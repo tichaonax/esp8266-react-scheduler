@@ -124,8 +124,6 @@ void TaskScheduler::setScheduleTimes(){
 }
 
 void TaskScheduler::setSchedule(){
-  Serial.print("TaskScheduler::setSchedule() _channel.enabled:");
-  Serial.println(_channel.enabled);
   if(_channel.enabled){
     digitalClockDisplay();
     Serial.print("Setting schedule for channel : ");
@@ -153,7 +151,6 @@ void TaskScheduler::scheduleTask(){
 
   Serial.print("Schedule Task for channel : ");
   Serial.println(_channel.name);
-  Serial.println("Control Scheduler started => ");
   runTask();  // run once initially on set
   digitalClockDisplay();
 }
@@ -166,6 +163,8 @@ bool TaskScheduler::shouldRunTask(){
 
 void TaskScheduler::runTask(){
   if(shouldRunTask()){
+    Serial.print("Control Scheduler started => ");
+    digitalClockDisplay();
     controlOn();
   }else{
     Serial.print("Task for channel : ");
@@ -176,16 +175,18 @@ void TaskScheduler::runTask(){
 }
 
 void TaskScheduler::controlOn(){
-  Serial.print(_channel.name);
-  Serial.print(": Task started at: ");
-  digitalClockDisplay();
   if(_channel.enabled){
     if(!_channel.schedule.isOverride){
-      //digitalWrite(_channel.controlPin, CONTROL_ON);
-
-          _channelStateService.update([&](ChannelState& channelState) {
-            channelState.channel.controlOn = true;
-          }, _channel.name);
+      _channelStateService.update([&](ChannelState& channelState) {
+      if (channelState.channel.controlOn) {
+        return StateUpdateResult::UNCHANGED;
+      }
+        channelState.channel.controlOn = true;
+        Serial.print(_channel.name);
+        Serial.print(": Task started at: ");
+        digitalClockDisplay();
+        return StateUpdateResult::CHANGED;
+      }, _channel.name);
 
       if(_channel.enableTimeSpan){
         Alarm.timerOnce(getScheduleTimeSpan(), std::bind(&TaskScheduler::controlOff, this));
@@ -198,15 +199,16 @@ void TaskScheduler::controlOn(){
 
 void TaskScheduler::controlOff(){
   if(!_channel.schedule.isOverride){
-    //digitalWrite(_channel.controlPin, CONTROL_OFF);
-  
     _channelStateService.update([&](ChannelState& channelState) {
+      if (!channelState.channel.controlOn) {
+        return StateUpdateResult::UNCHANGED;
+      }
       channelState.channel.controlOn = false;
+      Serial.print(_channel.name);
+      Serial.print(": Task stopped at: ");
+      digitalClockDisplay();
+      return StateUpdateResult::CHANGED;
     }, _channel.name);
-
-    Serial.print(_channel.name);
-    Serial.print(": Task stopped at: ");
-    digitalClockDisplay();
   }
 }
 

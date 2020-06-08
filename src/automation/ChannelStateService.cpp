@@ -55,9 +55,10 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
 }
 
 void ChannelStateService::onChannelStateUpdated() {
-  Serial.println("onChannelStateUpdated");
-    _state.channel.controlPin = _channelControlPin;
-    digitalWrite(_state.channel.controlPin, _state.channel.controlOn ? CONTROL_ON : CONTROL_OFF);
+  Serial.print("onChannelStateUpdated channel: ");
+  Serial.println(_state.channel.name);
+  _state.channel.controlPin = _channelControlPin;
+  digitalWrite(_state.channel.controlPin, _state.channel.controlOn ? CONTROL_ON : CONTROL_OFF);
 }
 
 void ChannelStateService::registerConfig() {
@@ -96,21 +97,7 @@ void ChannelStateService::begin() {
     _state.channel.channelEndPoint = _restChannelEndPoint;
     _fsPersistence.readFromFS();
 
-    //_taskScheduler.setScheduleTimes(_state.channel);
-
     onChannelStateUpdated();
-}
-void ChannelStateService::loop() {
-/*     // check to see if NTP updated the local time
-    if(!_taskScheduler.getIsNewDate()){
-        int year = _taskScheduler.getCurrenYear();
-        if(year != 70){
-        _taskScheduler.setIsNewDate(true);
-        _taskScheduler.setSchedule();
-        }
-    }
-    // You need to call the Alarm.delay() to run the set alarms
-    Alarm.delay(0); */
 }
 
 Channel ChannelStateService::getChannel(){
