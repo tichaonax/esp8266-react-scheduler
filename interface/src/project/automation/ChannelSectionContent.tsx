@@ -9,13 +9,13 @@ type ChannelStateRestControllerFormProps = RestControllerProps<ChannelState>;
 
 const ChannelSectionContent = (props : ChannelStateRestControllerFormProps) => {
     return (
-        <SectionContent title={props.data?.name || ""} titleGutter>
-        <RestFormLoader
-            {...props}
-            render={renderProps => (
-            <ChannelStateForm {...renderProps} />
-            )}
-        />
+        <SectionContent title="" titleGutter>
+            <RestFormLoader
+                {...props}
+                render={renderProps => (
+                <ChannelStateForm {...renderProps} />
+                )}
+            />
         </SectionContent>
     )
 }

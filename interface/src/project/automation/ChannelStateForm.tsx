@@ -56,11 +56,6 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
   
     return (
       <ValidatorForm onSubmit={saveData}>
-        <Box bgcolor="primary.main" color="primary.contrastText" p={2} mt={2} mb={2}>
-          <Typography variant="body1">
-            Schedule changes take effect after SAVE.
-          </Typography>
-        </Box>
         <BlockFormControlLabel
             control={
             <Checkbox

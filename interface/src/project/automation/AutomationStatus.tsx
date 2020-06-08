@@ -20,7 +20,7 @@ class AutomationStatus extends Component<RouteComponentProps> {
     return (
       <MenuAppBar sectionTitle="Channel Status">
         <Tabs value={this.props.match.url} onChange={this.handleTabChange} variant="fullWidth">
-          <Tab value={`/${PROJECT_PATH}/status/wsStatus`} label="Channel Status" />
+          <Tab value={`/${PROJECT_PATH}/status/wsStatus`} label="Web Socket Channels" />
         </Tabs>
         <Switch>
           <AuthenticatedRoute exact path={`/${PROJECT_PATH}/status/wsStatus`} component={ChannelWebSocketController} />
