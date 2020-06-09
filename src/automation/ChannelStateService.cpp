@@ -92,11 +92,13 @@ void ChannelStateService::registerConfig() {
 
 void ChannelStateService::begin() {
     _state.channel.controlPin = _channelControlPin;
-    _state.channel.controlOn = DEFAULT_CONTROL_STATE;
     _state.channel.name = _defaultChannelName;
     _state.channel.channelEndPoint = _restChannelEndPoint;
+    
     _fsPersistence.readFromFS();
 
+    _state.channel.controlOn = DEFAULT_CONTROL_STATE; // must be off on start up
+    
     onChannelStateUpdated();
 }
 
