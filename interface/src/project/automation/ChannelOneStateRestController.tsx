@@ -9,9 +9,9 @@ import ChannelOneWebSocketController from './ChannelOneWebSocketController';
 
 export const CONTROL_SETTINGS_ENDPOINT = ENDPOINT_ROOT + "channelOneState";
 
-type ChannelOneStateRestControllerProps = RestControllerProps<ChannelState>;
+type ChannelStateRestControllerProps = RestControllerProps<ChannelState>;
 
-class ChannelOneStateRestController extends Component<ChannelOneStateRestControllerProps> {
+class ChannelOneStateRestController extends Component<ChannelStateRestControllerProps> {
 
   componentDidMount() {
     this.props.loadData();

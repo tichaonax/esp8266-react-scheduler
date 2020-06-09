@@ -6,7 +6,6 @@ import ChannelStateForm from './ChannelStateForm';
 import { ChannelState } from './types';
 
 type ChannelStateRestControllerFormProps = RestControllerProps<ChannelState>;
-
 const ChannelSectionContent = (props : ChannelStateRestControllerFormProps) => {
     return (
         <SectionContent title="" titleGutter>

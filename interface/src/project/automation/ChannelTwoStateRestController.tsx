@@ -9,9 +9,9 @@ import ChannelTwoWebSocketController from './ChannelTwoWebSocketController';
 
 export const CONTROL_SETTINGS_ENDPOINT = ENDPOINT_ROOT + "channelTwoState";
 
-type ChannelTwoStateRestControllerProps = RestControllerProps<ChannelState>;
+type ChannelStateRestControllerProps = RestControllerProps<ChannelState>;
 
-class ChannelTwoStateRestController extends Component<ChannelTwoStateRestControllerProps> {
+class ChannelTwoStateRestController extends Component<ChannelStateRestControllerProps> {
 
   componentDidMount() {
     this.props.loadData();

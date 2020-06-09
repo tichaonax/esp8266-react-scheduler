@@ -9,9 +9,9 @@ import ChannelThreeWebSocketController from './ChannelThreeWebSocketController';
 
 export const CONTROL_SETTINGS_ENDPOINT = ENDPOINT_ROOT + "channelThreeState";
 
-type ChannelThreeStateRestControllerProps = RestControllerProps<ChannelState>;
+type ChannelStateRestControllerProps = RestControllerProps<ChannelState>;
 
-class ChannelThreeStateRestController extends Component<ChannelThreeStateRestControllerProps> {
+class ChannelThreeStateRestController extends Component<ChannelStateRestControllerProps> {
 
   componentDidMount() {
     this.props.loadData();
