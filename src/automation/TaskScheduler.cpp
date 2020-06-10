@@ -1,3 +1,4 @@
+#include "Utilities.h"
 #include "TaskScheduler.h"
 
 TaskScheduler::TaskScheduler(AsyncWebServer* server,
@@ -34,6 +35,7 @@ void TaskScheduler::loop() {
         }
     }
     // You need to call the Alarm.delay() to run the set alarms
+    delay(1000);
     Alarm.delay(0);
 }
 
@@ -182,6 +184,7 @@ void TaskScheduler::controlOn(){
         return StateUpdateResult::UNCHANGED;
       }
         channelState.channel.controlOn = true;
+        channelState.channel.lastStartedChangeTime =  Utils.getLocalTime();
         Serial.print(_channel.name);
         Serial.print(": Task started at: ");
         digitalClockDisplay();
@@ -204,6 +207,7 @@ void TaskScheduler::controlOff(){
         return StateUpdateResult::UNCHANGED;
       }
       channelState.channel.controlOn = false;
+      channelState.channel.lastStartedChangeTime =  Utils.getLocalTime();
       Serial.print(_channel.name);
       Serial.print(": Task stopped at: ");
       digitalClockDisplay();

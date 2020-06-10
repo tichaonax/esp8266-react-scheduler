@@ -60,6 +60,8 @@ class TaskScheduler {
     void setSchedule();
     void setScheduleTimes();
     uint8_t getCurrenYear();
+
+    private:
     CurrentTime getCurrentTime(){
         CurrentTime current;
         current.hours = 3600 * Alarm.getDigitsNow(dtHour);
@@ -68,8 +70,6 @@ class TaskScheduler {
         current.totalCurrentTime = current.hours + current.minutes + current.seconds;
         return current;
     }
-
-    private:
     ChannelStateService _channelStateService;
     Channel _channel;
     bool    _newDate = false;       // Wait for NTP to get valid time

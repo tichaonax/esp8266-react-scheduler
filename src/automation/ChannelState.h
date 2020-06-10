@@ -5,6 +5,8 @@
 #include <MqttPubSub.h>
 #include <WebSocketTxRx.h>
 #include <FSPersistence.h> 
+#include "Utilities.h"
+
 
 #define DEFAULT_LED_STATE false
 #define DEFAULT_CONTROL_STATE false
@@ -54,14 +56,18 @@ struct Channel {
     bool    enabled;
     String  name;            // control name e.g, Pump
     Schedule schedule;
-    bool    enableTimeSpan; // when enbale control is on between startTime and endTime
-    String  channelEndPoint;    //
-
+    bool    enableTimeSpan;  // when enbale control is on between startTime and endTime
+    String  channelEndPoint; //
+    String  lastStartedChangeTime;  //last time the switch was toggled
 };
 
 class ChannelState {
 public:
  Channel channel;
+/*   static char* getLocalTime(){
+    time_t now = time(0);
+    return ctime(&now);
+  } */
   static void read(ChannelState& settings, JsonObject& root) {
     readChannel(settings.channel, root);
   }
@@ -101,6 +107,7 @@ public:
     channel["name"] = settings.name;
     channel["enabled"] = settings.enabled;
     channel["enableTimeSpan"] = settings.enableTimeSpan;
+    channel["lastStartedChangeTime"] = settings.lastStartedChangeTime;
 
     JsonObject schedule = channel.createNestedObject("schedule");
     
@@ -117,6 +124,7 @@ static void updateChannel(JsonObject& channel, Channel& settings) {
     settings.name = channel["name"] | settings.name;
     settings.enabled = channel["enabled"] | DEFAULT_ENABLED_STATE;
     settings.enableTimeSpan = channel["enableTimeSpan"] | DEFAULT_ENABLE_TIME_SPAN_SCHEDULE;
+    settings.lastStartedChangeTime = channel["lastStartedChangeTime"] | Utils.getLocalTime();
 
     JsonObject schedule = channel["schedule"];
 
