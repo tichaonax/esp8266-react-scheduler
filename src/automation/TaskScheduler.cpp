@@ -35,7 +35,7 @@ void TaskScheduler::loop() {
         }
     }
     // You need to call the Alarm.delay() to run the set alarms
-    Alarm.delay(0);
+    Alarm.delay(1);
 }
 
 ScheduledTime TaskScheduler::getNextRunTime(){

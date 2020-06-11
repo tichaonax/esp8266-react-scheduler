@@ -37,7 +37,7 @@ TaskScheduler channelTwotaskScheduler = TaskScheduler(&server,
                                                         CHANNEL_TWO_REST_ENDPOINT_PATH,
                                                         CHANNEL_TWO_SOCKET_PATH);  
 
-/* TaskScheduler channelThreetaskScheduler = TaskScheduler(&server,
+/*TaskScheduler channelThreetaskScheduler = TaskScheduler(&server,
                                                         esp8266React.getSecurityManager(),
                                                         esp8266React.getMqttClient(),
                                                         &SPIFFS,
@@ -47,7 +47,7 @@ TaskScheduler channelTwotaskScheduler = TaskScheduler(&server,
                                                         CHANNEL_THREE_REST_ENDPOINT_PATH,
                                                         CHANNEL_THREE_SOCKET_PATH);  
                                                         
-TaskScheduler channelFourtaskScheduler = TaskScheduler(&server,
+ TaskScheduler channelFourtaskScheduler = TaskScheduler(&server,
                                                         esp8266React.getSecurityManager(),
                                                         esp8266React.getMqttClient(),
                                                         &SPIFFS,
@@ -80,13 +80,13 @@ void setup() {
 
   channelOnetaskScheduler.begin();
   channelTwotaskScheduler.begin();
-/*   channelThreetaskScheduler.begin();
-  channelFourtaskScheduler.begin(); */
+  //channelThreetaskScheduler.begin();
+ /* channelFourtaskScheduler.begin(); */
 
   channelOnetaskScheduler.setScheduleTimes();
   channelTwotaskScheduler.setScheduleTimes();
-/*   channelThreetaskScheduler.setScheduleTimes();
-  channelFourtaskScheduler.setScheduleTimes(); */
+  //channelThreetaskScheduler.setScheduleTimes();
+/*  channelFourtaskScheduler.setScheduleTimes(); */
 
   // start the server
   server.begin();
@@ -97,9 +97,12 @@ void loop() {
   esp8266React.loop();
   channelOnetaskScheduler.loop();
   esp8266React.loop();
+  //esp8266React.loop();
   channelTwotaskScheduler.loop();
-/*   esp8266React.loop();
-  channelThreetaskScheduler.loop();
   esp8266React.loop();
+  //esp8266React.loop();
+  //channelThreetaskScheduler.loop();
+  //esp8266React.loop();
+/* esp8266React.loop();
   channelFourtaskScheduler.loop(); */
 }
