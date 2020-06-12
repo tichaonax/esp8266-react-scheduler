@@ -1,6 +1,6 @@
 import React from 'react';
 import { ValidatorForm } from 'react-material-ui-form-validator';
-
+import history from '../../history';
 import { Switch } from '@material-ui/core';
 import { WebSocketFormProps } from '../../components';
 import { BlockFormControlLabel } from '../../components';
@@ -38,13 +38,17 @@ const ChannelStateWebSocketControllerForm = (props: ChannelStateWebSocketControl
         return ("/project/auto/channelFour");
         break;
       default:
+        return ("/project/auto/channelOne");
         break;
     }
   }
 
+  const onClick = () => {
+    history.push(getLink());
+  }
   return (
     <ValidatorForm onSubmit={saveData}>
-      {showLink && (<div><a href={getLink()}>View "{data.name}" schedule</a></div>)}
+      {showLink && (<div><a onClick={onClick} href="#">View "{data.name}" schedule</a></div>)}
       <BlockFormControlLabel
         control={
           <Switch
