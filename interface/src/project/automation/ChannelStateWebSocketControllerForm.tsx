@@ -1,7 +1,7 @@
 import React from 'react';
 import { ValidatorForm } from 'react-material-ui-form-validator';
 import history from '../../history';
-import { Switch } from '@material-ui/core';
+import { Switch, Typography } from '@material-ui/core';
 import { WebSocketFormProps } from '../../components';
 import { BlockFormControlLabel } from '../../components';
 
@@ -48,8 +48,10 @@ const ChannelStateWebSocketControllerForm = (props: ChannelStateWebSocketControl
   }
   return (
     <ValidatorForm onSubmit={saveData}>
+      <p/>
+      <Typography>{data.name}</Typography>
       {showLink && (<div>
-        <a onClick={onClick} href="#">View "{data.name}" schedule</a>
+        <div><a onClick={onClick} href="#">View schedule</a></div>
         <div>Next Run : {data.nextRunTime.substr(0, data.nextRunTime.lastIndexOf(' '))}</div>
         </div>)}
       <BlockFormControlLabel
@@ -60,7 +62,7 @@ const ChannelStateWebSocketControllerForm = (props: ChannelStateWebSocketControl
             color="primary"
           />
         }
-        label={data.name + " : last status at " + data.lastStartedChangeTime.substr(0, data.lastStartedChangeTime.lastIndexOf(' '))}
+        label={"Last status at " + data.lastStartedChangeTime.substr(0, data.lastStartedChangeTime.lastIndexOf(' '))}
       />
     </ValidatorForm>
   );
