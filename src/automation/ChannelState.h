@@ -99,6 +99,7 @@ public:
   }
   private:
   static void readChannel(Channel& settings, JsonObject channel) {
+    channel["controlPin"] = settings.controlPin;
     channel["controlOn"] = settings.controlOn;
     channel["name"] = settings.name;
     channel["enabled"] = settings.enabled;
@@ -116,6 +117,7 @@ public:
   }
 
 static void updateChannel(JsonObject& channel, Channel& settings) {
+    settings.controlPin = channel["controlPin"];// | DEFAULT_CONTROL_STATE;
     settings.controlOn = channel["controlOn"] | DEFAULT_CONTROL_STATE;
     settings.name = channel["name"] | settings.name;
     settings.enabled = channel["enabled"] | DEFAULT_ENABLED_STATE;
