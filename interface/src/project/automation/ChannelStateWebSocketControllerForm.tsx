@@ -48,7 +48,10 @@ const ChannelStateWebSocketControllerForm = (props: ChannelStateWebSocketControl
   }
   return (
     <ValidatorForm onSubmit={saveData}>
-      {showLink && (<div><a onClick={onClick} href="#">View "{data.name}" schedule</a></div>)}
+      {showLink && (<div>
+        <a onClick={onClick} href="#">View "{data.name}" schedule</a>
+        <div>Next Run : {data.nextRunTime.substr(0, data.nextRunTime.lastIndexOf(' '))}</div>
+        </div>)}
       <BlockFormControlLabel
         control={
           <Switch
@@ -57,7 +60,7 @@ const ChannelStateWebSocketControllerForm = (props: ChannelStateWebSocketControl
             color="primary"
           />
         }
-        label={data.name + " : " + data.lastStartedChangeTime.substr(0, data.lastStartedChangeTime.lastIndexOf(' '))}
+        label={data.name + " : last status at " + data.lastStartedChangeTime.substr(0, data.lastStartedChangeTime.lastIndexOf(' '))}
       />
     </ValidatorForm>
   );

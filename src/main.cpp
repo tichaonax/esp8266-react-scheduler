@@ -80,29 +80,17 @@ void setup() {
 
   channelOnetaskScheduler.begin();
   channelTwotaskScheduler.begin();
-  //channelThreetaskScheduler.begin();
- /* channelFourtaskScheduler.begin(); */
 
   channelOnetaskScheduler.setScheduleTimes();
   channelTwotaskScheduler.setScheduleTimes();
-  //channelThreetaskScheduler.setScheduleTimes();
-/*  channelFourtaskScheduler.setScheduleTimes(); */
 
   // start the server
   server.begin();
 }
 
 void loop() {
-  // run the framework's loop function
   esp8266React.loop();
   channelOnetaskScheduler.loop();
-  esp8266React.loop();
-  //esp8266React.loop();
   channelTwotaskScheduler.loop();
-  esp8266React.loop();
-  //esp8266React.loop();
-  //channelThreetaskScheduler.loop();
-  //esp8266React.loop();
-/* esp8266React.loop();
-  channelFourtaskScheduler.loop(); */
+
 }

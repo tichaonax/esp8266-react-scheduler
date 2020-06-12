@@ -59,6 +59,7 @@ struct Channel {
     bool    enableTimeSpan;  // when enable control is on between startTime and endTime
     String  channelEndPoint; //
     String  lastStartedChangeTime;  //last time the switch was toggled
+    String  nextRunTime;
 };
 
 class ChannelState {
@@ -105,6 +106,7 @@ public:
     channel["enabled"] = settings.enabled;
     channel["enableTimeSpan"] = settings.enableTimeSpan;
     channel["lastStartedChangeTime"] = settings.lastStartedChangeTime;
+    channel["nextRunTime"] = settings.nextRunTime;
 
     JsonObject schedule = channel.createNestedObject("schedule");
     
@@ -117,12 +119,13 @@ public:
   }
 
 static void updateChannel(JsonObject& channel, Channel& settings) {
-    settings.controlPin = channel["controlPin"];// | DEFAULT_CONTROL_STATE;
+    settings.controlPin = channel["controlPin"];
     settings.controlOn = channel["controlOn"] | DEFAULT_CONTROL_STATE;
     settings.name = channel["name"] | settings.name;
     settings.enabled = channel["enabled"] | DEFAULT_ENABLED_STATE;
     settings.enableTimeSpan = channel["enableTimeSpan"] | DEFAULT_ENABLE_TIME_SPAN_SCHEDULE;
     settings.lastStartedChangeTime = channel["lastStartedChangeTime"] | Utils.getLocalTime();
+    settings.nextRunTime = channel["nextRunTime"] | "";
 
     JsonObject schedule = channel["schedule"];
 

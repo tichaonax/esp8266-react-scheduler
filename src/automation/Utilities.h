@@ -10,6 +10,11 @@ public:
     time_t now = time(0);
     return ctime(&now);
   }
+
+  String getLocalNextRunTime(time_t delta){
+    time_t now = time(0) + delta;
+    return ctime(&now);
+  }
 };
 
 extern Utilities Utils;  // make an instance for the user

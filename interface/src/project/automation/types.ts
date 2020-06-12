@@ -25,6 +25,7 @@ export interface LightState {
     enableTimeSpan: boolean;
     lastStartedChangeTime: string;
     controlPin: number;
+    nextRunTime: string;
   }
   
   export interface LightMqttSettings { 
