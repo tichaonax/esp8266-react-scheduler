@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { ValidatorForm } from 'react-material-ui-form-validator';
-import { Typography, Box, TextField, Checkbox } from '@material-ui/core';
+import { TextField, Checkbox } from '@material-ui/core';
 import SaveIcon from '@material-ui/icons/Save';
 import MenuItem from "@material-ui/core/MenuItem";
 import Grid from '@material-ui/core/Grid';
@@ -11,6 +11,7 @@ import {
   KeyboardTimePicker,
 } from '@material-ui/pickers';
 
+import history from '../../history';
 import { RestFormProps, FormActions, FormButton, BlockFormControlLabel, extractEventValue } from '../../components';
 
 import { ChannelState, Schedule } from './types';
@@ -53,6 +54,10 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
             break;
         }
       }
+
+      const onGoBack = () => {
+        history.goBack();
+      }
   
     return (
       <ValidatorForm onSubmit={saveData}>
@@ -93,6 +98,7 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
             onChange={handleScheduleValueChange('runEvery')}>
             <MenuItem value={0.033}>02 seconds</MenuItem>
             <MenuItem value={0.083}>05 seconds</MenuItem>
+            <MenuItem value={0.1}>6 seconds</MenuItem>
             <MenuItem value={0.167}>10 seconds</MenuItem>
             <MenuItem value={0.2}>12 seconds</MenuItem>
             <MenuItem value={0.25}>15 seconds</MenuItem>
@@ -128,6 +134,7 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
             <MenuItem value={0.017}>01 seconds</MenuItem>
             <MenuItem value={0.033}>02 seconds</MenuItem>
             <MenuItem value={0.083}>05 seconds</MenuItem>
+            <MenuItem value={0.1}>6 seconds</MenuItem>
             <MenuItem value={0.167}>10 seconds</MenuItem>
             <MenuItem value={0.2}>12 seconds</MenuItem>
             <MenuItem value={0.25}>15 seconds</MenuItem>
@@ -194,6 +201,9 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
           </FormButton>
           <FormButton variant="contained" color="secondary" onClick={loadData}>
             Reset
+          </FormButton>
+          <FormButton variant="contained" color="secondary" onClick={onGoBack}>
+            Go Back
           </FormButton>
         </FormActions>
       </ValidatorForm>
