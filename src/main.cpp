@@ -82,16 +82,6 @@ void setup() {
   channelOnetaskScheduler.setScheduleTimes();
   channelTwotaskScheduler.setScheduleTimes();
 
-  // start the light service
-  //lightMqttSettingsService.begin();
-
-  channelOnetaskScheduler.begin();
-  channelTwotaskScheduler.begin();
-
-  channelOnetaskScheduler.setScheduleTimes();
-  channelTwotaskScheduler.setScheduleTimes();
-
-
   // start the server
   server.begin();
 }

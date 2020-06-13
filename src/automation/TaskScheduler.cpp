@@ -131,8 +131,8 @@ void TaskScheduler::setSchedule(){
     Serial.print("Setting schedule for channel : ");
     Serial.println(_channel.name);
     ScheduledTime schedule = getNextRunTime();
-    Serial.print("Scheduled to stat at => ");
-    Serial.println(schedule.scheduleTime);
+    //Serial.print("Scheduled to stat at => ");
+    //Serial.println(schedule.scheduleTime);
     digitalClockDisplay(schedule.currentTime + schedule.scheduleTime);
 
     if ( schedule.scheduleTime > 0 ){
@@ -143,10 +143,12 @@ void TaskScheduler::setSchedule(){
       scheduleTask();
     }
     _channelStateService.update([&](ChannelState& channelState) {
+    channelState.channel.controlOn = CONTROL_OFF;
     channelState.channel.nextRunTime =  Utils.getLocalNextRunTime(scheduleTime);
+    channelState.channel.lastStartedChangeTime = Utils.getLocalTime();
     Serial.print(_channel.name);
     Serial.print(": Task set to start at: ");
-    digitalClockDisplay();
+    Serial.println(channelState.channel.nextRunTime);
     return StateUpdateResult::CHANGED;
     }, _channel.name);
   } 

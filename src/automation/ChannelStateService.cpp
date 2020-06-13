@@ -55,8 +55,6 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
 }
 
 void ChannelStateService::onChannelStateUpdated() {
-  Serial.print("onChannelStateUpdated channel: ");
-  Serial.println(_state.channel.name);
   _state.channel.controlPin = _channelControlPin;
   digitalWrite(_state.channel.controlPin, _state.channel.controlOn ? CONTROL_ON : CONTROL_OFF);
 }
@@ -91,15 +89,12 @@ void ChannelStateService::registerConfig() {
 }
 
 void ChannelStateService::begin() {
-    _state.channel.controlPin = _channelControlPin;
     _state.channel.name = _defaultChannelName;
-    _state.channel.channelEndPoint = _restChannelEndPoint;
-    
     _fsPersistence.readFromFS();
+    _state.channel.controlPin = _channelControlPin;
+    _state.channel.channelEndPoint = _restChannelEndPoint;
+    _state.channel.controlOn = CONTROL_OFF;
 
-    _state.channel.controlOn = DEFAULT_CONTROL_STATE; // must be off on start up
-    _state.channel.lastStartedChangeTime =  Utils.getLocalTime();
-    
     onChannelStateUpdated();
 }
 
