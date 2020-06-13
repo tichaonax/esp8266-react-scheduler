@@ -55,9 +55,9 @@ TaskScheduler channelTwotaskScheduler = TaskScheduler(&server,
                                                         CHANNEL_FOUR_CONFIG_JSON_PATH,
                                                         CHANNEL_FOUR_DEFAULT_NAME,
                                                         CHANNEL_FOUR_REST_ENDPOINT_PATH,
-                                                        CHANNEL_FOUR_SOCKET_PATH);   */
+                                                        CHANNEL_FOUR_SOCKET_PATH);   
 
-                                                        CHANNEL_FOUR_SOCKET_PATH);  
+                                                        CHANNEL_FOUR_SOCKET_PATH);  */
 
 void setup() {
   // start serial and filesystem
@@ -78,13 +78,9 @@ void setup() {
 
   channelOnetaskScheduler.begin();
   channelTwotaskScheduler.begin();
-  channelThreetaskScheduler.begin();
-  channelFourtaskScheduler.begin();
 
   channelOnetaskScheduler.setScheduleTimes();
   channelTwotaskScheduler.setScheduleTimes();
-  channelThreetaskScheduler.setScheduleTimes();
-  channelFourtaskScheduler.setScheduleTimes();
 
   // start the light service
   //lightMqttSettingsService.begin();
@@ -105,6 +101,4 @@ void loop() {
   channelOnetaskScheduler.loop();
   esp8266React.loop();
   channelTwotaskScheduler.loop();
-  channelThreetaskScheduler.loop();
-  channelFourtaskScheduler.loop();
 }
