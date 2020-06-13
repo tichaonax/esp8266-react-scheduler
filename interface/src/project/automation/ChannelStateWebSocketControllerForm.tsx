@@ -49,11 +49,11 @@ const ChannelStateWebSocketControllerForm = (props: ChannelStateWebSocketControl
   return (
     <ValidatorForm onSubmit={saveData}>
       <p/>
-      <Typography>{data.name}</Typography>
-      {showLink && (<div>
-        <div><a onClick={onClick} href="#">View schedule</a></div>
-        <div>Next Run : {data.nextRunTime.substr(0, data.nextRunTime.lastIndexOf(' '))}</div>
-        </div>)}
+      <Typography variant="subtitle2">{data.name}</Typography>
+      {showLink && (<Typography>
+        <Typography variant="body2"><a onClick={onClick} href="#">View schedule</a></Typography>
+        <Typography variant="body2">Next Run : {data.nextRunTime.substr(0, data.nextRunTime.lastIndexOf(' '))}</Typography>
+        </Typography>)}
       <BlockFormControlLabel
         control={
           <Switch
@@ -62,8 +62,9 @@ const ChannelStateWebSocketControllerForm = (props: ChannelStateWebSocketControl
             color="primary"
           />
         }
-        label={"Last status at " + data.lastStartedChangeTime.substr(0, data.lastStartedChangeTime.lastIndexOf(' '))}
-      />
+        label={`Last status at ${data.lastStartedChangeTime.substr(0, data.lastStartedChangeTime.lastIndexOf(' '))}`}
+      /> 
+      <Typography variant="caption">{`Channel control pin [ ${data.controlPin} ]`}</Typography>
     </ValidatorForm>
   );
 }

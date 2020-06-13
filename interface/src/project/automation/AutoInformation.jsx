@@ -6,10 +6,9 @@ class AutoInformation extends Component {
 
   render() {
     return (
-      <SectionContent title='Demo Information' titleGutter>
+      <SectionContent title='Automation Information' titleGutter>
         <Typography variant="body1" paragraph>
-          This simple demo project allows you to control the blink speed of the built-in LED.
-          It demonstrates how the esp8266-react framework may be extended for your own IoT project.
+          This simple app allows you to control two channels through a schedule.
         </Typography>
         <Typography variant="body1" paragraph>
           It is recommended that you keep your project interface code under the 'project' directory.
