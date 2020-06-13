@@ -6,10 +6,7 @@ import { WebSocketFormProps } from '../../components';
 import { BlockFormControlLabel } from '../../components';
 
 import { ChannelState } from './types';
-import { CHANNEL_ONE_CONTROL_PIN,
-        CHANNEL_TWO_CONTROL_PIN,
-        CHANNEL_THREE_CONTROL_PIN, 
-        CHANNEL_FOUR_CONTROL_PIN } from './constants';
+import { CHANNEL_ONE_CONTROL_PIN, CHANNEL_TWO_CONTROL_PIN } from './constants';
 import { useLocation } from 'react-router';
 
 type ChannelStateWebSocketControllerFormProps = WebSocketFormProps<ChannelState>;
@@ -27,19 +24,10 @@ const ChannelStateWebSocketControllerForm = (props: ChannelStateWebSocketControl
     switch (data.controlPin) {
       case CHANNEL_ONE_CONTROL_PIN:
         return ("/project/auto/channelOne");
-        break;
       case CHANNEL_TWO_CONTROL_PIN:
         return ("/project/auto/channelTwo");
-        break;
-      case CHANNEL_THREE_CONTROL_PIN:
-        return ("/project/auto/channelThree");
-        break;
-      case CHANNEL_FOUR_CONTROL_PIN:
-        return ("/project/auto/channelFour");
-        break;
       default:
         return ("/project/auto/channelOne");
-        break;
     }
   }
 
