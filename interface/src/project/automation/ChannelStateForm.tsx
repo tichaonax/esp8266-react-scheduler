@@ -64,7 +64,7 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
                 color="primary"
             />
             }
-            label="ENABLE schedule?"
+            label="Enable schedule?"
         />
         <BlockFormControlLabel
             control={
@@ -74,7 +74,7 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
                 color="primary"
             />
             }
-            label="ENABLE TimeSpan schedule?"
+            label="Enable TimeSpan?"
         />
         <TextField
           name="name"

@@ -35,8 +35,7 @@ void TaskScheduler::loop() {
         }
     }
     // You need to call the Alarm.delay() to run the set alarms
-    delay(1000);
-    Alarm.delay(0);
+    Alarm.delay(1);
 }
 
 ScheduledTime TaskScheduler::getNextRunTime(){
@@ -126,6 +125,7 @@ void TaskScheduler::setScheduleTimes(){
 }
 
 void TaskScheduler::setSchedule(){
+  time_t scheduleTime = 0;
   if(_channel.enabled){
     digitalClockDisplay();
     Serial.print("Setting schedule for channel : ");
@@ -136,19 +136,27 @@ void TaskScheduler::setSchedule(){
     digitalClockDisplay(schedule.currentTime + schedule.scheduleTime);
 
     if ( schedule.scheduleTime > 0 ){
-      Alarm.timerOnce(schedule.scheduleTime, std::bind(&TaskScheduler::scheduleTask, this));
+      scheduleTime = schedule.scheduleTime;
+      Alarm.timerOnce(scheduleTime, std::bind(&TaskScheduler::scheduleTask, this));
     }
     else{
       scheduleTask();
-    } 
-  }
+    }
+    _channelStateService.update([&](ChannelState& channelState) {
+    channelState.channel.nextRunTime =  Utils.getLocalNextRunTime(scheduleTime);
+    Serial.print(_channel.name);
+    Serial.print(": Task set to start at: ");
+    digitalClockDisplay();
+    return StateUpdateResult::CHANGED;
+    }, _channel.name);
+  } 
 }
 
 void TaskScheduler::scheduleTask(){
   if(_channel.enableTimeSpan){
-    Alarm.timerRepeat(TWENTY_FOUR_HOUR_DURATION, std::bind(&TaskScheduler::runTask, this));  // periodic schedule
+    Alarm.timerRepeat(TWENTY_FOUR_HOUR_DURATION, std::bind(&TaskScheduler::runTask, this));
   }else{
-    Alarm.timerRepeat(_channel.schedule.runEvery, std::bind(&TaskScheduler::runTask, this));  // onde a day
+    Alarm.timerRepeat(_channel.schedule.runEvery, std::bind(&TaskScheduler::runTask, this));
   }
 
   Serial.print("Schedule Task for channel : ");
@@ -164,16 +172,40 @@ bool TaskScheduler::shouldRunTask(){
 }
 
 void TaskScheduler::runTask(){
+  String nextRunTime = "";
   if(shouldRunTask()){
     Serial.print("Control Scheduler started => ");
     digitalClockDisplay();
     controlOn();
+    if(_channel.enableTimeSpan){
+      nextRunTime =  Utils.getLocalNextRunTime(TWENTY_FOUR_HOUR_DURATION);
+    }else{
+      nextRunTime =  Utils.getLocalNextRunTime(_channel.schedule.runEvery);
+    } 
   }else{
     Serial.print("Task for channel : ");
     Serial.println(_channel.name);
     Serial.print("Control system outside run window at:  ");
     digitalClockDisplay();
+     if(_channel.enableTimeSpan){
+      nextRunTime =  Utils.getLocalNextRunTime(TWENTY_FOUR_HOUR_DURATION);
+    }else{
+      nextRunTime =  Utils.getLocalNextRunTime(_channel.schedule.runEvery);
+    } 
   }
+  _channelStateService.update([&](ChannelState& channelState) {
+    channelState.channel.nextRunTime = nextRunTime;  _channelStateService.update([&](ChannelState& channelState) {
+    channelState.channel.nextRunTime = nextRunTime;  
+    Serial.print(_channel.name);
+    Serial.print(": Task next run at: ");
+    digitalClockDisplay();
+    return StateUpdateResult::CHANGED;
+    }, _channel.name);
+    Serial.print(_channel.name);
+    Serial.print(": Task next run at: ");
+    digitalClockDisplay();
+    return StateUpdateResult::CHANGED;
+    }, _channel.name);
 }
 
 void TaskScheduler::controlOn(){

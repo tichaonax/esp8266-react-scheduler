@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { SectionContent } from '../../components';
 import ChannelOneWebSocketController from './ChannelOneWebSocketController';
 import ChannelTwoWebSocketController from './ChannelTwoWebSocketController';
-import ChannelThreeWebSocketController from './ChannelThreeWebSocketController';
-import ChannelFourWebSocketController from './ChannelFourWebSocketController';
+/*import ChannelThreeWebSocketController from './ChannelThreeWebSocketController';
+import ChannelFourWebSocketController from './ChannelFourWebSocketController'; */
 class ChannelWebSocketController extends Component {
 
   render() {
@@ -11,8 +11,8 @@ class ChannelWebSocketController extends Component {
       <SectionContent title='Switch status' titleGutter>
         <ChannelOneWebSocketController/>
         <ChannelTwoWebSocketController/>
-        <ChannelThreeWebSocketController/>
-        <ChannelFourWebSocketController/>
+       {/* <ChannelThreeWebSocketController/>
+        <ChannelFourWebSocketController/> */}
       </SectionContent>
     )
   }

@@ -23,6 +23,9 @@ export interface LightState {
     enabled: boolean;
     schedule: Schedule;
     enableTimeSpan: boolean;
+    lastStartedChangeTime: string;
+    controlPin: number;
+    nextRunTime: string;
   }
   
   export interface LightMqttSettings { 
