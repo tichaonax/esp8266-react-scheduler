@@ -24,8 +24,8 @@ class Automation extends Component<RouteComponentProps> {
       <MenuAppBar sectionTitle="Automation System">
         <Tabs value={this.props.match.url} onChange={this.handleTabChange} variant="fullWidth">
           <Tab value={`/${PROJECT_PATH}/auto/information`} label="Channel Info" />
-          <Tab value={`/${PROJECT_PATH}/auto/channelOne`} label="Channel A" />
-          <Tab value={`/${PROJECT_PATH}/auto/channelTwo`} label="Channel B" />
+          <Tab value={`/${PROJECT_PATH}/auto/channelOne`} label="Channel One" />
+          <Tab value={`/${PROJECT_PATH}/auto/channelTwo`} label="Channel Two" />
           {/*<Tab value={`/${PROJECT_PATH}/auto/channelThree`} label="Channel C" />
            <Tab value={`/${PROJECT_PATH}/auto/channelFour`} label="Channel D" /> */}
         </Tabs>
