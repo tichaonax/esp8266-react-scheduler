@@ -98,7 +98,7 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
             onChange={handleScheduleValueChange('runEvery')}>
             <MenuItem value={0.033}>02 seconds</MenuItem>
             <MenuItem value={0.083}>05 seconds</MenuItem>
-            <MenuItem value={0.1}>6 seconds</MenuItem>
+            <MenuItem value={0.1}>06 seconds</MenuItem>
             <MenuItem value={0.167}>10 seconds</MenuItem>
             <MenuItem value={0.2}>12 seconds</MenuItem>
             <MenuItem value={0.25}>15 seconds</MenuItem>
@@ -134,7 +134,7 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
             <MenuItem value={0.017}>01 seconds</MenuItem>
             <MenuItem value={0.033}>02 seconds</MenuItem>
             <MenuItem value={0.083}>05 seconds</MenuItem>
-            <MenuItem value={0.1}>6 seconds</MenuItem>
+            <MenuItem value={0.1}>06 seconds</MenuItem>
             <MenuItem value={0.167}>10 seconds</MenuItem>
             <MenuItem value={0.2}>12 seconds</MenuItem>
             <MenuItem value={0.25}>15 seconds</MenuItem>
