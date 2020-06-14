@@ -2,6 +2,7 @@
 #define ChannelStateService_h
 
 #include "ChannelState.h"
+#include "ChannelMqttSettingsService.h"
 #include "ESP8266TimeAlarms.h"
 #include <HttpEndpoint.h>
 #include <MqttPubSub.h>
@@ -18,8 +19,8 @@ class ChannelStateService : public StatefulService<ChannelState> {
                     char* channelJsonConfigPath,  //  "/config/channelOneState.json"   
                     String defaultChannelName,  //  Channel One Control
                     String restChannelEndPoint, //  "/rest/channelOneState"
-                    char* webSocketChannelEndPoint //  "/ws/channelOneState"
-                    );
+                    char* webSocketChannelEndPoint, //  "/ws/channelOneState"
+                    ChannelMqttSettingsService* channelMqttSettingsService);
 
   void begin();
   Channel getChannel();
@@ -30,6 +31,7 @@ class ChannelStateService : public StatefulService<ChannelState> {
   WebSocketTxRx<ChannelState> _webSocket;
   AsyncMqttClient* _mqttClient;
   FSPersistence<ChannelState> _fsPersistence;
+  ChannelMqttSettingsService* _channelMqttSettingsService;
   int _channelControlPin;
   String _defaultChannelName;
   String _restChannelEndPoint;

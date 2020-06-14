@@ -18,7 +18,7 @@ class ProjectRouting extends Component {
           * Add your project page routing below.
           */
         }
-{/*         <AuthenticatedRoute exact path={`/${PROJECT_PATH}/demo/*`} component={DemoProject} /> */}
+        {/* <AuthenticatedRoute exact path={`/${PROJECT_PATH}/demo/*`} component={DemoProject} /> */}
         <AuthenticatedRoute exact path={`/${PROJECT_PATH}/auto/*`} component={Automation} />
         <AuthenticatedRoute exact path={`/${PROJECT_PATH}/status/*`} component={AutomationStatus} />
         {

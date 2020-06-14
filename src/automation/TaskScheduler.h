@@ -44,8 +44,8 @@ class TaskScheduler {
                     char* channelJsonConfigPath,  //  "/config/channelOneState.json"   
                     String defaultChannelName,  //  Channel One Control
                     String restChannelEndPoint, //  "/rest/channelOneState"
-                    char* webSocketChannelEndPoint //  "/ws/channelOneState"
-    );
+                    char* webSocketChannelEndPoint, //  "/ws/channelOneState"
+                    ChannelMqttSettingsService* channelMqttSettingsService);
     void begin();
     void loop();
     void setIsNewDate(bool newDate){

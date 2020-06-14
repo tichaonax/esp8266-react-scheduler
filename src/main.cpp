@@ -1,21 +1,32 @@
 #include <ESP8266React.h>
-//#include <LightMqttSettingsService.h>
-//#include <LightStateService.h>
+#include <LightMqttSettingsService.h>
+#include <LightStateService.h>
 #include <FS.h>
 
 #include "./automation/TaskScheduler.h"
 #include "./automation/ChannelStateService.h"
+#include "./automation/ChannelMqttSettingsService.h"
 
 #define SERIAL_BAUD_RATE 115200
 
 AsyncWebServer server(80);
 ESP8266React esp8266React(&server, &SPIFFS);
+
 /* LightMqttSettingsService lightMqttSettingsService =
     LightMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager());
 LightStateService lightStateService = LightStateService(&server,
                                                         esp8266React.getSecurityManager(),
                                                         esp8266React.getMqttClient(),
-                                                        &lightMqttSettingsService); */
+                                                        &lightMqttSettingsService,
+                                                        &SPIFFS); */
+
+ChannelMqttSettingsService channelOneMqttSettingsService = 
+                                                        ChannelMqttSettingsService(&server,
+                                                        &SPIFFS,
+                                                        esp8266React.getSecurityManager(),
+                                                        CHANNEL_ONE_BROKER_CONFIG_JSON_PATH,
+                                                        CHANNEL_ONE_DEFAULT_MQTT_PATH_NAME, 
+                                                        CHANNEL_ONE_BROKER_END_POINT);
 
 TaskScheduler channelOnetaskScheduler = TaskScheduler(&server,
                                                         esp8266React.getSecurityManager(),
@@ -25,7 +36,16 @@ TaskScheduler channelOnetaskScheduler = TaskScheduler(&server,
                                                         CHANNEL_ONE_CONFIG_JSON_PATH,
                                                         CHANNEL_ONE_DEFAULT_NAME,
                                                         CHANNEL_ONE_REST_ENDPOINT_PATH,
-                                                        CHANNEL_ONE_SOCKET_PATH);  
+                                                        CHANNEL_ONE_SOCKET_PATH,
+                                                        &channelOneMqttSettingsService);  
+
+ChannelMqttSettingsService channelTwoMqttSettingsService = 
+                                                        ChannelMqttSettingsService(&server,
+                                                        &SPIFFS,
+                                                        esp8266React.getSecurityManager(),
+                                                        CHANNEL_TWO_BROKER_CONFIG_JSON_PATH,
+                                                        CHANNEL_TWO_DEFAULT_MQTT_PATH_NAME, 
+                                                        CHANNEL_TWO_BROKER_END_POINT);
 
 TaskScheduler channelTwotaskScheduler = TaskScheduler(&server,
                                                         esp8266React.getSecurityManager(),
@@ -35,7 +55,8 @@ TaskScheduler channelTwotaskScheduler = TaskScheduler(&server,
                                                         CHANNEL_TWO_CONFIG_JSON_PATH,
                                                         CHANNEL_TWO_DEFAULT_NAME,
                                                         CHANNEL_TWO_REST_ENDPOINT_PATH,
-                                                        CHANNEL_TWO_SOCKET_PATH);  
+                                                        CHANNEL_TWO_SOCKET_PATH,
+                                                        &channelTwoMqttSettingsService);  
 
 /*TaskScheduler channelThreetaskScheduler = TaskScheduler(&server,
                                                         esp8266React.getSecurityManager(),

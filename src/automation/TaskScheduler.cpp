@@ -9,7 +9,8 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                               char* channelJsonConfigPath,  
                               String defaultChannelName,
                               String restChannelEndPoint,
-                              char* webSocketChannelEndPoint) :
+                              char* webSocketChannelEndPoint,
+                              ChannelMqttSettingsService* channelMqttSettingsService) :
     _channelStateService(server,
                         securityManager,
                         mqttClient,
@@ -18,7 +19,8 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                         channelJsonConfigPath,
                         defaultChannelName,
                         restChannelEndPoint,
-                        webSocketChannelEndPoint)
+                        webSocketChannelEndPoint,
+                        channelMqttSettingsService)
                                        {
   };
 
