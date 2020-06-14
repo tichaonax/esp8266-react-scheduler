@@ -166,7 +166,6 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
           label="Off After"
         />
         <p/>
-  
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
           <Grid container justify="flex-start">
             <KeyboardTimePicker

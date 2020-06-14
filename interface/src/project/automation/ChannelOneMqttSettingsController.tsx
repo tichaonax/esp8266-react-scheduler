@@ -18,7 +18,7 @@ class ChannelOneMqttSettingsController extends Component<ChannelOneMqttSettingsC
 
   render() {
     return (
-      <SectionContent title='MQTT Controller' titleGutter>
+      <SectionContent title='' titleGutter>
         <RestFormLoader
           {...this.props}
           render={props => (

@@ -37,7 +37,7 @@ const ChannelStateWebSocketControllerForm = (props: ChannelStateWebSocketControl
   return (
     <ValidatorForm onSubmit={saveData}>
       <p/>
-      <Typography variant="subtitle2">{data.name}</Typography>
+      <Typography variant="h6">{data.name}</Typography>
       {showLink && (<Typography>
         <Typography variant="body2"><a onClick={onClick} href="#">View schedule</a></Typography>
         <Typography variant="body2">Next Run : {data.nextRunTime.substr(0, data.nextRunTime.lastIndexOf(' '))}</Typography>

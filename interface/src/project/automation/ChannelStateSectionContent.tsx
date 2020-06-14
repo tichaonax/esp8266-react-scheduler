@@ -8,6 +8,7 @@ import { ChannelState } from './types';
 type ChannelStateRestControllerFormProps = RestControllerProps<ChannelState>;
 const ChannelStateSectionContent = (props : ChannelStateRestControllerFormProps) => {
     return (
+        <div style={{ marginTop: -20}}>
         <SectionContent title="" titleGutter>
             <RestFormLoader
                 {...props}
@@ -16,6 +17,7 @@ const ChannelStateSectionContent = (props : ChannelStateRestControllerFormProps)
                 )}
             />
         </SectionContent>
+        </div>
     )
 }
 

@@ -19,8 +19,8 @@ class ChannelTwoStateRestController extends Component<ChannelStateRestController
 
   render() {
     return (
-    <div>
-      <SectionContent title='Switch Status' titleGutter>
+    <div style={{ marginTop: -20 , marginLeft: -23, marginRight: -23, marginBottom: -23}}>
+      <SectionContent title='' titleGutter>
         <ChannelTwoWebSocketController/> 
       </SectionContent>
       <ChannelStateSectionContent {...this.props}/> 

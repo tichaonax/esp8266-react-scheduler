@@ -110,6 +110,5 @@ void setup() {
 void loop() {
   esp8266React.loop();
   channelOnetaskScheduler.loop();
-  esp8266React.loop();
   channelTwotaskScheduler.loop();
 }

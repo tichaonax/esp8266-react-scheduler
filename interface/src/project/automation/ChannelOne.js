@@ -14,17 +14,17 @@ const ChannelOne = () => {
     <Tabs>
       <TabList>
         <Tab>
-          <Typography variant="subtitle2">
+          <Typography variant="overline">
             Schedule
           </Typography>
         </Tab>
         <Tab>
-          <Typography variant="subtitle2">
+          <Typography variant="overline">
             Mqtt
           </Typography>
         </Tab>
         <Tab>
-          <Typography variant="subtitle2">
+          <Typography variant="overline">
             Status
           </Typography>
         </Tab>

@@ -8,7 +8,7 @@ class ChannelWebSocketController extends Component {
 
   render() {
     return (
-      <SectionContent title='Switch status' titleGutter>
+      <SectionContent title='' titleGutter>
         <ChannelOneWebSocketController/>
         <ChannelTwoWebSocketController/>
        {/* <ChannelThreeWebSocketController/>
