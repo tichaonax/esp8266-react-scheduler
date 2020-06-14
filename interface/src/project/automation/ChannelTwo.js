@@ -1,0 +1,46 @@
+import React from 'react';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import Typography from '@material-ui/core/Typography';
+import 'react-tabs/style/react-tabs.css';
+
+import { SectionContent } from '../../components';
+import ChannelTwoStateRestController from './ChannelTwoStateRestController';
+import ChannelTwoWebSocketController from './ChannelTwoWebSocketController';
+import ChannelTwoMqttSettingsController from './ChannelTwoMqttSettingsController';
+
+const ChannelTwo = () => {
+  return(
+    <SectionContent title='' titleGutter>
+    <Tabs>
+      <TabList>
+        <Tab>
+          <Typography variant="subtitle2">
+            Schedule
+          </Typography>
+        </Tab>
+        <Tab>
+          <Typography variant="subtitle2">
+            Mqtt
+          </Typography>
+        </Tab>
+        <Tab>
+          <Typography variant="subtitle2">
+            Status
+          </Typography>
+        </Tab>
+      </TabList>
+      <TabPanel>
+        <ChannelTwoStateRestController/>
+      </TabPanel>
+      <TabPanel>
+        <ChannelTwoMqttSettingsController/>
+      </TabPanel>
+      <TabPanel>
+        <ChannelTwoWebSocketController/>
+      </TabPanel>
+    </Tabs>
+    </SectionContent>
+  );
+}
+
+export default ChannelTwo;

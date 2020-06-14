@@ -28,7 +28,7 @@ export interface LightState {
     nextRunTime: string;
   }
   
-  export interface LightMqttSettings { 
+  export interface ChannelMqttSettings { 
     unique_id : string;
     name: string;
     mqtt_path : string;

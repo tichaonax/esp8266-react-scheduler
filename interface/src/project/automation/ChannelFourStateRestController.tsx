@@ -4,7 +4,7 @@ import { ENDPOINT_ROOT } from '../../api';
 import { restController, RestControllerProps, SectionContent } from '../../components';
 
 import { ChannelState } from './types';
-import ChannelSectionContent from './ChannelSectionContent';
+import ChannelStateSectionContent from './ChannelStateSectionContent';
 import ChannelFourWebSocketController from './ChannelFourWebSocketController';
 
 export const CONTROL_SETTINGS_ENDPOINT = ENDPOINT_ROOT + "channelFourState";
@@ -23,7 +23,7 @@ class ChannelFourStateRestController extends Component<ChannelStateRestControlle
       <SectionContent title='Switch Status' titleGutter>
         <ChannelFourWebSocketController/> 
       </SectionContent>
-      <ChannelSectionContent {...this.props}/> 
+      <ChannelStateSectionContent {...this.props}/> 
     </div>
     )
   }

@@ -28,27 +28,28 @@ void TaskScheduler::begin(){
     _channelStateService.begin();
 }
 void TaskScheduler::loop() {
+  // You need to call the Alarm.delay() to run the set alar
+    Alarm.delay(1);
     // check to see if NTP updated the local time
-    if(!getIsNewDate()){
-        int year = getCurrenYear();
-        if(year != 70){
-        setIsNewDate(true);
-        setSchedule();
+    if(!_newDate){
+        time_t tnow = time(nullptr);
+        struct tm *date = localtime(&tnow);
+        if(date->tm_year != 70){
+          _newDate = true;
+          setSchedule();
         }
     }
-    // You need to call the Alarm.delay() to run the set alarms
-    Alarm.delay(1);
 }
 
 ScheduledTime TaskScheduler::getNextRunTime(){
-  Serial.print("Next Run Time Task for channel : ");
-  Serial.println(_channel.name);
+  //Serial.print("Next Run Time Task for channel : ");
+  //Serial.println(_channel.name);
   ScheduledTime schedule;
   schedule.currentTime = time(nullptr);
   schedule.scheduleTime = 0;
   
   CurrentTime current = getCurrentTime();
-  Serial.println(current.hours);
+ /*  Serial.println(current.hours);
   Serial.println(current.minutes);
   Serial.println(current.seconds);
   
@@ -61,44 +62,44 @@ ScheduledTime TaskScheduler::getNextRunTime(){
   Serial.print("current.minutes =>");
   Serial.println(current.minutes);
   Serial.print("current.hours =>");
-  Serial.println(current.hours);
+  Serial.println(current.hours); */
 
   if(current.totalCurrentTime > _channel.endTime){
-    Serial.println("if(current.totalCurrentTime > channel.endTime)");
+    //Serial.println("if(current.totalCurrentTime > channel.endTime)");
     schedule.scheduleTime = _channel.startTime + MID_NIGHT_SECONDS - current.totalCurrentTime + 1 ; //MID_NIGHT_SECONDS
     } 
   else if(current.totalCurrentTime < _channel.startTime){ 
-    Serial.println("if(current.totalCurrentTime < channel.startTime)");
+    //Serial.println("if(current.totalCurrentTime < channel.startTime)");
     schedule.scheduleTime = _channel.startTime -  current.totalCurrentTime;
   }
   else {
     if(current.minutes < _channel.schedule.startTimeMinute){
-      Serial.println("if(current.minutes < channel.schedule.startTimeMinute) =>");
+      //Serial.println("if(current.minutes < channel.schedule.startTimeMinute) =>");
        if((current.minutes + _channel.schedule.runEvery) < _channel.schedule.startTimeMinute){
-        Serial.println("(current.minutes + channel.schedule.runEvery) < channel.schedule.startTimeMinute)");
+        //Serial.println("(current.minutes + channel.schedule.runEvery) < channel.schedule.startTimeMinute)");
         schedule.scheduleTime = ceil(current.minutes/_channel.schedule.runEvery) * _channel.schedule.runEvery  + _channel.schedule.runEvery - current.minutes - current.seconds;
       }else{
-        Serial.println("(current.minutes + channel.schedule.runEvery) > channel.schedule.startTimeMinute)");
+        //Serial.println("(current.minutes + channel.schedule.runEvery) > channel.schedule.startTimeMinute)");
         schedule.scheduleTime = _channel.schedule.startTimeMinute - current.minutes - current.seconds;
       }
     }else if(current.minutes > _channel.schedule.startTimeMinute){
-      Serial.println("if(current.minutes > channel.schedule.startTimeMinute))");
+      //Serial.println("if(current.minutes > channel.schedule.startTimeMinute))");
       if((current.minutes + _channel.schedule.runEvery) > 3600){
-        Serial.println("(current.minutes + channel.schedule.startTimeMinute)) > 3600)");
+        //Serial.println("(current.minutes + channel.schedule.startTimeMinute)) > 3600)");
         schedule.scheduleTime =  3600 - current.minutes - current.seconds;
       }else{
-        Serial.println("(current.minutes + channel.schedule.startTimeMinute) < 3600)");
+        //Serial.println("(current.minutes + channel.schedule.startTimeMinute) < 3600)");
         if((current.minutes + _channel.schedule.runEvery) < _channel.schedule.startTimeMinute){
-          Serial.println("(current.minutes + channel.schedule.runEvery) < channel.schedule.startTimeMinute)");
+          //Serial.println("(current.minutes + channel.schedule.runEvery) < channel.schedule.startTimeMinute)");
           schedule.scheduleTime = ceil(current.minutes/_channel.schedule.runEvery) * _channel.schedule.runEvery  + _channel.schedule.runEvery - current.minutes - current.seconds;
         }else{
-          Serial.println("(current.minutes + channel.schedule.runEvery) > channel.schedule.startTimeMinute)");
+          //Serial.println("(current.minutes + channel.schedule.runEvery) > channel.schedule.startTimeMinute)");
           schedule.scheduleTime = _channel.schedule.startTimeMinute + _channel.schedule.runEvery - current.minutes  + current.seconds;
         }        
       }
     }else{
       // start the schedule now
-      Serial.println("start now =>");
+      //Serial.println("start now =>");
       schedule.scheduleTime = 0;
     } 
   }
@@ -110,7 +111,7 @@ void TaskScheduler::setScheduleTimes(){
   if(_channel.enabled){
     _channel.startTime = _channel.schedule.startTimeHour + _channel.schedule.startTimeMinute;
     _channel.endTime = _channel.schedule.endTimeHour + _channel.schedule.endTimeMinute;
-    Serial.println("");
+  /*   Serial.println("");
     Serial.print("Set Schedule Settings for > ");
     Serial.println(_channel.name);
     Serial.print("controlOn: ");
@@ -122,20 +123,20 @@ void TaskScheduler::setScheduleTimes(){
     Serial.print("startTime: ");
     Serial.println(_channel.startTime);
     Serial.print("endTime: ");
-    Serial.println(_channel.endTime);
+    Serial.println(_channel.endTime); */
   }
 }
 
 void TaskScheduler::setSchedule(){
   time_t scheduleTime = 0;
   if(_channel.enabled){
-    digitalClockDisplay();
-    Serial.print("Setting schedule for channel : ");
-    Serial.println(_channel.name);
+    //digitalClockDisplay();
+    //Serial.print("Setting schedule for channel : ");
+    //Serial.println(_channel.name);
     ScheduledTime schedule = getNextRunTime();
     //Serial.print("Scheduled to stat at => ");
     //Serial.println(schedule.scheduleTime);
-    digitalClockDisplay(schedule.currentTime + schedule.scheduleTime);
+    //digitalClockDisplay(schedule.currentTime + schedule.scheduleTime);
 
     if ( schedule.scheduleTime > 0 ){
       scheduleTime = schedule.scheduleTime;
@@ -148,9 +149,9 @@ void TaskScheduler::setSchedule(){
     channelState.channel.controlOn = CONTROL_OFF;
     channelState.channel.nextRunTime =  Utils.getLocalNextRunTime(scheduleTime);
     channelState.channel.lastStartedChangeTime = Utils.getLocalTime();
-    Serial.print(_channel.name);
-    Serial.print(": Task set to start at: ");
-    Serial.println(channelState.channel.nextRunTime);
+    //Serial.print(_channel.name);
+    //Serial.print(": Task set to start at: ");
+    //Serial.println(channelState.channel.nextRunTime);
     return StateUpdateResult::CHANGED;
     }, _channel.name);
   } 
@@ -163,10 +164,10 @@ void TaskScheduler::scheduleTask(){
     Alarm.timerRepeat(_channel.schedule.runEvery, std::bind(&TaskScheduler::runTask, this));
   }
 
-  Serial.print("Schedule Task for channel : ");
-  Serial.println(_channel.name);
+  //Serial.print("Schedule Task for channel : ");
+  //Serial.println(_channel.name);
   runTask();  // run once initially on set
-  digitalClockDisplay();
+  //digitalClockDisplay();
 }
 
 bool TaskScheduler::shouldRunTask(){
@@ -178,8 +179,8 @@ bool TaskScheduler::shouldRunTask(){
 void TaskScheduler::runTask(){
   String nextRunTime = "";
   if(shouldRunTask()){
-    Serial.print("Control Scheduler started => ");
-    digitalClockDisplay();
+    //Serial.print("Control Scheduler started => ");
+    //digitalClockDisplay();
     controlOn();
     if(_channel.enableTimeSpan){
       nextRunTime =  Utils.getLocalNextRunTime(TWENTY_FOUR_HOUR_DURATION);
@@ -187,10 +188,10 @@ void TaskScheduler::runTask(){
       nextRunTime =  Utils.getLocalNextRunTime(_channel.schedule.runEvery);
     } 
   }else{
-    Serial.print("Task for channel : ");
-    Serial.println(_channel.name);
-    Serial.print("Control system outside run window at:  ");
-    digitalClockDisplay();
+    //Serial.print("Task for channel : ");
+    //Serial.println(_channel.name);
+    //Serial.print("Control system outside run window at:  ");
+    //digitalClockDisplay();
      if(_channel.enableTimeSpan){
       nextRunTime =  Utils.getLocalNextRunTime(TWENTY_FOUR_HOUR_DURATION);
     }else{
@@ -201,13 +202,13 @@ void TaskScheduler::runTask(){
     channelState.channel.nextRunTime = nextRunTime;  _channelStateService.update([&](ChannelState& channelState) {
     channelState.channel.nextRunTime = nextRunTime;  
     Serial.print(_channel.name);
-    Serial.print(": Task next run at: ");
-    digitalClockDisplay();
+    //Serial.print(": Task next run at: ");
+    //digitalClockDisplay();
     return StateUpdateResult::CHANGED;
     }, _channel.name);
-    Serial.print(_channel.name);
-    Serial.print(": Task next run at: ");
-    digitalClockDisplay();
+    //Serial.print(_channel.name);
+    //Serial.print(": Task next run at: ");
+    //digitalClockDisplay();
     return StateUpdateResult::CHANGED;
     }, _channel.name);
 }
@@ -221,9 +222,9 @@ void TaskScheduler::controlOn(){
       }
         channelState.channel.controlOn = true;
         channelState.channel.lastStartedChangeTime =  Utils.getLocalTime();
-        Serial.print(_channel.name);
-        Serial.print(": Task started at: ");
-        digitalClockDisplay();
+        //Serial.print(_channel.name);
+        //Serial.print(": Task started at: ");
+        //digitalClockDisplay();
         return StateUpdateResult::CHANGED;
       }, _channel.name);
 
@@ -244,28 +245,28 @@ void TaskScheduler::controlOff(){
       }
       channelState.channel.controlOn = false;
       channelState.channel.lastStartedChangeTime =  Utils.getLocalTime();
-      Serial.print(_channel.name);
-      Serial.print(": Task stopped at: ");
-      digitalClockDisplay();
+      //Serial.print(_channel.name);
+      //Serial.print(": Task stopped at: ");
+      //digitalClockDisplay();
       return StateUpdateResult::CHANGED;
     }, _channel.name);
   }
 }
 
- void TaskScheduler::digitalClockDisplay() {
+/*  void TaskScheduler::digitalClockDisplay() {
   time_t tnow = time(nullptr);
   Serial.println(ctime(&tnow));
 }
 
  void TaskScheduler::digitalClockDisplay(time_t tnow) {
   Serial.println(ctime(&tnow));
-}
+} */
 
- uint8_t TaskScheduler::getCurrenYear(){
+/*  uint8_t TaskScheduler::getCurrenYear(){
     time_t tnow = time(nullptr);
     struct tm *date = localtime(&tnow);
     return date->tm_year;
-  }
+  } */
 
 time_t TaskScheduler::getScheduleTimeSpan(){
    CurrentTime current = getCurrentTime();

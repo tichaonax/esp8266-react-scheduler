@@ -6,11 +6,11 @@
 #include <ESPUtils.h>
 
 #define CHANNEL_ONE_BROKER_CONFIG_JSON_PATH "/config/channelOneBrokerSettings.json"
-#define CHANNEL_ONE_BROKER_END_POINT "/rest/channelOnebrokerSettings"
+#define CHANNEL_ONE_BROKER_END_POINT "/rest/channelOneBrokerSettings"
 #define CHANNEL_ONE_DEFAULT_MQTT_PATH_NAME "homeassistant/channelOne"
 
 #define CHANNEL_TWO_BROKER_CONFIG_JSON_PATH "/config/channelTwoBrokerSettings.json"
-#define CHANNEL_TWO_BROKER_END_POINT "/rest/channelTwobrokerSettings"
+#define CHANNEL_TWO_BROKER_END_POINT "/rest/channelTwoBrokerSettings"
 #define CHANNEL_TWO_DEFAULT_MQTT_PATH_NAME "homeassistant/channelTwo/"
 
 class ChannelMqttSettings {

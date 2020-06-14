@@ -48,18 +48,10 @@ class TaskScheduler {
                     ChannelMqttSettingsService* channelMqttSettingsService);
     void begin();
     void loop();
-    void setIsNewDate(bool newDate){
-        _newDate = newDate; 
-    };
-
-    bool getIsNewDate(){
-        return _newDate; 
-    };
 
     TaskScheduler();
     void setSchedule();
     void setScheduleTimes();
-    uint8_t getCurrenYear();
 
     private:
     CurrentTime getCurrentTime(){
@@ -76,8 +68,8 @@ class TaskScheduler {
     time_t getScheduleTimeSpan();
     protected:
 
-    void digitalClockDisplay();
-    void digitalClockDisplay(time_t tnow);
+    //void digitalClockDisplay();
+    //void digitalClockDisplay(time_t tnow);
 
     ScheduledTime getNextRunTime();
     void runTask();
