@@ -68,9 +68,6 @@ class TaskScheduler {
     time_t getScheduleTimeSpan();
     protected:
 
-    //void digitalClockDisplay();
-    //void digitalClockDisplay(time_t tnow);
-
     ScheduledTime getNextRunTime();
     void runTask();
     bool shouldRunTask();
