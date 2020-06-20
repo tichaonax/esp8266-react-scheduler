@@ -61,34 +61,49 @@ ScheduledTime TaskScheduler::getNextRunTime(){
   schedule.scheduleTime = 0;
   
   CurrentTime current = getCurrentTime();
-  if(current.totalCurrentTime > _channel.endTime){
-    schedule.scheduleTime = _channel.startTime + MID_NIGHT_SECONDS - current.totalCurrentTime + 1 ; //MID_NIGHT_SECONDS
-    } 
-  else if(current.totalCurrentTime < _channel.startTime){ 
-    schedule.scheduleTime = _channel.startTime -  current.totalCurrentTime;
+
+  if(_channel.enableTimeSpan){
+   return getTimeSpanSchedule(schedule);
   }
-  else {
-    if(current.minutes < _channel.schedule.startTimeMinute){
-       if((current.minutes + _channel.schedule.runEvery) < _channel.schedule.startTimeMinute){
-        schedule.scheduleTime = ceil(current.minutes/_channel.schedule.runEvery) * _channel.schedule.runEvery  + _channel.schedule.runEvery - current.minutes - current.seconds;
-      }else{
-        schedule.scheduleTime = _channel.schedule.startTimeMinute - current.minutes - current.seconds;
-      }
-    }else if(current.minutes > _channel.schedule.startTimeMinute){
-      if((current.minutes + _channel.schedule.runEvery) > 3600){
-        schedule.scheduleTime =  3600 - current.minutes - current.seconds;
-      }else{
+  
+  if(_channel.startTime < _channel.endTime){
+    if(current.totalCurrentTime > _channel.endTime){
+      schedule.scheduleTime = _channel.startTime + MID_NIGHT_SECONDS - current.totalCurrentTime + 1 ; //MID_NIGHT_SECONDS
+      } 
+    else if(current.totalCurrentTime < _channel.startTime){ 
+      schedule.scheduleTime = _channel.startTime -  current.totalCurrentTime;
+    }
+    else {
+      if(current.minutes < _channel.schedule.startTimeMinute){
         if((current.minutes + _channel.schedule.runEvery) < _channel.schedule.startTimeMinute){
           schedule.scheduleTime = ceil(current.minutes/_channel.schedule.runEvery) * _channel.schedule.runEvery  + _channel.schedule.runEvery - current.minutes - current.seconds;
         }else{
-          schedule.scheduleTime = _channel.schedule.startTimeMinute + _channel.schedule.runEvery - current.minutes  + current.seconds;
-        }        
-      }
-    }else{
-      schedule.scheduleTime = 0;
-    } 
+          schedule.scheduleTime = _channel.schedule.startTimeMinute - current.minutes - current.seconds;
+        }
+      }else if(current.minutes > _channel.schedule.startTimeMinute){
+        if((current.minutes + _channel.schedule.runEvery) > 3600){
+          schedule.scheduleTime =  3600 - current.minutes - current.seconds;
+        }else{
+          if((current.minutes + _channel.schedule.runEvery) < _channel.schedule.startTimeMinute){
+            schedule.scheduleTime = ceil(current.minutes/_channel.schedule.runEvery) * _channel.schedule.runEvery  + _channel.schedule.runEvery - current.minutes - current.seconds;
+          }else{
+            schedule.scheduleTime = _channel.schedule.startTimeMinute + _channel.schedule.runEvery - current.minutes  + current.seconds;
+          }        
+        }
+      }else{
+        schedule.scheduleTime = 0;
+      } 
+    }
+    return schedule;
   }
-   return schedule;
+  // we are starting later than ending next day
+  if( (current.totalCurrentTime > _channel.startTime) || (current.totalCurrentTime < _channel.endTime)){
+    schedule.scheduleTime = 0;
+  }else{ 
+      schedule.scheduleTime = _channel.startTime - current.totalCurrentTime;
+  }
+  
+  return schedule;
 }
 
 void TaskScheduler::setScheduleTimes(){
@@ -101,6 +116,8 @@ void TaskScheduler::setSchedule(){
   time_t scheduleTime = 0;
   if(_channel.enabled){
     ScheduledTime schedule = getNextRunTime();
+    Serial.print("getNextRunTime");
+    Serial.println(schedule.scheduleTime);
     if ( schedule.scheduleTime > 0 ){
       scheduleTime = schedule.scheduleTime;
       Alarm.timerOnce(scheduleTime, std::bind(&TaskScheduler::scheduleTask, this));
@@ -112,7 +129,7 @@ void TaskScheduler::setSchedule(){
     channelState.channel.nextRunTime =  Utils.getLocalNextRunTime(scheduleTime);
     Serial.print(_channel.name);
     Serial.print(": Task set to start at : ");
-    digitalClockDisplay();
+    Serial.println(channelState.channel.nextRunTime);
     return StateUpdateResult::CHANGED;
     }, _channel.name);
   } 
@@ -129,8 +146,11 @@ void TaskScheduler::scheduleTask(){
 
 bool TaskScheduler::shouldRunTask(){
   CurrentTime current = getCurrentTime();
-  time_t currentTimeMinutes = current.hours + current.minutes;
-  return(currentTimeMinutes >= _channel.startTime  && currentTimeMinutes <= _channel.endTime);
+  time_t currentTime = current.hours + current.minutes;
+  if(_channel.startTime < _channel.endTime){
+    return(currentTime >= _channel.startTime  && currentTime <= _channel.endTime);
+  }
+  return(currentTime >= _channel.startTime || currentTime <= _channel.endTime);
 }
 
 void TaskScheduler::runTask(){
@@ -205,10 +225,45 @@ void TaskScheduler::controlOff(){
   }
 
 time_t TaskScheduler::getScheduleTimeSpan(){
-   CurrentTime current = getCurrentTime();
+  CurrentTime current = getCurrentTime();
   if(_channel.startTime < _channel.endTime){
     return (_channel.endTime - current.totalCurrentTime);
-  }else{
-    return (MID_NIGHT_SECONDS + 1 - _channel.enabled + _channel.startTime);
   }
+  if(current.totalCurrentTime < _channel.endTime){
+    return(_channel.endTime - current.totalCurrentTime);
+  }
+  return (MID_NIGHT_SECONDS + 1 - current.totalCurrentTime + _channel.endTime);
+}
+
+ScheduledTime TaskScheduler::getTimeSpanSchedule(ScheduledTime& schedule){
+ CurrentTime current = getCurrentTime();
+  if(_channel.startTime < _channel.endTime){
+    if(current.totalCurrentTime > _channel.startTime){
+      if(current.totalCurrentTime < _channel.endTime){
+        schedule.scheduleTime = 0;
+        return(schedule);
+      }
+      schedule.scheduleTime = _channel.startTime - current.totalCurrentTime;
+
+      if(current.totalCurrentTime < (MID_NIGHT_SECONDS + 1)){
+        schedule.scheduleTime = schedule.scheduleTime + MID_NIGHT_SECONDS;
+      }
+
+      return(schedule);
+    }
+    schedule.scheduleTime = _channel.startTime - current.totalCurrentTime;
+    return(schedule);
+  }
+
+  if(current.totalCurrentTime < _channel.endTime){
+    schedule.scheduleTime = 0;
+    return(schedule); 
+  }
+
+  if(current.totalCurrentTime < _channel.startTime){
+    schedule.scheduleTime = _channel.startTime - current.totalCurrentTime;
+    return(schedule);
+  }
+  schedule.scheduleTime = 0;
+  return(schedule);
 }

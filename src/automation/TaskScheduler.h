@@ -113,6 +113,7 @@ class TaskScheduler {
     void digitalClockDisplay(time_t tnow);
 
     ScheduledTime getNextRunTime();
+    ScheduledTime getTimeSpanSchedule(ScheduledTime& schedule);
     void runTask();
     bool shouldRunTask();
     void scheduleTask();
