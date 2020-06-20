@@ -23,4 +23,4 @@ class ChannelOneWebSocketController extends Component<ChannelWebSocketController
   }
 }
 
-export default webSocketController(SWITCH_SETTINGS_WEBSOCKET_URL, 100, ChannelOneWebSocketController);
+export default webSocketController(SWITCH_SETTINGS_WEBSOCKET_URL, 1000, ChannelOneWebSocketController);

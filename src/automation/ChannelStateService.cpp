@@ -8,10 +8,18 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
                                       AsyncMqttClient* mqttClient,
                                       FS* fs,
                                       int channelControlPin,
-                                      char* channelJsonConfigPath,  
-                                      String defaultChannelName,
+                                      char* channelJsonConfigPath,
                                       String restChannelEndPoint,
-                                      char* webSocketChannelEndPoint) :
+                                      char* webSocketChannelEndPoint,
+                                      time_t  runEvery,
+                                      time_t  offAfter,
+                                      time_t  startTimeHour,
+                                      time_t  startTimeMinute,
+                                      time_t  endTimeHour,
+                                      time_t  endTimeMinute,
+                                      bool    enabled,
+                                      String  channelName,
+                                      bool enableTimeSpan) :
     _httpEndpoint(ChannelState::read,
                   ChannelState::update,
                   this,
@@ -37,9 +45,18 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
                 {
 
   _channelControlPin = channelControlPin;
-  _defaultChannelName = defaultChannelName;
   _restChannelEndPoint = restChannelEndPoint;
   _webSocketChannelEndPoint = webSocketChannelEndPoint;
+
+  _runEvery = runEvery;
+  _offAfter = offAfter;
+  _startTimeHour  = startTimeHour;
+  _startTimeMinute  =startTimeMinute;
+  _endTimeHour  = endTimeHour;
+  _endTimeMinute  = endTimeMinute;
+  _enabled  = enabled;
+  _channelName = channelName;
+  _enableTimeSpan = enableTimeSpan;
 
   // configure controls to be output
   pinMode(_channelControlPin, OUTPUT);
@@ -55,8 +72,6 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
 }
 
 void ChannelStateService::onChannelStateUpdated() {
-  Serial.print("onChannelStateUpdated channel: ");
-  Serial.println(_state.channel.name);
   _state.channel.controlPin = _channelControlPin;
   digitalWrite(_state.channel.controlPin, _state.channel.controlOn ? CONTROL_ON : CONTROL_OFF);
 }
@@ -92,8 +107,17 @@ void ChannelStateService::registerConfig() {
 
 void ChannelStateService::begin() {
     _state.channel.controlPin = _channelControlPin;
-    _state.channel.name = _defaultChannelName;
+    _state.channel.name = _channelName;
     _state.channel.channelEndPoint = _restChannelEndPoint;
+    _state.channel.enabled = _enabled;
+    _state.channel.enableTimeSpan = _enableTimeSpan;
+
+    _state.channel.schedule.runEvery =  _runEvery;
+    _state.channel.schedule.offAfter =  _offAfter;
+    _state.channel.schedule.startTimeHour = _startTimeHour;
+    _state.channel.schedule.startTimeMinute = _startTimeMinute;
+    _state.channel.schedule.endTimeHour = _endTimeHour;
+    _state.channel.schedule.endTimeMinute = _endTimeMinute;
     
     _fsPersistence.readFromFS();
 

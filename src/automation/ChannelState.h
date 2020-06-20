@@ -10,20 +10,10 @@
 
 #define DEFAULT_LED_STATE false
 #define DEFAULT_CONTROL_STATE false
-#define DEFAULT_ENABLED_STATE false
-#define DEFAULT_ENABLE_TIME_SPAN_SCHEDULE false;
 #define OFF_STATE "OFF"
 #define ON_STATE "ON"
 
 #define DEFAULT_JSON_DOCUMENT_SIZE 1024 
-
-#define DEFAULT_CHANNEL_NAME "Default Channel Name"
-#define DEFAULT_CONTROL_RUN_EVERY 30
-#define DEFAULT_CONTROL_OFF_AFTER 5
-#define DEFAULT_CONTROL_START_TIME_HOUR 8
-#define DEFAULT_CONTROL_START_TIME_MINUTE 0
-#define DEFAULT_CONTROL_END_TIME_HOUR 16
-#define DEFAULT_CONTROL_END_TIME_MINUTE 0
 
 struct ScheduledTime {
   time_t scheduleTime;
@@ -70,7 +60,7 @@ public:
   }
 
  static StateUpdateResult update(JsonObject& root, ChannelState& settings) {
-    if (dataIsValid(root)) {
+    if (dataIsValid(root, settings)) {
       updateChannel(root, settings.channel);
       return StateUpdateResult::CHANGED;
     }
@@ -84,7 +74,6 @@ public:
   static StateUpdateResult haUpdate(JsonObject& root, ChannelState& settings) {
     String state = root["state"];
     settings.channel.controlOn = strcmp(ON_STATE, state.c_str()) ? false : true;
-    // parse new led state 
     boolean newState = false;
     if (state.equals(ON_STATE)) {
       newState = true;
@@ -99,49 +88,49 @@ public:
     return StateUpdateResult::UNCHANGED;
   }
   private:
-  static void readChannel(Channel& settings, JsonObject channel) {
-    channel["controlPin"] = settings.controlPin;
-    channel["controlOn"] = settings.controlOn;
-    channel["name"] = settings.name;
-    channel["enabled"] = settings.enabled;
-    channel["enableTimeSpan"] = settings.enableTimeSpan;
-    channel["lastStartedChangeTime"] = settings.lastStartedChangeTime;
-    channel["nextRunTime"] = settings.nextRunTime;
+  static void readChannel(Channel& channel, JsonObject jsonObject) {
+    jsonObject["controlPin"] = channel.controlPin;
+    jsonObject["controlOn"] = channel.controlOn;
+    jsonObject["name"] = channel.name;
+    jsonObject["enabled"] = channel.enabled;
+    jsonObject["enableTimeSpan"] = channel.enableTimeSpan;
+    jsonObject["lastStartedChangeTime"] = channel.lastStartedChangeTime;
+    jsonObject["nextRunTime"] = channel.nextRunTime;
 
-    JsonObject schedule = channel.createNestedObject("schedule");
+    JsonObject schedule = jsonObject.createNestedObject("schedule");
     
-    schedule["runEvery"] = round(float(float(settings.schedule.runEvery)/float(60)) * 1000)/ 1000;
-    schedule["offAfter"] = round(float(float(settings.schedule.offAfter)/float(60)) * 1000)/ 1000;
-    schedule["startTimeHour"] = round(float(float(settings.schedule.startTimeHour)/float(3600)) * 1000)/ 1000;
-    schedule["startTimeMinute"] = round(float(float(settings.schedule.startTimeMinute)/float(60)) * 1000)/ 1000;
-    schedule["endTimeHour"] = round(float(float(settings.schedule.endTimeHour)/float(3600)) * 1000)/ 1000;
-    schedule["endTimeMinute"] = round(float(float(settings.schedule.endTimeMinute)/float(60)) * 1000)/ 1000;
+    schedule["runEvery"] = round(float(float(channel.schedule.runEvery)/float(60)) * 1000)/ 1000;
+    schedule["offAfter"] = round(float(float(channel.schedule.offAfter)/float(60)) * 1000)/ 1000;
+    schedule["startTimeHour"] = round(float(float(channel.schedule.startTimeHour)/float(3600)) * 1000)/ 1000;
+    schedule["startTimeMinute"] = round(float(float(channel.schedule.startTimeMinute)/float(60)) * 1000)/ 1000;
+    schedule["endTimeHour"] = round(float(float(channel.schedule.endTimeHour)/float(3600)) * 1000)/ 1000;
+    schedule["endTimeMinute"] = round(float(float(channel.schedule.endTimeMinute)/float(60)) * 1000)/ 1000;
   }
 
-static void updateChannel(JsonObject& channel, Channel& settings) {
-    settings.controlPin = channel["controlPin"];
-    settings.controlOn = channel["controlOn"] | DEFAULT_CONTROL_STATE;
-    settings.name = channel["name"] | settings.name;
-    settings.enabled = channel["enabled"] | DEFAULT_ENABLED_STATE;
-    settings.enableTimeSpan = channel["enableTimeSpan"] | DEFAULT_ENABLE_TIME_SPAN_SCHEDULE;
-    settings.lastStartedChangeTime = channel["lastStartedChangeTime"] | Utils.getLocalTime();
-    settings.nextRunTime = channel["nextRunTime"] | "";
+static void updateChannel(JsonObject& json, Channel& channel) {
+    channel.controlPin = json["controlPin"];
+    channel.controlOn = json["controlOn"] | DEFAULT_CONTROL_STATE;
+    channel.name = json["name"] | channel.name;
+    channel.enabled = json["enabled"] | channel.enabled;
+    channel.enableTimeSpan = json["enableTimeSpan"] | channel.enableTimeSpan;
+    channel.lastStartedChangeTime = json["lastStartedChangeTime"] | Utils.getLocalTime();
+    channel.nextRunTime = json["nextRunTime"] | "";
 
-    JsonObject schedule = channel["schedule"];
+    JsonObject schedule = json["schedule"];
 
-    settings.schedule.runEvery = schedule["runEvery"] ? (int)(round(60 * float(schedule["runEvery"]))) : (int)(60 * DEFAULT_CONTROL_RUN_EVERY);
-    settings.schedule.offAfter = schedule["offAfter"] ? (int)(round(60 * float(schedule["offAfter"]))) : (int)(60 * DEFAULT_CONTROL_OFF_AFTER);
-    settings.schedule.startTimeHour = schedule["startTimeHour"] ? (int)(round(3600 * float(schedule["startTimeHour"]))) : (int)(3600 * DEFAULT_CONTROL_START_TIME_HOUR);
-    settings.schedule.startTimeMinute = schedule["startTimeMinute"] ? (int)(round(60 * float(schedule["startTimeMinute"]))) : (int)(60 * DEFAULT_CONTROL_START_TIME_MINUTE);
-    settings.schedule.endTimeHour = schedule["endTimeHour"] ? (int)(round(3600 * float(schedule["endTimeHour"]))) : (int)(3600 * DEFAULT_CONTROL_END_TIME_HOUR);
-    settings.schedule.endTimeMinute = schedule["endTimeMinute"] ? (int)(round(60 * float(schedule["endTimeMinute"]))) : (int)(60 * DEFAULT_CONTROL_END_TIME_MINUTE);
+    channel.schedule.runEvery = schedule["runEvery"] ? (int)(round(60 * float(schedule["runEvery"]))) : (int)(60 * channel.schedule.runEvery);
+    channel.schedule.offAfter = schedule["offAfter"] ? (int)(round(60 * float(schedule["offAfter"]))) : (int)(60 * channel.schedule.offAfter);
+    channel.schedule.startTimeHour = schedule["startTimeHour"] ? (int)(round(3600 * float(schedule["startTimeHour"]))) : (int)(3600 * channel.schedule.startTimeHour);
+    channel.schedule.startTimeMinute = schedule["startTimeMinute"] ? (int)(round(60 * float(schedule["startTimeMinute"]))) : (int)(60 * channel.schedule.startTimeMinute);
+    channel.schedule.endTimeHour = schedule["endTimeHour"] ? (int)(round(3600 * float(schedule["endTimeHour"]))) : (int)(3600 * channel.schedule.endTimeHour);
+    channel.schedule.endTimeMinute = schedule["endTimeMinute"] ? (int)(round(60 * float(schedule["endTimeMinute"]))) : (int)(60 * channel.schedule.endTimeMinute);
   }
 
-  static boolean dataIsValid(JsonObject& channel){
+  static boolean dataIsValid(JsonObject& json, ChannelState& channelState){
     // TO DO to be expanded for more validation
-    JsonObject schedule = channel["schedule"];
-    time_t runEvery = schedule["runEvery"] ? (int)(round(60 * float(schedule["runEvery"]))) : (int)(60 * DEFAULT_CONTROL_RUN_EVERY);
-    time_t offAfter = schedule["offAfter"] ? (int)(round(60 * float(schedule["offAfter"]))) : (int)(60 * DEFAULT_CONTROL_OFF_AFTER);
+    JsonObject schedule = json["schedule"];
+    time_t runEvery = schedule["runEvery"] ? (int)(round(60 * float(schedule["runEvery"]))) : (int)(60 * channelState.channel.schedule.runEvery);
+    time_t offAfter = schedule["offAfter"] ? (int)(round(60 * float(schedule["offAfter"]))) : (int)(60 * channelState.channel.schedule.offAfter);
     if(runEvery > offAfter){ return true; }
     return false;
   }

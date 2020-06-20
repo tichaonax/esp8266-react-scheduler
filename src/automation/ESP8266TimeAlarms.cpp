@@ -191,7 +191,9 @@ void TimeAlarmsClass::delay(unsigned long ms)
 {
   unsigned long start = millis();
   while (millis() - start  <= ms) {
+    ESP.wdtFeed();
     serviceAlarms();
+    yield();
   }
 }
 
