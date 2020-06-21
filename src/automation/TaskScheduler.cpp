@@ -17,7 +17,8 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                               time_t  endTimeMinute,
                               bool    enabled,
                               String  channelName,
-                              bool  enableTimeSpan) :
+                              bool  enableTimeSpan,
+                              ChannelMqttSettingsService* channelMqttSettingsService) :
     _channelStateService(server,
                         securityManager,
                         mqttClient,
@@ -34,7 +35,8 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                         endTimeMinute,
                         enabled,
                         channelName,
-                        enableTimeSpan)
+                        enableTimeSpan,
+                        channelMqttSettingsService)
                                        {
   };
 

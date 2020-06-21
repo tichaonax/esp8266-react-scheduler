@@ -2,6 +2,7 @@
 #define TaskScheduler_h
 
 #include "ESP8266TimeAlarms.h"
+#include "ChannelMqttSettingsService.h"
 #include "ChannelStateService.h"
 
 #define MID_NIGHT_SECONDS 86399
@@ -85,7 +86,8 @@ class TaskScheduler {
                     time_t  endTimeMinute,    // 30
                     bool    enabled,
                     String  channelName,
-                    bool  enableTimeSpan);
+                    bool  enableTimeSpan,
+                    ChannelMqttSettingsService* channelMqttSettingsService);
     void begin();
     void loop();
 

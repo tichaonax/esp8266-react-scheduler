@@ -23,4 +23,4 @@ class ChannelFourWebSocketController extends Component<ChannelWebSocketControlle
   }
 }
 
-export default webSocketController(SWITCH_SETTINGS_WEBSOCKET_URL, 1000, ChannelFourWebSocketController);
+export default webSocketController(SWITCH_SETTINGS_WEBSOCKET_URL, 100, ChannelFourWebSocketController);

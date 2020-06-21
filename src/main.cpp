@@ -2,7 +2,7 @@
 //#include <LightMqttSettingsService.h>
 //#include <LightStateService.h>
 #include <FS.h>
-
+#include "./automation/ChannelMqttSettingsService.h"
 #include "./automation/TaskScheduler.h"
 #include "./automation/ChannelStateService.h"
 
@@ -16,6 +16,10 @@ LightStateService lightStateService = LightStateService(&server,
                                                         esp8266React.getSecurityManager(),
                                                         esp8266React.getMqttClient(),
                                                         &lightMqttSettingsService); */
+
+ChannelMqttSettingsService channelOneMqttSettingsService =
+    ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
+    CHANNEL_ONE_BROKER_SETTINGS_FILE, CHANNEL_ONE_BROKER_SETTINGS_PATH);
 
 TaskScheduler channelOnetaskScheduler = TaskScheduler(&server,
                                                         esp8266React.getSecurityManager(),
@@ -33,7 +37,12 @@ TaskScheduler channelOnetaskScheduler = TaskScheduler(&server,
                                                         CHANNEL_ONE_DEFAULT_CONTROL_END_TIME_MINUTE,
                                                         CHANNEL_ONE_DEFAULT_ENABLED_STATE,
                                                         CHANNEL_ONE_DEFAULT_NAME,
-                                                        CHANNEL_ONE_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE);
+                                                        CHANNEL_ONE_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE,
+                                                        &channelOneMqttSettingsService);
+
+ChannelMqttSettingsService channelTwoMqttSettingsService =
+    ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
+    CHANNEL_TWO_BROKER_SETTINGS_FILE, CHANNEL_TWO_BROKER_SETTINGS_PATH);
 
 TaskScheduler channelTwotaskScheduler = TaskScheduler(&server,
                                                         esp8266React.getSecurityManager(),
@@ -51,7 +60,12 @@ TaskScheduler channelTwotaskScheduler = TaskScheduler(&server,
                                                         CHANNEL_TWO_DEFAULT_CONTROL_END_TIME_MINUTE,
                                                         CHANNEL_TWO_DEFAULT_ENABLED_STATE,
                                                         CHANNEL_TWO_DEFAULT_NAME,
-                                                        CHANNEL_TWO_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE);  
+                                                        CHANNEL_TWO_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE,
+                                                        &channelTwoMqttSettingsService);  
+
+ChannelMqttSettingsService channelThreeMqttSettingsService =
+    ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
+    CHANNEL_THREE_BROKER_SETTINGS_FILE, CHANNEL_THREE_BROKER_SETTINGS_PATH);
 
 TaskScheduler channelThreetaskScheduler = TaskScheduler(&server,
                                                         esp8266React.getSecurityManager(),
@@ -69,8 +83,13 @@ TaskScheduler channelThreetaskScheduler = TaskScheduler(&server,
                                                         CHANNEL_THREE_DEFAULT_CONTROL_END_TIME_MINUTE,
                                                         CHANNEL_THREE_DEFAULT_ENABLED_STATE,
                                                         CHANNEL_THREE_DEFAULT_NAME,
-                                                        CHANNEL_THREE_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE);  
-                                                        
+                                                        CHANNEL_THREE_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE,
+                                                        &channelThreeMqttSettingsService);  
+
+ ChannelMqttSettingsService channelFourMqttSettingsService =
+    ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
+    CHANNEL_FOUR_BROKER_SETTINGS_FILE, CHANNEL_FOUR_BROKER_SETTINGS_PATH);
+
  TaskScheduler channelFourtaskScheduler = TaskScheduler(&server,
                                                         esp8266React.getSecurityManager(),
                                                         esp8266React.getMqttClient(),
@@ -87,7 +106,8 @@ TaskScheduler channelThreetaskScheduler = TaskScheduler(&server,
                                                         CHANNEL_FOUR_DEFAULT_CONTROL_END_TIME_MINUTE,
                                                         CHANNEL_FOUR_DEFAULT_ENABLED_STATE,
                                                         CHANNEL_FOUR_DEFAULT_NAME,
-                                                        CHANNEL_FOUR_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE);
+                                                        CHANNEL_FOUR_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE,
+                                                        &channelFourMqttSettingsService);
 
 void setup() {
   // start serial and filesystem

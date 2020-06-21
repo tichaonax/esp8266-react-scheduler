@@ -2,6 +2,7 @@
 #define ChannelStateService_h
 
 #include "ChannelState.h"
+#include "ChannelMqttSettingsService.h"
 #include "ESP8266TimeAlarms.h"
 #include <HttpEndpoint.h>
 #include <MqttPubSub.h>
@@ -26,7 +27,8 @@ class ChannelStateService : public StatefulService<ChannelState> {
                     time_t  endTimeMinute,    // 30
                     bool    enabled,
                     String  channelName,
-                    bool  enableTimeSpan);
+                    bool  enableTimeSpan,
+                    ChannelMqttSettingsService* channelMqttSettingsService);
 
   void begin();
   Channel getChannel();
@@ -37,6 +39,7 @@ class ChannelStateService : public StatefulService<ChannelState> {
   WebSocketTxRx<ChannelState> _webSocket;
   AsyncMqttClient* _mqttClient;
   FSPersistence<ChannelState> _fsPersistence;
+  ChannelMqttSettingsService* _channelMqttSettingsService;
   int _channelControlPin;
   String _defaultChannelName;
   String _restChannelEndPoint;

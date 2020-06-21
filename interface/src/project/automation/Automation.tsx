@@ -7,10 +7,10 @@ import { PROJECT_PATH } from '../../api';
 import { MenuAppBar } from '../../components';
 import { AuthenticatedRoute } from '../../authentication';
 
-import ChannelOneStateRestController from './ChannelOneStateRestController';
-import ChannelTwoStateRestController from './ChannelTwoStateRestController';
-import ChannelThreeStateRestController from './ChannelThreeStateRestController';
-import ChannelFourStateRestController from './ChannelFourStateRestController';
+import ChannelOne from './ChannelOne';
+import ChannelTwo from './ChannelTwo';
+import ChannelThree from './ChannelThree';
+import ChannelFour from './ChannelFour';
 import AutoInformation from './AutoInformation';
 
 class Automation extends Component<RouteComponentProps> {
@@ -31,10 +31,10 @@ class Automation extends Component<RouteComponentProps> {
         </Tabs>
         <Switch>
           <AuthenticatedRoute exact path={`/${PROJECT_PATH}/auto/information`} component={AutoInformation} />
-          <AuthenticatedRoute exact path={`/${PROJECT_PATH}/auto/channelOne`} component={ChannelOneStateRestController} />
-          <AuthenticatedRoute exact path={`/${PROJECT_PATH}/auto/channelTwo`} component={ChannelTwoStateRestController} />
-          <AuthenticatedRoute exact path={`/${PROJECT_PATH}/auto/channelThree`} component={ChannelThreeStateRestController} />
-          <AuthenticatedRoute exact path={`/${PROJECT_PATH}/auto/channelFour`} component={ChannelFourStateRestController} />
+          <AuthenticatedRoute exact path={`/${PROJECT_PATH}/auto/channelOne`} component={ChannelOne} />
+          <AuthenticatedRoute exact path={`/${PROJECT_PATH}/auto/channelTwo`} component={ChannelTwo} />
+          <AuthenticatedRoute exact path={`/${PROJECT_PATH}/auto/channelThree`} component={ChannelThree} />
+          <AuthenticatedRoute exact path={`/${PROJECT_PATH}/auto/channelFour`} component={ChannelFour} />
           <Redirect to={`/${PROJECT_PATH}/auto/information`} />
         </Switch>
       </MenuAppBar>

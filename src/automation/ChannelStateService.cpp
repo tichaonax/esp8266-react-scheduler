@@ -19,7 +19,8 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
                                       time_t  endTimeMinute,
                                       bool    enabled,
                                       String  channelName,
-                                      bool enableTimeSpan) :
+                                      bool enableTimeSpan,
+                                      ChannelMqttSettingsService* channelMqttSettingsService) :
     _httpEndpoint(ChannelState::read,
                   ChannelState::update,
                   this,
@@ -36,7 +37,7 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
                securityManager,
                AuthenticationPredicates::IS_AUTHENTICATED),
     _mqttClient(mqttClient),
-   // _lightMqttSettingsService(lightMqttSettingsService),
+    _channelMqttSettingsService(channelMqttSettingsService),
     _fsPersistence(ChannelState::read,
                 ChannelState::update,
                 this, fs,
@@ -65,7 +66,7 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
   _mqttClient->onConnect(std::bind(&ChannelStateService::registerConfig, this));
 
   // configure update handler for when the control settings change
-  //_lightMqttSettingsService->addUpdateHandler([&](const String& originId) { registerConfig(); }, false);
+  _channelMqttSettingsService->addUpdateHandler([&](const String& originId) { registerConfig(); }, false);
 
   // configure settings service update handler to update CONTROL state
   addUpdateHandler([&](const String& originId) { onChannelStateUpdated(); }, false);
@@ -85,7 +86,7 @@ void ChannelStateService::registerConfig() {
   String pubTopic;
 
   DynamicJsonDocument doc(256);
- /*  _lightMqttSettingsService->read([&](LightMqttSettings& settings) {
+  _channelMqttSettingsService->read([&](ChannelMqttSettings& settings) {
     configTopic = settings.mqttPath + "/config";
     subTopic = settings.mqttPath + "/set";
     pubTopic = settings.mqttPath + "/state";
@@ -96,7 +97,7 @@ void ChannelStateService::registerConfig() {
   doc["cmd_t"] = "~/set";
   doc["stat_t"] = "~/state";
   doc["schema"] = "json";
-  doc["brightness"] = false; */
+  //doc["brightness"] = false;
 
   String payload;
   serializeJson(doc, payload);
