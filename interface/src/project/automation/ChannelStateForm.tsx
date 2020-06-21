@@ -12,6 +12,7 @@ import {
 } from '@material-ui/pickers';
 
 import { RestFormProps, FormActions, FormButton, BlockFormControlLabel, extractEventValue } from '../../components';
+import history from '../../history';
 
 import { ChannelState, Schedule } from './types';
 
@@ -53,7 +54,11 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
             break;
         }
       }
-  
+      
+      const onGoBack = () => {
+        history.goBack();
+      }
+
     return (
       <ValidatorForm onSubmit={saveData}>
         <BlockFormControlLabel
@@ -202,6 +207,9 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
           </FormButton>
           <FormButton variant="contained" color="secondary" onClick={loadData}>
             Reset
+          </FormButton>
+          <FormButton variant="contained" color="secondary" onClick={onGoBack}>
+            Go Back
           </FormButton>
         </FormActions>
       </ValidatorForm>
