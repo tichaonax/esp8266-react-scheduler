@@ -115,10 +115,12 @@ void TaskScheduler::setSchedule(){
   time_t scheduleTime = 0;
   if(_channel.enabled){
     ScheduledTime schedule = getNextRunTime();
-    Serial.print("Current Tim:");
+    Serial.println("");
+    Serial.print("Current Time:");
     digitalClockDisplay();
-    Serial.print("getNextRunTime: ");
-    Serial.println(schedule.scheduleTime);
+    Serial.print("Time to next task run: ");
+    Serial.print(schedule.scheduleTime);
+    Serial.println("s");
     if ( schedule.scheduleTime > 0 ){
       scheduleTime = schedule.scheduleTime;
       _tickerScheduler.attach(scheduleTime, std::bind(&TaskScheduler::scheduleTask, this));
@@ -214,7 +216,7 @@ void TaskScheduler::controlOff(){
 
  void TaskScheduler::digitalClockDisplay() {
   time_t tnow = time(nullptr);
-  Serial.println(ctime(&tnow));
+  Serial.print(ctime(&tnow));
 }
 
  void TaskScheduler::digitalClockDisplay(time_t tnow) {
