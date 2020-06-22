@@ -1,7 +1,8 @@
 #ifndef TaskScheduler_h
 #define TaskScheduler_h
 
-#include "ESP8266TimeAlarms.h"
+#include <ctime>
+#include <Ticker.h>
 #include "ChannelMqttSettingsService.h"
 #include "ChannelStateService.h"
 
@@ -99,12 +100,18 @@ class TaskScheduler {
     private:
     CurrentTime getCurrentTime(){
         CurrentTime current;
-        current.hours = 3600 * Alarm.getDigitsNow(dtHour);
-        current.minutes = 60 * Alarm.getDigitsNow(dtMinute);
-        current.seconds = Alarm.getDigitsNow(dtSecond);
+        time_t curr_time;
+	    curr_time = time(NULL);
+	    tm *tm_local = localtime(&curr_time);
+	    current.hours = 3600 * tm_local->tm_hour;
+        current.minutes = 60 * tm_local->tm_min;
+        current.seconds = tm_local->tm_sec;
         current.totalCurrentTime = current.hours + current.minutes + current.seconds;
         return current;
     }
+    Ticker _tickerScheduler;
+    Ticker _tickerRepeat;
+    Ticker _tickerSwitch;
     ChannelStateService _channelStateService;
     Channel _channel;
     bool    _validNTP = false;       // Wait for NTP to get valid time

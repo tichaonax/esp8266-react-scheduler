@@ -43,18 +43,15 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
 void TaskScheduler::begin(){
     _channelStateService.begin();
 }
-void TaskScheduler::loop() {
-    ESP.wdtFeed();
+void TaskScheduler::loop(){ 
     // check to see if NTP updated the local time
     if(!_validNTP){
         int year = getCurrenYear();
         if(year != 70){
-        _validNTP = true;
-        setSchedule();
+          _validNTP = true;
+          setSchedule();
         }
     }
-    // You need to call the Alarm.delay() to run the set alarms
-    Alarm.delay(5);
 }
 
 ScheduledTime TaskScheduler::getNextRunTime(){
@@ -118,14 +115,16 @@ void TaskScheduler::setSchedule(){
   time_t scheduleTime = 0;
   if(_channel.enabled){
     ScheduledTime schedule = getNextRunTime();
-    Serial.print("getNextRunTime");
+    Serial.print("Current Tim:");
+    digitalClockDisplay();
+    Serial.print("getNextRunTime: ");
     Serial.println(schedule.scheduleTime);
     if ( schedule.scheduleTime > 0 ){
       scheduleTime = schedule.scheduleTime;
-      Alarm.timerOnce(scheduleTime, std::bind(&TaskScheduler::scheduleTask, this));
+      _tickerScheduler.attach(scheduleTime, std::bind(&TaskScheduler::scheduleTask, this));
     }
     else{
-      scheduleTask();
+      _tickerScheduler.attach(0, std::bind(&TaskScheduler::scheduleTask, this));
     }
     _channelStateService.update([&](ChannelState& channelState) {
     channelState.channel.nextRunTime =  Utils.getLocalNextRunTime(scheduleTime);
@@ -138,10 +137,11 @@ void TaskScheduler::setSchedule(){
 }
 
 void TaskScheduler::scheduleTask(){
+  _tickerScheduler.detach();
   if(_channel.enableTimeSpan){
-    Alarm.timerRepeat(TWENTY_FOUR_HOUR_DURATION, std::bind(&TaskScheduler::runTask, this));
+    _tickerRepeat.attach(TWENTY_FOUR_HOUR_DURATION, std::bind(&TaskScheduler::runTask, this));
   }else{
-    Alarm.timerRepeat(_channel.schedule.runEvery, std::bind(&TaskScheduler::runTask, this));
+    _tickerRepeat.attach(_channel.schedule.runEvery, std::bind(&TaskScheduler::runTask, this));
   }
   runTask();  // run once initially on set
  }
@@ -190,15 +190,16 @@ void TaskScheduler::controlOn(){
       }, _channel.name);
 
       if(_channel.enableTimeSpan){
-        Alarm.timerOnce(getScheduleTimeSpan(), std::bind(&TaskScheduler::controlOff, this));
+        _tickerSwitch.attach(getScheduleTimeSpan(), std::bind(&TaskScheduler::controlOff, this));
       }else{
-        Alarm.timerOnce(_channel.schedule.offAfter, std::bind(&TaskScheduler::controlOff, this)); 
+        _tickerSwitch.attach(_channel.schedule.offAfter, std::bind(&TaskScheduler::controlOff, this));
       }
     }
   }
 }
 
 void TaskScheduler::controlOff(){
+  _tickerSwitch.detach();
   if(!_channel.schedule.isOverride){
     _channelStateService.update([&](ChannelState& channelState) {
       if (!channelState.channel.controlOn) {

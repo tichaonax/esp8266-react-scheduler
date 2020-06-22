@@ -2,20 +2,23 @@
 //#include <LightMqttSettingsService.h>
 //#include <LightStateService.h>
 #include <FS.h>
+#include <Ticker.h>  //Ticker Librar/
 #include "./automation/ChannelMqttSettingsService.h"
 #include "./automation/TaskScheduler.h"
 #include "./automation/ChannelStateService.h"
 
 #define SERIAL_BAUD_RATE 115200
+#define LED 2  //On board LED
+
+Ticker blinker;
+
+void changeState()
+{
+  digitalWrite(LED, !(digitalRead(LED)));
+}
 
 AsyncWebServer server(80);
 ESP8266React esp8266React(&server, &SPIFFS);
-/* LightMqttSettingsService lightMqttSettingsService =
-    LightMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager());
-LightStateService lightStateService = LightStateService(&server,
-                                                        esp8266React.getSecurityManager(),
-                                                        esp8266React.getMqttClient(),
-                                                        &lightMqttSettingsService); */
 
 ChannelMqttSettingsService channelOneMqttSettingsService =
     ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
@@ -120,11 +123,14 @@ void setup() {
   SPIFFS.begin();
 #endif
 
+  pinMode(LED,OUTPUT);
+ 
+  //Initialize Ticker every 0.5s
+  blinker.attach(0.5, changeState);
+  
   // start the framework and demo project
   esp8266React.begin();
 
-  // load the initial light settings
-  //lightStateService.begin();
 
   channelOnetaskScheduler.begin();
   channelTwotaskScheduler.begin();
@@ -142,12 +148,8 @@ void setup() {
 
 void loop() {
   esp8266React.loop();
-  ESP.wdtFeed();
   channelOnetaskScheduler.loop();
-  ESP.wdtFeed();
   channelTwotaskScheduler.loop();
-  ESP.wdtFeed();
   channelThreetaskScheduler.loop();
-  ESP.wdtFeed();
   channelFourtaskScheduler.loop();
 }
