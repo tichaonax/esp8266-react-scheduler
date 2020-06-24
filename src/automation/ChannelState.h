@@ -50,6 +50,7 @@ struct Channel {
     String  channelEndPoint; //
     String  lastStartedChangeTime;  //last time the switch was toggled
     String  nextRunTime;
+    bool    randomize;      // when enabled randomize the on/off
 };
 
 class ChannelState {
@@ -96,6 +97,7 @@ public:
     jsonObject["enableTimeSpan"] = channel.enableTimeSpan;
     jsonObject["lastStartedChangeTime"] = channel.lastStartedChangeTime;
     jsonObject["nextRunTime"] = channel.nextRunTime;
+    jsonObject["randomize"] = channel.randomize;
 
     JsonObject schedule = jsonObject.createNestedObject("schedule");
     
@@ -115,6 +117,7 @@ static void updateChannel(JsonObject& json, Channel& channel) {
     channel.enableTimeSpan = json["enableTimeSpan"] | channel.enableTimeSpan;
     channel.lastStartedChangeTime = json["lastStartedChangeTime"] | Utils.getLocalTime();
     channel.nextRunTime = json["nextRunTime"] | "";
+    channel.randomize = json["randomize"] | channel.randomize;
 
     JsonObject schedule = json["schedule"];
 

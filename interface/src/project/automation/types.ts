@@ -26,6 +26,7 @@ export interface LightState {
     lastStartedChangeTime: string;
     controlPin: number;
     nextRunTime: string;
+    randomize: boolean;
   }
   
   export interface ChannelMqttSettings { 

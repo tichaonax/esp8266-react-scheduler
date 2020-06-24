@@ -26,6 +26,7 @@
 #define CHANNEL_ONE_DEFAULT_CONTROL_END_TIME_MINUTE 0
 #define CHANNEL_ONE_DEFAULT_ENABLED_STATE true
 #define CHANNEL_ONE_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE false
+#define CHANNEL_ONE_DEFAULT_RANDOMIZE_SCHEDULE false
 
 #define CHANNEL_TWO_CONTROL_PIN 12
 #define CHANNEL_TWO_REST_ENDPOINT_PATH "/rest/channelTwoState"  //restChannelEndPoint
@@ -40,6 +41,7 @@
 #define CHANNEL_TWO_DEFAULT_CONTROL_END_TIME_MINUTE 0
 #define CHANNEL_TWO_DEFAULT_ENABLED_STATE true
 #define CHANNEL_TWO_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE true
+#define CHANNEL_TWO_DEFAULT_RANDOMIZE_SCHEDULE false
 
 #define CHANNEL_THREE_CONTROL_PIN 13
 #define CHANNEL_THREE_REST_ENDPOINT_PATH "/rest/channelThreeState"  //restChannelEndPoint
@@ -54,6 +56,7 @@
 #define CHANNEL_THREE_DEFAULT_CONTROL_END_TIME_MINUTE 30
 #define CHANNEL_THREE_DEFAULT_ENABLED_STATE true
 #define CHANNEL_THREE_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE false
+#define CHANNEL_THREE_DEFAULT_RANDOMIZE_SCHEDULE true
 
 #define CHANNEL_FOUR_CONTROL_PIN 14
 #define CHANNEL_FOUR_REST_ENDPOINT_PATH "/rest/channelFourState"  //restChannelEndPoint
@@ -68,6 +71,7 @@
 #define CHANNEL_FOUR_DEFAULT_CONTROL_END_TIME_MINUTE 30
 #define CHANNEL_FOUR_DEFAULT_ENABLED_STATE true
 #define CHANNEL_FOUR_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE true
+#define CHANNEL_FOUR_DEFAULT_RANDOMIZE_SCHEDULE false
 
 class TaskScheduler {
     public:
@@ -88,7 +92,8 @@ class TaskScheduler {
                     bool    enabled,
                     String  channelName,
                     bool  enableTimeSpan,
-                    ChannelMqttSettingsService* channelMqttSettingsService);
+                    ChannelMqttSettingsService* channelMqttSettingsService,
+                    bool randomize);
     void begin();
     void loop();
 
@@ -127,7 +132,10 @@ class TaskScheduler {
     bool shouldRunTask();
     void scheduleTask();
     void controlOn();
-    void controlOff();  
+    void controlOff();
+    void updateNextRunStatus(String nextRunTime);
+    time_t getRandomOnTimeSpan();
+    time_t getRandomOffTimeSpan();  
 };
 
 #endif

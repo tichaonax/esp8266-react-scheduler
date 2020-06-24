@@ -1,6 +1,6 @@
 import React from 'react';
 import { ValidatorForm } from 'react-material-ui-form-validator';
-import { TextField, Checkbox } from '@material-ui/core';
+import { TextField, Checkbox, Typography } from '@material-ui/core';
 import SaveIcon from '@material-ui/icons/Save';
 import MenuItem from "@material-ui/core/MenuItem";
 import Grid from '@material-ui/core/Grid';
@@ -61,6 +61,7 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
 
     return (
       <ValidatorForm onSubmit={saveData}>
+        <Typography variant="h6">{data.name}</Typography>
         <BlockFormControlLabel
             control={
             <Checkbox
@@ -80,6 +81,16 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
             />
             }
             label="Enable TimeSpan?"
+        />
+          <BlockFormControlLabel
+            control={
+            <Checkbox
+                checked={data.randomize}
+                onChange={handleValueChange('randomize')}
+                color="primary"
+            />
+            }
+            label="Randomize Switch?"
         />
         <TextField
           name="name"

@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 
 import { ENDPOINT_ROOT } from '../../api';
-import { restController, RestControllerProps, SectionContent } from '../../components';
+import { restController, RestControllerProps } from '../../components';
 
 import { ChannelState } from './types';
 import ChannelSectionContent from './ChannelSectionContent';
-import ChannelOneWebSocketController from './ChannelOneWebSocketController';
 
 export const CONTROL_SETTINGS_ENDPOINT = ENDPOINT_ROOT + "channelOneState";
 
@@ -18,14 +17,7 @@ class ChannelOneStateRestController extends Component<ChannelStateRestController
   }
 
   render() {
-    return (
-    <div>
-      <SectionContent title='Switch Status' titleGutter>
-        <ChannelOneWebSocketController/> 
-      </SectionContent>
-      <ChannelSectionContent {...this.props}/> 
-    </div>
-    )
+    return (<ChannelSectionContent {...this.props}/>)
   }
 }
 

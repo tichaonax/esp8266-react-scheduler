@@ -41,7 +41,8 @@ TaskScheduler channelOnetaskScheduler = TaskScheduler(&server,
                                                         CHANNEL_ONE_DEFAULT_ENABLED_STATE,
                                                         CHANNEL_ONE_DEFAULT_NAME,
                                                         CHANNEL_ONE_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE,
-                                                        &channelOneMqttSettingsService);
+                                                        &channelOneMqttSettingsService,
+                                                        CHANNEL_ONE_DEFAULT_RANDOMIZE_SCHEDULE);
 
 ChannelMqttSettingsService channelTwoMqttSettingsService =
     ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
@@ -64,7 +65,8 @@ TaskScheduler channelTwotaskScheduler = TaskScheduler(&server,
                                                         CHANNEL_TWO_DEFAULT_ENABLED_STATE,
                                                         CHANNEL_TWO_DEFAULT_NAME,
                                                         CHANNEL_TWO_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE,
-                                                        &channelTwoMqttSettingsService);  
+                                                        &channelTwoMqttSettingsService,
+                                                        CHANNEL_TWO_DEFAULT_RANDOMIZE_SCHEDULE);  
 
 ChannelMqttSettingsService channelThreeMqttSettingsService =
     ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
@@ -87,7 +89,8 @@ TaskScheduler channelThreetaskScheduler = TaskScheduler(&server,
                                                         CHANNEL_THREE_DEFAULT_ENABLED_STATE,
                                                         CHANNEL_THREE_DEFAULT_NAME,
                                                         CHANNEL_THREE_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE,
-                                                        &channelThreeMqttSettingsService);  
+                                                        &channelThreeMqttSettingsService,
+                                                        CHANNEL_THREE_DEFAULT_RANDOMIZE_SCHEDULE);  
 
  ChannelMqttSettingsService channelFourMqttSettingsService =
     ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
@@ -110,7 +113,8 @@ TaskScheduler channelThreetaskScheduler = TaskScheduler(&server,
                                                         CHANNEL_FOUR_DEFAULT_ENABLED_STATE,
                                                         CHANNEL_FOUR_DEFAULT_NAME,
                                                         CHANNEL_FOUR_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE,
-                                                        &channelFourMqttSettingsService);
+                                                        &channelFourMqttSettingsService,
+                                                        CHANNEL_FOUR_DEFAULT_RANDOMIZE_SCHEDULE);
 
 void setup() {
   // start serial and filesystem

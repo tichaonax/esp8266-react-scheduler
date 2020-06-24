@@ -20,7 +20,8 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
                                       bool    enabled,
                                       String  channelName,
                                       bool enableTimeSpan,
-                                      ChannelMqttSettingsService* channelMqttSettingsService) :
+                                      ChannelMqttSettingsService* channelMqttSettingsService,
+                                      bool randomize) :
     _httpEndpoint(ChannelState::read,
                   ChannelState::update,
                   this,
@@ -58,6 +59,7 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
   _enabled  = enabled;
   _channelName = channelName;
   _enableTimeSpan = enableTimeSpan;
+  _randomize = randomize;
 
   // configure controls to be output
   pinMode(_channelControlPin, OUTPUT);
@@ -111,6 +113,7 @@ void ChannelStateService::begin() {
     _state.channel.channelEndPoint = _restChannelEndPoint;
     _state.channel.enabled = _enabled;
     _state.channel.enableTimeSpan = _enableTimeSpan;
+    _state.channel.randomize = _randomize;
 
     _state.channel.schedule.runEvery =  _runEvery;
     _state.channel.schedule.offAfter =  _offAfter;

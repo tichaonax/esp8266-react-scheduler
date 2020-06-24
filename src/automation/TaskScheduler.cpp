@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include "Utilities.h"
 #include "TaskScheduler.h"
 
@@ -18,7 +19,8 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                               bool    enabled,
                               String  channelName,
                               bool  enableTimeSpan,
-                              ChannelMqttSettingsService* channelMqttSettingsService) :
+                              ChannelMqttSettingsService* channelMqttSettingsService,
+                              bool randomize) :
     _channelStateService(server,
                         securityManager,
                         mqttClient,
@@ -36,7 +38,8 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                         enabled,
                         channelName,
                         enableTimeSpan,
-                        channelMqttSettingsService)
+                        channelMqttSettingsService,
+                        randomize)
                                        {
   };
 
@@ -157,30 +160,43 @@ bool TaskScheduler::shouldRunTask(){
   return(currentTime >= _channel.startTime || currentTime <= _channel.endTime);
 }
 
-void TaskScheduler::runTask(){
-  String nextRunTime = "";
-  if(shouldRunTask()){
-    controlOn();
-    if(_channel.enableTimeSpan){
-      nextRunTime =  Utils.getLocalNextRunTime(TWENTY_FOUR_HOUR_DURATION);
-    }else{
-      nextRunTime =  Utils.getLocalNextRunTime(_channel.schedule.runEvery);
-    } 
-  }else{
-     if(_channel.enableTimeSpan){
-      nextRunTime =  Utils.getLocalNextRunTime(TWENTY_FOUR_HOUR_DURATION);
-    }else{
-      nextRunTime =  Utils.getLocalNextRunTime(_channel.schedule.runEvery);
-    } 
-  }
-    _channelStateService.update([&](ChannelState& channelState) {
+void TaskScheduler::updateNextRunStatus(String nextRunTime){
+   _channelStateService.update([&](ChannelState& channelState) {
     channelState.channel.nextRunTime = nextRunTime;  
     return StateUpdateResult::CHANGED;
     }, _channel.name);
 }
 
+time_t TaskScheduler::getRandomOnTimeSpan(){
+  return(rand() % (_channel.schedule.runEvery - _channel.schedule.offAfter));
+}
+
+time_t TaskScheduler::getRandomOffTimeSpan(){
+ return(rand() % (_channel.schedule.offAfter));
+}
+
+void TaskScheduler::runTask(){
+  if(shouldRunTask()){
+    if(!_channel.randomize){
+      controlOn();
+    }
+    else{
+      _tickerSwitch.attach(getRandomOnTimeSpan(), std::bind(&TaskScheduler::controlOn, this));
+    }
+  }else{
+    String nextRunTime = "";
+    if(_channel.enableTimeSpan){
+      nextRunTime =  Utils.getLocalNextRunTime(TWENTY_FOUR_HOUR_DURATION);
+    }else{
+      nextRunTime =  Utils.getLocalNextRunTime(_channel.schedule.runEvery);
+    } 
+    updateNextRunStatus(nextRunTime);
+  }
+}
+
 void TaskScheduler::controlOn(){
   if(_channel.enabled){
+    if(_channel.randomize){_tickerSwitch.detach();};
     if(!_channel.schedule.isOverride){
       _channelStateService.update([&](ChannelState& channelState) {
       if (channelState.channel.controlOn) {
@@ -194,10 +210,21 @@ void TaskScheduler::controlOn(){
       if(_channel.enableTimeSpan){
         _tickerSwitch.attach(getScheduleTimeSpan(), std::bind(&TaskScheduler::controlOff, this));
       }else{
-        _tickerSwitch.attach(_channel.schedule.offAfter, std::bind(&TaskScheduler::controlOff, this));
+        if(!_channel.randomize){
+          _tickerSwitch.attach(_channel.schedule.offAfter, std::bind(&TaskScheduler::controlOff, this));
+        }else{
+          _tickerSwitch.attach(getRandomOffTimeSpan(), std::bind(&TaskScheduler::controlOff, this));
+        }
       }
     }
   }
+    String nextRunTime = "";
+    if(_channel.enableTimeSpan){
+      nextRunTime =  Utils.getLocalNextRunTime(TWENTY_FOUR_HOUR_DURATION);
+    }else{
+      nextRunTime =  Utils.getLocalNextRunTime(_channel.schedule.runEvery);
+    } 
+  updateNextRunStatus(nextRunTime);
 }
 
 void TaskScheduler::controlOff(){

@@ -29,10 +29,10 @@ const ChannelThree = () => {
           </Typography>
         </Tab>
       </TabList>
-      <TabPanel style={{marginLeft: -23, marginRight: -23}}>
+      <TabPanel style={{marginLeft: -23, marginRight: -23, marginTop: -35}}>
         <ChannelThreeStateRestController/>
       </TabPanel>
-      <TabPanel style={{marginLeft: -23, marginRight: -23}}>
+      <TabPanel style={{marginLeft: -23, marginRight: -23, marginTop: -35}}>
         <ChannelThreeMqttSettingsController/>
       </TabPanel>
       <TabPanel>

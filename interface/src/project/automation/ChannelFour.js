@@ -29,10 +29,10 @@ const ChannelFour = () => {
           </Typography>
         </Tab>
       </TabList>
-      <TabPanel style={{marginLeft: -23, marginRight: -23}}>
+      <TabPanel style={{marginLeft: -23, marginRight: -23, marginTop: -35}}>
         <ChannelFourStateRestController/>
       </TabPanel>
-      <TabPanel style={{marginLeft: -23, marginRight: -23}}>
+      <TabPanel style={{marginLeft: -23, marginRight: -23, marginTop: -35}}>
         <ChannelFourMqttSettingsController/>
       </TabPanel>
       <TabPanel>
