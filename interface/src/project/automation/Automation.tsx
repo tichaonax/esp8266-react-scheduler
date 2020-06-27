@@ -8,9 +8,9 @@ import { MenuAppBar } from '../../components';
 import { AuthenticatedRoute } from '../../authentication';
 
 import ChannelOne from './ChannelOne';
-import ChannelTwo from './ChannelTwo';
-import ChannelThree from './ChannelThree';
-import ChannelFour from './ChannelFour';
+//import ChannelTwo from './ChannelTwo';
+//import ChannelThree from './ChannelThree';
+//import ChannelFour from './ChannelFour';
 import AutoInformation from './AutoInformation';
 
 class Automation extends Component<RouteComponentProps> {
@@ -23,18 +23,18 @@ class Automation extends Component<RouteComponentProps> {
     return (
       <MenuAppBar sectionTitle="Automation System">
         <Tabs value={this.props.match.url} onChange={this.handleTabChange} variant="fullWidth">
-          <Tab value={`/${PROJECT_PATH}/auto/information`} label="Channel Info" />
-          <Tab value={`/${PROJECT_PATH}/auto/channelOne`} label="Channel One" />
-          <Tab value={`/${PROJECT_PATH}/auto/channelTwo`} label="Channel Two" />
+          <Tab value={`/${PROJECT_PATH}/auto/information`} label="Information" />
+           <Tab value={`/${PROJECT_PATH}/auto/channelOne`} label="Channel" />
+{/*        <Tab value={`/${PROJECT_PATH}/auto/channelTwo`} label="Channel Two" />
           <Tab value={`/${PROJECT_PATH}/auto/channelThree`} label="Channel Three" />
-          <Tab value={`/${PROJECT_PATH}/auto/channelFour`} label="Channel Four" />
+          <Tab value={`/${PROJECT_PATH}/auto/channelFour`} label="Channel Four" /> */}
         </Tabs>
         <Switch>
           <AuthenticatedRoute exact path={`/${PROJECT_PATH}/auto/information`} component={AutoInformation} />
           <AuthenticatedRoute exact path={`/${PROJECT_PATH}/auto/channelOne`} component={ChannelOne} />
-          <AuthenticatedRoute exact path={`/${PROJECT_PATH}/auto/channelTwo`} component={ChannelTwo} />
+          {/*<AuthenticatedRoute exact path={`/${PROJECT_PATH}/auto/channelTwo`} component={ChannelTwo} />
           <AuthenticatedRoute exact path={`/${PROJECT_PATH}/auto/channelThree`} component={ChannelThree} />
-          <AuthenticatedRoute exact path={`/${PROJECT_PATH}/auto/channelFour`} component={ChannelFour} />
+          <AuthenticatedRoute exact path={`/${PROJECT_PATH}/auto/channelFour`} component={ChannelFour} /> */}
           <Redirect to={`/${PROJECT_PATH}/auto/information`} />
         </Switch>
       </MenuAppBar>

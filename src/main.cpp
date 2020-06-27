@@ -44,7 +44,7 @@ TaskScheduler channelOnetaskScheduler = TaskScheduler(&server,
                                                         &channelOneMqttSettingsService,
                                                         CHANNEL_ONE_DEFAULT_RANDOMIZE_SCHEDULE);
 
-ChannelMqttSettingsService channelTwoMqttSettingsService =
+/* ChannelMqttSettingsService channelTwoMqttSettingsService =
     ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
     CHANNEL_TWO_BROKER_SETTINGS_FILE, CHANNEL_TWO_BROKER_SETTINGS_PATH);
 
@@ -68,7 +68,7 @@ TaskScheduler channelTwotaskScheduler = TaskScheduler(&server,
                                                         &channelTwoMqttSettingsService,
                                                         CHANNEL_TWO_DEFAULT_RANDOMIZE_SCHEDULE);  
 
-ChannelMqttSettingsService channelThreeMqttSettingsService =
+ ChannelMqttSettingsService channelThreeMqttSettingsService =
     ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
     CHANNEL_THREE_BROKER_SETTINGS_FILE, CHANNEL_THREE_BROKER_SETTINGS_PATH);
 
@@ -114,7 +114,7 @@ TaskScheduler channelThreetaskScheduler = TaskScheduler(&server,
                                                         CHANNEL_FOUR_DEFAULT_NAME,
                                                         CHANNEL_FOUR_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE,
                                                         &channelFourMqttSettingsService,
-                                                        CHANNEL_FOUR_DEFAULT_RANDOMIZE_SCHEDULE);
+                                                        CHANNEL_FOUR_DEFAULT_RANDOMIZE_SCHEDULE); */
 
 void setup() {
   // start serial and filesystem
@@ -137,14 +137,14 @@ void setup() {
 
 
   channelOnetaskScheduler.begin();
-  channelTwotaskScheduler.begin();
-  channelThreetaskScheduler.begin();
-  channelFourtaskScheduler.begin();
+  //channelTwotaskScheduler.begin();
+/*   channelThreetaskScheduler.begin();
+  channelFourtaskScheduler.begin(); */
 
   channelOnetaskScheduler.setScheduleTimes();
-  channelTwotaskScheduler.setScheduleTimes();
-  channelThreetaskScheduler.setScheduleTimes();
-  channelFourtaskScheduler.setScheduleTimes();
+  //channelTwotaskScheduler.setScheduleTimes();
+/*   channelThreetaskScheduler.setScheduleTimes();
+  channelFourtaskScheduler.setScheduleTimes(); */
 
   // start the server
   server.begin();
@@ -153,7 +153,7 @@ void setup() {
 void loop() {
   esp8266React.loop();
   channelOnetaskScheduler.loop();
-  channelTwotaskScheduler.loop();
-  channelThreetaskScheduler.loop();
-  channelFourtaskScheduler.loop();
+ // channelTwotaskScheduler.loop();
+/*   channelThreetaskScheduler.loop();
+  channelFourtaskScheduler.loop(); */
 }

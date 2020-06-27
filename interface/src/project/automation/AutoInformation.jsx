@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Typography, Box, List, ListItem, ListItemText } from '@material-ui/core';
 import { SectionContent } from '../../components';
-import { Schedule, ChannelMqttSettings } from './types';
 
 class AutoInformation extends Component {
 
@@ -9,15 +8,12 @@ class AutoInformation extends Component {
     return (
       <SectionContent title='Automation Information' titleGutter>
         <Typography variant="body1" paragraph>
-          This simple app allows you to control two channels through a schedule. It comes with defaults that can be changed by user.
+          This simple app allows you to control a switch through a schedule. It comes with defaults that can be changed by user.
         </Typography>
         <Typography variant="body1" paragraph>
           Channel Schedule is active only between the 'Start Time' and 'End Time' periods. Changes to the schedule 
           must be saved to take effect after system is reset.
-        </Typography>
-        <Typography variant="body1" paragraph>
-          Channel refers to either of the four channels
-        </Typography>        
+        </Typography>      
         <List>
           <ListItem>
             <ListItemText
@@ -43,6 +39,12 @@ class AutoInformation extends Component {
               secondary="When checked the switch is activated only during the time period from 'Start Time' to 'End Time'"
             />
           </ListItem> 
+          <ListItem>
+            <ListItemText
+              primary="Randomize Switch?"
+              secondary="When checked the switch is activated/deactivated randomly within the 'Run Every' and 'Off After' time definitions"
+            />
+          </ListItem>
           <ListItem>
             <ListItemText
               primary="Channel Name"
