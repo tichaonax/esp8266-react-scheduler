@@ -96,6 +96,7 @@ class TaskScheduler {
                     bool randomize);
     void begin();
     void loop();
+    void resetSchedule();
 
     TaskScheduler();
     void setSchedule();

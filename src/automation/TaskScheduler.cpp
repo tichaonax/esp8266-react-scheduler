@@ -299,3 +299,16 @@ ScheduledTime TaskScheduler::getTimeSpanSchedule(ScheduledTime& schedule){
   schedule.scheduleTime = 0;
   return(schedule);
 }
+
+void TaskScheduler::resetSchedule(){
+  Serial.print("Resetting schedule for channel: ");
+  Serial.println(_channel.name);
+
+  _tickerScheduler.detach();
+  _tickerRepeat.detach();
+  _tickerSwitch.detach();
+
+  begin();
+  setScheduleTimes();
+  setSchedule();
+}

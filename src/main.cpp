@@ -6,6 +6,7 @@
 #include "./automation/ChannelMqttSettingsService.h"
 #include "./automation/TaskScheduler.h"
 #include "./automation/ChannelStateService.h"
+#include "./automation/ChannelScheduleRestartService.h"
 
 #define SERIAL_BAUD_RATE 115200
 #define LED 2  //On board LED
@@ -115,6 +116,9 @@ TaskScheduler channelThreetaskScheduler = TaskScheduler(&server,
                                                         CHANNEL_FOUR_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE,
                                                         &channelFourMqttSettingsService,
                                                         CHANNEL_FOUR_DEFAULT_RANDOMIZE_SCHEDULE); */
+
+
+ChannelScheduleRestartService channelScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelOnetaskScheduler);
 
 void setup() {
   // start serial and filesystem
