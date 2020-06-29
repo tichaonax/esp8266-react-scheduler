@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { ENDPOINT_ROOT } from '../../api';
 import { restController, RestControllerProps } from '../../components';
 
-import { ChannelState } from './types';
+import { ChannelState} from '../automation/redux/types/channel';
 import ChannelSectionContent from './ChannelSectionContent';
 
 export const CONTROL_SETTINGS_ENDPOINT = ENDPOINT_ROOT + "channelTwoState";

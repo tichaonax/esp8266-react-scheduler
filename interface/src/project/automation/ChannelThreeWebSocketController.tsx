@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { WEB_SOCKET_ROOT } from '../../api';
 import { WebSocketControllerProps, WebSocketFormLoader, webSocketController } from '../../components';
 
-import { ChannelState } from './types';
+import { ChannelState} from '../automation/redux/types/channel';
 import ChannelStateWebSocketControllerForm from './ChannelStateWebSocketControllerForm';
 
 export const SWITCH_SETTINGS_WEBSOCKET_URL = WEB_SOCKET_ROOT + "channelThreeState";

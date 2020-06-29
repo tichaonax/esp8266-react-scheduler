@@ -5,7 +5,7 @@ import { Switch, Typography } from '@material-ui/core';
 import { WebSocketFormProps } from '../../components';
 import { BlockFormControlLabel } from '../../components';
 
-import { ChannelState } from './types';
+import { ChannelState} from '../automation/redux/types/channel';
 import { CHANNEL_ONE_CONTROL_PIN,
         CHANNEL_TWO_CONTROL_PIN,
         CHANNEL_THREE_CONTROL_PIN, 

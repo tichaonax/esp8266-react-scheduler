@@ -14,14 +14,47 @@ import {
 import { RestFormProps, FormActions, FormButton, BlockFormControlLabel, extractEventValue } from '../../components';
 import history from '../../history';
 
-import { ChannelState, Schedule } from './types';
+import {store} from "../automation/redux/store";
+import { setChannelSettings} from '../automation/redux/actions/channel';
+
+import { ChannelState, Schedule } from '../automation/redux/types/channel';
+import {
+  CHANNEL_ONE_CONTROL_PIN,
+  CHANNEL_TWO_CONTROL_PIN,
+  CHANNEL_THREE_CONTROL_PIN,
+  CHANNEL_FOUR_CONTROL_PIN,
+ } from './constants';
 
 type ChannelStateRestControllerFormProps = RestFormProps<ChannelState>;
 
 const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
- 
-    const { data, saveData, loadData, setData, handleValueChange } = props;
+
+  const { data, saveData, loadData, setData, handleValueChange } = props;
+
+    const restartSchedule = () => {
+      switch (data.controlPin) {
+        case CHANNEL_ONE_CONTROL_PIN:
+          store.dispatch(setChannelSettings(data, 1));
+          break;
+          case CHANNEL_TWO_CONTROL_PIN:
+            store.dispatch(setChannelSettings(data, 2));
+          break;
+          case CHANNEL_THREE_CONTROL_PIN:
+            store.dispatch(setChannelSettings(data, 2));
+          break;
+          case CHANNEL_FOUR_CONTROL_PIN:
+            store.dispatch(setChannelSettings(data, 2));
+          break;
+        default:
+          break;
+      }
+    }
   
+    const saveFormAndRestartSchedule = () => {
+      saveData();
+      restartSchedule();
+    }
+
     const makeDateFromTime = (hour: number, minute: number) => {
       return new Date(`Mon May 18 2020 ${hour}:${minute}:00`);
     }
@@ -60,7 +93,7 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
       }
 
     return (
-      <ValidatorForm onSubmit={saveData}>
+      <ValidatorForm onSubmit={saveFormAndRestartSchedule}>
         <Typography variant="h6">{data.name}</Typography>
         <BlockFormControlLabel
             control={
