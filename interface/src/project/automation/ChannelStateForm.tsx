@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Dispatch, useEffect } from 'react';
 import { ValidatorForm } from 'react-material-ui-form-validator';
 import { TextField, Checkbox, Typography } from '@material-ui/core';
 import SaveIcon from '@material-ui/icons/Save';
@@ -14,39 +14,78 @@ import {
 import { RestFormProps, FormActions, FormButton, BlockFormControlLabel, extractEventValue } from '../../components';
 import history from '../../history';
 
-import {store} from "../automation/redux/store";
 import { setChannelSettings} from '../automation/redux/actions/channel';
+import { channelSettingsSelector } from '../automation/redux/selectors/channel';
 
-import { ChannelState, Schedule } from '../automation/redux/types/channel';
+import { ChannelState, Schedule, ChannelSettingsActions, Channels, ChannelSettings, CHANNEL, RESTART } from '../automation/redux/types/channel';
 import {
   CHANNEL_ONE_CONTROL_PIN,
   CHANNEL_TWO_CONTROL_PIN,
   CHANNEL_THREE_CONTROL_PIN,
   CHANNEL_FOUR_CONTROL_PIN,
  } from './constants';
+import { connect } from 'react-redux';
+import { AppState } from './redux/store';
+import uiLoaderProjector from './redux/selectors/uiLoaderProjector';
 
 type ChannelStateRestControllerFormProps = RestFormProps<ChannelState>;
 
 const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
 
-  const { data, saveData, loadData, setData, handleValueChange } = props;
+  // @ts-ignore 
+  const { channels, loader, enqueueSnackbar, data, saveData, loadData, setData, handleValueChange, onSetChannelSettings } = props;
+  // suppress onSetChannelSettings not part of props;
+
+  const restartSuccessMessage = (name: string) => {
+      enqueueSnackbar(name +  " Schedule Restarted Successfully!", { variant: 'success' });
+  }
+
+  useEffect(() => {
+    if(loader && loader.loading && channels ){
+      const { channelOne, channelTwo, channelThree, channelFour } = channels;
+      switch (data.controlPin) {
+        case CHANNEL_ONE_CONTROL_PIN:
+          if (channelOne){
+            restartSuccessMessage(channelOne.name);
+          }
+          break;
+        case CHANNEL_TWO_CONTROL_PIN:
+          if (channelTwo){
+            restartSuccessMessage(channelTwo.name);;
+          }
+          break;
+        case CHANNEL_THREE_CONTROL_PIN:
+          if (channelThree){
+            restartSuccessMessage(channelThree.name);
+          }
+          break;
+        case CHANNEL_FOUR_CONTROL_PIN:
+          if (channelFour){
+            restartSuccessMessage(channelFour.name);
+          }
+          break;
+        default:
+          break;
+      }
+    }
+  },[loader, enqueueSnackbar, channels]);
 
     const restartSchedule = () => {
       switch (data.controlPin) {
         case CHANNEL_ONE_CONTROL_PIN:
-          store.dispatch(setChannelSettings(data, 1));
+          onSetChannelSettings(data, 1);
           break;
-          case CHANNEL_TWO_CONTROL_PIN:
-            store.dispatch(setChannelSettings(data, 2));
-          break;
-          case CHANNEL_THREE_CONTROL_PIN:
-            store.dispatch(setChannelSettings(data, 2));
-          break;
-          case CHANNEL_FOUR_CONTROL_PIN:
-            store.dispatch(setChannelSettings(data, 2));
-          break;
+        case CHANNEL_TWO_CONTROL_PIN:
+          onSetChannelSettings(data, 2);
+        break;
+        case CHANNEL_THREE_CONTROL_PIN:
+          onSetChannelSettings(data, 3);
+        break;
+        case CHANNEL_FOUR_CONTROL_PIN:
+          onSetChannelSettings(data, 4);
+        break;
         default:
-          break;
+        break;
       }
     }
   
@@ -72,7 +111,6 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
       }
   
       const handleScheduleValueChange = (name: keyof Schedule) => (event: any) => {
-        //const { data, setData } = props;
         switch (name) {
           case 'startTimeHour':
             const startTime = extractDateValue(event, name);
@@ -259,4 +297,19 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
       </ValidatorForm>
     );
 }
-export default ChannelStateForm;
+
+const mapStateToProps = (state: AppState ) => {
+  const channels: Channels = channelSettingsSelector(state);
+  const loader = uiLoaderProjector(`${CHANNEL}${RESTART}`)(state);
+  return {channels, loader}
+}
+
+const mapDispatchToProps = (dispatch: Dispatch<ChannelSettingsActions>) => {
+  return {
+      onSetChannelSettings: (settings: ChannelSettings, channel: number) => {
+        dispatch(setChannelSettings(settings, channel));
+      },
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChannelStateForm);

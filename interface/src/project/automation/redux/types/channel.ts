@@ -13,7 +13,7 @@ export interface Schedule{
     endTimeMinute: number;
  }
 
-export interface ChannelSettings{
+export interface ChannelSettings {
     controlOn: boolean;
     name: string;
     enabled: boolean;
@@ -25,8 +25,13 @@ export interface ChannelSettings{
     randomize: boolean;
 }
 
+export interface Channels {
+  channelOne: ChannelSettings;
+  channelTwo: ChannelSettings;
+  channelThree: ChannelSettings;
+  channelFour: ChannelSettings;
+}
   export interface ChannelState {
-    //channelSettings: ChannelSettings;
     controlOn: boolean;
     name: string;
     enabled: boolean;
@@ -36,7 +41,14 @@ export interface ChannelSettings{
     controlPin: number;
     nextRunTime: string;
     randomize: boolean;
+    onSetChannelSettings: SetChannelSettingsType;
+    channels: Channels;
   }
+export interface ChannelStateFuncs {
+  onRestartChannelSchedule: RestartChannelScheduleType; 
+  onSetChannelSettings: SetChannelSettingsType;
+  onRemoveLoader: RemoveLoaderType; 
+} 
 
 export interface SetChannelScheduleAction {
     type: typeof SET_CHANNEL_SCHEDULE;
