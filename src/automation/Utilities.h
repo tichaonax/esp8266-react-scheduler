@@ -19,7 +19,13 @@ public:
 
   String getLocalNextRunTime(time_t delta){
     time_t now = time(0) + delta;
-    return eraseLineFeed(ctime(&now));
+    return eraseLineFeed(ctime(&now)); 
+  }
+
+   uint8_t getCurrenYear(){
+    time_t tnow = time(nullptr);
+    struct tm *date = localtime(&tnow);
+    return date->tm_year;
   }
 };
 

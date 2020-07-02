@@ -2,7 +2,10 @@
 //#include <LightMqttSettingsService.h>
 //#include <LightStateService.h>
 #include <FS.h>
-#include <Ticker.h>  //Ticker Librar/
+//#include <Ticker.h>  //Ticker Librar/
+
+//#include "./automation/ESP8266TimeAlarms.h"
+#include "./automation/Utilities.h"
 #include "./automation/ChannelMqttSettingsService.h"
 #include "./automation/TaskScheduler.h"
 #include "./automation/ChannelStateService.h"
@@ -11,7 +14,13 @@
 #define SERIAL_BAUD_RATE 115200
 #define LED 2  //On board LED
 
-Ticker blinker;
+//Ticker blinkerFast;
+//Ticker blinkerHeartBeat;
+
+//AlarmId alarmFast;
+//AlarmId alarmHeartBeat;
+
+bool validNTP;
 
 void changeState()
 {
@@ -25,7 +34,7 @@ ChannelMqttSettingsService channelOneMqttSettingsService =
     ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
     CHANNEL_ONE_BROKER_SETTINGS_FILE, CHANNEL_ONE_BROKER_SETTINGS_PATH);
 
-TaskScheduler channelOnetaskScheduler = TaskScheduler(&server,
+TaskScheduler channelOneTaskScheduler = TaskScheduler(&server,
                                                         esp8266React.getSecurityManager(),
                                                         esp8266React.getMqttClient(),
                                                         &SPIFFS,
@@ -49,7 +58,7 @@ TaskScheduler channelOnetaskScheduler = TaskScheduler(&server,
     ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
     CHANNEL_TWO_BROKER_SETTINGS_FILE, CHANNEL_TWO_BROKER_SETTINGS_PATH);
 
-TaskScheduler channelTwotaskScheduler = TaskScheduler(&server,
+TaskScheduler channelTwoTaskScheduler = TaskScheduler(&server,
                                                         esp8266React.getSecurityManager(),
                                                         esp8266React.getMqttClient(),
                                                         &SPIFFS,
@@ -73,7 +82,7 @@ TaskScheduler channelTwotaskScheduler = TaskScheduler(&server,
     ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
     CHANNEL_THREE_BROKER_SETTINGS_FILE, CHANNEL_THREE_BROKER_SETTINGS_PATH);
 
-TaskScheduler channelThreetaskScheduler = TaskScheduler(&server,
+TaskScheduler channelThreeTaskScheduler = TaskScheduler(&server,
                                                         esp8266React.getSecurityManager(),
                                                         esp8266React.getMqttClient(),
                                                         &SPIFFS,
@@ -97,7 +106,7 @@ TaskScheduler channelThreetaskScheduler = TaskScheduler(&server,
     ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
     CHANNEL_FOUR_BROKER_SETTINGS_FILE, CHANNEL_FOUR_BROKER_SETTINGS_PATH);
 
- TaskScheduler channelFourtaskScheduler = TaskScheduler(&server,
+ TaskScheduler channelFourTaskScheduler = TaskScheduler(&server,
                                                         esp8266React.getSecurityManager(),
                                                         esp8266React.getMqttClient(),
                                                         &SPIFFS,
@@ -118,8 +127,27 @@ TaskScheduler channelThreetaskScheduler = TaskScheduler(&server,
                                                         CHANNEL_FOUR_DEFAULT_RANDOMIZE_SCHEDULE); */
 
 
-ChannelScheduleRestartService channelScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelOnetaskScheduler);
+ChannelScheduleRestartService channelScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelOneTaskScheduler);
 
+void initializeSchedules(){
+    // check to see if NTP updated the local time
+    if(!validNTP){
+        int year = Utils.getCurrenYear();
+        if(year != 70){
+          validNTP = true;
+          //blinkerFast.detach();
+          //Alarm.disable(alarmFast);
+          Serial.println("******** Valid data");
+          //alarmHeartBeat = Alarm.timerRepeat(0.5, changeState);
+           //blinkerHeartBeat.attach(0.5, changeState);
+          channelOneTaskScheduler.setSchedule();
+          //channelTwoTaskScheduler.setSchedule();
+          //channelThreeTaskScheduler.setSchedule();
+          //channelFourTaskScheduler.setSchedule();
+        }
+    }
+    //Alarm.delay(0);
+}
 void setup() {
   // start serial and filesystem
   Serial.begin(SERIAL_BAUD_RATE);
@@ -132,23 +160,25 @@ void setup() {
 #endif
 
   pinMode(LED,OUTPUT);
+  validNTP = false;
  
   //Initialize Ticker every 0.5s
-  blinker.attach(0.5, changeState);
+  //blinkerFast.attach(0.125, changeState);
+  //alarmFast = Alarm.timerRepeat(0.25, changeState);
   
   // start the framework and demo project
   esp8266React.begin();
 
 
-  channelOnetaskScheduler.begin();
-  //channelTwotaskScheduler.begin();
-/*   channelThreetaskScheduler.begin();
-  channelFourtaskScheduler.begin(); */
+  channelOneTaskScheduler.begin();
+  //channelTwoTaskScheduler.begin();
+/*   channelThreeTaskScheduler.begin();
+  channelFourTaskScheduler.begin(); */
 
-  channelOnetaskScheduler.setScheduleTimes();
-  //channelTwotaskScheduler.setScheduleTimes();
-/*   channelThreetaskScheduler.setScheduleTimes();
-  channelFourtaskScheduler.setScheduleTimes(); */
+  channelOneTaskScheduler.setScheduleTimes();
+  //channelTwoTaskScheduler.setScheduleTimes();
+/*   channelThreeTaskScheduler.setScheduleTimes();
+  channelFourTaskScheduler.setScheduleTimes(); */
 
   // start the server
   server.begin();
@@ -156,8 +186,12 @@ void setup() {
 
 void loop() {
   esp8266React.loop();
-  channelOnetaskScheduler.loop();
- // channelTwotaskScheduler.loop();
-/*   channelThreetaskScheduler.loop();
-  channelFourtaskScheduler.loop(); */
+  initializeSchedules();
+  //Alarm.delay(0);
+  if(validNTP){
+    channelOneTaskScheduler.loop();
+  }
+ // channelTwoTaskScheduler.loop();
+/*   channelThreeTaskScheduler.loop();
+  channelFourTaskScheduler.loop(); */
 }

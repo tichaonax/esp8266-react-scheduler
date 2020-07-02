@@ -47,14 +47,16 @@ void TaskScheduler::begin(){
     _channelStateService.begin();
 }
 void TaskScheduler::loop(){ 
-    // check to see if NTP updated the local time
+/*     // check to see if NTP updated the local time
     if(!_validNTP){
         int year = getCurrenYear();
         if(year != 70){
           _validNTP = true;
           setSchedule();
         }
-    }
+    } */
+    // You need to call the Alarm.delay() to run the set alarms
+    Alarm.delay(0);
 }
 
 ScheduledTime TaskScheduler::getNextRunTime(){
@@ -126,10 +128,14 @@ void TaskScheduler::setSchedule(){
     Serial.println("s");
     if ( schedule.scheduleTime > 0 ){
       scheduleTime = schedule.scheduleTime;
-      _tickerScheduler.attach(scheduleTime, std::bind(&TaskScheduler::scheduleTask, this));
+      //_tickerScheduler.attach(scheduleTime, std::bind(&TaskScheduler::scheduleTask, this));
+      Alarm.timerOnce(scheduleTime, std::bind(&TaskScheduler::scheduleTask, this));
+      Serial.println("if ( schedule.scheduleTime > 0 )");
     }
     else{
-      _tickerScheduler.attach(0, std::bind(&TaskScheduler::scheduleTask, this));
+      //_tickerScheduler.attach(0, std::bind(&TaskScheduler::scheduleTask, this));
+       Alarm.timerOnce(0, std::bind(&TaskScheduler::scheduleTask, this));
+        Serial.println(" run now");
     }
     _channelStateService.update([&](ChannelState& channelState) {
     channelState.channel.nextRunTime =  Utils.getLocalNextRunTime(scheduleTime);
@@ -142,11 +148,15 @@ void TaskScheduler::setSchedule(){
 }
 
 void TaskScheduler::scheduleTask(){
-  _tickerScheduler.detach();
+  //_tickerScheduler.detach();
+  Serial.println("scheduleTask()");
+  //Alarm.disable(_alarmScheduler);
   if(_channel.enableTimeSpan){
-    _tickerRepeat.attach(TWENTY_FOUR_HOUR_DURATION, std::bind(&TaskScheduler::runTask, this));
+    // _tickerRepeat.attach(TWENTY_FOUR_HOUR_DURATION, std::bind(&TaskScheduler::runTask, this));
+    _alarmRepeat = Alarm.timerRepeat(TWENTY_FOUR_HOUR_DURATION, std::bind(&TaskScheduler::runTask, this));
   }else{
-    _tickerRepeat.attach(_channel.schedule.runEvery, std::bind(&TaskScheduler::runTask, this));
+    //_tickerRepeat.attach(_channel.schedule.runEvery, std::bind(&TaskScheduler::runTask, this));
+    _alarmRepeat = Alarm.timerRepeat(_channel.schedule.runEvery, std::bind(&TaskScheduler::runTask, this));
   }
   runTask();  // run once initially on set
  }
@@ -176,12 +186,14 @@ time_t TaskScheduler::getRandomOffTimeSpan(){
 }
 
 void TaskScheduler::runTask(){
+  Serial.println("runTask()");
   if(shouldRunTask()){
     if(!_channel.randomize){
       controlOn();
     }
     else{
-      _tickerSwitch.attach(getRandomOnTimeSpan(), std::bind(&TaskScheduler::controlOn, this));
+      //_tickerSwitch.attach(getRandomOnTimeSpan(), std::bind(&TaskScheduler::controlOn, this));
+       Alarm.timerOnce(getRandomOnTimeSpan(), std::bind(&TaskScheduler::controlOn, this));
     }
   }else{
     String nextRunTime = "";
@@ -195,8 +207,9 @@ void TaskScheduler::runTask(){
 }
 
 void TaskScheduler::controlOn(){
+  Serial.println("controlOn()");
   if(_channel.enabled){
-    if(_channel.randomize){_tickerSwitch.detach();};
+    //if(_channel.randomize){_tickerSwitch.detach();};
     if(!_channel.schedule.isOverride){
       _channelStateService.update([&](ChannelState& channelState) {
       if (channelState.channel.controlOn) {
@@ -208,12 +221,15 @@ void TaskScheduler::controlOn(){
       }, _channel.name);
 
       if(_channel.enableTimeSpan){
-        _tickerSwitch.attach(getScheduleTimeSpan(), std::bind(&TaskScheduler::controlOff, this));
+        //_tickerSwitch.attach(getScheduleTimeSpan(), std::bind(&TaskScheduler::controlOff, this));
+        Alarm.timerOnce(getScheduleTimeSpan(), std::bind(&TaskScheduler::controlOff, this));
       }else{
         if(!_channel.randomize){
-          _tickerSwitch.attach(_channel.schedule.offAfter, std::bind(&TaskScheduler::controlOff, this));
+          //_tickerSwitch.attach(_channel.schedule.offAfter, std::bind(&TaskScheduler::controlOff, this));
+          Alarm.timerOnce(_channel.schedule.offAfter, std::bind(&TaskScheduler::controlOff, this));
         }else{
-          _tickerSwitch.attach(getRandomOffTimeSpan(), std::bind(&TaskScheduler::controlOff, this));
+          //_tickerSwitch.attach(getRandomOffTimeSpan(), std::bind(&TaskScheduler::controlOff, this));
+           Alarm.timerOnce(getRandomOffTimeSpan(), std::bind(&TaskScheduler::controlOff, this));
         }
       }
     }
@@ -228,7 +244,8 @@ void TaskScheduler::controlOn(){
 }
 
 void TaskScheduler::controlOff(){
-  _tickerSwitch.detach();
+   Serial.println("controlOff()");
+  //_tickerSwitch.detach();
   if(!_channel.schedule.isOverride){
     _channelStateService.update([&](ChannelState& channelState) {
       if (!channelState.channel.controlOn) {
@@ -250,11 +267,11 @@ void TaskScheduler::controlOff(){
   Serial.println(ctime(&tnow));
 }
 
- uint8_t TaskScheduler::getCurrenYear(){
+/*  uint8_t TaskScheduler::getCurrenYear(){
     time_t tnow = time(nullptr);
     struct tm *date = localtime(&tnow);
     return date->tm_year;
-  }
+  } */
 
 time_t TaskScheduler::getScheduleTimeSpan(){
   CurrentTime current = getCurrentTime();
@@ -304,9 +321,10 @@ void TaskScheduler::resetSchedule(){
   Serial.print("Resetting schedule for channel: ");
   Serial.println(_channel.name);
 
-  _tickerScheduler.detach();
-  _tickerRepeat.detach();
-  _tickerSwitch.detach();
+  //_tickerScheduler.detach();
+  //_tickerRepeat.detach();
+  //_tickerSwitch.detach();
+  Alarm.disable(_alarmScheduler);
 
   begin();
   setScheduleTimes();
