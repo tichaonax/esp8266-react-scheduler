@@ -116,9 +116,6 @@ class TaskScheduler {
         current.totalCurrentTime = current.hours + current.minutes + current.seconds;
         return current;
     }
-    //Ticker _tickerScheduler;
-    //Ticker _tickerRepeat;
-    //Ticker _tickerSwitch;
 
     AlarmId _alarmScheduler;
     AlarmId _alarmRepeat;

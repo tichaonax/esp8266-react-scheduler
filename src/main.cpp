@@ -1,10 +1,7 @@
 #include <ESP8266React.h>
-//#include <LightMqttSettingsService.h>
-//#include <LightStateService.h>
 #include <FS.h>
-//#include <Ticker.h>  //Ticker Librar/
+#include <Ticker.h>  //Ticker Librar/
 
-//#include "./automation/ESP8266TimeAlarms.h"
 #include "./automation/Utilities.h"
 #include "./automation/ChannelMqttSettingsService.h"
 #include "./automation/TaskScheduler.h"
@@ -14,11 +11,8 @@
 #define SERIAL_BAUD_RATE 115200
 #define LED 2  //On board LED
 
-//Ticker blinkerFast;
-//Ticker blinkerHeartBeat;
-
-//AlarmId alarmFast;
-//AlarmId alarmHeartBeat;
+Ticker blinkerFast;
+Ticker blinkerHeartBeat;
 
 bool validNTP;
 
@@ -129,24 +123,25 @@ TaskScheduler channelThreeTaskScheduler = TaskScheduler(&server,
 
 ChannelScheduleRestartService channelScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelOneTaskScheduler);
 
-void initializeSchedules(){
+void runSchedules(){
     // check to see if NTP updated the local time
     if(!validNTP){
         int year = Utils.getCurrenYear();
         if(year != 70){
           validNTP = true;
-          //blinkerFast.detach();
-          //Alarm.disable(alarmFast);
-          Serial.println("******** Valid data");
-          //alarmHeartBeat = Alarm.timerRepeat(0.5, changeState);
-           //blinkerHeartBeat.attach(0.5, changeState);
+          blinkerFast.detach(); // disable fast blinker
+          blinkerHeartBeat.attach(0.5, changeState);  // and replace with normal
           channelOneTaskScheduler.setSchedule();
           //channelTwoTaskScheduler.setSchedule();
           //channelThreeTaskScheduler.setSchedule();
           //channelFourTaskScheduler.setSchedule();
         }
+    }else{
+      channelOneTaskScheduler.loop();
+        // channelTwoTaskScheduler.loop();
+      /*   channelThreeTaskScheduler.loop();
+      channelFourTaskScheduler.loop(); */
     }
-    //Alarm.delay(0);
 }
 void setup() {
   // start serial and filesystem
@@ -162,9 +157,8 @@ void setup() {
   pinMode(LED,OUTPUT);
   validNTP = false;
  
-  //Initialize Ticker every 0.5s
-  //blinkerFast.attach(0.125, changeState);
-  //alarmFast = Alarm.timerRepeat(0.25, changeState);
+  //blink fast every 0.125s till NTP is valid
+  blinkerFast.attach(0.125, changeState);
   
   // start the framework and demo project
   esp8266React.begin();
@@ -186,12 +180,5 @@ void setup() {
 
 void loop() {
   esp8266React.loop();
-  initializeSchedules();
-  //Alarm.delay(0);
-  if(validNTP){
-    channelOneTaskScheduler.loop();
-  }
- // channelTwoTaskScheduler.loop();
-/*   channelThreeTaskScheduler.loop();
-  channelFourTaskScheduler.loop(); */
+  runSchedules();
 }
