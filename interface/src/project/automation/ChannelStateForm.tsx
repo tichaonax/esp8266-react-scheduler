@@ -95,7 +95,9 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
     }
 
     const makeDateFromTime = (hour: number, minute: number) => {
-      return new Date(`Mon May 18 2020 ${hour}:${minute}:00`);
+      const newHour = (hour >= 24) ? 24 : hour;
+      const newMinute = (minute >= 60) ? 0 : minute;
+      return new Date(`Mon May 18 2020 ${newHour}:${newMinute}:00`);
     }
     
     const startTime: Date = makeDateFromTime(data.schedule.startTimeHour, data.schedule.startTimeMinute);
@@ -103,9 +105,8 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
   
       const handleDateChange = (date: Date | null) => {};
   
-      const extractDateValue =(date: Date | null, period: string) => {
-        const defaultHour = (period === 'startTimeHour') ? 8 : 16;
-        const timeHour: number = date?.getHours() || defaultHour;
+      const extractDateValue =(date: Date | null) => {
+        const timeHour: number = date?.getHours() || 0;
         const timeMinute: number = date?.getMinutes() || 0;  
         return { timeHour, timeMinute };
       }
@@ -113,11 +114,11 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
       const handleScheduleValueChange = (name: keyof Schedule) => (event: any) => {
         switch (name) {
           case 'startTimeHour':
-            const startTime = extractDateValue(event, name);
+            const startTime = extractDateValue(event);
             setData({ ...data, schedule: {...data.schedule,  startTimeHour: startTime.timeHour, startTimeMinute: startTime.timeMinute } });
             break;
             case 'endTimeHour':
-              const endTime = extractDateValue(event, name);
+              const endTime = extractDateValue(event);
               setData({ ...data, schedule: {...data.schedule, endTimeHour: endTime.timeHour, endTimeMinute: endTime.timeMinute } });
             break;
           default:

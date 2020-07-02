@@ -1,12 +1,7 @@
 #ifndef ChannelState_h
 #define ChannelState_h
 
-#include <HttpEndpoint.h>
-#include <MqttPubSub.h>
-#include <WebSocketTxRx.h>
-#include <FSPersistence.h> 
 #include "Utilities.h"
-
 
 #define DEFAULT_LED_STATE false
 #define DEFAULT_CONTROL_STATE false
@@ -125,8 +120,10 @@ static void updateChannel(JsonObject& json, Channel& channel) {
     channel.schedule.offAfter = schedule["offAfter"] ? (int)(round(60 * float(schedule["offAfter"]))) : (int)(60 * channel.schedule.offAfter);
     channel.schedule.startTimeHour = schedule["startTimeHour"] ? (int)(round(3600 * float(schedule["startTimeHour"]))) : (int)(3600 * channel.schedule.startTimeHour);
     channel.schedule.startTimeMinute = schedule["startTimeMinute"] ? (int)(round(60 * float(schedule["startTimeMinute"]))) : (int)(60 * channel.schedule.startTimeMinute);
+    if (channel.schedule.startTimeMinute >= 3600) { channel.schedule.startTimeMinute  = 0; }
     channel.schedule.endTimeHour = schedule["endTimeHour"] ? (int)(round(3600 * float(schedule["endTimeHour"]))) : (int)(3600 * channel.schedule.endTimeHour);
     channel.schedule.endTimeMinute = schedule["endTimeMinute"] ? (int)(round(60 * float(schedule["endTimeMinute"]))) : (int)(60 * channel.schedule.endTimeMinute);
+    if (channel.schedule.endTimeMinute >= 3600) { channel.schedule.endTimeMinute  = 0; }
   }
 
   static boolean dataIsValid(JsonObject& json, ChannelState& channelState){

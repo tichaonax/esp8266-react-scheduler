@@ -16,7 +16,6 @@ export const channelMiddleware = () => (next) => (action) => {
 
     case RESTART_CHANNEL_SCHEDULE:
       const url = `${CHANNEL_SCHEDULE_RESTART_SERVICE_PATH}?channel=${action.payload}`;
-      console.log(action);
       next([
           apiRequest({body: null, method: 'POST', url, feature: `${CHANNEL}${RESTART}`}),
           setLoader({loading: true, success: false, feature: `${CHANNEL}${RESTART}`})

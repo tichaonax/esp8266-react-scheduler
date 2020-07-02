@@ -278,7 +278,7 @@ ScheduledTime TaskScheduler::getTimeSpanSchedule(ScheduledTime& schedule){
       schedule.scheduleTime = _channel.startTime - current.totalCurrentTime;
 
       if(current.totalCurrentTime < (MID_NIGHT_SECONDS + 1)){
-        schedule.scheduleTime = schedule.scheduleTime + MID_NIGHT_SECONDS;
+        schedule.scheduleTime = schedule.scheduleTime + MID_NIGHT_SECONDS + 1;
       }
 
       return(schedule);
