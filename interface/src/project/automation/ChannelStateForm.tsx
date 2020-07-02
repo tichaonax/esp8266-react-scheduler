@@ -158,6 +158,7 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
             control={
             <Checkbox
                 checked={data.randomize}
+                disabled={data.enableTimeSpan}
                 onChange={handleValueChange('randomize')}
                 color="primary"
             />
