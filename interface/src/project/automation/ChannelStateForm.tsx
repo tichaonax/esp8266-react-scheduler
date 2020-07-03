@@ -16,6 +16,8 @@ import history from '../../history';
 
 import { setChannelSettings} from '../automation/redux/actions/channel';
 import { channelSettingsSelector } from '../automation/redux/selectors/channel';
+import { removeLoader } from '../automation/redux/actions/ui';
+import { Loader, LoaderActions } from './redux/types/ui';
 
 import { ChannelState, Schedule, ChannelSettingsActions, Channels, ChannelSettings, CHANNEL, RESTART } from '../automation/redux/types/channel';
 import {
@@ -26,42 +28,50 @@ import {
  } from './constants';
 import { connect } from 'react-redux';
 import { AppState } from './redux/store';
-import uiLoaderProjector from './redux/selectors/uiLoaderProjector';
+import { uiLoaderProjector } from './redux/selectors/uiLoaderProjector';
+
 
 type ChannelStateRestControllerFormProps = RestFormProps<ChannelState>;
 
 const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
 
   // @ts-ignore 
-  const { channels, loader, enqueueSnackbar, data, saveData, loadData, setData, handleValueChange, onSetChannelSettings } = props;
-  // suppress onSetChannelSettings not part of props;
+  const { channels, loader, enqueueSnackbar, data, saveData, loadData, setData, handleValueChange, onSetChannelSettings, onRemoveLoader } = props;
+  // suppress onSetChannelSettings, onRemoveLoader not part of props;
 
-  const restartSuccessMessage = (name: string) => {
+  const restartSuccessMessage = (name: string, loader: Loader) => {
+    if(loader.success){
       enqueueSnackbar(name +  " Schedule Restarted Successfully!", { variant: 'success' });
+      }else{
+        enqueueSnackbar(name + " " + loader.errorMessage, { variant: 'error' });
+      }
+      onRemoveLoader();
   }
 
   useEffect(() => {
-    if(loader && loader.loading && channels ){
+    console.log('loader', loader);
+    if(loader && !loader.loading && channels ){
       const { channelOne, channelTwo, channelThree, channelFour } = channels;
+      //console.log('loader', loader);
       switch (data.controlPin) {
         case CHANNEL_ONE_CONTROL_PIN:
           if (channelOne){
-            restartSuccessMessage(channelOne.name);
+            restartSuccessMessage(channelOne.name, loader);
           }
           break;
         case CHANNEL_TWO_CONTROL_PIN:
           if (channelTwo){
-            restartSuccessMessage(channelTwo.name);;
+            restartSuccessMessage(channelTwo.name, loader);;
           }
           break;
         case CHANNEL_THREE_CONTROL_PIN:
           if (channelThree){
-            restartSuccessMessage(channelThree.name);
+            restartSuccessMessage(channelThree.name, loader);
           }
           break;
         case CHANNEL_FOUR_CONTROL_PIN:
           if (channelFour){
-            restartSuccessMessage(channelFour.name);
+            restartSuccessMessage(channelFour.name, loader);
           }
           break;
         default:
@@ -302,15 +312,19 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
 
 const mapStateToProps = (state: AppState ) => {
   const channels: Channels = channelSettingsSelector(state);
-  const loader = uiLoaderProjector(`${CHANNEL}${RESTART}`)(state);
+  const loader: Loader = uiLoaderProjector(`${CHANNEL}${RESTART}`)(state);
   return {channels, loader}
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<ChannelSettingsActions>) => {
+const mapDispatchToProps = (dispatch: Dispatch<ChannelSettingsActions | LoaderActions>) => {
   return {
       onSetChannelSettings: (settings: ChannelSettings, channel: number) => {
         dispatch(setChannelSettings(settings, channel));
       },
+      onRemoveLoader: () => {
+        // @ts-ignore 
+        dispatch(removeLoader(`${CHANNEL}${RESTART}`));
+      }
   };
 }
 

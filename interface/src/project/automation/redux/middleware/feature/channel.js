@@ -6,7 +6,6 @@ import {setLoader} from "../../actions/ui";
 import {setNotification} from "../../actions/notification";
 
 import { ENDPOINT_ROOT } from '../../../../../api';
-export const CHANNEL_SCHEDULE_RESTART_SERVICE_PATH = ENDPOINT_ROOT + "channelScheduleRestart";
 
 export const channelMiddleware = () => (next) => (action) => {
 
@@ -15,7 +14,26 @@ export const channelMiddleware = () => (next) => (action) => {
   switch (action.type) {
 
     case RESTART_CHANNEL_SCHEDULE:
-      const url = `${CHANNEL_SCHEDULE_RESTART_SERVICE_PATH}?channel=${action.payload}`;
+      let channel;
+      switch (action.payload) {
+        case 1:
+          channel = "channelOneScheduleRestart";
+          break;
+        case 2:
+          channel = "channelTwoScheduleRestart";
+          break;
+        case 3:
+          channel = "channelThreeScheduleRestart";
+          break;
+        case 4:
+          channel = "channelFourScheduleRestart";
+          break;
+        default:
+          channel = "";
+          break;
+      }
+
+      const url = `${ENDPOINT_ROOT}${channel}`;
       next([
           apiRequest({body: null, method: 'POST', url, feature: `${CHANNEL}${RESTART}`}),
           setLoader({loading: true, success: false, feature: `${CHANNEL}${RESTART}`})

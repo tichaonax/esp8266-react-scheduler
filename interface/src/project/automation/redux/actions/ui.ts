@@ -10,7 +10,7 @@ export const setLoader = ({loading, success, feature, errorMessage} : Loader) =>
     )
 )({loading, success, feature, errorMessage});
 
-export const removeLoader = (feature: string) => (
+export const removeLoader = (feature : string) => (
     createAction(
         `${feature} ${REMOVE_LOADER}`,
         () => undefined,
