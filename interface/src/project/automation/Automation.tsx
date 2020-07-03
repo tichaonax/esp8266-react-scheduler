@@ -20,10 +20,6 @@ class Automation extends Component<RouteComponentProps> {
   };
 
   render() {
-    console.log('process.env.REACT_APP_CHANNEL_ONE', CHANNEL_ONE);
-    console.log('process.env.REACT_APP_CHANNEL_TWO', CHANNEL_TWO);
-    console.log('process.env.REACT_APP_CHANNEL_THREE', CHANNEL_THREE);
-    console.log('process.env.REACT_APP_CHANNEL_FOUR', CHANNEL_FOUR);
     return (
       <MenuAppBar sectionTitle="Automation System">
         <Tabs value={this.props.match.url} onChange={this.handleTabChange} variant="fullWidth">

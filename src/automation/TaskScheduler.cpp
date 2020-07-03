@@ -119,10 +119,10 @@ void TaskScheduler::setSchedule(){
     Serial.println("s");
     if ( schedule.scheduleTime > 0 ){
       scheduleTime = schedule.scheduleTime;
-      _alarmScheduler = Alarm.timerOnce(scheduleTime, std::bind(&TaskScheduler::scheduleTask, this));
+      Alarm.timerOnce(scheduleTime, std::bind(&TaskScheduler::scheduleTask, this));
     }
     else{
-       _alarmScheduler = Alarm.timerOnce(1, std::bind(&TaskScheduler::scheduleTask, this));
+       Alarm.timerOnce(1, std::bind(&TaskScheduler::scheduleTask, this));
     }
     _channelStateService.update([&](ChannelState& channelState) {
     channelState.channel.nextRunTime =  Utils.getLocalNextRunTime(scheduleTime);
@@ -135,7 +135,6 @@ void TaskScheduler::setSchedule(){
 }
 
 void TaskScheduler::scheduleTask(){
-  Alarm.disable(_alarmScheduler);
   if(_channel.enableTimeSpan){
     _alarmRepeat = Alarm.timerRepeat(TWENTY_FOUR_HOUR_DURATION, std::bind(&TaskScheduler::runTask, this));
   }else{
@@ -174,7 +173,7 @@ void TaskScheduler::runTask(){
       controlOn();
     }
     else{
-      _alarmSwitch = Alarm.timerOnce(getRandomOnTimeSpan(), std::bind(&TaskScheduler::controlOn, this));
+      Alarm.timerOnce(getRandomOnTimeSpan(), std::bind(&TaskScheduler::controlOn, this));
     }
   }else{
     String nextRunTime = "";
@@ -188,7 +187,6 @@ void TaskScheduler::runTask(){
 }
 
 void TaskScheduler::controlOn(){
-  Alarm.disable(_alarmSwitch);
   if(_channel.enabled){
     if(!_channel.schedule.isOverride){
       _channelStateService.update([&](ChannelState& channelState) {
@@ -201,12 +199,12 @@ void TaskScheduler::controlOn(){
       }, _channel.name);
 
       if(_channel.enableTimeSpan){
-        _alarmSwitch = Alarm.timerOnce(getScheduleTimeSpan(), std::bind(&TaskScheduler::controlOff, this));
+        Alarm.timerOnce(getScheduleTimeSpan(), std::bind(&TaskScheduler::controlOff, this));
       }else{
         if(!_channel.randomize){
-          _alarmSwitch = Alarm.timerOnce(_channel.schedule.offAfter, std::bind(&TaskScheduler::controlOff, this));
+          Alarm.timerOnce(_channel.schedule.offAfter, std::bind(&TaskScheduler::controlOff, this));
         }else{
-           _alarmSwitch = Alarm.timerOnce(getRandomOffTimeSpan(), std::bind(&TaskScheduler::controlOff, this));
+           Alarm.timerOnce(getRandomOffTimeSpan(), std::bind(&TaskScheduler::controlOff, this));
         }
       }
     }
@@ -290,9 +288,7 @@ void TaskScheduler::resetSchedule(){
   Serial.print("Resetting schedule for channel: ");
   Serial.println(_channel.name);
 
-  Alarm.disable(_alarmScheduler);
   Alarm.disable(_alarmRepeat);
-  Alarm.disable(_alarmSwitch);
 
   begin();
   setScheduleTimes();

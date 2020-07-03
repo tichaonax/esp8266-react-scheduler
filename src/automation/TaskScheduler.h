@@ -102,7 +102,6 @@ class TaskScheduler {
     TaskScheduler();
     void setSchedule();
     void setScheduleTimes();
-    //uint8_t getCurrenYear();
 
     private:
     CurrentTime getCurrentTime(){
@@ -117,9 +116,7 @@ class TaskScheduler {
         return current;
     }
 
-    AlarmId _alarmScheduler;
     AlarmId _alarmRepeat;
-    AlarmId _alarmSwitch;
 
     ChannelStateService _channelStateService;
     Channel _channel;
