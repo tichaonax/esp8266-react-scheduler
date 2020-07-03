@@ -68,7 +68,7 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
           break;
       }
     }
-  },[loader, enqueueSnackbar, channels]);
+  },[loader, enqueueSnackbar, channels, data.controlPin]);
 
     const restartSchedule = () => {
       switch (data.controlPin) {

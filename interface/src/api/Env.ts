@@ -1,3 +1,8 @@
+
+export const CHANNEL_ONE = process.env.REACT_APP_CHANNEL_ONE!;
+export const CHANNEL_TWO = process.env.REACT_APP_CHANNEL_TWO!;
+export const CHANNEL_THREE = process.env.REACT_APP_CHANNEL_THREE!;
+export const CHANNEL_FOUR = process.env.REACT_APP_CHANNEL_FOUR!;
 export const PROJECT_NAME = process.env.REACT_APP_PROJECT_NAME!;
 export const PROJECT_PATH = process.env.REACT_APP_PROJECT_PATH!;
 

@@ -24,11 +24,12 @@ void changeState()
 AsyncWebServer server(80);
 ESP8266React esp8266React(&server, &SPIFFS);
 
-ChannelMqttSettingsService channelOneMqttSettingsService =
+ #if defined(CHANNEL_ONE)
+  ChannelMqttSettingsService channelOneMqttSettingsService =
     ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
     CHANNEL_ONE_BROKER_SETTINGS_FILE, CHANNEL_ONE_BROKER_SETTINGS_PATH);
 
-TaskScheduler channelOneTaskScheduler = TaskScheduler(&server,
+  TaskScheduler channelOneTaskScheduler = TaskScheduler(&server,
                                                         esp8266React.getSecurityManager(),
                                                         esp8266React.getMqttClient(),
                                                         &SPIFFS,
@@ -47,12 +48,14 @@ TaskScheduler channelOneTaskScheduler = TaskScheduler(&server,
                                                         CHANNEL_ONE_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE,
                                                         &channelOneMqttSettingsService,
                                                         CHANNEL_ONE_DEFAULT_RANDOMIZE_SCHEDULE);
-
-/* ChannelMqttSettingsService channelTwoMqttSettingsService =
+  ChannelScheduleRestartService channelScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelOneTaskScheduler);
+#endif
+#if defined(CHANNEL_TWO)
+  ChannelMqttSettingsService channelTwoMqttSettingsService =
     ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
     CHANNEL_TWO_BROKER_SETTINGS_FILE, CHANNEL_TWO_BROKER_SETTINGS_PATH);
 
-TaskScheduler channelTwoTaskScheduler = TaskScheduler(&server,
+  TaskScheduler channelTwoTaskScheduler = TaskScheduler(&server,
                                                         esp8266React.getSecurityManager(),
                                                         esp8266React.getMqttClient(),
                                                         &SPIFFS,
@@ -71,12 +74,14 @@ TaskScheduler channelTwoTaskScheduler = TaskScheduler(&server,
                                                         CHANNEL_TWO_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE,
                                                         &channelTwoMqttSettingsService,
                                                         CHANNEL_TWO_DEFAULT_RANDOMIZE_SCHEDULE);  
-
+  ChannelScheduleRestartService channelScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelTwoTaskScheduler);
+#endif
+#if defined(CHANNEL_THREE)
  ChannelMqttSettingsService channelThreeMqttSettingsService =
     ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
     CHANNEL_THREE_BROKER_SETTINGS_FILE, CHANNEL_THREE_BROKER_SETTINGS_PATH);
 
-TaskScheduler channelThreeTaskScheduler = TaskScheduler(&server,
+  TaskScheduler channelThreeTaskScheduler = TaskScheduler(&server,
                                                         esp8266React.getSecurityManager(),
                                                         esp8266React.getMqttClient(),
                                                         &SPIFFS,
@@ -94,8 +99,10 @@ TaskScheduler channelThreeTaskScheduler = TaskScheduler(&server,
                                                         CHANNEL_THREE_DEFAULT_NAME,
                                                         CHANNEL_THREE_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE,
                                                         &channelThreeMqttSettingsService,
-                                                        CHANNEL_THREE_DEFAULT_RANDOMIZE_SCHEDULE);  
-
+                                                        CHANNEL_THREE_DEFAULT_RANDOMIZE_SCHEDULE);
+  ChannelScheduleRestartService channelScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelThreeTaskScheduler);
+#endif  
+#if defined(CHANNEL_FOUR)
  ChannelMqttSettingsService channelFourMqttSettingsService =
     ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
     CHANNEL_FOUR_BROKER_SETTINGS_FILE, CHANNEL_FOUR_BROKER_SETTINGS_PATH);
@@ -118,10 +125,9 @@ TaskScheduler channelThreeTaskScheduler = TaskScheduler(&server,
                                                         CHANNEL_FOUR_DEFAULT_NAME,
                                                         CHANNEL_FOUR_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE,
                                                         &channelFourMqttSettingsService,
-                                                        CHANNEL_FOUR_DEFAULT_RANDOMIZE_SCHEDULE); */
-
-
-ChannelScheduleRestartService channelScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelOneTaskScheduler);
+                                                        CHANNEL_FOUR_DEFAULT_RANDOMIZE_SCHEDULE);
+  ChannelScheduleRestartService channelScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelFourTaskScheduler);
+#endif
 
 void runSchedules(){
     // check to see if NTP updated the local time
@@ -131,16 +137,32 @@ void runSchedules(){
           validNTP = true;
           blinkerFast.detach(); // disable fast blinker
           blinkerHeartBeat.attach(0.5, changeState);  // and replace with normal
-          channelOneTaskScheduler.setSchedule();
-          //channelTwoTaskScheduler.setSchedule();
-          //channelThreeTaskScheduler.setSchedule();
-          //channelFourTaskScheduler.setSchedule();
+          #if defined(CHANNEL_ONE)
+            channelOneTaskScheduler.setSchedule();
+          #endif  
+          #if defined(CHANNEL_TWO)
+            channelTwoTaskScheduler.setSchedule();
+          #endif  
+          #if defined(CHANNEL_THREE)
+            channelThreeTaskScheduler.setSchedule();
+          #endif  
+          #if defined(CHANNEL_FOUR)
+            channelFourTaskScheduler.setSchedule();
+          #endif
         }
     }else{
-      channelOneTaskScheduler.loop();
-        // channelTwoTaskScheduler.loop();
-      /*   channelThreeTaskScheduler.loop();
-      channelFourTaskScheduler.loop(); */
+      #if defined(CHANNEL_ONE)
+            channelOneTaskScheduler.loop();
+          #endif  
+          #if defined(CHANNEL_TWO)
+            channelTwoTaskScheduler.loop();
+          #endif  
+          #if defined(CHANNEL_THREE)
+            channelThreeTaskScheduler.loop();
+          #endif  
+          #if defined(CHANNEL_FOUR)
+            channelFourTaskScheduler.loop();
+          #endif
     }
 }
 void setup() {
@@ -163,16 +185,22 @@ void setup() {
   // start the framework and demo project
   esp8266React.begin();
 
-
+#if defined(CHANNEL_ONE)
   channelOneTaskScheduler.begin();
-  //channelTwoTaskScheduler.begin();
-/*   channelThreeTaskScheduler.begin();
-  channelFourTaskScheduler.begin(); */
-
   channelOneTaskScheduler.setScheduleTimes();
-  //channelTwoTaskScheduler.setScheduleTimes();
-/*   channelThreeTaskScheduler.setScheduleTimes();
-  channelFourTaskScheduler.setScheduleTimes(); */
+#endif  
+#if defined(CHANNEL_TWO)
+  channelTwoTaskScheduler.begin();
+  channelTwoTaskScheduler.setScheduleTimes();
+#endif  
+#if defined(CHANNEL_THREE)
+  channelThreeTaskScheduler.begin();
+  channelThreeTaskScheduler.setScheduleTimes();
+#endif  
+#if defined(CHANNEL_FOUR)
+  channelFourTaskScheduler.begin();
+  channelFourTaskScheduler.setScheduleTimes(); 
+#endif
 
   // start the server
   server.begin();
