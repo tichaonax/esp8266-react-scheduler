@@ -58,7 +58,7 @@ ScheduledTime TaskScheduler::getNextRunTime(){
   CurrentTime current = getCurrentTime();
 
   if(_channel.enableTimeSpan){
-   return getTimeSpanSchedule(schedule);
+   return getTimeSpanScheduleNextRunTime(schedule);
   }
   
   if(_channel.startTime < _channel.endTime){
@@ -136,7 +136,7 @@ void TaskScheduler::setSchedule(){
 
 void TaskScheduler::scheduleTask(){
   if(_channel.enableTimeSpan){
-    _alarmRepeat = Alarm.timerRepeat(TWENTY_FOUR_HOUR_DURATION, std::bind(&TaskScheduler::runTask, this));
+    Alarm.timerOnce(getNextRunTime().scheduleTime, std::bind(&TaskScheduler::controlOn, this));
   }else{
     _alarmRepeat = Alarm.timerRepeat(_channel.schedule.runEvery, std::bind(&TaskScheduler::runTask, this));
   }
@@ -178,7 +178,7 @@ void TaskScheduler::runTask(){
   }else{
     String nextRunTime = "";
     if(_channel.enableTimeSpan){
-      nextRunTime =  Utils.getLocalNextRunTime(TWENTY_FOUR_HOUR_DURATION);
+      nextRunTime = Utils.getLocalNextRunTime(getNextRunTime().scheduleTime);
     }else{
       nextRunTime =  Utils.getLocalNextRunTime(_channel.schedule.runEvery);
     } 
@@ -199,7 +199,8 @@ void TaskScheduler::controlOn(){
       }, _channel.name);
 
       if(_channel.enableTimeSpan){
-        Alarm.timerOnce(getScheduleTimeSpan(), std::bind(&TaskScheduler::controlOff, this));
+        Alarm.timerOnce(getScheduleTimeSpanOff(), std::bind(&TaskScheduler::controlOff, this));
+        Alarm.timerOnce(getNextRunTime().scheduleTime, std::bind(&TaskScheduler::controlOn, this));
       }else{
         if(!_channel.randomize){
           Alarm.timerOnce(_channel.schedule.offAfter, std::bind(&TaskScheduler::controlOff, this));
@@ -211,7 +212,7 @@ void TaskScheduler::controlOn(){
   }
     String nextRunTime = "";
     if(_channel.enableTimeSpan){
-      nextRunTime =  Utils.getLocalNextRunTime(TWENTY_FOUR_HOUR_DURATION);
+      nextRunTime = Utils.getLocalNextRunTime(getNextRunTime().scheduleTime);
     }else{
       nextRunTime =  Utils.getLocalNextRunTime(_channel.schedule.runEvery);
     } 
@@ -240,7 +241,7 @@ void TaskScheduler::controlOff(){
   Serial.println(ctime(&tnow));
 }
 
-time_t TaskScheduler::getScheduleTimeSpan(){
+time_t TaskScheduler::getScheduleTimeSpanOff(){
   CurrentTime current = getCurrentTime();
   if(_channel.startTime < _channel.endTime){
     return (_channel.endTime - current.totalCurrentTime);
@@ -251,7 +252,7 @@ time_t TaskScheduler::getScheduleTimeSpan(){
   return (MID_NIGHT_SECONDS + 1 - current.totalCurrentTime + _channel.endTime);
 }
 
-ScheduledTime TaskScheduler::getTimeSpanSchedule(ScheduledTime& schedule){
+ScheduledTime TaskScheduler::getTimeSpanScheduleNextRunTime(ScheduledTime& schedule){
  CurrentTime current = getCurrentTime();
   if(_channel.startTime < _channel.endTime){
     if(current.totalCurrentTime > _channel.startTime){

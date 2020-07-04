@@ -121,14 +121,14 @@ class TaskScheduler {
     ChannelStateService _channelStateService;
     Channel _channel;
     bool    _validNTP = false;       // Wait for NTP to get valid time
-    time_t getScheduleTimeSpan();
+    time_t getScheduleTimeSpanOff();
     protected:
 
     void digitalClockDisplay();
     void digitalClockDisplay(time_t tnow);
 
     ScheduledTime getNextRunTime();
-    ScheduledTime getTimeSpanSchedule(ScheduledTime& schedule);
+    ScheduledTime getTimeSpanScheduleNextRunTime(ScheduledTime& schedule);
     void runTask();
     bool shouldRunTask();
     void scheduleTask();
