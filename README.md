@@ -1,5 +1,7 @@
 # esp8266-react-scheduler
 A basic scheduler for ESP8266 based on https://github.com/rjwats/esp8266-react
+    -D FT_UPLOAD_FIRMWARE=1
+FT_UPLOAD_FIRMWARE | Controls the whether the manual upload firmware feature is enabled. Disable this if you won't be manually uploading firmware.
 
 Make sure you are familiar with building the project by going to the lick above for more documenation.
 
