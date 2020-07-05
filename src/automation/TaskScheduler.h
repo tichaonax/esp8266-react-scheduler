@@ -116,7 +116,7 @@ class TaskScheduler {
         return current;
     }
 
-    AlarmId _alarmRepeat;
+    AlarmId _timerRepeat;
 
     ChannelStateService _channelStateService;
     Channel _channel;
@@ -134,9 +134,11 @@ class TaskScheduler {
     void scheduleTask();
     void controlOn();
     void controlOff();
-    void updateNextRunStatus(String nextRunTime);
+    void updateNextRunStatus();
     time_t getRandomOnTimeSpan();
-    time_t getRandomOffTimeSpan();  
+    time_t getRandomOffTimeSpan();
+    time_t getTimeSpanStartTimeFromNow();
+    void scheduleTimeSpanTask();  
 };
 
 #endif
