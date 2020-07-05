@@ -125,8 +125,6 @@ void ChannelStateService::begin() {
     _fsPersistence.readFromFS();
 
     _state.channel.controlOn = DEFAULT_CONTROL_STATE; // must be off on start up
-    _state.channel.lastStartedChangeTime =  "* Never *";
-    
     onChannelStateUpdated();
 }
 
