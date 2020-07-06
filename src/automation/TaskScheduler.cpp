@@ -165,7 +165,11 @@ void TaskScheduler::updateNextRunStatus(){
   if(_channel.enableTimeSpan){
     nextRunTime = Utils.getLocalNextRunTime(getTimeSpanStartTimeFromNow());
   }else{
-    nextRunTime =  Utils.getLocalNextRunTime(_channel.schedule.runEvery);
+    if(shouldRunTask()){
+      nextRunTime =  Utils.getLocalNextRunTime(_channel.schedule.runEvery);
+    }else{
+      nextRunTime =  Utils.getLocalNextRunTime(getNextRunTime().scheduleTime);
+    }
   } 
   _channelStateService.update([&](ChannelState& channelState) {
   channelState.channel.nextRunTime = nextRunTime;  
