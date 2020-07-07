@@ -251,13 +251,13 @@ time_t TaskScheduler::getScheduleTimeSpanOff(){
   CurrentTime current = getCurrentTime();
   if(_channel.startTime < _channel.endTime){
     if(current.totalCurrentTime < _channel.endTime ){
-      next = _channel.endTime - current.totalCurrentTime + 1;
+      next = _channel.endTime - current.totalCurrentTime;
     }
   }else{
     if(current.totalCurrentTime > _channel.endTime){
       next = MID_NIGHT_SECONDS + _channel.endTime - current.totalCurrentTime + 1;
     }else{
-      next = _channel.endTime - current.totalCurrentTime + 1;
+      next = _channel.endTime - current.totalCurrentTime;
     }
   }
   
