@@ -7,6 +7,7 @@
 #include "./automation/TaskScheduler.h"
 #include "./automation/ChannelStateService.h"
 #include "./automation/ChannelScheduleRestartService.h"
+#include "./automation/SystemStateService.h"
 
 #define SERIAL_BAUD_RATE 115200
 #define LED 2  //On board LED
@@ -23,6 +24,9 @@ void changeState()
 
 AsyncWebServer server(80);
 ESP8266React esp8266React(&server, &SPIFFS);
+
+SystemStateService systemStateService = SystemStateService(&server, esp8266React.getSecurityManager());
+
 
  #if defined(CHANNEL_ONE)
   ChannelMqttSettingsService channelOneMqttSettingsService =
@@ -184,6 +188,7 @@ void setup() {
   
   // start the framework and demo project
   esp8266React.begin();
+  systemStateService.begin();
 
 #if defined(CHANNEL_ONE)
   channelOneTaskScheduler.begin();

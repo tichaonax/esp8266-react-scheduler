@@ -5,13 +5,12 @@
 #include <HttpEndpoint.h>
 
 class Utilities {
-private:
+public:
   String eraseLineFeed(std::string str){
     str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
     return str.c_str();
   }
 
-public:
   String getLocalTime(){
     time_t now = time(0);
     return eraseLineFeed(ctime(&now));
