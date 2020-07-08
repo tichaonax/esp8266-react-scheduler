@@ -23,6 +23,7 @@ export interface ChannelSettings {
     controlPin: number;
     nextRunTime: string;
     randomize: boolean;
+    localDateTime: string;
 }
 
 export interface Channels {
@@ -43,6 +44,7 @@ export interface Channels {
     randomize: boolean;
     onSetChannelSettings: SetChannelSettingsType;
     channels: Channels;
+    localDateTime: string;
   }
 export interface ChannelStateFuncs {
   onRestartChannelSchedule: RestartChannelScheduleType; 

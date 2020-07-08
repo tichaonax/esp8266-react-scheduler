@@ -29,6 +29,7 @@ import {
 import { connect } from 'react-redux';
 import { AppState } from './redux/store';
 import { uiLoaderProjector } from './redux/selectors/uiLoaderProjector';
+import SystemStateWebSocketController from './SystemStateWebSocketController';
 
 
 type ChannelStateRestControllerFormProps = RestFormProps<ChannelState>;
@@ -143,7 +144,7 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
 
     return (
       <ValidatorForm onSubmit={saveFormAndRestartSchedule}>
-        <Typography variant="h6">{data.name}</Typography>
+        <Typography variant="h6">{data.name} <SystemStateWebSocketController/></Typography>
         <BlockFormControlLabel
             control={
             <Checkbox

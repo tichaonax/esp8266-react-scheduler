@@ -1,12 +1,13 @@
 #ifndef ChannelStateService_h
 #define ChannelStateService_h
 
-#include "ChannelState.h"
-#include "ChannelMqttSettingsService.h"
 #include <HttpEndpoint.h>
 #include <MqttPubSub.h>
 #include <WebSocketTxRx.h>
 #include <FSPersistence.h>
+#include <Ticker.h>
+#include "ChannelState.h"
+#include "ChannelMqttSettingsService.h"
 
 class ChannelStateService : public StatefulService<ChannelState> {
  public:
@@ -44,6 +45,7 @@ class ChannelStateService : public StatefulService<ChannelState> {
   String _defaultChannelName;
   String _restChannelEndPoint;
   String _webSocketChannelEndPoint;
+  Ticker _deviceTime;
 
     time_t  _runEvery;         // run every 30 mins
     time_t  _offAfter;         // stop after 5 mins
@@ -58,5 +60,6 @@ class ChannelStateService : public StatefulService<ChannelState> {
 
   void registerConfig();
   void onChannelStateUpdated();
+  void updateSystemTime();
 };
 #endif

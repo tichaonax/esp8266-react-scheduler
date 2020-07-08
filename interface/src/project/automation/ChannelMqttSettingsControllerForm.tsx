@@ -6,6 +6,7 @@ import SaveIcon from '@material-ui/icons/Save';
 
 import { RestFormProps, FormActions, FormButton } from '../../components';
 import { ChannelMqttSettings } from './types';
+import SystemStateWebSocketController from './SystemStateWebSocketController';
 
 type ChannelMqttSettingsControllerFormProps = RestFormProps<ChannelMqttSettings>;
 
@@ -13,6 +14,7 @@ const ChannelMqttSettingsControllerForm = (props: ChannelMqttSettingsControllerF
   const { data, saveData, loadData, handleValueChange } = props;
   return (
     <ValidatorForm onSubmit={saveData}>
+      <Typography variant="h6">{data.name} <SystemStateWebSocketController/></Typography>
       <Box bgcolor="primary.main" color="primary.contrastText" p={2} mt={2} mb={2}>
         <Typography variant="body1">
           The channel switch is controllable via MQTT designed to work with Home Assistant's auto discovery feature.

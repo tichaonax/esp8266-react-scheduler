@@ -126,8 +126,15 @@ void ChannelStateService::begin() {
 
     _state.channel.controlOn = DEFAULT_CONTROL_STATE; // must be off on start up
     onChannelStateUpdated();
+    _deviceTime.attach(15, std::bind(&ChannelStateService::updateSystemTime, this));
 }
 
 Channel ChannelStateService::getChannel(){
   return _state.channel;
+}
+
+void ChannelStateService::updateSystemTime(){
+  update([&](ChannelState& channelState) {  
+    return StateUpdateResult::CHANGED;
+  }, _state.channel.name);
 }

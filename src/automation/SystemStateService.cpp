@@ -1,5 +1,4 @@
 #include "SystemStateService.h"
-//#include <Ticker.h>
 
 SystemStateService::SystemStateService(AsyncWebServer* server,
                                      SecurityManager* securityManager) :
@@ -17,12 +16,15 @@ SystemStateService::SystemStateService(AsyncWebServer* server,
                SYSTEM_STATE_SOCKET_PATH,
                securityManager,
                AuthenticationPredicates::IS_AUTHENTICATED){
-  addUpdateHandler([&](const String& originId) { onConfigUpdated(); }, false);
 }
 
 void SystemStateService::begin() {
-  onConfigUpdated();
+  _systemHeartBeat.attach(15, std::bind(&SystemStateService::changeState, this));
 }
 
-void SystemStateService::onConfigUpdated() {
+void SystemStateService::changeState()
+{
+    update([&](SystemState& systemState) {
+        return StateUpdateResult::CHANGED;
+    }, "systemHeartBeat");
 }

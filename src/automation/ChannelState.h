@@ -46,6 +46,7 @@ struct Channel {
     String  lastStartedChangeTime;  //last time the switch was toggled
     String  nextRunTime;
     bool    randomize;      // when enabled randomize the on/off
+    String localDateTime;
 };
 
 class ChannelState {
@@ -85,6 +86,8 @@ public:
   }
   private:
   static void readChannel(Channel& channel, JsonObject jsonObject) {
+     time_t tnow = time(nullptr);
+    jsonObject["localDateTime"] = Utils.eraseLineFeed(ctime(&tnow));
     jsonObject["controlPin"] = channel.controlPin;
     jsonObject["controlOn"] = channel.controlOn;
     jsonObject["name"] = channel.name;
