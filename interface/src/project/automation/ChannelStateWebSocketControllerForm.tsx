@@ -67,7 +67,7 @@ const ChannelStateWebSocketControllerForm = (props: ChannelStateWebSocketControl
         secondary={`Last status at ${data.lastStartedChangeTime.substr(0, data.lastStartedChangeTime.lastIndexOf(' '))}`}/>
       </ListItem>
       {showLink && (
-      <Typography variant="body1"><a onClick={onClick} href="#">View schedule</a></Typography>)}
+      <Typography variant="body1"><a onClick={onClick} href="#">Schedule</a></Typography>)}
       <Typography variant="overline">{`Device Time [${data.localDateTime.substr(0, data.localDateTime.lastIndexOf(':'))}] `}</Typography>
     </ValidatorForm>
   );
