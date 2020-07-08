@@ -1,7 +1,8 @@
 import React from 'react';
 import { ValidatorForm } from 'react-material-ui-form-validator';
 import history from '../../history';
-import { Switch, Typography } from '@material-ui/core';
+import { Switch, Typography, ListItem, Avatar, ListItemText } from '@material-ui/core';
+import BeachAccessIcon from '@material-ui/icons/BeachAccess';
 import { WebSocketFormProps } from '../../components';
 import { BlockFormControlLabel } from '../../components';
 
@@ -49,11 +50,8 @@ const ChannelStateWebSocketControllerForm = (props: ChannelStateWebSocketControl
   return (
     <ValidatorForm onSubmit={saveData}>
       <Typography variant="subtitle1">{data.name}</Typography>
-      <Typography variant="overline">{`Device Time [${data.localDateTime.substr(0, data.localDateTime.lastIndexOf(':'))}] `}</Typography>
-      {showLink && (<Typography>
-        <Typography variant="body1"><a onClick={onClick} href="#">View schedule</a></Typography>
-        <Typography variant="body1">Next Run Time : {data.nextRunTime.substr(0, data.nextRunTime.lastIndexOf(' '))}</Typography>
-        </Typography>)}
+      <Typography variant="body2">{`Channel control pin ${data.controlPin}`}</Typography>
+      <ListItem>
       <BlockFormControlLabel
         control={
           <Switch
@@ -62,9 +60,15 @@ const ChannelStateWebSocketControllerForm = (props: ChannelStateWebSocketControl
             color="primary"
           />
         }
-        label={`Last status at ${data.lastStartedChangeTime.substr(0, data.lastStartedChangeTime.lastIndexOf(' '))}`}
+        label
       /> 
-      <Typography variant="overline">{`Channel control pin [ ${data.controlPin} ]`}</Typography>
+      <ListItemText 
+        primary={`Scheduled ${data.nextRunTime.substr(0, data.nextRunTime.lastIndexOf(' '))}`}
+        secondary={`Last status at ${data.lastStartedChangeTime.substr(0, data.lastStartedChangeTime.lastIndexOf(' '))}`}/>
+      </ListItem>
+      {showLink && (
+      <Typography variant="body1"><a onClick={onClick} href="#">View schedule</a></Typography>)}
+      <Typography variant="overline">{`Device Time [${data.localDateTime.substr(0, data.localDateTime.lastIndexOf(':'))}] `}</Typography>
     </ValidatorForm>
   );
 }
