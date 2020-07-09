@@ -33,6 +33,7 @@ void NTPSettingsService::begin() {
 #ifdef ESP32
 void NTPSettingsService::onStationModeGotIP(WiFiEvent_t event, WiFiEventInfo_t info) {
   Serial.println(F("Got IP address, starting NTP Synchronization"));
+  
   configureNTP();
 }
 

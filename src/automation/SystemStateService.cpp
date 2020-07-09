@@ -19,7 +19,7 @@ SystemStateService::SystemStateService(AsyncWebServer* server,
 }
 
 void SystemStateService::begin() {
-  _systemHeartBeat.attach(15, std::bind(&SystemStateService::changeState, this));
+  _systemHeartBeat.attach(10, std::bind(&SystemStateService::changeState, this));
 }
 
 void SystemStateService::changeState()

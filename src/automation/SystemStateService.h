@@ -13,6 +13,7 @@
 struct System {
   tm localTime;
   String localDateTime;
+  String IP;
 }; 
 
 class SystemState {

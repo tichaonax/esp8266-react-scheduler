@@ -72,8 +72,39 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
 
   // configure settings service update handler to update CONTROL state
   addUpdateHandler([&](const String& originId) { onChannelStateUpdated(); }, false);
+
+  #ifdef ESP32
+  WiFi.onEvent(
+      std::bind(&ChannelStateService::onStationModeDisconnected, this, std::placeholders::_1, std::placeholders::_2),
+      WiFiEvent_t::SYSTEM_EVENT_STA_DISCONNECTED);
+  WiFi.onEvent(std::bind(&ChannelStateService::onStationModeGotIP, this, std::placeholders::_1, std::placeholders::_2),
+               WiFiEvent_t::SYSTEM_EVENT_STA_GOT_IP);
+#elif defined(ESP8266)
+  _onStationModeDisconnectedHandler = WiFi.onStationModeDisconnected(
+      std::bind(&ChannelStateService::onStationModeDisconnected, this, std::placeholders::_1));
+  _onStationModeGotIPHandler =
+      WiFi.onStationModeGotIP(std::bind(&ChannelStateService::onStationModeGotIP, this, std::placeholders::_1));
+#endif
 }
 
+#ifdef ESP32
+void ChannelStateService::onStationModeGotIP(WiFiEvent_t event, WiFiEventInfo_t info) {
+  updateStateIP(WiFi.localIP().toString());
+}
+
+void ChannelStateService::onStationModeDisconnected(WiFiEvent_t event, WiFiEventInfo_t info) {
+  updateStateIP("");
+}
+#elif defined(ESP8266)
+void ChannelStateService::onStationModeGotIP(const WiFiEventStationModeGotIP& event) {
+  updateStateIP(WiFi.localIP().toString());
+}
+
+void ChannelStateService::onStationModeDisconnected(const WiFiEventStationModeDisconnected& event) {
+  updateStateIP("");
+}
+
+#endif
 void ChannelStateService::onChannelStateUpdated() {
   _state.channel.controlPin = _channelControlPin;
   digitalWrite(_state.channel.controlPin, _state.channel.controlOn ? CONTROL_ON : CONTROL_OFF);
@@ -126,15 +157,22 @@ void ChannelStateService::begin() {
 
     _state.channel.controlOn = DEFAULT_CONTROL_STATE; // must be off on start up
     onChannelStateUpdated();
-    _deviceTime.attach(15, std::bind(&ChannelStateService::updateSystemTime, this));
+    _deviceTime.attach(10, std::bind(&ChannelStateService::updateStateTime, this));
 }
 
 Channel ChannelStateService::getChannel(){
   return _state.channel;
 }
 
-void ChannelStateService::updateSystemTime(){
+void ChannelStateService::updateStateTime(){
   update([&](ChannelState& channelState) {  
+    return StateUpdateResult::CHANGED;
+  }, _state.channel.name);
+}
+
+void ChannelStateService::updateStateIP(String IPAddress){
+  update([&](ChannelState& channelState) {  
+    channelState.channel.IP = IPAddress;
     return StateUpdateResult::CHANGED;
   }, _state.channel.name);
 }

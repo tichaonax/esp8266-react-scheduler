@@ -68,7 +68,7 @@ const ChannelStateWebSocketControllerForm = (props: ChannelStateWebSocketControl
       </ListItem>
       {showLink && (
       <Typography variant="body1"><a onClick={onClick} href="#">Schedule</a></Typography>)}
-      <Typography variant="overline">{`Device Time [${data.localDateTime.substr(0, data.localDateTime.lastIndexOf(':'))}] `}</Typography>
+      <Typography variant="overline">{`IP: ${data.IPAddress} Time: ${data.localDateTime.substr(0, data.localDateTime.lastIndexOf(':'))} `}</Typography>
     </ValidatorForm>
   );
 }

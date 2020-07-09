@@ -47,6 +47,7 @@ struct Channel {
     String  nextRunTime;
     bool    randomize;      // when enabled randomize the on/off
     String localDateTime;
+    String IP;
 };
 
 class ChannelState {
@@ -96,6 +97,7 @@ public:
     jsonObject["lastStartedChangeTime"] = channel.lastStartedChangeTime;
     jsonObject["nextRunTime"] = channel.nextRunTime;
     jsonObject["randomize"] = channel.randomize;
+    jsonObject["IPAddress"] = channel.IP;
 
     JsonObject schedule = jsonObject.createNestedObject("schedule");
     

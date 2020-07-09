@@ -8,17 +8,17 @@ class AutoInformation extends Component {
     return (
       <SectionContent title='Automation Information' titleGutter>
         <Typography variant="body1" paragraph>
-          This simple app allows you to control a switch through a schedule. It comes with defaults that can be changed by user.
+          This simple app allows user to control a switch through a simple schedule. It comes with default settings that can be changed by user.
         </Typography>
         <Typography variant="body1" paragraph>
           Channel Schedule is active only between the 'Start Time' and 'End Time' periods. Changes to the schedule 
-          must be saved to take effect after system is reset.
+          must be saved to take effect. The changes take effect after 5s from time changes are saved. The schedule for the Channel is restarted with the new settings. The system also provides the device time as well as the IPAddress of the device if connected to WIFI.
         </Typography>      
         <List>
           <ListItem>
             <ListItemText
               primary="Channel control pin"
-              secondary="This is the hardware pin on the micro-controller you may connect a relay if you want to controls a device."
+              secondary="This is the hardware pin on the micro-controller user may connect a relay in order to control a device. Solid State Relays (SSR) may be connected directly to the pin without the need for buffering transistors."
             />
           </ListItem> 
           <ListItem>
@@ -36,43 +36,43 @@ class AutoInformation extends Component {
           <ListItem>
             <ListItemText
               primary="Enable TimeSpan?"
-              secondary="When checked the switch is activated only during the time period from 'Start Time' to 'End Time'"
+              secondary="When checked the switch is activated only during the time period from 'Start Time' to 'End Time', the Randomize feature is disabled automatically with this choice."
             />
           </ListItem> 
           <ListItem>
             <ListItemText
               primary="Randomize Switch?"
-              secondary="When checked the switch is activated/deactivated randomly within the 'Run Every' and 'Off After' time definitions"
+              secondary="When checked the switch is activated/deactivated randomly within the 'Run Every' and 'Off After' time definitions. The function is disabled if 'TimeSpan' is active."
             />
           </ListItem>
           <ListItem>
             <ListItemText
               primary="Channel Name"
-              secondary="User defined channel name that shows on the screen, if one is not provided system defaults to factory settings."
+              secondary="User defined channel name that shows on the screen, if one is not provided system defaults to factory settings value."
             />
           </ListItem> 
           <ListItem>
             <ListItemText
               primary="Run Every"
-              secondary="Turns on the switch repeatedly at this time frequency. If 'Enable TimeSpan' is checked the option is disabled and is ignored"
+              secondary="Turns on the switch repeatedly at the selected time frequency. If 'Enable TimeSpan' is checked the option is disabled and is ignored. If 'Randomize' option is enabled the switch can turn on after a random delay up to 'Run Every' minus 'Off After' duration. This is useful to simulate person turning lights on/off at night in bedrooms."
             />
           </ListItem>  
           <ListItem>
             <ListItemText
               primary="Off After"
-              secondary="Turns off the switch at the end of this time period automatically after switch is activated by the 'Run Every' event. If 'Enable TimeSpan' is checked the option is disabled and is ignored"
+              secondary="Turns off the switch at the end of this time period automatically after switch is activated by the 'Run Every' event. If 'Enable TimeSpan' is checked the option is disabled and is ignored. If 'Randomize' option is enabled the switch can turn off after a random delay up to 'Off After' duration."
             />
           </ListItem>    
           <ListItem>
             <ListItemText
               primary="Start Time"
-              secondary="The start time when the schedule is active"
+              secondary="The start time when the schedule is active. If the start time is greater than the end time then schedule ends the following day."
             />
           </ListItem>
           <ListItem>
             <ListItemText
               primary="End Time"
-              secondary="The end time when the schedule is active"
+              secondary="The end time when the schedule is active."
             />
           </ListItem> 
         </List>

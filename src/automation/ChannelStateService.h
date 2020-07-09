@@ -58,8 +58,20 @@ class ChannelStateService : public StatefulService<ChannelState> {
     bool  _enableTimeSpan;
     bool  _randomize;
 
+#ifdef ESP32
+  void onStationModeGotIP(WiFiEvent_t event, WiFiEventInfo_t info);
+  void onStationModeDisconnected(WiFiEvent_t event, WiFiEventInfo_t info);
+#elif defined(ESP8266)
+  WiFiEventHandler _onStationModeDisconnectedHandler;
+  WiFiEventHandler _onStationModeGotIPHandler;
+
+  void onStationModeGotIP(const WiFiEventStationModeGotIP& event);
+  void onStationModeDisconnected(const WiFiEventStationModeDisconnected& event);
+#endif
+
   void registerConfig();
   void onChannelStateUpdated();
-  void updateSystemTime();
+  void updateStateTime();
+  void updateStateIP(String IPAddress);
 };
 #endif

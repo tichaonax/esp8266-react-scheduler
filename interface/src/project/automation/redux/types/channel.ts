@@ -24,6 +24,7 @@ export interface ChannelSettings {
     nextRunTime: string;
     randomize: boolean;
     localDateTime: string;
+    IPAddress: string;
 }
 
 export interface Channels {
@@ -45,6 +46,7 @@ export interface Channels {
     onSetChannelSettings: SetChannelSettingsType;
     channels: Channels;
     localDateTime: string;
+    IPAddress: string;
   }
 export interface ChannelStateFuncs {
   onRestartChannelSchedule: RestartChannelScheduleType; 

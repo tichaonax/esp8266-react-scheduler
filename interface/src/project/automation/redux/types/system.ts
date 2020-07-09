@@ -6,4 +6,5 @@ export interface Tm {
 export interface SystemState {
     localTime: Tm;
     localDateTime: string;
+    IPAddress: string;
 }
