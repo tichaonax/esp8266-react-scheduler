@@ -24,8 +24,7 @@ LightStateService::LightStateService(AsyncWebServer* server,
     _mqttClient(mqttClient),
     _lightMqttSettingsService(lightMqttSettingsService),
     _fsPersistence(LightState::read, LightState::update, this, fs, "/config/lightState.json"){
-  // configure blink led to be output
-  pinMode(BLINK_LED, OUTPUT);
+  pinMode(LED_PIN, OUTPUT);
 
   // configure MQTT callback
   _mqttClient->onConnect(std::bind(&LightStateService::registerConfig, this));
@@ -44,7 +43,7 @@ void LightStateService::begin() {
 }
 
 void LightStateService::onConfigUpdated() {
-  digitalWrite(BLINK_LED, _state.ledOn ? LED_ON : LED_OFF);
+  digitalWrite(LED_PIN, _state.ledOn ? LED_ON : LED_OFF);
 }
 
 void LightStateService::registerConfig() {
