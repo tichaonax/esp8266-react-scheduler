@@ -2,7 +2,6 @@
 #define TaskScheduler_h
 
 #include <ctime>
-//#include <Ticker.h>
 #include "ESP8266TimeAlarms.h"
 #include "ChannelMqttSettingsService.h"
 #include "ChannelStateService.h"
@@ -12,7 +11,6 @@
 
 #define CONTROL_ON 0x1
 #define CONTROL_OFF 0x0
-
 
 #define CHANNEL_ONE_CONTROL_PIN 5
 #define CHANNEL_ONE_REST_ENDPOINT_PATH "/rest/channelOneState"  //restChannelEndPoint
@@ -29,7 +27,14 @@
 #define CHANNEL_ONE_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE false
 #define CHANNEL_ONE_DEFAULT_RANDOMIZE_SCHEDULE false
 
-#define CHANNEL_TWO_CONTROL_PIN 12
+
+#ifdef SINILINK
+  // onboard relay control pin = 4
+  #define CHANNEL_TWO_CONTROL_PIN 4
+#else
+    #define CHANNEL_TWO_CONTROL_PIN 12
+#endif
+
 #define CHANNEL_TWO_REST_ENDPOINT_PATH "/rest/channelTwoState"  //restChannelEndPoint
 #define CHANNEL_TWO_SOCKET_PATH "/ws/channelTwoState"  // webSocketChannelEndPoint
 #define CHANNEL_TWO_DEFAULT_NAME "Solar Fridge" //  defaultChannelName
