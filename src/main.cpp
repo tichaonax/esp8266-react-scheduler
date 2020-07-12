@@ -31,7 +31,7 @@ SystemStateService systemStateService = SystemStateService(&server, esp8266React
  #if defined(CHANNEL_ONE)
   ChannelMqttSettingsService channelOneMqttSettingsService =
     ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
-    CHANNEL_ONE_BROKER_SETTINGS_FILE, CHANNEL_ONE_BROKER_SETTINGS_PATH);
+    CHANNEL_ONE_BROKER_SETTINGS_FILE, CHANNEL_ONE_BROKER_SETTINGS_PATH, CHANNEL_ONE_CONTROL_PIN);
 
   TaskScheduler channelOneTaskScheduler = TaskScheduler(&server,
                                                         esp8266React.getSecurityManager(),
@@ -57,7 +57,7 @@ SystemStateService systemStateService = SystemStateService(&server, esp8266React
 #if defined(CHANNEL_TWO)
   ChannelMqttSettingsService channelTwoMqttSettingsService =
     ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
-    CHANNEL_TWO_BROKER_SETTINGS_FILE, CHANNEL_TWO_BROKER_SETTINGS_PATH);
+    CHANNEL_TWO_BROKER_SETTINGS_FILE, CHANNEL_TWO_BROKER_SETTINGS_PATH, CHANNEL_TWO_CONTROL_PIN);
 
   TaskScheduler channelTwoTaskScheduler = TaskScheduler(&server,
                                                         esp8266React.getSecurityManager(),
@@ -83,7 +83,7 @@ SystemStateService systemStateService = SystemStateService(&server, esp8266React
 #if defined(CHANNEL_THREE)
  ChannelMqttSettingsService channelThreeMqttSettingsService =
     ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
-    CHANNEL_THREE_BROKER_SETTINGS_FILE, CHANNEL_THREE_BROKER_SETTINGS_PATH);
+    CHANNEL_THREE_BROKER_SETTINGS_FILE, CHANNEL_THREE_BROKER_SETTINGS_PATH, CHANNEL_THREE_CONTROL_PIN);
 
   TaskScheduler channelThreeTaskScheduler = TaskScheduler(&server,
                                                         esp8266React.getSecurityManager(),
@@ -109,7 +109,7 @@ SystemStateService systemStateService = SystemStateService(&server, esp8266React
 #if defined(CHANNEL_FOUR)
  ChannelMqttSettingsService channelFourMqttSettingsService =
     ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
-    CHANNEL_FOUR_BROKER_SETTINGS_FILE, CHANNEL_FOUR_BROKER_SETTINGS_PATH);
+    CHANNEL_FOUR_BROKER_SETTINGS_FILE, CHANNEL_FOUR_BROKER_SETTINGS_PATH, CHANNEL_FOUR_CONTROL_PIN);
 
  TaskScheduler channelFourTaskScheduler = TaskScheduler(&server,
                                                         esp8266React.getSecurityManager(),
