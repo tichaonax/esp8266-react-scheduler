@@ -71,7 +71,7 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
   _channelMqttSettingsService->addUpdateHandler([&](const String& originId) { registerConfig(); }, false);
 
   // configure settings service update handler to update CONTROL state
-  addUpdateHandler([&](const String& originId) { onChannelStateUpdated(); }, false);
+  addUpdateHandler([&](const String& originId) { onConfigUpdated(); }, false);
 
   #ifdef ESP32
   WiFi.onEvent(
@@ -105,7 +105,7 @@ void ChannelStateService::onStationModeDisconnected(const WiFiEventStationModeDi
 }
 
 #endif
-void ChannelStateService::onChannelStateUpdated() {
+void ChannelStateService::onConfigUpdated() {
   _state.channel.controlPin = _channelControlPin;
   digitalWrite(_state.channel.controlPin, _state.channel.controlOn ? CONTROL_ON : CONTROL_OFF);
 }
@@ -156,8 +156,9 @@ void ChannelStateService::begin() {
     _fsPersistence.readFromFS();
 
     _state.channel.controlOn = DEFAULT_CONTROL_STATE; // must be off on start up
-    onChannelStateUpdated();
+    onConfigUpdated();
     _deviceTime.attach(10, std::bind(&ChannelStateService::updateStateTime, this));
+    _channelMqttSettingsService->begin();
 }
 
 Channel ChannelStateService::getChannel(){

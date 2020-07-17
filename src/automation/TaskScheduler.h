@@ -17,6 +17,8 @@
 #define CHANNEL_ONE_SOCKET_PATH "/ws/channelOneState"  // webSocketChannelEndPoint
 #define CHANNEL_ONE_DEFAULT_NAME "Water Pump" //  defaultChannelName
 #define CHANNEL_ONE_CONFIG_JSON_PATH "/config/channelOneState.json"  // channelJsonConfigPath
+#define CHANNEL_ONE_HOME_ASSISTANT_ENTITY "water_pump_switch"    // homeAssistantEntity
+#define CHANNEL_ONE_HOME_ASSISTANT_ENTITY_TYPE "switch" 
 #define CHANNEL_ONE_DEFAULT_CONTROL_RUN_EVERY 15
 #define CHANNEL_ONE_DEFAULT_CONTROL_OFF_AFTER 3
 #define CHANNEL_ONE_DEFAULT_CONTROL_START_TIME_HOUR 8
@@ -39,6 +41,8 @@
 #define CHANNEL_TWO_SOCKET_PATH "/ws/channelTwoState"  // webSocketChannelEndPoint
 #define CHANNEL_TWO_DEFAULT_NAME "Solar Fridge" //  defaultChannelName
 #define CHANNEL_TWO_CONFIG_JSON_PATH "/config/channelTwoState.json"  // channelJsonConfigPath
+#define CHANNEL_TWO_HOME_ASSISTANT_ENTITY "solar_fridge_switch"    // homeAssistantEntity
+#define CHANNEL_TWO_HOME_ASSISTANT_ENTITY_TYPE "switch" 
 #define CHANNEL_TWO_DEFAULT_CONTROL_RUN_EVERY 30
 #define CHANNEL_TWO_DEFAULT_CONTROL_OFF_AFTER 15
 #define CHANNEL_TWO_DEFAULT_CONTROL_START_TIME_HOUR 8
@@ -54,6 +58,8 @@
 #define CHANNEL_THREE_SOCKET_PATH "/ws/channelThreeState"  // webSocketChannelEndPoint
 #define CHANNEL_THREE_DEFAULT_NAME "Inside Lights" //  defaultChannelName
 #define CHANNEL_THREE_CONFIG_JSON_PATH "/config/channelThreeState.json"  // channelJsonConfigPath
+#define CHANNEL_THREE_HOME_ASSISTANT_ENTITY "inside_light"    // homeAssistantEntity
+#define CHANNEL_THREE_HOME_ASSISTANT_ENTITY_TYPE "light" 
 #define CHANNEL_THREE_DEFAULT_CONTROL_RUN_EVERY 10
 #define CHANNEL_THREE_DEFAULT_CONTROL_OFF_AFTER 5
 #define CHANNEL_THREE_DEFAULT_CONTROL_START_TIME_HOUR 19
@@ -69,6 +75,8 @@
 #define CHANNEL_FOUR_SOCKET_PATH "/ws/channelFourState"  // webSocketChannelEndPoint
 #define CHANNEL_FOUR_DEFAULT_NAME "Outside Lights" //  defaultChannelName
 #define CHANNEL_FOUR_CONFIG_JSON_PATH "/config/channelFourState.json"  // channelJsonConfigPath
+#define CHANNEL_FOUR_HOME_ASSISTANT_ENTITY "outside_light"    // homeAssistantEntity
+#define CHANNEL_FOUR_HOME_ASSISTANT_ENTITY_TYPE "light" 
 #define CHANNEL_FOUR_DEFAULT_CONTROL_RUN_EVERY 30
 #define CHANNEL_FOUR_DEFAULT_CONTROL_OFF_AFTER 5
 #define CHANNEL_FOUR_DEFAULT_CONTROL_START_TIME_HOUR 19

@@ -1,4 +1,6 @@
 #include <ESP8266React.h>
+#include <LightMqttSettingsService.h>
+#include <LightStateService.h>
 #include <FS.h>
 #include <Ticker.h>  //Ticker Librar/
 
@@ -24,6 +26,13 @@ void changeState()
 
 AsyncWebServer server(80);
 ESP8266React esp8266React(&server, &SPIFFS);
+/* LightMqttSettingsService lightMqttSettingsService =
+    LightMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager());
+LightStateService lightStateService = LightStateService(&server,
+                                                        esp8266React.getSecurityManager(),
+                                                        esp8266React.getMqttClient(),
+                                                        &lightMqttSettingsService,
+                                                        &SPIFFS); */
 
 SystemStateService systemStateService = SystemStateService(&server, esp8266React.getSecurityManager());
 
@@ -31,7 +40,8 @@ SystemStateService systemStateService = SystemStateService(&server, esp8266React
  #if defined(CHANNEL_ONE)
   ChannelMqttSettingsService channelOneMqttSettingsService =
     ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
-    CHANNEL_ONE_BROKER_SETTINGS_FILE, CHANNEL_ONE_BROKER_SETTINGS_PATH, CHANNEL_ONE_CONTROL_PIN);
+    CHANNEL_ONE_BROKER_SETTINGS_FILE, CHANNEL_ONE_BROKER_SETTINGS_PATH, CHANNEL_ONE_CONTROL_PIN,
+    CHANNEL_ONE_DEFAULT_NAME, CHANNEL_ONE_HOME_ASSISTANT_ENTITY, CHANNEL_ONE_HOME_ASSISTANT_ENTITY_TYPE);
 
   TaskScheduler channelOneTaskScheduler = TaskScheduler(&server,
                                                         esp8266React.getSecurityManager(),
@@ -57,7 +67,8 @@ SystemStateService systemStateService = SystemStateService(&server, esp8266React
 #if defined(CHANNEL_TWO)
   ChannelMqttSettingsService channelTwoMqttSettingsService =
     ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
-    CHANNEL_TWO_BROKER_SETTINGS_FILE, CHANNEL_TWO_BROKER_SETTINGS_PATH, CHANNEL_TWO_CONTROL_PIN);
+    CHANNEL_TWO_BROKER_SETTINGS_FILE, CHANNEL_TWO_BROKER_SETTINGS_PATH, CHANNEL_TWO_CONTROL_PIN,
+    CHANNEL_TWO_DEFAULT_NAME, CHANNEL_TWO_HOME_ASSISTANT_ENTITY, CHANNEL_TWO_HOME_ASSISTANT_ENTITY_TYPE);
 
   TaskScheduler channelTwoTaskScheduler = TaskScheduler(&server,
                                                         esp8266React.getSecurityManager(),
@@ -83,7 +94,8 @@ SystemStateService systemStateService = SystemStateService(&server, esp8266React
 #if defined(CHANNEL_THREE)
  ChannelMqttSettingsService channelThreeMqttSettingsService =
     ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
-    CHANNEL_THREE_BROKER_SETTINGS_FILE, CHANNEL_THREE_BROKER_SETTINGS_PATH, CHANNEL_THREE_CONTROL_PIN);
+    CHANNEL_THREE_BROKER_SETTINGS_FILE, CHANNEL_THREE_BROKER_SETTINGS_PATH, CHANNEL_THREE_CONTROL_PIN,
+     CHANNEL_THREE_DEFAULT_NAME, CHANNEL_THREE_HOME_ASSISTANT_ENTITY, CHANNEL_THREE_HOME_ASSISTANT_ENTITY_TYPE);
 
   TaskScheduler channelThreeTaskScheduler = TaskScheduler(&server,
                                                         esp8266React.getSecurityManager(),
@@ -109,7 +121,8 @@ SystemStateService systemStateService = SystemStateService(&server, esp8266React
 #if defined(CHANNEL_FOUR)
  ChannelMqttSettingsService channelFourMqttSettingsService =
     ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
-    CHANNEL_FOUR_BROKER_SETTINGS_FILE, CHANNEL_FOUR_BROKER_SETTINGS_PATH, CHANNEL_FOUR_CONTROL_PIN);
+    CHANNEL_FOUR_BROKER_SETTINGS_FILE, CHANNEL_FOUR_BROKER_SETTINGS_PATH, CHANNEL_FOUR_CONTROL_PIN,
+    CHANNEL_FOUR_DEFAULT_NAME, CHANNEL_FOUR_HOME_ASSISTANT_ENTITY, CHANNEL_FOUR_HOME_ASSISTANT_ENTITY_TYPE);
 
  TaskScheduler channelFourTaskScheduler = TaskScheduler(&server,
                                                         esp8266React.getSecurityManager(),
@@ -190,21 +203,33 @@ void setup() {
   esp8266React.begin();
   systemStateService.begin();
 
+  // load the initial light settings
+  //lightStateService.begin();
+
+  // start the light service
+  //lightMqttSettingsService.begin();
+
+
+
 #if defined(CHANNEL_ONE)
   channelOneTaskScheduler.begin();
   channelOneTaskScheduler.setScheduleTimes();
+  //channelOneMqttSettingsService.begin();
 #endif  
 #if defined(CHANNEL_TWO)
   channelTwoTaskScheduler.begin();
   channelTwoTaskScheduler.setScheduleTimes();
+  //channelTwoMqttSettingsService.begin();
 #endif  
 #if defined(CHANNEL_THREE)
   channelThreeTaskScheduler.begin();
   channelThreeTaskScheduler.setScheduleTimes();
+  //channelThreeMqttSettingsService.begin();
 #endif  
 #if defined(CHANNEL_FOUR)
   channelFourTaskScheduler.begin();
-  channelFourTaskScheduler.setScheduleTimes(); 
+  channelFourTaskScheduler.setScheduleTimes();
+  //channelFourMqttSettingsService.begin(); 
 #endif
 
   // start the server

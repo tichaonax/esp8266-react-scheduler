@@ -70,7 +70,7 @@ class ChannelStateService : public StatefulService<ChannelState> {
 #endif
 
   void registerConfig();
-  void onChannelStateUpdated();
+  void onConfigUpdated();
   void updateStateTime();
   void updateStateIP(String IPAddress);
 };
