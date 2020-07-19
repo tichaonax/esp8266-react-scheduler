@@ -1,3 +1,4 @@
+#include "Channels.h"
 #include "ChannelStateService.h"
 
 #define CONTROL_ON 0x1
@@ -126,10 +127,10 @@ void ChannelStateService::registerConfig() {
     doc["~"] = settings.mqttPath;
     doc["name"] = settings.name;
     doc["unique_id"] = settings.uniqueId;
+    doc["cmd_t"] = "~/set";
+    doc["stat_t"] = "~/state";
+    doc["schema"] = "json";
   });
-  doc["cmd_t"] = "~/set";
-  doc["stat_t"] = "~/state";
-  doc["schema"] = "json";
 
   String payload;
   serializeJson(doc, payload);
