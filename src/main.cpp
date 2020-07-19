@@ -141,7 +141,7 @@ SystemStateService systemStateService = SystemStateService(&server, esp8266React
                                                         CHANNEL_FOUR_DEFAULT_CONTROL_END_TIME_MINUTE,
                                                         CHANNEL_FOUR_DEFAULT_ENABLED_STATE,
                                                         CHANNEL_FOUR_DEFAULT_NAME,
-                                                        CHANNEL_FOUR_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE,
+                                                      CHANNEL_FOUR_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE,
                                                         &channelFourMqttSettingsService,
                                                         CHANNEL_FOUR_DEFAULT_RANDOMIZE_SCHEDULE);
   ChannelScheduleRestartService channelFourScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelFourTaskScheduler, CHANNEL_FOUR_SCHEDULE_RESTART_SERVICE_PATH);

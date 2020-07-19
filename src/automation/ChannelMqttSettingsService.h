@@ -4,6 +4,7 @@
 #include <HttpEndpoint.h>
 #include <FSPersistence.h>
 #include <ESPUtils.h>
+#include "channels.h"
 
 #define CHANNEL_ONE_BROKER_SETTINGS_FILE "/config/channelOneBrokerSettings.json"
 #define CHANNEL_ONE_BROKER_SETTINGS_PATH "/rest/channelOneBrokerSettings"
@@ -30,9 +31,26 @@ class ChannelMqttSettings {
   }
 
   static StateUpdateResult update(JsonObject& root, ChannelMqttSettings& settings) {
-    settings.mqttPath = root["mqtt_path"] | ESPUtils::defaultDeviceValue("homeassistant/light/" + settings.homeAssistantEntity + "_" + String(settings.channelControlPin) + "/");
+    String topicHeader;
+    String topicType;
+    
+    switch (settings.channelControlPin)
+    {
+      case CHANNEL_ONE_CONTROL_PIN :
+      case CHANNEL_TWO_CONTROL_PIN:
+        topicHeader = "homeassistant/switch/";
+        topicType = "switch-";
+      break;
+      default:
+        topicHeader = "homeassistant/light/";
+        topicType = "light-";
+      break;
+    }
+
     settings.name = root["name"] | ESPUtils::defaultDeviceValue(settings.channelName + " : ");
-    settings.uniqueId = root["unique_id"] | ESPUtils::defaultDeviceValue("light-" + String(settings.channelControlPin) + "-");
+    settings.mqttPath = root["mqtt_path"] | ESPUtils::defaultDeviceValue(topicHeader + settings.homeAssistantEntity + "-" + String(settings.channelControlPin) + "/");
+    settings.uniqueId = root["unique_id"] | ESPUtils::defaultDeviceValue(topicType + String(settings.channelControlPin) + "-");
+      
     return StateUpdateResult::CHANGED;
   }
 };

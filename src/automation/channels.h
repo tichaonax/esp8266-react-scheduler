@@ -6,7 +6,7 @@
 #define CHANNEL_ONE_SOCKET_PATH "/ws/channelOneState"  // webSocketChannelEndPoint
 #define CHANNEL_ONE_DEFAULT_NAME "Water Pump" //  defaultChannelName
 #define CHANNEL_ONE_CONFIG_JSON_PATH "/config/channelOneState.json"  // channelJsonConfigPath
-#define CHANNEL_ONE_HOME_ASSISTANT_ENTITY "water_pump_switch"    // homeAssistantEntity
+#define CHANNEL_ONE_HOME_ASSISTANT_ENTITY "water_pump_switch"
 #define CHANNEL_ONE_DEFAULT_CONTROL_RUN_EVERY 15
 #define CHANNEL_ONE_DEFAULT_CONTROL_OFF_AFTER 3
 #define CHANNEL_ONE_DEFAULT_CONTROL_START_TIME_HOUR 8
@@ -28,7 +28,7 @@
 #define CHANNEL_TWO_SOCKET_PATH "/ws/channelTwoState"  // webSocketChannelEndPoint
 #define CHANNEL_TWO_DEFAULT_NAME "Solar Fridge" //  defaultChannelName
 #define CHANNEL_TWO_CONFIG_JSON_PATH "/config/channelTwoState.json"  // channelJsonConfigPath
-#define CHANNEL_TWO_HOME_ASSISTANT_ENTITY "solar_fridge_switch"    // homeAssistantEntity
+#define CHANNEL_TWO_HOME_ASSISTANT_ENTITY "solar_fridge_switch"
 #define CHANNEL_TWO_DEFAULT_CONTROL_RUN_EVERY 30
 #define CHANNEL_TWO_DEFAULT_CONTROL_OFF_AFTER 15
 #define CHANNEL_TWO_DEFAULT_CONTROL_START_TIME_HOUR 8
