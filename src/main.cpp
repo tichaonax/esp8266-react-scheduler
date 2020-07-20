@@ -1,7 +1,6 @@
 #include <ESP8266React.h>
 #include <LightMqttSettingsService.h>
 #include <LightStateService.h>
-#include <FS.h>
 #include <Ticker.h>  //Ticker Librar/
 
 #include "./automation/Utilities.h"
@@ -26,9 +25,9 @@ void changeState()
 }
 
 AsyncWebServer server(80);
-ESP8266React esp8266React(&server, &SPIFFS);
+ESP8266React esp8266React(&server);
 /* LightMqttSettingsService lightMqttSettingsService =
-    LightMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager());
+    LightMqttSettingsService(&server, esp8266React.getFS(), esp8266React.getSecurityManager());
 LightStateService lightStateService = LightStateService(&server,
                                                         esp8266React.getSecurityManager(),
                                                         esp8266React.getMqttClient(),
@@ -186,13 +185,6 @@ void runSchedules(){
 void setup() {
   // start serial and filesystem
   Serial.begin(SERIAL_BAUD_RATE);
-
-  // start the file system (must be done before starting the framework)
-#ifdef ESP32
-  SPIFFS.begin(true);
-#elif defined(ESP8266)
-  SPIFFS.begin();
-#endif
 
   pinMode(LED,OUTPUT);
   validNTP = false;

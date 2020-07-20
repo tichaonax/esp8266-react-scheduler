@@ -1,5 +1,6 @@
 # esp8266-react-scheduler
 A basic scheduler for ESP8266 based on https://github.com/rjwats/esp8266-react
+getFS()                      | The filesystem used by the framework
 
 Make sure you are familiar with building the project by going to the link above for more documentation.
 
