@@ -120,7 +120,6 @@ void ChannelStateService::registerConfig() {
   String pubTopic;
 
   DynamicJsonDocument doc(256);
-  bool useSimple = false;
   _channelMqttSettingsService->read([&](ChannelMqttSettings& settings) {
     configTopic = settings.mqttPath + "/config";
     subTopic = settings.mqttPath + "/set";
@@ -130,32 +129,25 @@ void ChannelStateService::registerConfig() {
     doc["unique_id"] = settings.uniqueId;
     doc["cmd_t"] = "~/set";
     doc["stat_t"] = "~/state";
+    
     switch (settings.channelControlPin)
     {
       case CHANNEL_ONE_CONTROL_PIN :
           doc["icon"] = "mdi:water-pump";
-          doc["payload_on"] =  "{\"state\": \"ON\"}";
-          doc["payload_off"] =  "{\"state\": \"OFF\"}";
-          doc["state_on"] =  "ON";
-          doc["state_off"] =  "OFF";
-          useSimple = true;
+          doc["payload_on"] =  "{\"state\":\"ON\"}";
+          doc["payload_off"] = "{\"state\":\"OFF\"}";
         break;
       case CHANNEL_TWO_CONTROL_PIN:
           doc["icon"] = "mdi:fridge";
-          doc["payload_on"] =  "{\"state\": \"ON\"}";
-          doc["payload_off"] =  "{\"state\": \"OFF\"}";
-          doc["state_on"] =  "ON";
-          doc["state_off"] =  "OFF";
-          useSimple = true;
+          doc["payload_on"] =  "{\"state\":\"ON\"}";
+          doc["payload_off"] = "{\"state\":\"OFF\"}";
         break;
       case CHANNEL_THREE_CONTROL_PIN:
           doc["schema"] = "json";
-          useSimple = false;
         break;
       default:
-        doc["schema"] = "json";
-        useSimple = false;
-      break;
+          doc["schema"] = "json";
+        break;
     }
   });
 
@@ -163,7 +155,7 @@ void ChannelStateService::registerConfig() {
   serializeJson(doc, payload);
   _mqttClient->publish(configTopic.c_str(), 0, false, payload.c_str());
 
-  _mqttPubSub.configureTopics(pubTopic, subTopic, useSimple);
+  _mqttPubSub.configureTopics(pubTopic, subTopic);
 }
 
 void ChannelStateService::begin() {

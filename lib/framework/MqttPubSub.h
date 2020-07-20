@@ -38,9 +38,8 @@ class MqttPub : virtual public MqttConnector<T> {
     MqttConnector<T>::_statefulService->addUpdateHandler([&](const String& originId) { publish(); }, false);
   }
 
-  void setPubTopic(const String& pubTopic, bool useSimple=false) {
+  void setPubTopic(const String& pubTopic) {
     _pubTopic = pubTopic;
-    _useSimple = useSimple;
     publish();
   }
 
@@ -52,7 +51,6 @@ class MqttPub : virtual public MqttConnector<T> {
  private:
   JsonStateReader<T> _stateReader;
   String _pubTopic;
-  bool _useSimple;
 
   void publish() {
     if (_pubTopic.length() > 0 && MqttConnector<T>::_mqttClient->connected()) {
@@ -64,13 +62,9 @@ class MqttPub : virtual public MqttConnector<T> {
       // serialize to string
       String payload;
       serializeJson(json, payload);
+
       // publish the payload
-      if(_useSimple){
-        String simple = jsonObject["state"];
-        MqttConnector<T>::_mqttClient->publish(_pubTopic.c_str(), 0, false, simple.c_str());
-      }else{
-        MqttConnector<T>::_mqttClient->publish(_pubTopic.c_str(), 0, false, payload.c_str());
-      }
+      MqttConnector<T>::_mqttClient->publish(_pubTopic.c_str(), 0, false, payload.c_str());
     }
   }
 };
@@ -138,16 +132,6 @@ class MqttSub : virtual public MqttConnector<T> {
     if (!error && json.is<JsonObject>()) {
       JsonObject jsonObject = json.as<JsonObject>();
       MqttConnector<T>::_statefulService->update(jsonObject, _stateUpdater, MQTT_ORIGIN_ID);
-    }else{
-      JsonObject jsonObject;
-      String upDateString = payload;
-      if(upDateString.substring(0,3) == "ON"){
-        jsonObject["state"] = "ON";
-        MqttConnector<T>::_statefulService->update(jsonObject, _stateUpdater, MQTT_ORIGIN_ID);
-      }else{
-        jsonObject["state"] = "OFF";
-        MqttConnector<T>::_statefulService->update(jsonObject, _stateUpdater, MQTT_ORIGIN_ID);
-      }
     }
   }
 };
@@ -168,9 +152,9 @@ class MqttPubSub : public MqttPub<T>, public MqttSub<T> {
   }
 
  public:
-  void configureTopics(const String& pubTopic, const String& subTopic, bool useSimple=false) {
+  void configureTopics(const String& pubTopic, const String& subTopic) {
     MqttSub<T>::setSubTopic(subTopic);
-    MqttPub<T>::setPubTopic(pubTopic, useSimple);
+    MqttPub<T>::setPubTopic(pubTopic);
   }
 
  protected:
