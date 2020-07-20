@@ -1,3 +1,4 @@
+#include "channels.h"
 #include "ChannelStateService.h"
 
 #define CONTROL_ON 0x1
@@ -119,6 +120,7 @@ void ChannelStateService::registerConfig() {
   String pubTopic;
 
   DynamicJsonDocument doc(256);
+  bool useSimple = false;
   _channelMqttSettingsService->read([&](ChannelMqttSettings& settings) {
     configTopic = settings.mqttPath + "/config";
     subTopic = settings.mqttPath + "/set";
@@ -128,14 +130,40 @@ void ChannelStateService::registerConfig() {
     doc["unique_id"] = settings.uniqueId;
     doc["cmd_t"] = "~/set";
     doc["stat_t"] = "~/state";
-    doc["schema"] = "json";
+    switch (settings.channelControlPin)
+    {
+      case CHANNEL_ONE_CONTROL_PIN :
+          doc["icon"] = "mdi:water-pump";
+          doc["payload_on"] =  "{\"state\": \"ON\"}";
+          doc["payload_off"] =  "{\"state\": \"OFF\"}";
+          doc["state_on"] =  "ON";
+          doc["state_off"] =  "OFF";
+          useSimple = true;
+        break;
+      case CHANNEL_TWO_CONTROL_PIN:
+          doc["icon"] = "mdi:fridge";
+          doc["payload_on"] =  "{\"state\": \"ON\"}";
+          doc["payload_off"] =  "{\"state\": \"OFF\"}";
+          doc["state_on"] =  "ON";
+          doc["state_off"] =  "OFF";
+          useSimple = true;
+        break;
+      case CHANNEL_THREE_CONTROL_PIN:
+          doc["schema"] = "json";
+          useSimple = false;
+        break;
+      default:
+        doc["schema"] = "json";
+        useSimple = false;
+      break;
+    }
   });
 
   String payload;
   serializeJson(doc, payload);
   _mqttClient->publish(configTopic.c_str(), 0, false, payload.c_str());
 
-  _mqttPubSub.configureTopics(pubTopic, subTopic);
+  _mqttPubSub.configureTopics(pubTopic, subTopic, useSimple);
 }
 
 void ChannelStateService::begin() {

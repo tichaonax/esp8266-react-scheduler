@@ -37,7 +37,7 @@
 #endif
 
 #ifndef FACTORY_MQTT_KEEP_ALIVE
-#define FACTORY_MQTT_KEEP_ALIVE 16
+#define FACTORY_MQTT_KEEP_ALIVE 60
 #endif
 
 #ifndef FACTORY_MQTT_CLEAN_SESSION
@@ -45,7 +45,7 @@
 #endif
 
 #ifndef FACTORY_MQTT_MAX_TOPIC_LENGTH
-#define FACTORY_MQTT_MAX_TOPIC_LENGTH 128
+#define FACTORY_MQTT_MAX_TOPIC_LENGTH 256
 #endif
 
 static String generateClientId() {
