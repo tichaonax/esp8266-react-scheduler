@@ -307,13 +307,9 @@ time_t TaskScheduler::getTimeSpanStartTimeFromNow(){
   return(_channel.startTime - current.totalCurrentTime);
 }
 
-void TaskScheduler::resetSchedule(){
-  Serial.print("Resetting schedule for channel: ");
-  Serial.println(_channel.name);
-
+void TaskScheduler::scheduleRestart(){
   Alarm.disable(_timerRepeat);
-
-  begin();
   setScheduleTimes();
+  controlOff();
   setSchedule();
 }

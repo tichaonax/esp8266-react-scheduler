@@ -35,7 +35,7 @@ class TaskScheduler {
                     bool randomize);
     void begin();
     void loop();
-    void resetSchedule();
+    void scheduleRestart();
 
     TaskScheduler();
     void setSchedule();
