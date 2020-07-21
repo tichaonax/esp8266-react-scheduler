@@ -224,9 +224,8 @@ void TaskScheduler::controlOn(){
   updateNextRunStatus();
 }
 
-void TaskScheduler::controlOff(){
-  if(!_channel.schedule.isOverride){
-    _channelStateService.update([&](ChannelState& channelState) {
+void TaskScheduler::overrideControlOff(){
+  _channelStateService.update([&](ChannelState& channelState) {
       if (!channelState.channel.controlOn) {
         return StateUpdateResult::UNCHANGED;
       }
@@ -235,7 +234,11 @@ void TaskScheduler::controlOff(){
       return StateUpdateResult::CHANGED;
     }, _channel.name);
     updateNextRunStatus();
-  }
+}
+
+void TaskScheduler::controlOff(){
+  if(!_channel.schedule.isOverride){
+    overrideControlOff();
 }
 
  void TaskScheduler::digitalClockDisplay() {
@@ -310,6 +313,6 @@ time_t TaskScheduler::getTimeSpanStartTimeFromNow(){
 void TaskScheduler::scheduleRestart(){
   Alarm.disable(_timerRepeat);
   setScheduleTimes();
-  controlOff();
+  overrideControlOff();
   setSchedule();
 }

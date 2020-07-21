@@ -76,7 +76,8 @@ class TaskScheduler {
     time_t getRandomOnTimeSpan();
     time_t getRandomOffTimeSpan();
     time_t getTimeSpanStartTimeFromNow();
-    void scheduleTimeSpanTask();  
+    void scheduleTimeSpanTask();
+    void overrideControlOff();  
 };
 
 #endif
