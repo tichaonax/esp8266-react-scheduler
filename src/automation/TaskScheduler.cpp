@@ -230,7 +230,7 @@ void TaskScheduler::overrideControlOff(){
         return StateUpdateResult::UNCHANGED;
       }
       channelState.channel.controlOn = false;
-      channelState.channel.lastStartedChangeTime =  Utils.getLocalTime();
+      channelState.channel.lastStartedChangeTime = Utils.getLocalTime();
       return StateUpdateResult::CHANGED;
     }, _channel.name);
     updateNextRunStatus();
@@ -239,14 +239,15 @@ void TaskScheduler::overrideControlOff(){
 void TaskScheduler::controlOff(){
   if(!_channel.schedule.isOverride){
     overrideControlOff();
+  }
 }
 
- void TaskScheduler::digitalClockDisplay() {
+void TaskScheduler::digitalClockDisplay() {
   time_t tnow = time(nullptr);
   Serial.print(ctime(&tnow));
 }
 
- void TaskScheduler::digitalClockDisplay(time_t tnow) {
+void TaskScheduler::digitalClockDisplay(time_t tnow) {
   Serial.println(ctime(&tnow));
 }
 
