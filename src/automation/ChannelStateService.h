@@ -46,6 +46,7 @@ class ChannelStateService : public StatefulService<ChannelState> {
   String _restChannelEndPoint;
   String _webSocketChannelEndPoint;
   Ticker _deviceTime;
+  Ticker _mqttRepublish;
 
     time_t  _runEvery;         // run every 30 mins
     time_t  _offAfter;         // stop after 5 mins
@@ -73,5 +74,6 @@ class ChannelStateService : public StatefulService<ChannelState> {
   void onConfigUpdated();
   void updateStateTime();
   void updateStateIP(String IPAddress);
+  void mqttRepublish();
 };
 #endif
