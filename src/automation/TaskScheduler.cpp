@@ -97,7 +97,7 @@ ScheduledTime TaskScheduler::getNextRunTime(){
   }
   // we are starting later than ending next day
   if( (current.totalCurrentTime > _channel.startTime) || (current.totalCurrentTime < _channel.endTime)){
-    schedule.scheduleTime = 0;
+    schedule.scheduleTime = getTimeSpanStartTimeFromNow();
   }else{ 
       schedule.scheduleTime = _channel.startTime - current.totalCurrentTime;
   }
