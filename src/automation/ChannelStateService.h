@@ -29,7 +29,8 @@ class ChannelStateService : public StatefulService<ChannelState> {
                     String  channelName,
                     bool  enableTimeSpan,
                     ChannelMqttSettingsService* channelMqttSettingsService,
-                    bool randomize);
+                    bool randomize,
+                    time_t hotTimeHour);
 
   void begin();
   Channel getChannel();
@@ -54,6 +55,7 @@ class ChannelStateService : public StatefulService<ChannelState> {
     time_t  _startTimeMinute;  // 30
     time_t  _endTimeHour;      // 16
     time_t  _endTimeMinute;    // 30
+    time_t  _hotTimeHour;     // 0 to 4hr
     bool    _enabled;
     String  _channelName;
     bool  _enableTimeSpan;

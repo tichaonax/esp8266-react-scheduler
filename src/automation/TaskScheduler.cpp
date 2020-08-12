@@ -21,7 +21,8 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                               String  channelName,
                               bool  enableTimeSpan,
                               ChannelMqttSettingsService* channelMqttSettingsService,
-                              bool randomize) :
+                              bool randomize,
+                              time_t hotTimeHour) :
     _channelStateService(server,
                         securityManager,
                         mqttClient,
@@ -40,7 +41,8 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                         channelName,
                         enableTimeSpan,
                         channelMqttSettingsService,
-                        randomize)
+                        randomize,
+                        hotTimeHour)
                                        {
   };
 
@@ -96,10 +98,13 @@ ScheduledTime TaskScheduler::getNextRunTime(){
     return schedule;
   }
   // we are starting later than ending next day
-  if( (current.totalCurrentTime > _channel.startTime) || (current.totalCurrentTime < _channel.endTime)){
-    schedule.scheduleTime = getTimeSpanStartTimeFromNow();
+  if( (current.totalCurrentTime > _channel.startTime) && (current.totalCurrentTime < _channel.endTime)){
+    schedule.scheduleTime = 0;
   }else{ 
-      schedule.scheduleTime = _channel.startTime - current.totalCurrentTime;
+      schedule.scheduleTime = getTimeSpanStartTimeFromNow() ;
+      if(_channel.randomize){
+        schedule.scheduleTime = schedule.scheduleTime  + _channel.schedule.hotTimeHour;
+      }
   }
   
   if( schedule.scheduleTime <= 0 ) { schedule.scheduleTime = 1;}
@@ -114,45 +119,95 @@ void TaskScheduler::setScheduleTimes(){
 
 void TaskScheduler::setSchedule(){
   Serial.println("");
-  Serial.print("Current Time:");
+  Serial.print("Current Time: ");
   digitalClockDisplay();
   Serial.print(_channel.name);
 
   if(_channel.enabled){
+    CurrentTime current = getCurrentTime();
     ScheduledTime schedule = getNextRunTime();
     if (schedule.scheduleTime <= 0) { schedule.scheduleTime = 1; } 
     Serial.print(": Time to next task run: ");
     Serial.print(schedule.scheduleTime);
     Serial.println("s");
-    
-    Alarm.timerOnce(schedule.scheduleTime, std::bind(&TaskScheduler::scheduleTask, this));
-    
+
+    if(!_channel.randomize){
+      Alarm.timerOnce(schedule.scheduleTime, std::bind(&TaskScheduler::scheduleTask, this));
+    }else{
+      if(_channel.schedule.hotTimeHour == 0){
+        Alarm.timerOnce(schedule.scheduleTime, std::bind(&TaskScheduler::scheduleTask, this));
+      }else{
+        if(_channel.startTime + _channel.schedule.hotTimeHour >= current.totalCurrentTime){
+          Alarm.timerOnce(schedule.scheduleTime, std::bind(&TaskScheduler::scheduleHotTask, this));
+        }
+        if(schedule.scheduleTime > 1){
+          Alarm.timerOnce(schedule.scheduleTime, std::bind(&TaskScheduler::scheduleHotTask, this));
+          Alarm.timerOnce((schedule.scheduleTime + _channel.schedule.hotTimeHour), std::bind(&TaskScheduler::scheduleTask, this));
+        }else{
+          if(_channel.startTime + _channel.schedule.hotTimeHour <= current.totalCurrentTime){
+              Alarm.timerOnce(schedule.scheduleTime, std::bind(&TaskScheduler::scheduleTask, this));
+          }else{
+            Alarm.timerOnce((schedule.scheduleTime + _channel.startTime + _channel.schedule.hotTimeHour - current.totalCurrentTime), std::bind(&TaskScheduler::scheduleTask, this));
+          }
+        }
+      }
+    }
+
     _channelStateService.update([&](ChannelState& channelState) {
       channelState.channel.nextRunTime = Utils.getLocalNextRunTime(getNextRunTime().scheduleTime);
       Serial.print("Task set to start at : ");
       Serial.println(channelState.channel.nextRunTime);
       return StateUpdateResult::CHANGED;
     }, _channel.name);
-  }else{
-    Serial.println(": Task is DISABLED.");
-  } 
+  }
 }
 
 void TaskScheduler::scheduleTask(){
   if(_channel.enableTimeSpan){
     Alarm.timerOnce(getTimeSpanStartTimeFromNow(), std::bind(&TaskScheduler::scheduleTimeSpanTask, this));
   }else{
-    _timerRepeat = Alarm.timerRepeat(_channel.schedule.runEvery, std::bind(&TaskScheduler::runTask, this));
+    _timeEveryRepeat = Alarm.timerRepeat(_channel.schedule.runEvery, std::bind(&TaskScheduler::runTask, this));
   }
-  runTask();  // run once initially on set
+  runTask();
  }
 
+void TaskScheduler::scheduleHotTask(){
+  _timeHotHourRepeat = Alarm.timerRepeat(TWENTY_FOUR_HOUR_DURATION, std::bind(&TaskScheduler::runHotTask, this));
+   runHotTask();
+}
+
+void TaskScheduler::runHotTask(){
+  if(_channel.enabled){
+    _timeSpanActive = true;
+    _channelStateService.update([&](ChannelState& channelState) {
+
+    if (channelState.channel.controlOn) {
+      return StateUpdateResult::UNCHANGED;
+    }
+      channelState.channel.controlOn = true;
+      channelState.channel.lastStartedChangeTime =  Utils.getLocalTime();
+      return StateUpdateResult::CHANGED;
+    }, _channel.name);
+
+    CurrentTime current = getCurrentTime();
+    time_t offSpan = _channel.startTime + _channel.schedule.hotTimeHour - current.totalCurrentTime;
+    if(offSpan < 1) { offSpan = 1;}
+    Alarm.timerOnce(offSpan, std::bind(&TaskScheduler::stopHotTask, this));
+  }
+}
+
+void TaskScheduler::stopHotTask(){
+  _timeSpanActive = false;
+  controlOff();
+}
+
 void TaskScheduler::scheduleTimeSpanTask(){
-  _timerRepeat = Alarm.timerRepeat(TWENTY_FOUR_HOUR_DURATION, std::bind(&TaskScheduler::runTask, this));
+  _timeSpanRepeat = Alarm.timerRepeat(TWENTY_FOUR_HOUR_DURATION, std::bind(&TaskScheduler::runTask, this));
   runTask();
 }
 
 bool TaskScheduler::shouldRunTask(){
+  if (_timeSpanActive) { return false; }
   CurrentTime current = getCurrentTime();
   time_t currentTime = current.hours + current.minutes;
   if(_channel.startTime < _channel.endTime){
@@ -312,7 +367,9 @@ time_t TaskScheduler::getTimeSpanStartTimeFromNow(){
 }
 
 void TaskScheduler::scheduleRestart(){
-  Alarm.disable(_timerRepeat);
+  Alarm.disable(_timeHotHourRepeat);
+  Alarm.disable(_timeSpanRepeat);
+  Alarm.disable(_timeEveryRepeat);
   setScheduleTimes();
   overrideControlOff();
   setSchedule();

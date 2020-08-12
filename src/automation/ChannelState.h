@@ -29,7 +29,8 @@ struct Schedule {
     time_t  startTimeMinute;  // 30
     time_t  endTimeHour;      // 16
     time_t  endTimeMinute;    // 30
-    bool    isOverride;         // when true ignore schedule run
+    bool    isOverride;       // when true ignore schedule run
+    time_t  hotTimeHour;      // default 0 hours [0-4]
 };
 
 
@@ -107,6 +108,7 @@ public:
     schedule["startTimeMinute"] = round(float(float(channel.schedule.startTimeMinute)/float(60)) * 1000)/ 1000;
     schedule["endTimeHour"] = round(float(float(channel.schedule.endTimeHour)/float(3600)) * 1000)/ 1000;
     schedule["endTimeMinute"] = round(float(float(channel.schedule.endTimeMinute)/float(60)) * 1000)/ 1000;
+    schedule["hotTimeHour"] =  round(float(float(channel.schedule.hotTimeHour)/float(3600)) * 1000)/ 1000;
   }
 
 static void updateChannel(JsonObject& json, Channel& channel) {
@@ -129,6 +131,7 @@ static void updateChannel(JsonObject& json, Channel& channel) {
     channel.schedule.endTimeHour = schedule["endTimeHour"] ? (int)(round(3600 * float(schedule["endTimeHour"]))) : (int)(3600 * channel.schedule.endTimeHour);
     channel.schedule.endTimeMinute = schedule["endTimeMinute"] ? (int)(round(60 * float(schedule["endTimeMinute"]))) : (int)(60 * channel.schedule.endTimeMinute);
     if (channel.schedule.endTimeMinute >= 3600) { channel.schedule.endTimeMinute  = 0; }
+    channel.schedule.hotTimeHour = schedule["hotTimeHour"] ? (int)(round(3600 * float(schedule["hotTimeHour"]))) : (int)(3600 * channel.schedule.hotTimeHour);
   }
 
   static boolean dataIsValid(JsonObject& json, ChannelState& channelState){

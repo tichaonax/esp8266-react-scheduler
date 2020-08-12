@@ -1,6 +1,7 @@
 import React, { Dispatch, useEffect } from 'react';
 import { ValidatorForm } from 'react-material-ui-form-validator';
 import { TextField, Checkbox, Typography } from '@material-ui/core';
+import Slider from '@material-ui/core/Slider';
 import SaveIcon from '@material-ui/icons/Save';
 import MenuItem from "@material-ui/core/MenuItem";
 import Grid from '@material-ui/core/Grid';
@@ -115,6 +116,11 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
     const endTime: Date = makeDateFromTime(data.schedule.endTimeHour, data.schedule.endTimeMinute);
   
       const handleDateChange = (date: Date | null) => {};
+
+      const handleSliderChange = (event: any, newValue: number | number[]) => {
+
+        setData({ ...data, schedule: {...data.schedule, hotTimeHour: Array.isArray(newValue)? newValue[0]: newValue } });
+      };
   
       const extractDateValue =(date: Date | null) => {
         const timeHour: number = date?.getHours() || 0;
@@ -140,6 +146,32 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
       
       const onGoBack = () => {
         history.goBack();
+      }
+
+      const marks = [
+        {
+          value: 0,
+          label: '0hr',
+        },
+        {
+          value: 1,
+          label: '1hr',
+        },
+        {
+          value: 2,
+          label: '2hr',
+        },
+        {
+          value: 3,
+          label: '3hr',
+        },
+        {
+          value: 4,
+          label: '4hr',
+        },
+      ];
+      const valuetext = (value: number) => {
+        return `${value}hr`;
       }
 
     return (
@@ -185,89 +217,92 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
           onChange={handleValueChange('name')}
           margin="normal"
         />
-        <BlockFormControlLabel
-          control={
-            <Select style={{ marginLeft: 10 }} 
-            disabled={data.enableTimeSpan}
-            value={data.schedule.runEvery}
-            onChange={handleScheduleValueChange('runEvery')}>
-            <MenuItem value={0.033}>02 seconds</MenuItem>
-            <MenuItem value={0.05}>03 seconds</MenuItem>
-            <MenuItem value={0.067}>04 seconds</MenuItem>
-            <MenuItem value={0.083}>05 seconds</MenuItem>
-            <MenuItem value={0.1}>06 seconds</MenuItem>
-            <MenuItem value={0.167}>10 seconds</MenuItem>
-            <MenuItem value={0.2}>12 seconds</MenuItem>
-            <MenuItem value={0.25}>15 seconds</MenuItem>
-            <MenuItem value={0.333}>20 seconds</MenuItem>
-            <MenuItem value={0.5}>30 seconds</MenuItem>  
-            <MenuItem value={1}>1 minute</MenuItem>
-            <MenuItem value={2}>2 minutes</MenuItem>
-            <MenuItem value={3}>3 minutes</MenuItem>
-            <MenuItem value={4}>4 minutes</MenuItem>
-            <MenuItem value={5}>5 minutes</MenuItem>
-            <MenuItem value={6}>6 minutes</MenuItem>
-            <MenuItem value={10}>10 minutes</MenuItem>
-            <MenuItem value={15}>15 minutes</MenuItem>
-            <MenuItem value={30}>30 minutes</MenuItem>
-            <MenuItem value={60}>1 hour</MenuItem>
-            <MenuItem value={120}>2 hours</MenuItem>
-            <MenuItem value={180}>3 hours</MenuItem>
-            <MenuItem value={240}>4 hours</MenuItem>
-            <MenuItem value={360}>6 hours</MenuItem>
-            <MenuItem value={480}>8 hours</MenuItem>
-            <MenuItem value={720}>12 hours</MenuItem>
-            <MenuItem value={1440}>24 hours</MenuItem>
-          </Select>
-          }
-          label="Run Every"
-        />
-        <p/>
-         <BlockFormControlLabel
-          control={
-            <Select style={{ marginLeft: 10 }}
-            disabled={data.enableTimeSpan}
-            value={data.schedule.offAfter}
-            onChange={handleScheduleValueChange('offAfter')}>
-            <MenuItem value={0.017}>01 seconds</MenuItem>
-            <MenuItem value={0.033}>02 seconds</MenuItem>
-            <MenuItem value={0.05}>03 seconds</MenuItem>
-            <MenuItem value={0.067}>04 seconds</MenuItem>
-            <MenuItem value={0.083}>05 seconds</MenuItem>
-            <MenuItem value={0.1}>06 seconds</MenuItem>
-            <MenuItem value={0.167}>10 seconds</MenuItem>
-            <MenuItem value={0.2}>12 seconds</MenuItem>
-            <MenuItem value={0.25}>15 seconds</MenuItem>
-            <MenuItem value={0.333}>20 seconds</MenuItem>
-            <MenuItem value={0.5}>30 seconds</MenuItem>  
-            <MenuItem value={1}>1 minute</MenuItem>
-            <MenuItem value={2}>2 minutes</MenuItem>
-            <MenuItem value={3}>3 minutes</MenuItem>
-            <MenuItem value={4}>4 minutes</MenuItem>
-            <MenuItem value={5}>5 minutes</MenuItem>
-            <MenuItem value={6}>6 minutes</MenuItem>
-            <MenuItem value={10}>10 minutes</MenuItem>
-            <MenuItem value={15}>15 minutes</MenuItem>
-            <MenuItem value={20}>20 minutes</MenuItem>
-            <MenuItem value={30}>30 minutes</MenuItem>
-            <MenuItem value={60}>1 hour</MenuItem>
-            <MenuItem value={120}>2 hours</MenuItem>
-            <MenuItem value={180}>3 hours</MenuItem>
-            <MenuItem value={240}>4 hours</MenuItem>
-            <MenuItem value={360}>6 hours</MenuItem>
-            <MenuItem value={480}>8 hours</MenuItem>
-            <MenuItem value={600}>10 hours</MenuItem>
-            <MenuItem value={720}>12 hours</MenuItem>
-            <MenuItem value={780}>13 hours</MenuItem>
-            <MenuItem value={960}>16 hours</MenuItem>
-            <MenuItem value={1080}>18 hours</MenuItem>
-            <MenuItem value={1200}>20 hours</MenuItem>
-          </Select>
-          }
-          label="Off After"
-        />
-        <p/>
-  
+        {!data.enableTimeSpan && (
+          <div>
+            <BlockFormControlLabel
+              control={
+                <Select style={{ marginLeft: 10 }} 
+                disabled={data.enableTimeSpan}
+                value={data.schedule.runEvery}
+                onChange={handleScheduleValueChange('runEvery')}>
+                <MenuItem value={0.033}>02 seconds</MenuItem>
+                <MenuItem value={0.05}>03 seconds</MenuItem>
+                <MenuItem value={0.067}>04 seconds</MenuItem>
+                <MenuItem value={0.083}>05 seconds</MenuItem>
+                <MenuItem value={0.1}>06 seconds</MenuItem>
+                <MenuItem value={0.167}>10 seconds</MenuItem>
+                <MenuItem value={0.2}>12 seconds</MenuItem>
+                <MenuItem value={0.25}>15 seconds</MenuItem>
+                <MenuItem value={0.333}>20 seconds</MenuItem>
+                <MenuItem value={0.5}>30 seconds</MenuItem>  
+                <MenuItem value={1}>1 minute</MenuItem>
+                <MenuItem value={2}>2 minutes</MenuItem>
+                <MenuItem value={3}>3 minutes</MenuItem>
+                <MenuItem value={4}>4 minutes</MenuItem>
+                <MenuItem value={5}>5 minutes</MenuItem>
+                <MenuItem value={6}>6 minutes</MenuItem>
+                <MenuItem value={10}>10 minutes</MenuItem>
+                <MenuItem value={15}>15 minutes</MenuItem>
+                <MenuItem value={30}>30 minutes</MenuItem>
+                <MenuItem value={60}>1 hour</MenuItem>
+                <MenuItem value={120}>2 hours</MenuItem>
+                <MenuItem value={180}>3 hours</MenuItem>
+                <MenuItem value={240}>4 hours</MenuItem>
+                <MenuItem value={360}>6 hours</MenuItem>
+                <MenuItem value={480}>8 hours</MenuItem>
+                <MenuItem value={720}>12 hours</MenuItem>
+                <MenuItem value={1440}>24 hours</MenuItem>
+              </Select>
+              }
+              label="Run Every"
+            />
+            <p/>
+            <BlockFormControlLabel
+              control={
+                <Select style={{ marginLeft: 10 }}
+                disabled={data.enableTimeSpan}
+                value={data.schedule.offAfter}
+                onChange={handleScheduleValueChange('offAfter')}>
+                <MenuItem value={0.017}>01 seconds</MenuItem>
+                <MenuItem value={0.033}>02 seconds</MenuItem>
+                <MenuItem value={0.05}>03 seconds</MenuItem>
+                <MenuItem value={0.067}>04 seconds</MenuItem>
+                <MenuItem value={0.083}>05 seconds</MenuItem>
+                <MenuItem value={0.1}>06 seconds</MenuItem>
+                <MenuItem value={0.167}>10 seconds</MenuItem>
+                <MenuItem value={0.2}>12 seconds</MenuItem>
+                <MenuItem value={0.25}>15 seconds</MenuItem>
+                <MenuItem value={0.333}>20 seconds</MenuItem>
+                <MenuItem value={0.5}>30 seconds</MenuItem>  
+                <MenuItem value={1}>1 minute</MenuItem>
+                <MenuItem value={2}>2 minutes</MenuItem>
+                <MenuItem value={3}>3 minutes</MenuItem>
+                <MenuItem value={4}>4 minutes</MenuItem>
+                <MenuItem value={5}>5 minutes</MenuItem>
+                <MenuItem value={6}>6 minutes</MenuItem>
+                <MenuItem value={10}>10 minutes</MenuItem>
+                <MenuItem value={15}>15 minutes</MenuItem>
+                <MenuItem value={20}>20 minutes</MenuItem>
+                <MenuItem value={30}>30 minutes</MenuItem>
+                <MenuItem value={60}>1 hour</MenuItem>
+                <MenuItem value={120}>2 hours</MenuItem>
+                <MenuItem value={180}>3 hours</MenuItem>
+                <MenuItem value={240}>4 hours</MenuItem>
+                <MenuItem value={360}>6 hours</MenuItem>
+                <MenuItem value={480}>8 hours</MenuItem>
+                <MenuItem value={600}>10 hours</MenuItem>
+                <MenuItem value={720}>12 hours</MenuItem>
+                <MenuItem value={780}>13 hours</MenuItem>
+                <MenuItem value={960}>16 hours</MenuItem>
+                <MenuItem value={1080}>18 hours</MenuItem>
+                <MenuItem value={1200}>20 hours</MenuItem>
+              </Select>
+              }
+              label="Off After"
+            />
+            <p/>
+          </div>
+        )}
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
           <Grid container justify="flex-start">
             <KeyboardTimePicker
@@ -282,6 +317,24 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
             />
           </Grid>
         </MuiPickersUtilsProvider>
+        {!data.enableTimeSpan && data.randomize && (
+        <div>
+          <Typography id="discrete-slider" gutterBottom>
+          Hot Time
+          </Typography>
+          <Slider
+            disabled={!data.randomize}
+            defaultValue={data.schedule.hotTimeHour}
+            getAriaValueText={valuetext}
+            aria-labelledby="discrete-slider-custom"
+            step={0.5}
+            valueLabelDisplay="auto"
+            marks={marks}
+            max={4}
+            onChange={handleSliderChange}
+          /> 
+        </div>
+        )}
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
           <Grid container justify="flex-start">
             <KeyboardTimePicker

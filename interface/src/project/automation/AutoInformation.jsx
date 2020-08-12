@@ -36,13 +36,13 @@ class AutoInformation extends Component {
           <ListItem>
             <ListItemText
               primary="Enable TimeSpan?"
-              secondary="When checked the switch is activated only during the time period from 'Start Time' to 'End Time', the Randomize feature is disabled automatically with this choice."
+              secondary="When checked disabled 'Randomize', the switch is activated only during the time period from 'Start Time' to 'End Time'."
             />
           </ListItem> 
           <ListItem>
             <ListItemText
               primary="Randomize Switch?"
-              secondary="When checked the switch is activated/deactivated randomly within the 'Run Every' and 'Off After' time definitions. The function is disabled if 'TimeSpan' is active."
+              secondary="When checked enables 'Hot Time' feature, the switch is on/off randomly within the 'Run Every' and 'Off After' limits. Disabled when 'TimeSpan' is active."
             />
           </ListItem>
           <ListItem>
@@ -67,6 +67,12 @@ class AutoInformation extends Component {
             <ListItemText
               primary="Start Time"
               secondary="The start time when the schedule is active. If the start time is greater than the end time then schedule ends the following day."
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary="Hot Time"
+              secondary="The duration that the switch is on before randomize feature takes over."
             />
           </ListItem>
           <ListItem>

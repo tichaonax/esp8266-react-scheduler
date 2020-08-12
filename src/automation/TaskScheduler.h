@@ -32,7 +32,8 @@ class TaskScheduler {
                     String  channelName,
                     bool  enableTimeSpan,
                     ChannelMqttSettingsService* channelMqttSettingsService,
-                    bool randomize);
+                    bool randomize,
+                    time_t hotTimeHour);
     void begin();
     void loop();
     void scheduleRestart();
@@ -54,8 +55,10 @@ class TaskScheduler {
         return current;
     }
 
-    AlarmId _timerRepeat;
-
+    AlarmId _timeEveryRepeat;
+    AlarmId _timeSpanRepeat;
+    AlarmId _timeHotHourRepeat;
+    bool _timeSpanActive = false;   
     ChannelStateService _channelStateService;
     Channel _channel;
     bool    _validNTP = false;       // Wait for NTP to get valid time
@@ -68,10 +71,13 @@ class TaskScheduler {
     ScheduledTime getNextRunTime();
     ScheduledTime getTimeSpanScheduleNextRunTime(ScheduledTime& schedule);
     void runTask();
+    void runHotTask();
     bool shouldRunTask();
     void scheduleTask();
+    void scheduleHotTask();
     void controlOn();
     void controlOff();
+    void stopHotTask();
     void updateNextRunStatus();
     time_t getRandomOnTimeSpan();
     time_t getRandomOffTimeSpan();

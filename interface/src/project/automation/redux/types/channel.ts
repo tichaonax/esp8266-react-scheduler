@@ -11,6 +11,7 @@ export interface Schedule{
     startTimeMinute: number;
     endTimeHour: number;
     endTimeMinute: number;
+    hotTimeHour: number;
  }
 
 export interface ChannelSettings {
