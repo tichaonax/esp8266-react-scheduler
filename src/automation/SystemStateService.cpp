@@ -18,8 +18,14 @@ SystemStateService::SystemStateService(AsyncWebServer* server,
                AuthenticationPredicates::IS_AUTHENTICATED){
 }
 
+
+void changeStateCallbackFunc(SystemStateService* instance) {
+  instance->changeState();
+}
+
 void SystemStateService::begin() {
-  _systemHeartBeat.attach(10, std::bind(&SystemStateService::changeState, this));
+  //_systemHeartBeat.attach(10, std::bind(&SystemStateService::changeState, this));
+  _systemHeartBeat.attach(10, changeStateCallbackFunc, this);
 }
 
 void SystemStateService::changeState()

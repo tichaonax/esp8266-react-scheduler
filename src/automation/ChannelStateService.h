@@ -34,14 +34,16 @@ class ChannelStateService : public StatefulService<ChannelState> {
 
   void begin();
   Channel getChannel();
+  void updateStateTime();
+  void mqttRepublish();
 
  private:
   HttpEndpoint<ChannelState> _httpEndpoint;
   MqttPubSub<ChannelState> _mqttPubSub;
   WebSocketTxRx<ChannelState> _webSocket;
   AsyncMqttClient* _mqttClient;
-  FSPersistence<ChannelState> _fsPersistence;
   ChannelMqttSettingsService* _channelMqttSettingsService;
+  FSPersistence<ChannelState> _fsPersistence;
   int _channelControlPin;
   String _defaultChannelName;
   String _restChannelEndPoint;
@@ -74,8 +76,8 @@ class ChannelStateService : public StatefulService<ChannelState> {
 
   void registerConfig();
   void onConfigUpdated();
-  void updateStateTime();
+  //void updateStateTime();
   void updateStateIP(String IPAddress);
-  void mqttRepublish();
+  //void mqttRepublish();
 };
 #endif

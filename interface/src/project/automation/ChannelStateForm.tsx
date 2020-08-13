@@ -51,10 +51,8 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
   }
 
   useEffect(() => {
-    console.log('loader', loader);
     if(loader && !loader.loading && channels ){
       const { channelOne, channelTwo, channelThree, channelFour } = channels;
-      //console.log('loader', loader);
       switch (data.controlPin) {
         case CHANNEL_ONE_CONTROL_PIN:
           if (channelOne){
@@ -118,8 +116,8 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
       const handleDateChange = (date: Date | null) => {};
 
       const handleSliderChange = (event: any, newValue: number | number[]) => {
-
-        setData({ ...data, schedule: {...data.schedule, hotTimeHour: Array.isArray(newValue)? newValue[0]: newValue } });
+        let slider =  Array.isArray(newValue)? 0 : newValue ;
+        setData({ ...data, schedule: {...data.schedule, hotTimeHour: slider} });
       };
   
       const extractDateValue =(date: Date | null) => {
@@ -168,7 +166,7 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
         {
           value: 4,
           label: '4hr',
-        },
+        }
       ];
       const valuetext = (value: number) => {
         return `${value}hr`;
@@ -330,6 +328,7 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
             step={0.5}
             valueLabelDisplay="auto"
             marks={marks}
+            min={0}
             max={4}
             onChange={handleSliderChange}
           /> 

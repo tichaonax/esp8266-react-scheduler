@@ -50,7 +50,39 @@ void TaskScheduler::begin(){
     _channelStateService.begin();
 }
 void TaskScheduler::loop(){ 
-    Alarm.delay(0);
+    //Alarm.delay(0);
+}
+
+void scheduleHotTaskTicker(TaskScheduler* taskScheduler){
+  taskScheduler->scheduleHotTask();
+}
+
+void runHotTaskTicker(TaskScheduler* taskScheduler){
+  taskScheduler->runHotTask();
+}
+
+void stopHotTaskTicker(TaskScheduler* taskScheduler){
+  taskScheduler->stopHotTask();
+}
+
+void scheduleTimeSpanTaskTicker(TaskScheduler* taskScheduler){
+  taskScheduler->scheduleTimeSpanTask();
+}
+
+void runTaskTicker(TaskScheduler* taskScheduler){
+  taskScheduler->runTask();
+}
+
+void controlOnTicker(TaskScheduler* taskScheduler){
+  taskScheduler->controlOn();
+}
+
+void controlOffTicker(TaskScheduler* taskScheduler){
+  taskScheduler->controlOff();
+}
+
+void scheduleTaskTicker(TaskScheduler* taskScheduler){
+  taskScheduler->scheduleTask();
 }
 
 ScheduledTime TaskScheduler::getNextRunTime(){
@@ -130,24 +162,30 @@ void TaskScheduler::setSchedule(){
     Serial.print(": Time to next task run: ");
     Serial.print(schedule.scheduleTime);
     Serial.println("s");
-
     if(!_channel.randomize){
-      Alarm.timerOnce(schedule.scheduleTime, std::bind(&TaskScheduler::scheduleTask, this));
+      //Alarm.timerOnce(schedule.scheduleTime, std::bind(&TaskScheduler::scheduleTask, this));
+      _ticker.once(schedule.scheduleTime, scheduleTaskTicker, this);
     }else{
       if(_channel.schedule.hotTimeHour == 0){
-        Alarm.timerOnce(schedule.scheduleTime, std::bind(&TaskScheduler::scheduleTask, this));
+        //Alarm.timerOnce(schedule.scheduleTime, std::bind(&TaskScheduler::scheduleTask, this));
+        _ticker.once(schedule.scheduleTime, scheduleTaskTicker, this);
       }else{
         if(_channel.startTime + _channel.schedule.hotTimeHour >= current.totalCurrentTime){
-          Alarm.timerOnce(schedule.scheduleTime, std::bind(&TaskScheduler::scheduleHotTask, this));
+          //Alarm.timerOnce(schedule.scheduleTime, std::bind(&TaskScheduler::scheduleHotTask, this));
+          _tickerHot.once(schedule.scheduleTime, scheduleHotTaskTicker, this);
         }
         if(schedule.scheduleTime > 1){
-          Alarm.timerOnce(schedule.scheduleTime, std::bind(&TaskScheduler::scheduleHotTask, this));
-          Alarm.timerOnce((schedule.scheduleTime + _channel.schedule.hotTimeHour), std::bind(&TaskScheduler::scheduleTask, this));
+          //Alarm.timerOnce(schedule.scheduleTime, std::bind(&TaskScheduler::scheduleHotTask, this));
+          _tickerHot.once(schedule.scheduleTime, scheduleHotTaskTicker, this);
+          //Alarm.timerOnce((schedule.scheduleTime + _channel.schedule.hotTimeHour), std::bind(&TaskScheduler::scheduleTask, this));
+          _ticker.once((schedule.scheduleTime + _channel.schedule.hotTimeHour), scheduleTaskTicker, this);
         }else{
           if(_channel.startTime + _channel.schedule.hotTimeHour <= current.totalCurrentTime){
-              Alarm.timerOnce(schedule.scheduleTime, std::bind(&TaskScheduler::scheduleTask, this));
+              //Alarm.timerOnce(schedule.scheduleTime, std::bind(&TaskScheduler::scheduleTask, this));
+              _ticker.once(schedule.scheduleTime, scheduleTaskTicker, this);
           }else{
-            Alarm.timerOnce((schedule.scheduleTime + _channel.startTime + _channel.schedule.hotTimeHour - current.totalCurrentTime), std::bind(&TaskScheduler::scheduleTask, this));
+            //Alarm.timerOnce((schedule.scheduleTime + _channel.startTime + _channel.schedule.hotTimeHour - current.totalCurrentTime), std::bind(&TaskScheduler::scheduleTask, this));
+            _ticker.once((schedule.scheduleTime + _channel.startTime + _channel.schedule.hotTimeHour - current.totalCurrentTime), scheduleTaskTicker, this);
           }
         }
       }
@@ -164,15 +202,18 @@ void TaskScheduler::setSchedule(){
 
 void TaskScheduler::scheduleTask(){
   if(_channel.enableTimeSpan){
-    Alarm.timerOnce(getTimeSpanStartTimeFromNow(), std::bind(&TaskScheduler::scheduleTimeSpanTask, this));
+    //Alarm.timerOnce(getTimeSpanStartTimeFromNow(), std::bind(&TaskScheduler::scheduleTimeSpanTask, this));
+    _tickerSpan.once(getTimeSpanStartTimeFromNow(), scheduleTimeSpanTaskTicker, this);
   }else{
-    _timeEveryRepeat = Alarm.timerRepeat(_channel.schedule.runEvery, std::bind(&TaskScheduler::runTask, this));
+    //_timeEveryRepeat = Alarm.timerRepeat(_channel.schedule.runEvery, std::bind(&TaskScheduler::runTask, this));
+    _tickerEveryRepeat.attach(_channel.schedule.runEvery, runTaskTicker, this);
   }
   runTask();
  }
 
 void TaskScheduler::scheduleHotTask(){
-  _timeHotHourRepeat = Alarm.timerRepeat(TWENTY_FOUR_HOUR_DURATION, std::bind(&TaskScheduler::runHotTask, this));
+  //_timeHotHourRepeat = Alarm.timerRepeat(TWENTY_FOUR_HOUR_DURATION, std::bind(&TaskScheduler::runHotTask, this));
+  _tickerHotHourRepeat.attach(TWENTY_FOUR_HOUR_DURATION, runHotTaskTicker, this);
    runHotTask();
 }
 
@@ -192,7 +233,8 @@ void TaskScheduler::runHotTask(){
     CurrentTime current = getCurrentTime();
     time_t offSpan = _channel.startTime + _channel.schedule.hotTimeHour - current.totalCurrentTime;
     if(offSpan < 1) { offSpan = 1;}
-    Alarm.timerOnce(offSpan, std::bind(&TaskScheduler::stopHotTask, this));
+    //Alarm.timerOnce(offSpan, std::bind(&TaskScheduler::stopHotTask, this));
+    _tickerHot.once(offSpan, stopHotTaskTicker, this);
   }
 }
 
@@ -202,7 +244,8 @@ void TaskScheduler::stopHotTask(){
 }
 
 void TaskScheduler::scheduleTimeSpanTask(){
-  _timeSpanRepeat = Alarm.timerRepeat(TWENTY_FOUR_HOUR_DURATION, std::bind(&TaskScheduler::runTask, this));
+  //_timeSpanRepeat = Alarm.timerRepeat(TWENTY_FOUR_HOUR_DURATION, std::bind(&TaskScheduler::runTask, this));
+  _tickerSpanRepeat.attach(TWENTY_FOUR_HOUR_DURATION, runTaskTicker, this);
   runTask();
 }
 
@@ -247,7 +290,8 @@ void TaskScheduler::runTask(){
       controlOn();;
     }
     else{
-      Alarm.timerOnce(getRandomOnTimeSpan(), std::bind(&TaskScheduler::controlOn, this));
+      //Alarm.timerOnce(getRandomOnTimeSpan(), std::bind(&TaskScheduler::controlOn, this));
+      _ticker.once(getRandomOnTimeSpan(), controlOnTicker, this);
     }
   }
   updateNextRunStatus();
@@ -266,12 +310,15 @@ void TaskScheduler::controlOn(){
       }, _channel.name);
 
       if(_channel.enableTimeSpan){
-        Alarm.timerOnce(getScheduleTimeSpanOff(), std::bind(&TaskScheduler::controlOff, this));
+        //Alarm.timerOnce(getScheduleTimeSpanOff(), std::bind(&TaskScheduler::controlOff, this));
+        _ticker.once(getScheduleTimeSpanOff(), controlOffTicker, this);
       }else{
         if(!_channel.randomize){
-          Alarm.timerOnce(_channel.schedule.offAfter, std::bind(&TaskScheduler::controlOff, this));
+          //Alarm.timerOnce(_channel.schedule.offAfter, std::bind(&TaskScheduler::controlOff, this));
+          _ticker.once(_channel.schedule.offAfter, controlOffTicker, this);
         }else{
-           Alarm.timerOnce(getRandomOffTimeSpan(), std::bind(&TaskScheduler::controlOff, this));
+           //Alarm.timerOnce(getRandomOffTimeSpan(), std::bind(&TaskScheduler::controlOff, this));
+           _ticker.once(getRandomOffTimeSpan(), controlOffTicker, this);
         }
       }
     }
@@ -367,10 +414,17 @@ time_t TaskScheduler::getTimeSpanStartTimeFromNow(){
 }
 
 void TaskScheduler::scheduleRestart(){
-  Alarm.disable(_timeHotHourRepeat);
+  tickerDetachAll();
+/*   Alarm.disable(_timeHotHourRepeat);
   Alarm.disable(_timeSpanRepeat);
-  Alarm.disable(_timeEveryRepeat);
+  Alarm.disable(_timeEveryRepeat); */
   setScheduleTimes();
   overrideControlOff();
   setSchedule();
+}
+
+void TaskScheduler::tickerDetachAll(){
+  _tickerHotHourRepeat.detach();
+  _tickerEveryRepeat.detach();
+  _tickerSpanRepeat.detach();
 }

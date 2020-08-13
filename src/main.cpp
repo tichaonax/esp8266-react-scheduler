@@ -1,7 +1,7 @@
 #include <ESP8266React.h>
 #include <LightMqttSettingsService.h>
 #include <LightStateService.h>
-#include <Ticker.h>  //Ticker Librar/
+#include <Ticker.h>
 
 #include "./automation/Utilities.h"
 #include "./automation/ChannelMqttSettingsService.h"
