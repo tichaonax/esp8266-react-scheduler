@@ -192,6 +192,7 @@ void TaskScheduler::setSchedule(){
     }
 
     _channelStateService.update([&](ChannelState& channelState) {
+      channelState.channel.lastStartedChangeTime = Utils.getLocalTime();
       channelState.channel.nextRunTime = Utils.getLocalNextRunTime(getNextRunTime().scheduleTime);
       Serial.print("Task set to start at : ");
       Serial.println(channelState.channel.nextRunTime);
