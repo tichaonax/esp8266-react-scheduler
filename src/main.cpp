@@ -171,8 +171,9 @@ void runSchedules(){
             channelFourTaskScheduler.setSchedule();
           #endif
         }
-    }else{
-      #if defined(CHANNEL_ONE)
+    }
+    //else{
+     /*  #if defined(CHANNEL_ONE)
             channelOneTaskScheduler.loop();
           #endif  
           #if defined(CHANNEL_TWO)
@@ -183,8 +184,8 @@ void runSchedules(){
           #endif  
           #if defined(CHANNEL_FOUR)
             channelFourTaskScheduler.loop();
-          #endif
-    }
+          #endif */
+   // }
 }
 void setup() {
   // start serial and filesystem

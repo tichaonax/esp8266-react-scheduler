@@ -36,7 +36,7 @@ class TaskScheduler {
                     bool randomize,
                     time_t hotTimeHour);
     void begin();
-    void loop();
+    //void loop();
     void scheduleRestart();
     void scheduleTimeSpanTask();
     void runTask();
@@ -46,6 +46,36 @@ class TaskScheduler {
     void controlOff();
     void scheduleTask();
     void scheduleHotTask();
+
+    time_t SpanRepeatTime;
+    time_t SpanRepeatTimeCopy;
+    Ticker SpanRepeatTicker;
+
+    time_t OffHotHourTime;
+    Ticker OffHotHourTicker;
+
+    time_t HotHourTaskTime;
+    time_t HotHourTaskTimeCopy;
+    Ticker HotHourTaskTicker;
+    
+    time_t ScheduleTime;
+    Ticker ScheduleTicker;
+
+    time_t ScheduleHotTime;
+    Ticker ScheduleHotTicker;
+
+    time_t SpanTime;
+    Ticker SpanTicker;
+
+    time_t RunEveryTime;
+    time_t RunEveryTimeCopy;
+    Ticker RunEveryTicker;
+
+    time_t ControlOnTime;
+    Ticker ControlOnTicker;
+
+    time_t ControlOffTime;
+    Ticker ControlOffTicker;
 
     TaskScheduler();
     void setSchedule();
