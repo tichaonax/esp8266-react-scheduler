@@ -325,7 +325,7 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
             defaultValue={data.schedule.hotTimeHour}
             getAriaValueText={valuetext}
             aria-labelledby="discrete-slider-custom"
-            step={0.5}
+            step={0.0167}
             valueLabelDisplay="auto"
             marks={marks}
             min={0}
