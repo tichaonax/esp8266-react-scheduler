@@ -14,7 +14,6 @@
 #define SERIAL_BAUD_RATE 115200
 #define LED 2  //On board LED
 
-Ticker blinkerFast;
 Ticker blinkerHeartBeat;
 
 bool validNTP;
@@ -26,16 +25,8 @@ void changeState()
 
 AsyncWebServer server(80);
 ESP8266React esp8266React(&server);
-/* LightMqttSettingsService lightMqttSettingsService =
-    LightMqttSettingsService(&server, esp8266React.getFS(), esp8266React.getSecurityManager());
-LightStateService lightStateService = LightStateService(&server,
-                                                        esp8266React.getSecurityManager(),
-                                                        esp8266React.getMqttClient(),
-                                                        &lightMqttSettingsService,
-                                                        &SPIFFS); */
 
 SystemStateService systemStateService = SystemStateService(&server, esp8266React.getSecurityManager());
-
 
  #if defined(CHANNEL_ONE)
   ChannelMqttSettingsService channelOneMqttSettingsService =
@@ -156,7 +147,7 @@ void runSchedules(){
         int year = Utils.getCurrenYear();
         if(year != 70){
           validNTP = true;
-          blinkerFast.detach(); // disable fast blinker
+          blinkerHeartBeat.attach(1, +[&](){}); // disable fast blinker
           blinkerHeartBeat.attach(0.5, changeState);  // and replace with normal
           #if defined(CHANNEL_ONE)
             channelOneTaskScheduler.setSchedule();
@@ -172,20 +163,6 @@ void runSchedules(){
           #endif
         }
     }
-    //else{
-     /*  #if defined(CHANNEL_ONE)
-            channelOneTaskScheduler.loop();
-          #endif  
-          #if defined(CHANNEL_TWO)
-            channelTwoTaskScheduler.loop();
-          #endif  
-          #if defined(CHANNEL_THREE)
-            channelThreeTaskScheduler.loop();
-          #endif  
-          #if defined(CHANNEL_FOUR)
-            channelFourTaskScheduler.loop();
-          #endif */
-   // }
 }
 void setup() {
   // start serial and filesystem
@@ -195,7 +172,7 @@ void setup() {
   validNTP = false;
  
   //blink fast every 0.125s till NTP is valid
-  blinkerFast.attach(0.125, changeState);
+  blinkerHeartBeat.attach(0.125, changeState);
   
   // start the framework and demo project
   esp8266React.begin();
@@ -207,27 +184,21 @@ void setup() {
   // start the light service
   //lightMqttSettingsService.begin();
 
-
-
 #if defined(CHANNEL_ONE)
   channelOneTaskScheduler.begin();
   channelOneTaskScheduler.setScheduleTimes();
-  //channelOneMqttSettingsService.begin();
 #endif  
 #if defined(CHANNEL_TWO)
   channelTwoTaskScheduler.begin();
   channelTwoTaskScheduler.setScheduleTimes();
-  //channelTwoMqttSettingsService.begin();
 #endif  
 #if defined(CHANNEL_THREE)
   channelThreeTaskScheduler.begin();
   channelThreeTaskScheduler.setScheduleTimes();
-  //channelThreeMqttSettingsService.begin();
 #endif  
 #if defined(CHANNEL_FOUR)
   channelFourTaskScheduler.begin();
-  channelFourTaskScheduler.setScheduleTimes();
-  //channelFourMqttSettingsService.begin(); 
+  channelFourTaskScheduler.setScheduleTimes(); 
 #endif
 
   // start the server

@@ -36,7 +36,6 @@ class TaskScheduler {
                     bool randomize,
                     time_t hotTimeHour);
     void begin();
-    //void loop();
     void scheduleRestart();
     void scheduleTimeSpanTask();
     void runTask();
@@ -94,16 +93,6 @@ class TaskScheduler {
         return current;
     }
 
-    /* AlarmId _timeEveryRepeat;
-    AlarmId _timeSpanRepeat;
-    AlarmId _timeHotHourRepeat; */
-
-    Ticker _ticker;
-    Ticker _tickerHot;
-    Ticker _tickerSpan;
-    Ticker _tickerEveryRepeat;
-    Ticker _tickerSpanRepeat;
-    Ticker _tickerHotHourRepeat;
     bool _timeSpanActive = false;   
     ChannelStateService _channelStateService;
     Channel _channel;
@@ -121,8 +110,18 @@ class TaskScheduler {
     time_t getRandomOnTimeSpan();
     time_t getRandomOffTimeSpan();
     time_t getTimeSpanStartTimeFromNow();
+
     void overrideControlOff(); 
     void tickerDetachAll(); 
+    void controlOffTicker();
+    void runTaskTicker();
+    void controlOnTicker();
+    void scheduleTaskTicker();
+    void scheduleHotTaskTicker();
+    void runHotTaskTicker();
+    void stopHotTaskTicker();
+    void scheduleTimeSpanTaskTicker();
+    void runSpanTaskTicker();
 };
 
 #endif
