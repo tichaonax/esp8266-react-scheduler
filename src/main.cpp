@@ -26,13 +26,6 @@ void changeState()
 
 AsyncWebServer server(80);
 ESP8266React esp8266React(&server);
-/* LightMqttSettingsService lightMqttSettingsService =
-    LightMqttSettingsService(&server, esp8266React.getFS(), esp8266React.getSecurityManager());
-LightStateService lightStateService = LightStateService(&server,
-                                                        esp8266React.getSecurityManager(),
-                                                        esp8266React.getMqttClient(),
-                                                        &lightMqttSettingsService,
-                                                        &SPIFFS); */
 
 SystemStateService systemStateService = SystemStateService(&server, esp8266React.getSecurityManager());
 
@@ -211,22 +204,18 @@ void setup() {
 #if defined(CHANNEL_ONE)
   channelOneTaskScheduler.begin();
   channelOneTaskScheduler.setScheduleTimes();
-  //channelOneMqttSettingsService.begin();
 #endif  
 #if defined(CHANNEL_TWO)
   channelTwoTaskScheduler.begin();
   channelTwoTaskScheduler.setScheduleTimes();
-  //channelTwoMqttSettingsService.begin();
 #endif  
 #if defined(CHANNEL_THREE)
   channelThreeTaskScheduler.begin();
   channelThreeTaskScheduler.setScheduleTimes();
-  //channelThreeMqttSettingsService.begin();
 #endif  
 #if defined(CHANNEL_FOUR)
   channelFourTaskScheduler.begin();
   channelFourTaskScheduler.setScheduleTimes();
-  //channelFourMqttSettingsService.begin(); 
 #endif
 
   // start the server

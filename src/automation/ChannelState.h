@@ -131,7 +131,7 @@ static void updateChannel(JsonObject& json, Channel& channel) {
     channel.schedule.endTimeHour = schedule["endTimeHour"] ? (int)(round(3600 * float(schedule["endTimeHour"]))) : (int)(3600 * channel.schedule.endTimeHour);
     channel.schedule.endTimeMinute = schedule["endTimeMinute"] ? (int)(round(60 * float(schedule["endTimeMinute"]))) : (int)(60 * channel.schedule.endTimeMinute);
     if (channel.schedule.endTimeMinute >= 3600) { channel.schedule.endTimeMinute  = 0; }
-    channel.schedule.hotTimeHour = schedule["hotTimeHour"] ? (int)(round(3600 * float(schedule["hotTimeHour"]))) : (int)(3600 * channel.schedule.hotTimeHour);
+    if ((channel.schedule.hotTimeHour > 14400) | (channel.schedule.hotTimeHour < 0)) { channel.schedule.hotTimeHour  = 0; }
   }
 
   static boolean dataIsValid(JsonObject& json, ChannelState& channelState){
