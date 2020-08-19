@@ -54,7 +54,7 @@ void TaskScheduler::scheduleHotTaskTicker(){
   ScheduleHotTicker.attach(1, +[&](TaskScheduler* task) {
      task->ScheduleHotTime--;
      if(task->ScheduleHotTime <= 0){
-      task->ScheduleHotTicker.attach(1, +[&](){});
+      task->ScheduleHotTicker.once(1, +[&](){});
       task->scheduleHotTask();
     }
   }, this);
@@ -75,7 +75,7 @@ void TaskScheduler::stopHotTaskTicker(){
   OffHotHourTicker.attach(1, +[&](TaskScheduler* task) {
     task->OffHotHourTime--;
     if(task->OffHotHourTime <= 0){
-    task->OffHotHourTicker.attach(1, +[&](){});
+    task->OffHotHourTicker.once(1, +[&](){});
     task->stopHotTask();
     }
   }, this);
@@ -85,7 +85,7 @@ void TaskScheduler::scheduleTimeSpanTaskTicker(){
   SpanTicker.attach(1, +[&](TaskScheduler* task) {
     task->SpanTime--;
     if(task->SpanTime <= 0){
-    task->SpanTicker.attach(1, +[&](){});
+    task->SpanTicker.once(1, +[&](){});
     task->scheduleTimeSpanTask();
     }
   }, this);
@@ -117,7 +117,7 @@ void TaskScheduler::controlOnTicker(){
   ControlOnTicker.attach(1, +[&](TaskScheduler* task) {
      task->ControlOnTime--;
      if(task->ControlOnTime <= 0){
-      task->ControlOnTicker.attach(1, +[&](){});
+      task->ControlOnTicker.once(1, +[&](){});
       task->controlOn();
      }
   }, this);
@@ -127,7 +127,7 @@ void TaskScheduler::controlOffTicker(){
   ControlOffTicker.attach(1, +[&](TaskScheduler* task) {
      task->ControlOffTime--;
      if(task->ControlOffTime <= 0){
-      task->ControlOffTicker.attach(1, +[&](){});
+      task->ControlOffTicker.once(1, +[&](){});
       task->controlOff();
      }
   }, this);
@@ -137,7 +137,7 @@ void TaskScheduler::scheduleTaskTicker(){
   ScheduleTicker.attach(1, +[&](TaskScheduler* task) {
     task->ScheduleTime--;
     if(task->ScheduleTime <= 0){
-    task->ScheduleTicker.attach(1, +[&](){});
+    task->ScheduleTicker.once(1, +[&](){});
     task->scheduleTask();
     }
   }, this);
@@ -477,7 +477,16 @@ void TaskScheduler::scheduleRestart(){
 }
 
 void TaskScheduler::tickerDetachAll(){
-  HotHourTaskTicker.attach(1, +[&](){});
-  RunEveryTicker.attach(1, +[&](){});
-  SpanRepeatTicker.attach(1, +[&](){});
+  HotHourTaskTicker.once(1, +[&](){});
+  RunEveryTicker.once(1, +[&](){});
+  SpanRepeatTicker.once(1, +[&](){});
+  SpanRepeatTicker.once(1, +[&](){});
+  OffHotHourTicker.once(1, +[&](){});
+  HotHourTaskTicker.once(1, +[&](){});
+  ScheduleTicker.once(1, +[&](){});
+  ScheduleHotTicker.once(1, +[&](){});
+  SpanTicker.once(1, +[&](){});
+  RunEveryTicker.once(1, +[&](){});
+  ControlOnTicker.once(1, +[&](){});
+  ControlOffTicker.once(1, +[&](){});
 }

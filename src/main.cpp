@@ -144,8 +144,10 @@ SystemStateService systemStateService = SystemStateService(&server, esp8266React
 void runSchedules(){
     // check to see if NTP updated the local time
     if(!validNTP){
-        int year = Utils.getCurrenYear();
-        if(year != 70){
+        time_t tnow = time(nullptr);
+        String dateText = ctime(&tnow); 
+        int year = dateText.substring(dateText.lastIndexOf(" ")+1).toInt();
+        if(year > 1970){
           validNTP = true;
           blinkerHeartBeat.attach(1, +[&](){}); // disable fast blinker
           blinkerHeartBeat.attach(0.5, changeState);  // and replace with normal
