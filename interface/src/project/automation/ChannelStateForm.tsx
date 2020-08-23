@@ -51,10 +51,8 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
   }
 
   useEffect(() => {
-    console.log('loader', loader);
     if(loader && !loader.loading && channels ){
       const { channelOne, channelTwo, channelThree, channelFour } = channels;
-      //console.log('loader', loader);
       switch (data.controlPin) {
         case CHANNEL_ONE_CONTROL_PIN:
           if (channelOne){
@@ -118,8 +116,8 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
       const handleDateChange = (date: Date | null) => {};
 
       const handleSliderChange = (event: any, newValue: number | number[]) => {
-
-        setData({ ...data, schedule: {...data.schedule, hotTimeHour: Array.isArray(newValue)? newValue[0]: newValue } });
+        let slider =  Array.isArray(newValue)? 0 : newValue ;
+        setData({ ...data, schedule: {...data.schedule, hotTimeHour: slider} });
       };
   
       const extractDateValue =(date: Date | null) => {
@@ -168,10 +166,43 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
         {
           value: 4,
           label: '4hr',
-        },
+        }
       ];
       const valuetext = (value: number) => {
         return `${value}hr`;
+      }
+
+      const formatHotTimeHour = (hotTimeHour: number) => {
+        const totalTimeSeconds = hotTimeHour * 3600;
+        const hours: number = Math.floor((hotTimeHour));
+        const minutes: number = Math.floor(((totalTimeSeconds - (hours*3600)) / 60));
+        const seconds: number = Math.floor(totalTimeSeconds - (hours*3600) - (minutes * 60));
+        
+        let hString: string = hours.toString();
+        if(hours < 10){hString = "0" + hours;}
+        if (hours == 0){
+          hString="";
+        }else{
+          hString= hString + "h ";
+        }
+
+        let mString: string = minutes.toString();
+        if(minutes < 10){mString = "0" + minutes;}
+        if (minutes == 0){
+          mString="";
+        }else{
+          mString= mString + "m ";
+        }
+
+        let sString: string = seconds.toString();
+        if(seconds < 10){sString = "0" + seconds;}
+        if (seconds == 0){
+          sString="";
+        }else{
+          sString= sString + "s";
+        }
+
+        return (hString + mString + sString);
       }
 
     return (
@@ -320,16 +351,16 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
         {!data.enableTimeSpan && data.randomize && (
         <div>
           <Typography id="discrete-slider" gutterBottom>
-          Hot Time
+          Hot Time: {formatHotTimeHour(data.schedule.hotTimeHour)} 
           </Typography>
           <Slider
             disabled={!data.randomize}
             defaultValue={data.schedule.hotTimeHour}
-            getAriaValueText={valuetext}
             aria-labelledby="discrete-slider-custom"
             step={0.0167}
-            valueLabelDisplay="auto"
+            valueLabelDisplay="off"
             marks={marks}
+            min={0}
             max={4}
             onChange={handleSliderChange}
           /> 
