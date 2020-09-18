@@ -27,7 +27,7 @@
 
 #define CHANNEL_TWO_REST_ENDPOINT_PATH "/rest/channelTwoState"  //restChannelEndPoint
 #define CHANNEL_TWO_SOCKET_PATH "/ws/channelTwoState"  // webSocketChannelEndPoint
-#define CHANNEL_TWO_DEFAULT_NAME "Solar Fridge" //  defaultChannelName
+#define CHANNEL_TWO_DEFAULT_NAME "Main Fridge" //  defaultChannelName
 #define CHANNEL_TWO_CONFIG_JSON_PATH "/config/channelTwoState.json"  // channelJsonConfigPath
 #define CHANNEL_TWO_HOME_ASSISTANT_ENTITY "solar_fridge_switch"
 #define CHANNEL_TWO_DEFAULT_CONTROL_RUN_EVERY 30
