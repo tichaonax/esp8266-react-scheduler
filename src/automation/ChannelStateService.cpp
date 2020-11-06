@@ -135,9 +135,10 @@ void ChannelStateService::registerConfig() {
     switch (settings.channelControlPin)
     {
       case CHANNEL_ONE_CONTROL_PIN :
-          doc["icon"] = "mdi:water-pump";
-          doc["payload_on"] =  "{\"state\":\"ON\"}";
-          doc["payload_off"] = "{\"state\":\"OFF\"}";
+          doc["schema"] = "json";
+          //doc["icon"] = "mdi:water-pump";
+          //doc["payload_on"] =  "{\"state\":\"ON\"}";
+          //doc["payload_off"] = "{\"state\":\"OFF\"}";
         break;
       case CHANNEL_TWO_CONTROL_PIN:
           doc["icon"] = "mdi:fridge";
