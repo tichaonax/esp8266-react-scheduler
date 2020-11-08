@@ -36,7 +36,7 @@ class ChannelMqttSettings {
     
     switch (settings.channelControlPin)
     {
-      case CHANNEL_ONE_CONTROL_PIN :
+      //case CHANNEL_ONE_CONTROL_PIN :
       case CHANNEL_TWO_CONTROL_PIN:
         topicHeader = "homeassistant/switch/";
         topicType = "switch-";
