@@ -149,23 +149,39 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
       const marks = [
         {
           value: 0,
-          label: '0hr',
+          label: '0',
         },
         {
           value: 1,
-          label: '1hr',
+          label: '1',
         },
         {
           value: 2,
-          label: '2hr',
+          label: '2',
         },
         {
           value: 3,
-          label: '3hr',
+          label: '3',
         },
         {
           value: 4,
           label: '4hr',
+        },
+        {
+          value: 8,
+          label: '8hr',
+        },
+        {
+          value: 12,
+          label: '12hr',
+        },
+        {
+          value: 14,
+          label: '14hr',
+        },
+        {
+          value: 16,
+          label: '16hr',
         }
       ];
       const valuetext = (value: number) => {
