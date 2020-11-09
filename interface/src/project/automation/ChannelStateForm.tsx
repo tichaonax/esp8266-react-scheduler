@@ -274,6 +274,7 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
                 <MenuItem value={6}>6 minutes</MenuItem>
                 <MenuItem value={10}>10 minutes</MenuItem>
                 <MenuItem value={15}>15 minutes</MenuItem>
+                <MenuItem value={20}>20 minutes</MenuItem>
                 <MenuItem value={30}>30 minutes</MenuItem>
                 <MenuItem value={60}>1 hour</MenuItem>
                 <MenuItem value={120}>2 hours</MenuItem>
