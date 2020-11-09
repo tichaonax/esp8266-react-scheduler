@@ -192,6 +192,11 @@ ScheduledTime TaskScheduler::getNextRunTime(){
         schedule.scheduleTime = getTimeSpanStartTimeFromNow() ;
         if(_channel.randomize){
           schedule.scheduleTime = schedule.scheduleTime;
+          if((current.totalCurrentTime > _channel.startTime) 
+            && (_channel.startTime > _channel.endTime)
+            && (current.totalCurrentTime > _channel.endTime)){
+            schedule.scheduleTime = 0;
+          }
         }
       }
     }  
