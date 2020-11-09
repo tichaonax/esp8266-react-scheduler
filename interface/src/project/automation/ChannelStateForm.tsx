@@ -362,7 +362,7 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
             valueLabelDisplay="off"
             marks={marks}
             min={0}
-            max={4}
+            max={16}
             onChange={handleSliderChange}
           /> 
         </div>
