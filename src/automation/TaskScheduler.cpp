@@ -181,30 +181,25 @@ ScheduledTime TaskScheduler::getNextRunTime(){
         }
       }else{
         schedule.scheduleTime = 0;
-        if(_channel.randomize){
-          schedule.scheduleTime = schedule.scheduleTime + _channel.schedule.hotTimeHour;
-        }
       } 
     }
     if( schedule.scheduleTime <= 0 ) { schedule.scheduleTime = 1;}
     return schedule;
   }else{
-    if(current.totalCurrentTime > _channel.startTime){
+    if( (current.totalCurrentTime > _channel.startTime) && (current.totalCurrentTime < _channel.endTime)){
       schedule.scheduleTime = 0;
       }else{ 
         schedule.scheduleTime = getTimeSpanStartTimeFromNow() ;
         if(_channel.randomize){
-          //schedule.scheduleTime = schedule.scheduleTime;
-          //if((current.totalCurrentTime > _channel.startTime) 
-          //  && (_channel.startTime > _channel.endTime)
-          //  && (current.totalCurrentTime > _channel.endTime)){
-          //  schedule.scheduleTime = 0;
-         // }
-         schedule.scheduleTime = schedule.scheduleTime + _channel.schedule.hotTimeHour;
+          schedule.scheduleTime = schedule.scheduleTime;
+          if((current.totalCurrentTime > _channel.startTime) 
+            && (_channel.startTime > _channel.endTime)
+            && (current.totalCurrentTime > _channel.endTime)){
+            schedule.scheduleTime = 0;
+          }
         }
       }
-    }
-  //schedule.scheduleTime = schedule.scheduleTime + _channel.schedule.hotTimeHour;   
+    }  
   if( schedule.scheduleTime <= 0 ) { schedule.scheduleTime = 1;}
   return schedule;
 }
