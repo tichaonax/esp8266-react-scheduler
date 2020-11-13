@@ -4,9 +4,9 @@
 #define CHANNEL_ONE_CONTROL_PIN 5
 #define CHANNEL_ONE_REST_ENDPOINT_PATH "/rest/channelOneState"  //restChannelEndPoint
 #define CHANNEL_ONE_SOCKET_PATH "/ws/channelOneState"  // webSocketChannelEndPoint
-#define CHANNEL_ONE_DEFAULT_NAME "East Gate Light" //  defaultChannelName
+#define CHANNEL_ONE_DEFAULT_NAME "West Gate Light" //  defaultChannelName
 #define CHANNEL_ONE_CONFIG_JSON_PATH "/config/channelOneState.json"  // channelJsonConfigPath
-#define CHANNEL_ONE_HOME_ASSISTANT_ENTITY "eastgate_light"
+#define CHANNEL_ONE_HOME_ASSISTANT_ENTITY "westgate_light"
 #define CHANNEL_ONE_DEFAULT_CONTROL_RUN_EVERY 15
 #define CHANNEL_ONE_DEFAULT_CONTROL_OFF_AFTER 10
 #define CHANNEL_ONE_DEFAULT_CONTROL_START_TIME_HOUR 19
