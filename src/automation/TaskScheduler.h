@@ -2,7 +2,8 @@
 #define TaskScheduler_h
 
 #include <ctime>
-#include "ESP8266TimeAlarms.h"
+#include <Ticker.h>
+//#include "ESP8266TimeAlarms.h"
 #include "ChannelMqttSettingsService.h"
 #include "ChannelStateService.h"
 
@@ -35,8 +36,45 @@ class TaskScheduler {
                     bool randomize,
                     time_t hotTimeHour);
     void begin();
-    void loop();
     void scheduleRestart();
+    void scheduleTimeSpanTask();
+    void runTask();
+    void runHotTask();
+    void stopHotTask();
+    void controlOn();
+    void controlOff();
+    void scheduleTask();
+    void scheduleHotTask();
+
+    time_t SpanRepeatTime;
+    time_t SpanRepeatTimeCopy;
+    Ticker SpanRepeatTicker;
+
+    time_t OffHotHourTime;
+    Ticker OffHotHourTicker;
+
+    time_t HotHourTaskTime;
+    time_t HotHourTaskTimeCopy;
+    Ticker HotHourTaskTicker;
+    
+    time_t ScheduleTime;
+    Ticker ScheduleTicker;
+
+    time_t ScheduleHotTime;
+    Ticker ScheduleHotTicker;
+
+    time_t SpanTime;
+    Ticker SpanTicker;
+
+    time_t RunEveryTime;
+    time_t RunEveryTimeCopy;
+    Ticker RunEveryTicker;
+
+    time_t ControlOnTime;
+    Ticker ControlOnTicker;
+
+    time_t ControlOffTime;
+    Ticker ControlOffTicker;
 
     TaskScheduler();
     void setSchedule();
@@ -55,9 +93,6 @@ class TaskScheduler {
         return current;
     }
 
-    AlarmId _timeEveryRepeat;
-    AlarmId _timeSpanRepeat;
-    AlarmId _timeHotHourRepeat;
     bool _timeSpanActive = false;   
     ChannelStateService _channelStateService;
     Channel _channel;
@@ -70,20 +105,23 @@ class TaskScheduler {
 
     ScheduledTime getNextRunTime();
     ScheduledTime getTimeSpanScheduleNextRunTime(ScheduledTime& schedule);
-    void runTask();
-    void runHotTask();
     bool shouldRunTask();
-    void scheduleTask();
-    void scheduleHotTask();
-    void controlOn();
-    void controlOff();
-    void stopHotTask();
     void updateNextRunStatus();
     time_t getRandomOnTimeSpan();
     time_t getRandomOffTimeSpan();
     time_t getTimeSpanStartTimeFromNow();
-    void scheduleTimeSpanTask();
-    void overrideControlOff();  
+
+    void overrideControlOff(); 
+    void tickerDetachAll(); 
+    void controlOffTicker();
+    void runTaskTicker();
+    void controlOnTicker();
+    void scheduleTaskTicker();
+    void scheduleHotTaskTicker();
+    void runHotTaskTicker();
+    void stopHotTaskTicker();
+    void scheduleTimeSpanTaskTicker();
+    void runSpanTaskTicker();
 };
 
 #endif
