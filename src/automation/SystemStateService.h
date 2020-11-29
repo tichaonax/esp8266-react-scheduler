@@ -41,6 +41,7 @@ class SystemStateService : public StatefulService<SystemState> {
  public:
   SystemStateService(AsyncWebServer* server, SecurityManager* securityManager);
   void begin();
+  void changeState();
 
  private:
   HttpEndpoint<SystemState> _httpEndpoint;
@@ -49,6 +50,6 @@ class SystemStateService : public StatefulService<SystemState> {
 
   void registerConfig();
   void onConfigUpdated();
-  void changeState();
+  //void changeState();
 };
 #endif

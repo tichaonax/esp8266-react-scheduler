@@ -160,6 +160,14 @@ void ChannelStateService::registerConfig() {
   _mqttPubSub.configureTopics(pubTopic, subTopic);
 }
 
+void updateStateTimeTicker(ChannelStateService* channelStateService){
+  channelStateService->updateStateTime();
+}
+
+void mqttRepublishTicker(ChannelStateService* channelStateService){
+  channelStateService->mqttRepublish();
+}
+
 void ChannelStateService::begin() {
     _state.channel.controlPin = _channelControlPin;
     _state.channel.name = _channelName;
@@ -180,8 +188,8 @@ void ChannelStateService::begin() {
 
     _state.channel.controlOn = DEFAULT_CONTROL_STATE; // must be off on start up
     onConfigUpdated();
-    _deviceTime.attach(10, std::bind(&ChannelStateService::updateStateTime, this));
-    _mqttRepublish.attach(60, std::bind(&ChannelStateService::mqttRepublish, this));
+    _deviceTime.attach(10, updateStateTimeTicker, this);
+    _mqttRepublish.attach(60, mqttRepublishTicker, this);
     _channelMqttSettingsService->begin();
 }
 
