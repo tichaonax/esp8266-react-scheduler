@@ -76,8 +76,6 @@ class ChannelStateService : public StatefulService<ChannelState> {
 
   void registerConfig();
   void onConfigUpdated();
-  //void updateStateTime();
   void updateStateIP(String IPAddress);
-  //void mqttRepublish();
 };
 #endif

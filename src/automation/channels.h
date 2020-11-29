@@ -44,10 +44,10 @@
 #define CHANNEL_THREE_CONTROL_PIN 13
 #define CHANNEL_THREE_REST_ENDPOINT_PATH "/rest/channelThreeState"  //restChannelEndPoint
 #define CHANNEL_THREE_SOCKET_PATH "/ws/channelThreeState"  // webSocketChannelEndPoint
-#define CHANNEL_THREE_DEFAULT_NAME "Inside Lights" //  defaultChannelName
+#define CHANNEL_THREE_DEFAULT_NAME "Bedside Light" //  defaultChannelName
 #define CHANNEL_THREE_CONFIG_JSON_PATH "/config/channelThreeState.json"  // channelJsonConfigPath
 #define CHANNEL_THREE_HOME_ASSISTANT_ENTITY "inside_light"    // homeAssistantEntity
-#define CHANNEL_THREE_DEFAULT_CONTROL_RUN_EVERY 10
+#define CHANNEL_THREE_DEFAULT_CONTROL_RUN_EVERY 20
 #define CHANNEL_THREE_DEFAULT_CONTROL_OFF_AFTER 5
 #define CHANNEL_THREE_DEFAULT_CONTROL_START_TIME_HOUR 2
 #define CHANNEL_THREE_DEFAULT_CONTROL_START_TIME_MINUTE 0
