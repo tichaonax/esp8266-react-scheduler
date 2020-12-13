@@ -30,7 +30,7 @@ struct Schedule {
     time_t  endTimeHour;      // 16
     time_t  endTimeMinute;    // 30
     bool    isOverride;       // when true ignore schedule run
-    time_t  hotTimeHour;      // default 0 hours [0-4]
+    time_t  hotTimeHour;      // default 0 hours [0-16]
 };
 
 
@@ -117,21 +117,21 @@ static void updateChannel(JsonObject& json, Channel& channel) {
     channel.name = json["name"] | channel.name;
     channel.enabled = json["enabled"] | channel.enabled;
     channel.enableTimeSpan = json["enableTimeSpan"] | channel.enableTimeSpan;
-    channel.lastStartedChangeTime = json["lastStartedChangeTime"] | Utils.getLocalTime();
+    channel.lastStartedChangeTime = json["lastStartedChangeTime"] | Utils.strLocalTime();
     channel.nextRunTime = json["nextRunTime"] | "";
     channel.randomize = json["randomize"] | channel.randomize;
 
     JsonObject schedule = json["schedule"];
 
-    channel.schedule.runEvery = schedule["runEvery"] ? (int)(round(60 * float(schedule["runEvery"]))) : (int)(60 * channel.schedule.runEvery);
-    channel.schedule.offAfter = schedule["offAfter"] ? (int)(round(60 * float(schedule["offAfter"]))) : (int)(60 * channel.schedule.offAfter);
+    channel.schedule.runEvery = schedule["runEvery"] ? (int)(round(60 * float(schedule["runEvery"]))) : channel.schedule.runEvery;
+    channel.schedule.offAfter = schedule["offAfter"] ? (int)(round(60 * float(schedule["offAfter"]))) : channel.schedule.offAfter;
     channel.schedule.startTimeHour = schedule["startTimeHour"] ? (int)(round(3600 * float(schedule["startTimeHour"]))) : (int)(3600 * channel.schedule.startTimeHour);
     channel.schedule.startTimeMinute = schedule["startTimeMinute"] ? (int)(round(60 * float(schedule["startTimeMinute"]))) : (int)(60 * channel.schedule.startTimeMinute);
     if (channel.schedule.startTimeMinute >= 3600) { channel.schedule.startTimeMinute  = 0; }
     channel.schedule.endTimeHour = schedule["endTimeHour"] ? (int)(round(3600 * float(schedule["endTimeHour"]))) : (int)(3600 * channel.schedule.endTimeHour);
     channel.schedule.endTimeMinute = schedule["endTimeMinute"] ? (int)(round(60 * float(schedule["endTimeMinute"]))) : (int)(60 * channel.schedule.endTimeMinute);
     if (channel.schedule.endTimeMinute >= 3600) { channel.schedule.endTimeMinute  = 0; }
-    channel.schedule.hotTimeHour = schedule["hotTimeHour"] ? (int)(round(3600 * float(schedule["hotTimeHour"]))) : (int)(3600 * channel.schedule.hotTimeHour);
+    channel.schedule.hotTimeHour = schedule["hotTimeHour"] ? (int)(round(3600 * float(schedule["hotTimeHour"]))) : channel.schedule.hotTimeHour;
     if ((channel.schedule.hotTimeHour > 57600) | (channel.schedule.hotTimeHour < 0)) { channel.schedule.hotTimeHour  = 0; }
   }
 
