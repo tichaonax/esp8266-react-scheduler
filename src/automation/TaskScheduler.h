@@ -3,7 +3,6 @@
 
 #include <ctime>
 #include <Ticker.h>
-//#include "ESP8266TimeAlarms.h"
 #include "ChannelMqttSettingsService.h"
 #include "ChannelStateService.h"
 
@@ -23,8 +22,8 @@ class TaskScheduler {
                     char* channelJsonConfigPath,  //  "/config/channelOneState.json" 
                     String restChannelEndPoint, //  "/rest/channelOneState"
                     char* webSocketChannelEndPoint, //  "/ws/channelOneState"
-                    time_t  runEvery,         // run every 30 mins
-                    time_t  offAfter,         // stop after 5 mins
+                    float  runEvery,         // run every 30 mins
+                    float  offAfter,         // stop after 5 mins
                     time_t  startTimeHour,    // 8
                     time_t  startTimeMinute,  // 30
                     time_t  endTimeHour,      // 16
@@ -34,7 +33,7 @@ class TaskScheduler {
                     bool  enableTimeSpan,
                     ChannelMqttSettingsService* channelMqttSettingsService,
                     bool randomize,
-                    time_t hotTimeHour);
+                    float hotTimeHour);
     void begin();
     void scheduleRestart();
     void scheduleTimeSpanTask();
