@@ -203,8 +203,6 @@ void TaskScheduler::setSchedule(){
           }else{
             ScheduleTime = schedule.scheduleTime + _channel.startTime + _channel.schedule.hotTimeHour - current.totalCurrentTime;
             scheduleTaskTicker();
-            ScheduleHotTime = _channel.startTime + _channel.schedule.hotTimeHour - current.totalCurrentTime;
-            scheduleHotTaskTicker();
           }
         }
       }
