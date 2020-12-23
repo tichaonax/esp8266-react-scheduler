@@ -200,7 +200,12 @@ void TaskScheduler::setSchedule(){
           if(_channel.startTime + _channel.schedule.hotTimeHour <= current.totalCurrentTime){
               ScheduleTime = schedule.scheduleTime;
               scheduleTaskTicker();
+              ScheduleHotTime = schedule.scheduleTime + current.totalCurrentTime 
+              - _channel.startTime + TWENTY_FOUR_HOUR_DURATION - 1;
+              scheduleHotTaskTicker();
           }else{
+            ScheduleHotTime = schedule.scheduleTime;
+            scheduleHotTaskTicker();
             ScheduleTime = schedule.scheduleTime + _channel.startTime + _channel.schedule.hotTimeHour - current.totalCurrentTime;
             scheduleTaskTicker();
           }
