@@ -12,8 +12,8 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
                                       char* channelJsonConfigPath,
                                       String restChannelEndPoint,
                                       char* webSocketChannelEndPoint,
-                                      time_t  runEvery,
-                                      time_t  offAfter,
+                                      float  runEvery,
+                                      float  offAfter,
                                       time_t  startTimeHour,
                                       time_t  startTimeMinute,
                                       time_t  endTimeHour,
@@ -23,7 +23,7 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
                                       bool enableTimeSpan,
                                       ChannelMqttSettingsService* channelMqttSettingsService,
                                       bool randomize,
-                                      time_t hotTimeHour) :
+                                      float hotTimeHour) :
     _httpEndpoint(ChannelState::read,
                   ChannelState::update,
                   this,
@@ -52,8 +52,8 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
   _restChannelEndPoint = restChannelEndPoint;
   _webSocketChannelEndPoint = webSocketChannelEndPoint;
 
-  _runEvery = runEvery;
-  _offAfter = offAfter;
+  _runEvery = (int)(round(60 * float(runEvery)));
+  _offAfter = (int)(round(60 * float(offAfter)));
   _startTimeHour  = startTimeHour;
   _startTimeMinute  =startTimeMinute;
   _endTimeHour  = endTimeHour;
@@ -62,7 +62,7 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
   _channelName = channelName;
   _enableTimeSpan = enableTimeSpan;
   _randomize = randomize;
-  _hotTimeHour = hotTimeHour;
+  _hotTimeHour = (int)(round(3600 * float(hotTimeHour)));
 
   // configure controls to be output
   pinMode(_channelControlPin, OUTPUT);
@@ -188,9 +188,8 @@ void ChannelStateService::begin() {
 
     _state.channel.controlOn = DEFAULT_CONTROL_STATE; // must be off on start up
     onConfigUpdated();
-    //_deviceTime.attach(10, std::bind(&ChannelStateService::updateStateTime, this));
     _deviceTime.attach(10, updateStateTimeTicker, this);
-    //_mqttRepublish.attach(60, std::bind(&ChannelStateService::mqttRepublish, this));
+    _mqttRepublish.attach(60, mqttRepublishTicker, this);
     _mqttRepublish.attach(60, mqttRepublishTicker, this);
     _channelMqttSettingsService->begin();
 }

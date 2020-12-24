@@ -18,9 +18,10 @@ import history from '../../history';
 import { setChannelSettings} from '../automation/redux/actions/channel';
 import { channelSettingsSelector } from '../automation/redux/selectors/channel';
 import { removeLoader } from '../automation/redux/actions/ui';
-import { Loader, LoaderActions } from './redux/types/ui';
+import { Loader, LoaderActions, RemoveLoaderType } from './redux/types/ui';
 
-import { ChannelState, Schedule, ChannelSettingsActions, Channels, ChannelSettings, CHANNEL, RESTART } from '../automation/redux/types/channel';
+import { ChannelState, Schedule, ChannelSettingsActions, Channels,
+  ChannelSettings, CHANNEL, RESTART, SetChannelSettingsType } from '../automation/redux/types/channel';
 import {
   CHANNEL_ONE_CONTROL_PIN,
   CHANNEL_TWO_CONTROL_PIN,
@@ -33,13 +34,13 @@ import { uiLoaderProjector } from './redux/selectors/uiLoaderProjector';
 import SystemStateWebSocketController from './SystemStateWebSocketController';
 
 
-type ChannelStateRestControllerFormProps = RestFormProps<ChannelState>;
+type ChannelStateRestControllerFormProps = RestFormProps<ChannelState>
+& ({channels: Channels, loader: Loader, onSetChannelSettings: SetChannelSettingsType, onRemoveLoader: RemoveLoaderType });
 
 const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
 
-  // @ts-ignore 
-  const { channels, loader, enqueueSnackbar, data, saveData, loadData, setData, handleValueChange, onSetChannelSettings, onRemoveLoader } = props;
-  // suppress onSetChannelSettings, onRemoveLoader not part of props;
+  const { channels, loader, enqueueSnackbar, data, saveData, loadData,
+    setData, handleValueChange, onSetChannelSettings, onRemoveLoader } = props;
 
   const restartSuccessMessage = (name: string, loader: Loader) => {
     if(loader.success){
@@ -47,7 +48,7 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
       }else{
         enqueueSnackbar(name + " " + loader.errorMessage, { variant: 'error' });
       }
-      onRemoveLoader();
+      onRemoveLoader(`${CHANNEL}${RESTART}`);
   }
 
   useEffect(() => {
@@ -78,7 +79,7 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
           break;
       }
     }
-  },[loader, enqueueSnackbar, channels, data.controlPin]);
+  },[loader, enqueueSnackbar, channels, data.controlPin, restartSuccessMessage]);
 
     const restartSchedule = () => {
       switch (data.controlPin) {
@@ -107,7 +108,7 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
     const makeDateFromTime = (hour: number, minute: number) => {
       const newHour = (hour >= 24) ? 24 : hour;
       const newMinute = (minute >= 60) ? 0 : minute;
-      return new Date(`Mon May 18 2020 ${newHour}:${newMinute}:00`);
+      return new Date(`Thu July 16 1964 ${newHour}:${newMinute}:00`);
     }
     
     const startTime: Date = makeDateFromTime(data.schedule.startTimeHour, data.schedule.startTimeMinute);
@@ -130,11 +131,13 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
         switch (name) {
           case 'startTimeHour':
             const startTime = extractDateValue(event);
-            setData({ ...data, schedule: {...data.schedule,  startTimeHour: startTime.timeHour, startTimeMinute: startTime.timeMinute } });
+            setData({ ...data, schedule: {...data.schedule,
+              startTimeHour: startTime.timeHour, startTimeMinute: startTime.timeMinute } });
             break;
             case 'endTimeHour':
               const endTime = extractDateValue(event);
-              setData({ ...data, schedule: {...data.schedule, endTimeHour: endTime.timeHour, endTimeMinute: endTime.timeMinute } });
+              setData({ ...data, schedule: {...data.schedule,
+                endTimeHour: endTime.timeHour, endTimeMinute: endTime.timeMinute } });
             break;
           default:
             setData({ ...data, schedule: {...data.schedule, [name]: extractEventValue(event) } });
@@ -168,10 +171,7 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
           label: '4hr',
         }
       ];
-      const valuetext = (value: number) => {
-        return `${value}hr`;
-      }
-
+      
       const formatHotTimeHour = (hotTimeHour: number) => {
         const totalTimeSeconds = hotTimeHour * 3600;
         const hours: number = Math.floor((hotTimeHour));
@@ -180,7 +180,7 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
         
         let hString: string = hours.toString();
         if(hours < 10){hString = "0" + hours;}
-        if (hours == 0){
+        if (hours === 0){
           hString="";
         }else{
           hString= hString + "h ";
@@ -188,7 +188,7 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
 
         let mString: string = minutes.toString();
         if(minutes < 10){mString = "0" + minutes;}
-        if (minutes == 0){
+        if (minutes === 0){
           mString="";
         }else{
           mString= mString + "m ";
@@ -196,7 +196,7 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
 
         let sString: string = seconds.toString();
         if(seconds < 10){sString = "0" + seconds;}
-        if (seconds == 0){
+        if (seconds === 0){
           sString="";
         }else{
           sString= sString + "s";
@@ -272,10 +272,12 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
                 <MenuItem value={4}>4 minutes</MenuItem>
                 <MenuItem value={5}>5 minutes</MenuItem>
                 <MenuItem value={6}>6 minutes</MenuItem>
+                <MenuItem value={8}>8 minutes</MenuItem>
                 <MenuItem value={10}>10 minutes</MenuItem>
                 <MenuItem value={15}>15 minutes</MenuItem>
                 <MenuItem value={20}>20 minutes</MenuItem>
                 <MenuItem value={30}>30 minutes</MenuItem>
+                <MenuItem value={40}>40 minutes</MenuItem>
                 <MenuItem value={60}>1 hour</MenuItem>
                 <MenuItem value={120}>2 hours</MenuItem>
                 <MenuItem value={180}>3 hours</MenuItem>
@@ -312,10 +314,12 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
                 <MenuItem value={4}>4 minutes</MenuItem>
                 <MenuItem value={5}>5 minutes</MenuItem>
                 <MenuItem value={6}>6 minutes</MenuItem>
+                <MenuItem value={8}>8 minutes</MenuItem>
                 <MenuItem value={10}>10 minutes</MenuItem>
                 <MenuItem value={15}>15 minutes</MenuItem>
                 <MenuItem value={20}>20 minutes</MenuItem>
                 <MenuItem value={30}>30 minutes</MenuItem>
+                <MenuItem value={40}>40 minutes</MenuItem>
                 <MenuItem value={60}>1 hour</MenuItem>
                 <MenuItem value={120}>2 hours</MenuItem>
                 <MenuItem value={180}>3 hours</MenuItem>
@@ -407,9 +411,8 @@ const mapDispatchToProps = (dispatch: Dispatch<ChannelSettingsActions | LoaderAc
       onSetChannelSettings: (settings: ChannelSettings, channel: number) => {
         dispatch(setChannelSettings(settings, channel));
       },
-      onRemoveLoader: () => {
-        // @ts-ignore 
-        dispatch(removeLoader(`${CHANNEL}${RESTART}`));
+      onRemoveLoader: (feature: string) => {
+        dispatch(removeLoader(feature));
       }
   };
 }

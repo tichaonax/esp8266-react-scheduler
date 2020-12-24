@@ -52,7 +52,7 @@ export interface Channels {
 export interface ChannelStateFuncs {
   onRestartChannelSchedule: RestartChannelScheduleType; 
   onSetChannelSettings: SetChannelSettingsType;
-  onRemoveLoader: RemoveLoaderType; 
+  //onRemoveLoader: RemoveLoaderType; 
 } 
 
 export interface SetChannelScheduleAction {
@@ -69,10 +69,7 @@ export interface ReStartChannelScheduleAction {
 
 export type SetChannelSettingsType = (channelSettings: ChannelSettings, channel: number) => void;
 export type RestartChannelScheduleType = (url: string, channel: number) => void;
-export type RemoveLoaderType = (feature: string) => void;
 
-export type ChannelSettingsActionTypes = 
-  | SetChannelScheduleAction
-  | ReStartChannelScheduleAction;
+export type ChannelSettingsActions = SetChannelScheduleAction | ReStartChannelScheduleAction;
 
-export type ChannelSettingsActions = ChannelSettingsActionTypes;
+export type ChannelSettingsActionTypes = SetChannelSettingsType | RestartChannelScheduleType;
