@@ -103,12 +103,10 @@ class TaskScheduler {
     void digitalClockDisplay(time_t tnow);
 
     ScheduledTime getNextRunTime();
-    ScheduledTime getTimeSpanScheduleNextRunTime(ScheduledTime& schedule);
     bool shouldRunTask();
     void updateNextRunStatus();
     time_t getRandomOnTimeSpan();
     time_t getRandomOffTimeSpan();
-    time_t getTimeSpanStartTimeFromNow();
 
     void overrideControlOff(); 
     void tickerDetachAll(); 

@@ -146,17 +146,7 @@ void TaskScheduler::scheduleTaskTicker(){
 ScheduledTime TaskScheduler::getNextRunTime(){
   ScheduledTime schedule;
   schedule.currentTime = time(nullptr);
-  schedule.scheduleTime = 0;  
- 
-  if(_channel.enableTimeSpan){ 
-   schedule = getTimeSpanScheduleNextRunTime(schedule);
-    if( schedule.scheduleTime <= 0 ) { schedule.scheduleTime = 1;}
-    return schedule;
-  }
-  
-  time_t timeToStartSeconds = Utils.timeToStartSeconds(schedule.currentTime, _channel.startTime, _channel.endTime);
-
-  schedule.scheduleTime = timeToStartSeconds;
+  schedule.scheduleTime = Utils.timeToStartSeconds(schedule.currentTime, _channel.startTime, _channel.endTime);
   return schedule;
 }
 
@@ -225,7 +215,7 @@ void TaskScheduler::setSchedule(){
 
 void TaskScheduler::scheduleTask(){
   if(_channel.enableTimeSpan){
-    SpanTime = getTimeSpanStartTimeFromNow();
+    SpanTime = getNextRunTime().scheduleTime;
     scheduleTimeSpanTaskTicker();
   }else{
     RunEveryTime = _channel.schedule.runEvery;
@@ -244,10 +234,6 @@ void TaskScheduler::runHotTask(){
   if(_channel.enabled){
     _timeSpanActive = true;
     _channelStateService.update([&](ChannelState& channelState) {
-
-    if (channelState.channel.controlOn) {
-      return StateUpdateResult::UNCHANGED;
-    }
       channelState.channel.controlOn = true;
       channelState.channel.lastStartedChangeTime =  Utils.strLocalTime();
       return StateUpdateResult::CHANGED;
@@ -284,7 +270,7 @@ bool TaskScheduler::shouldRunTask(){
 void TaskScheduler::updateNextRunStatus(){
   String nextRunTime = "";
   if(_channel.enableTimeSpan){
-    nextRunTime = Utils.strLocalNextRunTime(getTimeSpanStartTimeFromNow());
+    nextRunTime = Utils.strLocalNextRunTime(getNextRunTime().scheduleTime);
   }else{
     if(shouldRunTask()){
       nextRunTime =  Utils.strLocalNextRunTime(_channel.schedule.runEvery);
@@ -323,9 +309,6 @@ void TaskScheduler::controlOn(){
   if(_channel.enabled){
     if(!_channel.schedule.isOverride){
       _channelStateService.update([&](ChannelState& channelState) {
-      if (channelState.channel.controlOn) {
-        return StateUpdateResult::UNCHANGED;
-      }
         channelState.channel.controlOn = true;
         channelState.channel.lastStartedChangeTime =  Utils.strLocalTime();
         return StateUpdateResult::CHANGED;
@@ -350,9 +333,6 @@ void TaskScheduler::controlOn(){
 
 void TaskScheduler::overrideControlOff(){
   _channelStateService.update([&](ChannelState& channelState) {
-      if (!channelState.channel.controlOn) {
-        return StateUpdateResult::UNCHANGED;
-      }
       channelState.channel.controlOn = false;
       channelState.channel.lastStartedChangeTime = Utils.strLocalTime();
       return StateUpdateResult::CHANGED;
@@ -392,47 +372,6 @@ time_t TaskScheduler::getScheduleTimeSpanOff(){
   
   if (next <= 0 ) { next = 1;}
   return next;
-}
-
-ScheduledTime TaskScheduler::getTimeSpanScheduleNextRunTime(ScheduledTime& schedule){
- CurrentTime current = getCurrentTime();
-  if(_channel.startTime < _channel.endTime){
-    if(current.totalCurrentTime > _channel.startTime){
-      if(current.totalCurrentTime < _channel.endTime){
-        schedule.scheduleTime = 0;
-        return(schedule);
-      }
-      schedule.scheduleTime = _channel.startTime - current.totalCurrentTime;
-
-      if(current.totalCurrentTime < (MID_NIGHT_SECONDS + 1)){
-        schedule.scheduleTime = schedule.scheduleTime + MID_NIGHT_SECONDS + 1;
-      }
-
-      return(schedule);
-    }
-    schedule.scheduleTime = _channel.startTime - current.totalCurrentTime;
-    return(schedule);
-  }
-
-  if(current.totalCurrentTime < _channel.endTime){
-    schedule.scheduleTime = 0;
-    return(schedule); 
-  }
-
-  if(current.totalCurrentTime < _channel.startTime){
-    schedule.scheduleTime = _channel.startTime - current.totalCurrentTime;
-    return(schedule);
-  }
-  schedule.scheduleTime = 0;
-  return(schedule);
-}
-
-time_t TaskScheduler::getTimeSpanStartTimeFromNow(){
-  CurrentTime current = getCurrentTime();
-  if(current.totalCurrentTime >= _channel.startTime){
-    return(MID_NIGHT_SECONDS + 1 + _channel.startTime - current.totalCurrentTime);
-  }
-  return(_channel.startTime - current.totalCurrentTime);
 }
 
 void TaskScheduler::scheduleRestart(){
