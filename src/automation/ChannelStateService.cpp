@@ -190,7 +190,6 @@ void ChannelStateService::begin() {
     onConfigUpdated();
     _deviceTime.attach(10, updateStateTimeTicker, this);
     _mqttRepublish.attach(60, mqttRepublishTicker, this);
-    //_mqttRepublish.attach(60, std::bind(&ChannelStateService::mqttRepublish, this));
     _mqttRepublish.attach(60, mqttRepublishTicker, this);
     _channelMqttSettingsService->begin();
 }
