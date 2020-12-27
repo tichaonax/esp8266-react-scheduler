@@ -52,10 +52,9 @@ void TaskScheduler::begin(){
 
 void TaskScheduler::scheduleHotTaskTicker(){
   ScheduleHotTicker.attach(1, +[&](TaskScheduler* task) {
-     task->ScheduleHotTime--;
-     if(task->ScheduleHotTime <= 0){
-      task->ScheduleHotTicker.once(1, +[&](){});
-      task->scheduleHotTask();
+    task->ScheduleHotTime--;
+    if(task->ScheduleHotTime <= 0){
+      task->ScheduleHotTicker.once(1, +[&](TaskScheduler* once){once->scheduleHotTask();}, task);
     }
   }, this);
 }
@@ -75,8 +74,7 @@ void TaskScheduler::stopHotTaskTicker(){
   OffHotHourTicker.attach(1, +[&](TaskScheduler* task) {
     task->OffHotHourTime--;
     if(task->OffHotHourTime <= 0){
-    task->OffHotHourTicker.once(1, +[&](){});
-    task->stopHotTask();
+      task->OffHotHourTicker.once(1, +[&](TaskScheduler* once){once->stopHotTask();}, task);
     }
   }, this);
 }
@@ -85,8 +83,7 @@ void TaskScheduler::scheduleTimeSpanTaskTicker(){
   SpanTicker.attach(1, +[&](TaskScheduler* task) {
     task->SpanTime--;
     if(task->SpanTime <= 0){
-    task->SpanTicker.once(1, +[&](){});
-    task->scheduleTimeSpanTask();
+      task->SpanTicker.once(1, +[&](TaskScheduler* once){once->scheduleTimeSpanTask();}, task);
     }
   }, this);
 }
@@ -96,8 +93,8 @@ void TaskScheduler::runTaskTicker(){
   RunEveryTicker.attach(1, +[&](TaskScheduler* task) {
     task->RunEveryTime--;
     if(task->RunEveryTime <= 0){
-    task->RunEveryTime = task->RunEveryTimeCopy;
-    task->runTask();
+      task->RunEveryTime = task->RunEveryTimeCopy;
+      task->runTask();
     }
   }, this);
 }
@@ -107,29 +104,27 @@ void TaskScheduler::runSpanTaskTicker(){
   SpanRepeatTicker.attach(1, +[&](TaskScheduler* task) {
     task->SpanRepeatTime--;
     if(task->SpanRepeatTime <= 0){
-    task->SpanRepeatTime = task->SpanRepeatTimeCopy;
-    task->runTask();
+      task->SpanRepeatTime = task->SpanRepeatTimeCopy;
+      task->runTask();
     }
   }, this);
 }
 
 void TaskScheduler::controlOnTicker(){
   ControlOnTicker.attach(1, +[&](TaskScheduler* task) {
-     task->ControlOnTime--;
-     if(task->ControlOnTime <= 0){
-      task->ControlOnTicker.once(1, +[&](){});
-      task->controlOn();
-     }
+    task->ControlOnTime--;
+    if(task->ControlOnTime <= 0){
+      task->ControlOnTicker.once(1, +[&](TaskScheduler* once){once->controlOn();}, task);
+    }
   }, this);
 }
 
 void TaskScheduler::controlOffTicker(){
   ControlOffTicker.attach(1, +[&](TaskScheduler* task) {
-     task->ControlOffTime--;
-     if(task->ControlOffTime <= 0){
-      task->ControlOffTicker.once(1, +[&](){});
-      task->controlOff();
-     }
+    task->ControlOffTime--;
+    if(task->ControlOffTime <= 0){
+      task->ControlOffTicker.once(1, +[&](TaskScheduler* once){once->controlOff();}, task);
+    }
   }, this);
 }
 
@@ -137,8 +132,7 @@ void TaskScheduler::scheduleTaskTicker(){
   ScheduleTicker.attach(1, +[&](TaskScheduler* task) {
     task->ScheduleTime--;
     if(task->ScheduleTime <= 0){
-    task->ScheduleTicker.once(1, +[&](){});
-    task->scheduleTask();
+      task->ScheduleTicker.once(1, +[&](TaskScheduler* once){once->scheduleTask();}, task);
     }
   }, this);
 }
@@ -169,12 +163,11 @@ void TaskScheduler::setSchedule(){
     Serial.print(": Time to next task run: ");
     Serial.print(schedule.scheduleTime);
     Serial.println("s");
+    ScheduleTime = schedule.scheduleTime;
     if(!_channel.randomize){
-      ScheduleTime = schedule.scheduleTime;
       scheduleTaskTicker();
     }else{
       if(_channel.schedule.hotTimeHour == 0){
-        ScheduleTime = schedule.scheduleTime;
         scheduleTaskTicker();
       }else{
         if(_channel.startTime + _channel.schedule.hotTimeHour >= current.totalCurrentTime){
@@ -188,7 +181,6 @@ void TaskScheduler::setSchedule(){
           scheduleTaskTicker();
         }else{
           if(_channel.startTime + _channel.schedule.hotTimeHour <= current.totalCurrentTime){
-              ScheduleTime = schedule.scheduleTime;
               scheduleTaskTicker();
               ScheduleHotTime = schedule.scheduleTime + current.totalCurrentTime 
               - _channel.startTime + TWENTY_FOUR_HOUR_DURATION - 1;
@@ -196,7 +188,6 @@ void TaskScheduler::setSchedule(){
           }else{
             ScheduleHotTime = schedule.scheduleTime;
             scheduleHotTaskTicker();
-            ScheduleTime = schedule.scheduleTime + _channel.startTime + _channel.schedule.hotTimeHour - current.totalCurrentTime;
             scheduleTaskTicker();
           }
         }
@@ -257,14 +248,8 @@ void TaskScheduler::scheduleTimeSpanTask(){
   runTask();
 }
 
-bool TaskScheduler::shouldRunTask(){
-  if (_timeSpanActive) { return false; }
-  CurrentTime current = getCurrentTime();
-  time_t currentTime = current.hours + current.minutes;
-  if(_channel.startTime < _channel.endTime){
-    return(currentTime >= _channel.startTime  && currentTime <= _channel.endTime);
-  }
-  return(currentTime >= _channel.startTime || currentTime <= _channel.endTime);
+bool TaskScheduler::shouldRunTaskNow(){
+  return(getNextRunTime().scheduleTime <= 1);
 }
 
 void TaskScheduler::updateNextRunStatus(){
@@ -272,7 +257,7 @@ void TaskScheduler::updateNextRunStatus(){
   if(_channel.enableTimeSpan){
     nextRunTime = Utils.strLocalNextRunTime(getNextRunTime().scheduleTime);
   }else{
-    if(shouldRunTask()){
+    if(shouldRunTaskNow()){
       nextRunTime =  Utils.strLocalNextRunTime(_channel.schedule.runEvery);
     }else{
       nextRunTime =  Utils.strLocalNextRunTime(getNextRunTime().scheduleTime);
@@ -293,7 +278,7 @@ time_t TaskScheduler::getRandomOffTimeSpan(){
 }
 
 void TaskScheduler::runTask(){
-  if(shouldRunTask()){
+  if(shouldRunTaskNow()){
     if(!_channel.randomize){
       controlOn();
     }
