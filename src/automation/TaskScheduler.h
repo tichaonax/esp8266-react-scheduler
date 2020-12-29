@@ -42,7 +42,7 @@ class TaskScheduler {
     void stopHotTask();
     void controlOn();
     void controlOff();
-    void scheduleTask();
+    void scheduleRunEveryTask();
     void scheduleHotTask();
 
     time_t SpanRepeatTime;
@@ -117,7 +117,7 @@ class TaskScheduler {
     void scheduleHotTaskTicker(ScheduledTime schedule);
     void runHotTaskTicker();
     void stopHotTaskTicker();
-    void scheduleTimeSpanTaskTicker();
+    void scheduleTimeSpanTaskTicker(ScheduledTime schedule);
     void runSpanTaskTicker();
 };
 

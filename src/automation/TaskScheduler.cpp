@@ -88,7 +88,15 @@ void TaskScheduler::stopHotTaskTicker(){
   }, this);
 }
 
-void TaskScheduler::scheduleTimeSpanTaskTicker(){
+void TaskScheduler::scheduleTimeSpanTaskTicker(ScheduledTime schedule){
+  if(schedule.scheduleTime > 1){
+    SpanTime = schedule.scheduleTime;  // hotTime in future
+  }else{
+    SpanTime = schedule.currentTime - schedule.scheduleStartDateTime + TWENTY_FOUR_HOUR_DURATION - 1; // schedule following day
+    if(schedule.scheduleEndDateTime > schedule.currentTime) {  
+      runTask(); // we are inside window must run now
+    }
+  }
   SpanTicker.attach(1, +[&](TaskScheduler* task) {
     task->SpanTime--;
     if(task->SpanTime <= 0){
@@ -141,13 +149,14 @@ void TaskScheduler::scheduleTaskTicker(){
   ScheduleTicker.attach(1, +[&](TaskScheduler* task) {
     task->ScheduleTime--;
     if(task->ScheduleTime <= 0){
-      task->ScheduleTicker.once(1, +[&](TaskScheduler* once){once->scheduleTask();}, task);
+      task->ScheduleTicker.once(1, +[&](TaskScheduler* once){once->scheduleRunEveryTask();}, task);
     }
   }, this);
 }
 
 ScheduledTime TaskScheduler::getNextRunTime(){
-    ScheduledTime schedule = Utils.getScheduleTimes(_channel.startTime, _channel.endTime, _channel.schedule.hotTimeHour);
+    ScheduledTime schedule = Utils.getScheduleTimes(_channel.startTime,
+    _channel.endTime, _channel.schedule.hotTimeHour, _channel.enableTimeSpan);
     return schedule;
 }
 
@@ -171,8 +180,14 @@ void TaskScheduler::setSchedule(){
     Serial.print(schedule.scheduleTime);
     Serial.println("s");
     ScheduleTime = schedule.scheduleTime;
-    scheduleTaskTicker();
-    scheduleHotTaskTicker(schedule);
+
+    if(schedule.isHotSchedule){scheduleHotTaskTicker(schedule);}
+
+    if(schedule.isSpanSchedule){
+      scheduleTimeSpanTaskTicker(schedule);
+    }else{
+      scheduleTaskTicker();    
+    }
 
     _channelStateService.update([&](ChannelState& channelState) {
       channelState.channel.lastStartedChangeTime = Utils.strLocalTime();
@@ -184,14 +199,9 @@ void TaskScheduler::setSchedule(){
   }
 }
 
-void TaskScheduler::scheduleTask(){
-  if(_channel.enableTimeSpan){
-    SpanTime = getNextRunTime().scheduleTime;
-    scheduleTimeSpanTaskTicker();
-  }else{
-    RunEveryTime = _channel.schedule.runEvery;
-    runTaskTicker();
-  }
+void TaskScheduler::scheduleRunEveryTask(){
+  RunEveryTime = _channel.schedule.runEvery;
+  runTaskTicker();
   runTask();
  }
 
