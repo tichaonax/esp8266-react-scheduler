@@ -114,7 +114,7 @@ class TaskScheduler {
     void runTaskTicker();
     void controlOnTicker();
     void scheduleTaskTicker();
-    void scheduleHotTaskTicker();
+    void scheduleHotTaskTicker(ScheduledTime schedule);
     void runHotTaskTicker();
     void stopHotTaskTicker();
     void scheduleTimeSpanTaskTicker();
