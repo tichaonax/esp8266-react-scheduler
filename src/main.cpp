@@ -23,6 +23,12 @@ void changeState()
   digitalWrite(LED, !(digitalRead(LED)));
 }
 
+Ticker restartTicker;
+struct SystemRestart {
+  int day;
+  time_t restartTime;
+};
+
 AsyncWebServer server(80);
 ESP8266React esp8266React(&server);
 
@@ -141,6 +147,20 @@ SystemStateService systemStateService = SystemStateService(&server, esp8266React
   ChannelScheduleRestartService channelFourScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelFourTaskScheduler, CHANNEL_FOUR_SCHEDULE_RESTART_SERVICE_PATH);
 #endif
 
+SystemRestart getSystemRestart(time_t date){
+  SystemRestart restart;
+  restart.restartTime = TWENTY_FOUR_HOUR_DURATION + Utils.midNightToday() - date;
+  tm *ltm = localtime(&date);
+  restart.day = ltm->tm_mday;
+  return(restart);
+}
+
+  static void restartNow() {
+    WiFi.disconnect(true);
+    delay(500);
+    ESP.restart();
+  }
+
 void runSchedules(){
     // check to see if NTP updated the local time
     if(!validNTP){
@@ -163,6 +183,13 @@ void runSchedules(){
           #if defined(CHANNEL_FOUR)
             channelFourTaskScheduler.setSchedule();
           #endif
+
+          SystemRestart restart = getSystemRestart(tnow);
+
+          if(restart.day == 1 && restart.restartTime > 0) {
+            // reset the system midnight first of every month.
+            restartTicker.once(restart.restartTime, restartNow);
+          }
         }
     }
 }
