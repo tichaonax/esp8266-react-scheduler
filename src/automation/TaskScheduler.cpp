@@ -233,7 +233,7 @@ bool TaskScheduler::shouldRunTaskNow(){
   ScheduledTime schedule = getNextRunTime();
   
   if (!schedule.isHotSchedule){
-    return schedule.scheduleTime < 1;
+    return schedule.scheduleTime <= 1;
   }
 
   return schedule.currentTime > schedule.scheduleHotTimeEndDateTime && schedule.currentTime < schedule.scheduleEndDateTime;
