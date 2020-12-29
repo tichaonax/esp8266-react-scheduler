@@ -10,11 +10,6 @@
 
 #define DEFAULT_JSON_DOCUMENT_SIZE 1024 
 
-struct ScheduledTime {
-  time_t scheduleTime;
-  time_t currentTime;
-}; 
-
 struct CurrentTime {
   time_t hours;
   time_t minutes;

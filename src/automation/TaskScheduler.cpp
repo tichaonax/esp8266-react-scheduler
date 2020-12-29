@@ -50,7 +50,16 @@ void TaskScheduler::begin(){
     _channelStateService.begin();
 }
 
-void TaskScheduler::scheduleHotTaskTicker(){
+void TaskScheduler::scheduleHotTaskTicker(ScheduledTime schedule){
+  if(schedule.scheduleTime > 1){
+    ScheduleHotTime = schedule.scheduleTime;  // hotTime in future
+  }else{
+    ScheduleHotTime = schedule.currentTime - schedule.scheduleStartDateTime + TWENTY_FOUR_HOUR_DURATION - 1; // schedule following day
+    if(schedule.scheduleHotTimeEndDateTime > schedule.currentTime) {  
+      runHotTask(); // we are inside window must run now
+    }
+  }
+
   ScheduleHotTicker.attach(1, +[&](TaskScheduler* task) {
     task->ScheduleHotTime--;
     if(task->ScheduleHotTime <= 0){
@@ -138,10 +147,8 @@ void TaskScheduler::scheduleTaskTicker(){
 }
 
 ScheduledTime TaskScheduler::getNextRunTime(){
-  ScheduledTime schedule;
-  schedule.currentTime = time(nullptr);
-  schedule.scheduleTime = Utils.timeToStartSeconds(schedule.currentTime, _channel.startTime, _channel.endTime);
-  return schedule;
+    ScheduledTime schedule = Utils.getScheduleTimes(_channel.startTime, _channel.endTime, _channel.schedule.hotTimeHour);
+    return schedule;
 }
 
 void TaskScheduler::setScheduleTimes(){
@@ -164,39 +171,12 @@ void TaskScheduler::setSchedule(){
     Serial.print(schedule.scheduleTime);
     Serial.println("s");
     ScheduleTime = schedule.scheduleTime;
-    if(!_channel.randomize){
-      scheduleTaskTicker();
-    }else{
-      if(_channel.schedule.hotTimeHour == 0){
-        scheduleTaskTicker();
-      }else{
-        if(_channel.startTime + _channel.schedule.hotTimeHour >= current.totalCurrentTime){
-          ScheduleHotTime = schedule.scheduleTime;
-          scheduleHotTaskTicker();
-        }
-        if(schedule.scheduleTime > 1){
-          ScheduleHotTime = schedule.scheduleTime;
-          scheduleHotTaskTicker();
-          ScheduleTime = schedule.scheduleTime + _channel.schedule.hotTimeHour;
-          scheduleTaskTicker();
-        }else{
-          if(_channel.startTime + _channel.schedule.hotTimeHour <= current.totalCurrentTime){
-              scheduleTaskTicker();
-              ScheduleHotTime = schedule.scheduleTime + current.totalCurrentTime 
-              - _channel.startTime + TWENTY_FOUR_HOUR_DURATION - 1;
-              scheduleHotTaskTicker();
-          }else{
-            ScheduleHotTime = schedule.scheduleTime;
-            scheduleHotTaskTicker();
-            scheduleTaskTicker();
-          }
-        }
-      }
-    }
+    scheduleTaskTicker();
+    scheduleHotTaskTicker(schedule);
 
     _channelStateService.update([&](ChannelState& channelState) {
       channelState.channel.lastStartedChangeTime = Utils.strLocalTime();
-      channelState.channel.nextRunTime = Utils.strLocalNextRunTime(getNextRunTime().scheduleTime);
+      channelState.channel.nextRunTime = Utils.strLocalNextRunTime(schedule.scheduleTime);
       Serial.print("Task set to start at : ");
       Serial.println(channelState.channel.nextRunTime);
       return StateUpdateResult::CHANGED;
@@ -230,8 +210,8 @@ void TaskScheduler::runHotTask(){
       return StateUpdateResult::CHANGED;
     }, _channel.name);
 
-    CurrentTime current = getCurrentTime();
-    OffHotHourTime = _channel.startTime + _channel.schedule.hotTimeHour - current.totalCurrentTime;
+    ScheduledTime schedule = getNextRunTime();
+    OffHotHourTime = schedule.scheduleHotTimeEndDateTime - schedule.currentTime;
     if(OffHotHourTime < 1) { OffHotHourTime = 1;}
     stopHotTaskTicker();
   }
@@ -249,7 +229,15 @@ void TaskScheduler::scheduleTimeSpanTask(){
 }
 
 bool TaskScheduler::shouldRunTaskNow(){
-  return(getNextRunTime().scheduleTime <= 1);
+  if (_timeSpanActive) { return false; }
+  ScheduledTime schedule = getNextRunTime();
+  
+  if (!schedule.isHotSchedule){
+    return schedule.scheduleTime < 1;
+  }
+
+  return schedule.currentTime > schedule.scheduleHotTimeEndDateTime && schedule.currentTime < schedule.scheduleEndDateTime;
+
 }
 
 void TaskScheduler::updateNextRunStatus(){
