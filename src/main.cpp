@@ -147,14 +147,11 @@ SystemStateService systemStateService = SystemStateService(&server, esp8266React
   ChannelScheduleRestartService channelFourScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelFourTaskScheduler, CHANNEL_FOUR_SCHEDULE_RESTART_SERVICE_PATH);
 #endif
 
-SystemRestart getSystemRestart(){
+SystemRestart getSystemRestart(time_t date){
   SystemRestart restart;
-
-  time_t now = time(0);
-  restart.restartTime = TWENTY_FOUR_HOUR_DURATION + Utils.midNightToday() - now;
-  tm *ltm = localtime(&now);
+  restart.restartTime = TWENTY_FOUR_HOUR_DURATION + Utils.midNightToday() - date;
+  tm *ltm = localtime(&date);
   restart.day = ltm->tm_mday;
-
   return(restart);
 }
 
@@ -163,6 +160,7 @@ SystemRestart getSystemRestart(){
     delay(500);
     ESP.restart();
   }
+
 
 void runSchedules(){
     // check to see if NTP updated the local time
@@ -187,7 +185,7 @@ void runSchedules(){
             channelFourTaskScheduler.setSchedule();
           #endif
 
-          SystemRestart restart = getSystemRestart();
+          SystemRestart restart = getSystemRestart(tnow);
 
           if(restart.day == 1 && restart.restartTime > 0) {
             // reset the system midnight first of every month.
