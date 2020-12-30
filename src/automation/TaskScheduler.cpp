@@ -83,7 +83,7 @@ void TaskScheduler::stopHotTaskTicker(){
   OffHotHourTicker.attach(1, +[&](TaskScheduler* task) {
     task->OffHotHourTime--;
     if(task->OffHotHourTime <= 0){
-      task->OffHotHourTicker.once(1, +[&](TaskScheduler* once){once->stopHotTask();}, task);
+      task->OffHotHourTicker.once(1, +[&](TaskScheduler* once){once->controlOff();}, task);
     }
   }, this);
 }
@@ -128,6 +128,7 @@ void TaskScheduler::runSpanTaskTicker(){
 }
 
 void TaskScheduler::controlOnTicker(){
+  updateNextRunStatus();
   ControlOnTicker.attach(1, +[&](TaskScheduler* task) {
     task->ControlOnTime--;
     if(task->ControlOnTime <= 0){
@@ -213,7 +214,6 @@ void TaskScheduler::scheduleHotTask(){
 
 void TaskScheduler::runHotTask(){
   if(_channel.enabled){
-    _timeSpanActive = true;
     _channelStateService.update([&](ChannelState& channelState) {
       channelState.channel.controlOn = true;
       channelState.channel.lastStartedChangeTime =  Utils.strLocalTime();
@@ -227,40 +227,24 @@ void TaskScheduler::runHotTask(){
   }
 }
 
-void TaskScheduler::stopHotTask(){
-  _timeSpanActive = false;
-  controlOff();
-}
-
 void TaskScheduler::scheduleTimeSpanTask(){
   SpanRepeatTime = TWENTY_FOUR_HOUR_DURATION;
   runSpanTaskTicker();
   runTask();
 }
 
-bool TaskScheduler::shouldRunTaskNow(){
-  if (_timeSpanActive) { return false; }
-  ScheduledTime schedule = getNextRunTime();
+// bool TaskScheduler::shouldRunTaskNow(){
+//   ScheduledTime schedule = getNextRunTime();
   
-  if (!schedule.isHotSchedule){
-    return schedule.scheduleTime <= 1;
-  }
+//   if (!schedule.isHotSchedule){
+//     return schedule.scheduleTime <= 1;
+//   }
 
-  return schedule.currentTime > schedule.scheduleHotTimeEndDateTime && schedule.currentTime < schedule.scheduleEndDateTime;
-
-}
+//   return schedule.currentTime > schedule.scheduleHotTimeEndDateTime && schedule.currentTime < schedule.scheduleEndDateTime;
+// }
 
 void TaskScheduler::updateNextRunStatus(){
-  String nextRunTime = "";
-  if(_channel.enableTimeSpan){
-    nextRunTime = Utils.strLocalNextRunTime(getNextRunTime().scheduleTime);
-  }else{
-    if(shouldRunTaskNow()){
-      nextRunTime =  Utils.strLocalNextRunTime(_channel.schedule.runEvery);
-    }else{
-      nextRunTime =  Utils.strLocalNextRunTime(getNextRunTime().scheduleTime);
-    }
-  } 
+  String nextRunTime = Utils.strLocalNextRunTime(getNextRunTime().scheduleTime);
   _channelStateService.update([&](ChannelState& channelState) {
   channelState.channel.nextRunTime = nextRunTime;  
   return StateUpdateResult::CHANGED;
@@ -276,7 +260,8 @@ time_t TaskScheduler::getRandomOffTimeSpan(){
 }
 
 void TaskScheduler::runTask(){
-  if(shouldRunTaskNow()){
+  ScheduledTime schedule = getNextRunTime();
+  if(schedule.isRunTaskNow){
     if(!_channel.randomize){
       controlOn();
     }
@@ -285,7 +270,6 @@ void TaskScheduler::runTask(){
       controlOnTicker();
     }
   }
-  updateNextRunStatus();
 }
 
 void TaskScheduler::controlOn(){
