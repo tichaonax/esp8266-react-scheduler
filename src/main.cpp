@@ -147,10 +147,15 @@ SystemStateService systemStateService = SystemStateService(&server, esp8266React
   ChannelScheduleRestartService channelFourScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelFourTaskScheduler, CHANNEL_FOUR_SCHEDULE_RESTART_SERVICE_PATH);
 #endif
 
-SystemRestart getSystemRestart(time_t date){
+SystemRestart getSystemRestart(time_t tnow){
+  struct tm *lt = localtime(&tnow);
+  lt->tm_hour = 0;
+  lt->tm_min = 0;
+  lt->tm_sec = 0;
+  time_t midNightToday = mktime(lt);
   SystemRestart restart;
-  restart.restartTime = TWENTY_FOUR_HOUR_DURATION + Utils.midNightToday() - date;
-  tm *ltm = localtime(&date);
+  restart.restartTime = TWENTY_FOUR_HOUR_DURATION + midNightToday - tnow;
+  tm *ltm = localtime(&tnow);
   restart.day = ltm->tm_mday;
   return(restart);
 }

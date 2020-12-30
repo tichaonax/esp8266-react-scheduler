@@ -12,6 +12,7 @@ struct ScheduledTime {
   bool isHotSchedule;
   time_t scheduleHotTimeEndDateTime;
   bool isSpanSchedule;
+  bool isRunTaskNow;
 }; 
 
 class Utilities {
@@ -50,14 +51,14 @@ public:
     return(mktime(&tm));
   }
 
-  time_t midNightToday(){
-    time_t now = time(nullptr);
-    struct tm *lt = localtime(&now);
-    lt->tm_hour = 0;
-    lt->tm_min = 0;
-    lt->tm_sec = 0;
-    return mktime(lt);
-  }
+  // time_t midNightToday(){
+  //   time_t now = time(nullptr);
+  //   struct tm *lt = localtime(&now);
+  //   lt->tm_hour = 0;
+  //   lt->tm_min = 0;
+  //   lt->tm_sec = 0;
+  //   return mktime(lt);
+  // }
 
 
   time_t timeToStartSeconds(time_t currentTime, time_t startTime, time_t endTime, time_t startDateTime, time_t endDateTime){
@@ -85,16 +86,31 @@ public:
 
   ScheduledTime getScheduleTimes(time_t startTime, time_t endTime, time_t hotTimeHour, bool enableTimeSpan){
     ScheduledTime schedule;
-    time_t startDateTime = midNightToday() + startTime;
-    time_t endDateTime = midNightToday() + endTime;
+    schedule.currentTime = time(nullptr);
+    struct tm *lt = localtime(&schedule.currentTime);
+    lt->tm_hour = 0;
+    lt->tm_min = 0;
+    lt->tm_sec = 0;
+
+    time_t midNightToday = mktime(lt);
+    time_t startDateTime = midNightToday + startTime;
+    time_t endDateTime = midNightToday + endTime;
+    
     schedule.scheduleStartDateTime = startDateTime;
     schedule.scheduleHotTimeEndDateTime = startDateTime + hotTimeHour;
     if (startTime > endTime) { endDateTime = endDateTime + 86400;}
     schedule.scheduleEndDateTime = endDateTime;
-    schedule.currentTime = time(nullptr);
+    
     schedule.scheduleTime = timeToStartSeconds(schedule.currentTime, startTime, endTime, startDateTime, endDateTime);
     schedule.isHotSchedule = hotTimeHour > 0;
     schedule.isSpanSchedule = enableTimeSpan;
+
+    if (!schedule.isHotSchedule){
+      schedule.isRunTaskNow = schedule.scheduleTime <= 1;
+    }else{
+      schedule.isRunTaskNow = schedule.currentTime > schedule.scheduleHotTimeEndDateTime 
+      && schedule.currentTime < schedule.scheduleEndDateTime;
+    }
     return schedule;
   }
 };
