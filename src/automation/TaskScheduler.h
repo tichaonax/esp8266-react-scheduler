@@ -39,10 +39,9 @@ class TaskScheduler {
     void scheduleTimeSpanTask();
     void runTask();
     void runHotTask();
-    void stopHotTask();
     void controlOn();
     void controlOff();
-    void scheduleTask();
+    void scheduleRunEveryTask();
     void scheduleHotTask();
 
     time_t SpanRepeatTime;
@@ -92,10 +91,8 @@ class TaskScheduler {
         return current;
     }
 
-    bool _timeSpanActive = false;   
     ChannelStateService _channelStateService;
     Channel _channel;
-    bool    _validNTP = false;       // Wait for NTP to get valid time
     time_t getScheduleTimeSpanOff();
     protected:
 
@@ -103,7 +100,7 @@ class TaskScheduler {
     void digitalClockDisplay(time_t tnow);
 
     ScheduledTime getNextRunTime();
-    bool shouldRunTaskNow();
+    //bool shouldRunTaskNow();
     void updateNextRunStatus();
     time_t getRandomOnTimeSpan();
     time_t getRandomOffTimeSpan();
@@ -117,7 +114,7 @@ class TaskScheduler {
     void scheduleHotTaskTicker(ScheduledTime schedule);
     void runHotTaskTicker();
     void stopHotTaskTicker();
-    void scheduleTimeSpanTaskTicker();
+    void scheduleTimeSpanTaskTicker(ScheduledTime schedule);
     void runSpanTaskTicker();
 };
 
