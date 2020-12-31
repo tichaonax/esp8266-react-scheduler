@@ -11,6 +11,8 @@ struct ScheduledTime {
   time_t scheduleEndDateTime;
   bool isHotSchedule;
   time_t scheduleHotTimeEndDateTime;
+  bool isSpanSchedule;
+  bool isRunTaskNow;
 }; 
 
 class Utilities {
@@ -49,14 +51,14 @@ public:
     return(mktime(&tm));
   }
 
-  time_t midNightToday(){
-    time_t now = time(nullptr);
-    struct tm *lt = localtime(&now);
-    lt->tm_hour = 0;
-    lt->tm_min = 0;
-    lt->tm_sec = 0;
-    return mktime(lt);
-  }
+  // time_t midNightToday(){
+  //   time_t now = time(nullptr);
+  //   struct tm *lt = localtime(&now);
+  //   lt->tm_hour = 0;
+  //   lt->tm_min = 0;
+  //   lt->tm_sec = 0;
+  //   return mktime(lt);
+  // }
 
 
   time_t timeToStartSeconds(time_t currentTime, time_t startTime, time_t endTime, time_t startDateTime, time_t endDateTime){
@@ -72,6 +74,9 @@ public:
       }
     }else{  // start 19:00 end 3:00AM
       if(difftime(startDateTime, currentTime) > 0){ // we have not reached startTime
+        if((currentTime + 86400) < endDateTime ){
+          return(1);  // we have not reached end time of today start immediately
+        }
         return(startDateTime - currentTime);  // time to startTime
       }else{
         return (1); // start immediately we are between startTime and EndTime
@@ -79,17 +84,33 @@ public:
     }
   }
 
-  ScheduledTime getScheduleTimes(time_t startTime, time_t endTime, time_t hotTimeHour){
+  ScheduledTime getScheduleTimes(time_t startTime, time_t endTime, time_t hotTimeHour, bool enableTimeSpan){
     ScheduledTime schedule;
-    time_t startDateTime = midNightToday() + startTime;
-    time_t endDateTime = midNightToday() + endTime;
+    schedule.currentTime = time(nullptr);
+    struct tm *lt = localtime(&schedule.currentTime);
+    lt->tm_hour = 0;
+    lt->tm_min = 0;
+    lt->tm_sec = 0;
+
+    time_t midNightToday = mktime(lt);
+    time_t startDateTime = midNightToday + startTime;
+    time_t endDateTime = midNightToday + endTime;
+    
     schedule.scheduleStartDateTime = startDateTime;
     schedule.scheduleHotTimeEndDateTime = startDateTime + hotTimeHour;
     if (startTime > endTime) { endDateTime = endDateTime + 86400;}
     schedule.scheduleEndDateTime = endDateTime;
-    schedule.currentTime = time(nullptr);
+    
     schedule.scheduleTime = timeToStartSeconds(schedule.currentTime, startTime, endTime, startDateTime, endDateTime);
     schedule.isHotSchedule = hotTimeHour > 0;
+    schedule.isSpanSchedule = enableTimeSpan;
+
+    if (!schedule.isHotSchedule){
+      schedule.isRunTaskNow = schedule.scheduleTime <= 1;
+    }else{
+      schedule.isRunTaskNow = schedule.currentTime > schedule.scheduleHotTimeEndDateTime 
+      && schedule.currentTime < schedule.scheduleEndDateTime;
+    }
     return schedule;
   }
 };
