@@ -176,6 +176,7 @@ void TaskScheduler::setSchedule(){
   if(_channel.enabled){
     CurrentTime current = getCurrentTime();
     ScheduledTime schedule = getNextRunTime();
+    printSchedule(schedule);
     if (schedule.scheduleTime <= 0) { schedule.scheduleTime = 1; } 
     Serial.print(": Time to next task run: ");
     Serial.print(schedule.scheduleTime);
@@ -250,6 +251,29 @@ time_t TaskScheduler::getRandomOnTimeSpan(){
 
 time_t TaskScheduler::getRandomOffTimeSpan(){ 
  return(rand() % _channel.schedule.offAfter + 1);
+}
+
+void TaskScheduler::printSchedule(ScheduledTime schedule){
+  Serial.println("scheduleTime:        ");
+  Serial.println(schedule.scheduleTime);
+  Serial.print("isHotSchedule:       ");
+  Serial.println(schedule.isHotSchedule);
+  Serial.print("isSpanSchedule:      ");
+  Serial.println(schedule.isSpanSchedule);
+  Serial.print("isRunTaskNow:        ");
+  Serial.println(schedule.isRunTaskNow);
+  Serial.print("currentTime:                 ");
+  Serial.print(ctime(&schedule.currentTime));
+  Serial.print("startTime:                   ");
+  Serial.println(schedule.startTime);
+  Serial.print("endTime:                     ");
+  Serial.println(schedule.endTime);
+  Serial.print("scheduleStartDateTime:       ");
+  Serial.print(ctime(&schedule.scheduleStartDateTime));
+  Serial.print("scheduleHotTimeEndDateTime:  ");
+  Serial.print(ctime(&schedule.scheduleHotTimeEndDateTime));
+  Serial.print("scheduleEndDateTime:         ");
+  Serial.print(ctime(&schedule.scheduleEndDateTime));
 }
 
 void TaskScheduler::runTask(){
