@@ -4,8 +4,13 @@
 #include <ctime>
 #include <HttpEndpoint.h>
 
+#define MID_NIGHT_SECONDS 86399
+#define TWENTY_FOUR_HOUR_DURATION MID_NIGHT_SECONDS + 1
 struct ScheduledTime {
+  time_t startTime;
+  time_t endTime;
   time_t scheduleTime;
+  time_t midNightToday;
   time_t currentTime;
   time_t scheduleStartDateTime;
   time_t scheduleEndDateTime;
@@ -60,13 +65,14 @@ public:
           return (1); // start immediately we are between startTime and EndTime
         }
       }else{  // we are past endTime but before startTime
-        return(startDateTime + 86400 - currentTime);  // we are starting next day
+        return(startDateTime + TWENTY_FOUR_HOUR_DURATION - currentTime);  // we are starting next day
       }
     }else{  // start 19:00 end 3:00AM
       if(difftime(startDateTime, currentTime) > 0){ // we have not reached startTime
-        if((currentTime + 86400) < endDateTime ){
+        if((currentTime + TWENTY_FOUR_HOUR_DURATION) < endDateTime ){
           return(1);  // we have not reached end time of today start immediately
         }
+        if(currentTime < endDateTime){ return (1);}
         return(startDateTime - currentTime);  // time to startTime
       }else{
         return (1); // start immediately we are between startTime and EndTime
@@ -76,30 +82,40 @@ public:
 
   ScheduledTime getScheduleTimes(time_t startTime, time_t endTime, time_t hotTimeHour, bool enableTimeSpan){
     ScheduledTime schedule;
+
     schedule.currentTime = time(nullptr);
+    schedule.startTime = startTime;
+    schedule.endTime = endTime;
+
     struct tm *lt = localtime(&schedule.currentTime);
     lt->tm_hour = 0;
     lt->tm_min = 0;
     lt->tm_sec = 0;
 
-    time_t midNightToday = mktime(lt);
-    time_t startDateTime = midNightToday + startTime;
-    time_t endDateTime = midNightToday + endTime;
+    schedule.midNightToday = mktime(lt);
     
-    schedule.scheduleStartDateTime = startDateTime;
-    schedule.scheduleHotTimeEndDateTime = startDateTime + hotTimeHour;
-    if (startTime > endTime) { endDateTime = endDateTime + 86400;}
-    schedule.scheduleEndDateTime = endDateTime;
+    schedule.scheduleStartDateTime = schedule.midNightToday + startTime;
+    schedule.scheduleHotTimeEndDateTime = schedule.scheduleStartDateTime + hotTimeHour;
+
+    if (startTime > endTime) { schedule.scheduleEndDateTime = schedule.scheduleEndDateTime + TWENTY_FOUR_HOUR_DURATION;}
+    schedule.scheduleEndDateTime = schedule.midNightToday + endTime;
     
-    schedule.scheduleTime = timeToStartSeconds(schedule.currentTime, startTime, endTime, startDateTime, endDateTime);
+    schedule.scheduleTime = timeToStartSeconds(schedule.currentTime, startTime, endTime,
+    schedule.scheduleStartDateTime, schedule.scheduleEndDateTime);
     schedule.isHotSchedule = hotTimeHour > 0;
     schedule.isSpanSchedule = enableTimeSpan;
 
     if (!schedule.isHotSchedule){
       schedule.isRunTaskNow = schedule.scheduleTime <= 1;
     }else{
-      schedule.isRunTaskNow = schedule.currentTime > schedule.scheduleHotTimeEndDateTime 
-      && schedule.currentTime < schedule.scheduleEndDateTime;
+      if(schedule.startTime < schedule.endTime){
+        schedule.isRunTaskNow = schedule.currentTime > schedule.scheduleHotTimeEndDateTime 
+        && schedule.currentTime < schedule.scheduleEndDateTime;
+      }
+      else{
+        schedule.isRunTaskNow = ((schedule.currentTime + TWENTY_FOUR_HOUR_DURATION) > schedule.scheduleHotTimeEndDateTime 
+        && (schedule.currentTime + TWENTY_FOUR_HOUR_DURATION) < schedule.scheduleEndDateTime) | schedule.scheduleTime <= 1 ;
+      }
     }
     return schedule;
   }
