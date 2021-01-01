@@ -52,11 +52,11 @@ void TaskScheduler::begin(){
 
 void TaskScheduler::scheduleHotTaskTicker(ScheduledTime schedule){
   if(schedule.scheduleTime > 1){
-    ScheduleHotTime = schedule.scheduleTime;  // hotTime in future
+    ScheduleHotTime = schedule.scheduleTime;
   }else{
-    ScheduleHotTime = schedule.currentTime - schedule.scheduleStartDateTime + TWENTY_FOUR_HOUR_DURATION - 1; // schedule following day
+    ScheduleHotTime = TWENTY_FOUR_HOUR_DURATION - (schedule.currentTime - schedule.scheduleStartDateTime) - 1;
     if(schedule.scheduleHotTimeEndDateTime > schedule.currentTime) {  
-      runHotTask(); // we are inside window must run now
+      runHotTask();
     }
   }
 
@@ -90,11 +90,11 @@ void TaskScheduler::stopHotTaskTicker(){
 
 void TaskScheduler::scheduleTimeSpanTaskTicker(ScheduledTime schedule){
   if(schedule.scheduleTime > 1){
-    SpanTime = schedule.scheduleTime;  // hotTime in future
+    SpanTime = schedule.scheduleTime;
   }else{
-    SpanTime = schedule.currentTime - schedule.scheduleStartDateTime + TWENTY_FOUR_HOUR_DURATION - 1; // schedule following day
+    SpanTime = TWENTY_FOUR_HOUR_DURATION - (schedule.currentTime - schedule.scheduleStartDateTime) - 1;
     if(schedule.scheduleEndDateTime > schedule.currentTime) {  
-      runTask(); // we are inside window must run now
+      runTask();
     }
   }
   SpanTicker.attach(1, +[&](TaskScheduler* task) {
@@ -176,6 +176,7 @@ void TaskScheduler::setSchedule(){
   if(_channel.enabled){
     CurrentTime current = getCurrentTime();
     ScheduledTime schedule = getNextRunTime();
+    printSchedule(schedule);
     if (schedule.scheduleTime <= 0) { schedule.scheduleTime = 1; } 
     Serial.print(": Time to next task run: ");
     Serial.print(schedule.scheduleTime);
@@ -233,22 +234,15 @@ void TaskScheduler::scheduleTimeSpanTask(){
   runTask();
 }
 
-// bool TaskScheduler::shouldRunTaskNow(){
-//   ScheduledTime schedule = getNextRunTime();
-  
-//   if (!schedule.isHotSchedule){
-//     return schedule.scheduleTime <= 1;
-//   }
-
-//   return schedule.currentTime > schedule.scheduleHotTimeEndDateTime && schedule.currentTime < schedule.scheduleEndDateTime;
-// }
-
-void TaskScheduler::updateNextRunStatus(){
-  String nextRunTime = Utils.strLocalNextRunTime(getNextRunTime().scheduleTime);
+void TaskScheduler::updateStatus(time_t delta){
   _channelStateService.update([&](ChannelState& channelState) {
-  channelState.channel.nextRunTime = nextRunTime;  
+  channelState.channel.nextRunTime = Utils.strLocalNextRunTime(delta);;  
   return StateUpdateResult::CHANGED;
   }, _channel.name);
+}
+
+void TaskScheduler::updateNextRunStatus(){
+  updateStatus(getNextRunTime().scheduleTime);
 }
 
 time_t TaskScheduler::getRandomOnTimeSpan(){
@@ -257,6 +251,29 @@ time_t TaskScheduler::getRandomOnTimeSpan(){
 
 time_t TaskScheduler::getRandomOffTimeSpan(){ 
  return(rand() % _channel.schedule.offAfter + 1);
+}
+
+void TaskScheduler::printSchedule(ScheduledTime schedule){
+  Serial.println("scheduleTime:        ");
+  Serial.println(schedule.scheduleTime);
+  Serial.print("isHotSchedule:       ");
+  Serial.println(schedule.isHotSchedule);
+  Serial.print("isSpanSchedule:      ");
+  Serial.println(schedule.isSpanSchedule);
+  Serial.print("isRunTaskNow:        ");
+  Serial.println(schedule.isRunTaskNow);
+  Serial.print("currentTime:                 ");
+  Serial.print(ctime(&schedule.currentTime));
+  Serial.print("startTime:                   ");
+  Serial.println(schedule.startTime);
+  Serial.print("endTime:                     ");
+  Serial.println(schedule.endTime);
+  Serial.print("scheduleStartDateTime:       ");
+  Serial.print(ctime(&schedule.scheduleStartDateTime));
+  Serial.print("scheduleHotTimeEndDateTime:  ");
+  Serial.print(ctime(&schedule.scheduleHotTimeEndDateTime));
+  Serial.print("scheduleEndDateTime:         ");
+  Serial.print(ctime(&schedule.scheduleEndDateTime));
 }
 
 void TaskScheduler::runTask(){
@@ -269,6 +286,8 @@ void TaskScheduler::runTask(){
       ControlOnTime = getRandomOnTimeSpan();
       controlOnTicker();
     }
+  }else{
+    updateStatus(schedule.scheduleTime);
   }
 }
 
