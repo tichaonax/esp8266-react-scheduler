@@ -76,6 +76,7 @@ class TaskScheduler {
     void setScheduleTimes();
 
     private:
+    bool _isHotScheduleActive;
     CurrentTime getCurrentTime(){
         CurrentTime current;
         time_t curr_time;
@@ -106,6 +107,7 @@ class TaskScheduler {
     void tickerDetachAll(); 
     void controlOffTicker();
     void runTaskTicker();
+    void stopHotTask();
     void controlOnTicker();
     void scheduleTaskTicker();
     void scheduleHotTaskTicker(ScheduledTime schedule);

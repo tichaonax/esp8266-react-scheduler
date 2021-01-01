@@ -44,6 +44,7 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                         randomize,
                         hotTimeHour)
                                        {
+                                         _isHotScheduleActive = false;
   };
 
 void TaskScheduler::begin(){
@@ -83,10 +84,16 @@ void TaskScheduler::stopHotTaskTicker(){
   OffHotHourTicker.attach(1, +[&](TaskScheduler* task) {
     task->OffHotHourTime--;
     if(task->OffHotHourTime <= 0){
-      task->OffHotHourTicker.once(1, +[&](TaskScheduler* once){once->controlOff();}, task);
+      task->OffHotHourTicker.once(1, +[&](TaskScheduler* once){once->stopHotTask();}, task);
     }
   }, this);
 }
+
+void TaskScheduler::stopHotTask(){
+  _isHotScheduleActive = false;
+  controlOff();
+}
+
 
 void TaskScheduler::scheduleTimeSpanTaskTicker(ScheduledTime schedule){
   if(schedule.scheduleTime > 1){
@@ -157,7 +164,7 @@ void TaskScheduler::scheduleTaskTicker(){
 
 ScheduledTime TaskScheduler::getNextRunTime(){
     ScheduledTime schedule = Utils.getScheduleTimes(_channel.startTime,
-    _channel.endTime, _channel.schedule.hotTimeHour, _channel.enableTimeSpan);
+    _channel.endTime, _channel.schedule.hotTimeHour, _channel.enableTimeSpan, isHotScheduleActive, _channel.name);
     return schedule;
 }
 
@@ -215,6 +222,7 @@ void TaskScheduler::scheduleHotTask(){
 
 void TaskScheduler::runHotTask(){
   if(_channel.enabled){
+    _isHotScheduleActive = true;
     _channelStateService.update([&](ChannelState& channelState) {
       channelState.channel.controlOn = true;
       channelState.channel.lastStartedChangeTime =  Utils.strLocalTime();
@@ -254,12 +262,17 @@ time_t TaskScheduler::getRandomOffTimeSpan(){
 }
 
 void TaskScheduler::printSchedule(ScheduledTime schedule){
-  Serial.println("scheduleTime:        ");
+  Serial.println(" ");
+  Serial.print("channelName:         ");
+  Serial.println(schedule.channelName);
+  Serial.print("scheduleTime:        ");
   Serial.println(schedule.scheduleTime);
   Serial.print("isHotSchedule:       ");
   Serial.println(schedule.isHotSchedule);
   Serial.print("isSpanSchedule:      ");
   Serial.println(schedule.isSpanSchedule);
+  Serial.print("isSpanActive:        ");
+  Serial.println(schedule.isSpanActive);
   Serial.print("isRunTaskNow:        ");
   Serial.println(schedule.isRunTaskNow);
   Serial.print("currentTime:                 ");
@@ -278,6 +291,7 @@ void TaskScheduler::printSchedule(ScheduledTime schedule){
 
 void TaskScheduler::runTask(){
   ScheduledTime schedule = getNextRunTime();
+  printSchedule(schedule);
   if(schedule.isRunTaskNow){
     if(!_channel.randomize){
       controlOn();
