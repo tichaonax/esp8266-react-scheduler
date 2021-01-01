@@ -56,9 +56,7 @@ void TaskScheduler::scheduleHotTaskTicker(ScheduledTime schedule){
     ScheduleHotTime = schedule.scheduleTime;
   }else{
     ScheduleHotTime = TWENTY_FOUR_HOUR_DURATION - (schedule.currentTime - schedule.scheduleStartDateTime) - 1;
-    if(schedule.scheduleHotTimeEndDateTime > schedule.currentTime) {  
-      runHotTask();
-    }
+    runHotTask();
   }
 
   ScheduleHotTicker.attach(1, +[&](TaskScheduler* task) {
@@ -100,9 +98,7 @@ void TaskScheduler::scheduleTimeSpanTaskTicker(ScheduledTime schedule){
     SpanTime = schedule.scheduleTime;
   }else{
     SpanTime = TWENTY_FOUR_HOUR_DURATION - (schedule.currentTime - schedule.scheduleStartDateTime) - 1;
-    if(schedule.scheduleEndDateTime > schedule.currentTime) {  
-      runTask();
-    }
+    runTask();
   }
   SpanTicker.attach(1, +[&](TaskScheduler* task) {
     task->SpanTime--;
@@ -164,7 +160,7 @@ void TaskScheduler::scheduleTaskTicker(){
 
 ScheduledTime TaskScheduler::getNextRunTime(){
     ScheduledTime schedule = Utils.getScheduleTimes(_channel.startTime,
-    _channel.endTime, _channel.schedule.hotTimeHour, _channel.enableTimeSpan, isHotScheduleActive, _channel.name);
+    _channel.endTime, _channel.schedule.hotTimeHour, _channel.enableTimeSpan, _isHotScheduleActive, _channel.name);
     return schedule;
 }
 
@@ -271,8 +267,8 @@ void TaskScheduler::printSchedule(ScheduledTime schedule){
   Serial.println(schedule.isHotSchedule);
   Serial.print("isSpanSchedule:      ");
   Serial.println(schedule.isSpanSchedule);
-  Serial.print("isSpanActive:        ");
-  Serial.println(schedule.isSpanActive);
+  Serial.print("isHotScheduleActive:        ");
+  Serial.println(schedule.isHotScheduleActive);
   Serial.print("isRunTaskNow:        ");
   Serial.println(schedule.isRunTaskNow);
   Serial.print("currentTime:                 ");
@@ -298,6 +294,8 @@ void TaskScheduler::runTask(){
     }
     else{
       ControlOnTime = getRandomOnTimeSpan();
+      Serial.print("ControlOnTime:    ");
+      Serial.println(ControlOnTime);
       controlOnTicker();
     }
   }else{
