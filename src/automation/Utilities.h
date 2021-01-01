@@ -51,16 +51,6 @@ public:
     return(mktime(&tm));
   }
 
-  // time_t midNightToday(){
-  //   time_t now = time(nullptr);
-  //   struct tm *lt = localtime(&now);
-  //   lt->tm_hour = 0;
-  //   lt->tm_min = 0;
-  //   lt->tm_sec = 0;
-  //   return mktime(lt);
-  // }
-
-
   time_t timeToStartSeconds(time_t currentTime, time_t startTime, time_t endTime, time_t startDateTime, time_t endDateTime){
     if(startTime < endTime){  // start 7:00 end 23:00
       if((difftime(endDateTime, currentTime) > 0)){ // we have not reached endTime
