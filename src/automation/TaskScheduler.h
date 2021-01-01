@@ -100,7 +100,7 @@ class TaskScheduler {
     void digitalClockDisplay(time_t tnow);
 
     ScheduledTime getNextRunTime();
-    //bool shouldRunTaskNow();
+    void updateStatus(time_t delta);
     void updateNextRunStatus();
     time_t getRandomOnTimeSpan();
     time_t getRandomOffTimeSpan();
