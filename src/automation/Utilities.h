@@ -20,6 +20,7 @@ struct ScheduledTime {
   bool isRunTaskNow;
   bool isHotScheduleActive;
   String channelName;
+  bool isRandomize;
 }; 
 
 class Utilities {
@@ -58,7 +59,7 @@ public:
     return(mktime(&tm));
   }
 
-  time_t timeToStartSeconds(time_t currentTime, time_t startTime, time_t endTime, time_t startDateTime, time_t endDateTime, time_t hotTime){
+  time_t timeToStartSeconds(time_t currentTime, time_t startTime, time_t endTime, time_t startDateTime, time_t endDateTime){
     if(startTime < endTime){  // start 7:00 end 23:00
       if((difftime(endDateTime, currentTime) > 0)){ // we have not reached endTime
         if((difftime(startDateTime, currentTime) > 0)){ // we have not reached startTime
@@ -83,10 +84,13 @@ public:
   }
 
   ScheduledTime getScheduleTimes(time_t startTime, time_t endTime,
-    time_t hotTimeHour, bool enableTimeSpan, bool isHotScheduleActive, String channelName){
+    time_t hotTimeHour, bool enableTimeSpan, bool isHotScheduleActive,
+    String channelName, bool randomize){
     ScheduledTime schedule;
+    schedule.isRandomize = randomize;
     schedule.channelName = channelName;
     schedule.isHotScheduleActive = isHotScheduleActive;
+    schedule.isSpanSchedule = enableTimeSpan;
     schedule.currentTime = time(nullptr);
     schedule.startTime = startTime;
     schedule.endTime = endTime;
@@ -105,10 +109,9 @@ public:
     schedule.scheduleEndDateTime = schedule.midNightToday + endTime;
     
     schedule.scheduleTime = timeToStartSeconds(schedule.currentTime, startTime, endTime,
-    schedule.scheduleStartDateTime, schedule.scheduleEndDateTime, hotTimeHour);
-    schedule.isHotSchedule = hotTimeHour > 0;
-    schedule.isSpanSchedule = enableTimeSpan;
-
+    schedule.scheduleStartDateTime, schedule.scheduleEndDateTime);
+    schedule.isHotSchedule = schedule.isRandomize && (hotTimeHour > 0) && !schedule.isSpanSchedule;
+   
     if (!schedule.isHotSchedule){
       schedule.isRunTaskNow = schedule.scheduleTime <= 1;
     }else{
