@@ -56,7 +56,11 @@ void TaskScheduler::scheduleHotTaskTicker(ScheduledTime schedule){
     ScheduleHotTime = schedule.scheduleTime;
   }else{
     ScheduleHotTime = TWENTY_FOUR_HOUR_DURATION - (schedule.currentTime - schedule.scheduleStartDateTime) - 1;
-    runHotTask();
+      runHotTask();
+      if((schedule.currentTime < schedule.scheduleHotTimeEndDateTime)
+        && ((schedule.currentTime + TWENTY_FOUR_HOUR_DURATION - schedule.scheduleStartDateTime) > _channel.schedule.hotTimeHour) ){
+        _isHotScheduleActive = false;
+      }
   }
 
   ScheduleHotTicker.attach(1, +[&](TaskScheduler* task) {
@@ -73,6 +77,7 @@ void TaskScheduler::runHotTaskTicker(){
      task->HotHourTaskTime--;
      if(task->HotHourTaskTime <= 0){
       task->HotHourTaskTime = task->HotHourTaskTimeCopy;
+      task->updateStatus(task->HotHourTaskTimeCopy);
       task->runHotTask();
      }
   }, this);
@@ -160,7 +165,8 @@ void TaskScheduler::scheduleTaskTicker(){
 
 ScheduledTime TaskScheduler::getNextRunTime(){
     ScheduledTime schedule = Utils.getScheduleTimes(_channel.startTime,
-    _channel.endTime, _channel.schedule.hotTimeHour, _channel.enableTimeSpan, _isHotScheduleActive, _channel.name);
+    _channel.endTime, _channel.schedule.hotTimeHour, _channel.enableTimeSpan,
+    _isHotScheduleActive, _channel.name, _channel.randomize);
     return schedule;
 }
 
@@ -212,6 +218,7 @@ void TaskScheduler::scheduleRunEveryTask(){
 
 void TaskScheduler::scheduleHotTask(){
   HotHourTaskTime = TWENTY_FOUR_HOUR_DURATION;
+  updateStatus(HotHourTaskTime);
   runHotTaskTicker();
   runHotTask();
 }
@@ -234,6 +241,7 @@ void TaskScheduler::runHotTask(){
 
 void TaskScheduler::scheduleTimeSpanTask(){
   SpanRepeatTime = TWENTY_FOUR_HOUR_DURATION;
+  updateStatus(SpanRepeatTime);
   runSpanTaskTicker();
   runTask();
 }
@@ -296,6 +304,7 @@ void TaskScheduler::runTask(){
       ControlOnTime = getRandomOnTimeSpan();
       Serial.print("ControlOnTime:    ");
       Serial.println(ControlOnTime);
+      updateStatus(ControlOnTime);
       controlOnTicker();
     }
   }else{
