@@ -61,6 +61,9 @@ void TaskScheduler::scheduleHotTaskTicker(ScheduledTime schedule){
         && ((schedule.currentTime + TWENTY_FOUR_HOUR_DURATION - schedule.scheduleStartDateTime) > _channel.schedule.hotTimeHour) ){
         _isHotScheduleActive = false;
       }
+      if(OffHotHourTime > 1){
+        _isHotScheduleActive = true;
+      }
   }
 
   ScheduleHotTicker.attach(1, +[&](TaskScheduler* task) {
@@ -234,6 +237,8 @@ void TaskScheduler::runHotTask(){
 
     ScheduledTime schedule = getNextRunTime();
     OffHotHourTime = schedule.scheduleHotTimeEndDateTime - schedule.currentTime;
+    Serial.print("OffHotHourTime:    ");
+    Serial.println(OffHotHourTime);
     if(OffHotHourTime < 1) { OffHotHourTime = 1;}
     stopHotTaskTicker();
   }
@@ -323,6 +328,8 @@ void TaskScheduler::controlOn(){
 
       if(_channel.enableTimeSpan){
         ControlOffTime = getScheduleTimeSpanOff();
+        Serial.print("ControlOffTime:    ");
+        Serial.println(ControlOffTime);
         controlOffTicker();
       }else{
         if(!_channel.randomize){
