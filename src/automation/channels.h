@@ -4,11 +4,11 @@
 #define CHANNEL_ONE_CONTROL_PIN 5
 #define CHANNEL_ONE_REST_ENDPOINT_PATH "/rest/channelOneState"  //restChannelEndPoint
 #define CHANNEL_ONE_SOCKET_PATH "/ws/channelOneState"  // webSocketChannelEndPoint
-#define CHANNEL_ONE_DEFAULT_NAME "Water Pump" //  defaultChannelName
+#define CHANNEL_ONE_DEFAULT_NAME "Onboard Pump" //  defaultChannelName
 #define CHANNEL_ONE_CONFIG_JSON_PATH "/config/channelOneState.json"  // channelJsonConfigPath
 #define CHANNEL_ONE_HOME_ASSISTANT_ENTITY "water_pump_switch"
 #define CHANNEL_ONE_DEFAULT_CONTROL_RUN_EVERY 15.0f
-#define CHANNEL_ONE_DEFAULT_CONTROL_OFF_AFTER 3.0f
+#define CHANNEL_ONE_DEFAULT_CONTROL_OFF_AFTER 5.0f
 #define CHANNEL_ONE_DEFAULT_CONTROL_START_TIME_HOUR 8
 #define CHANNEL_ONE_DEFAULT_CONTROL_START_TIME_MINUTE 0
 #define CHANNEL_ONE_DEFAULT_CONTROL_END_TIME_HOUR 16
