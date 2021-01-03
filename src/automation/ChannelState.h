@@ -44,6 +44,9 @@ struct Channel {
     bool    randomize;      // when enabled randomize the on/off
     String localDateTime;
     String IP;
+    bool isHotScheduleActive;
+    String offHotHourDateTime;
+    String controlOffDateTime;
 };
 
 class ChannelState {
@@ -104,6 +107,35 @@ public:
     schedule["hotTimeHour"] = round(float(float(channel.schedule.hotTimeHour)/float(3600)) * 1000)/ 1000;
     schedule["endTimeHour"] = round(float(float(channel.schedule.endTimeHour)/float(3600)) * 1000)/ 1000;
     schedule["endTimeMinute"] = round(float(float(channel.schedule.endTimeMinute)/float(60)) * 1000)/ 1000;
+
+    JsonObject scheduled = jsonObject.createNestedObject("scheduledTime");
+
+    ScheduledTime scheduledTime = Utils.getScheduleTimes(
+      (channel.schedule.startTimeHour + channel.schedule.startTimeMinute),
+      (channel.schedule.endTimeHour + channel.schedule.endTimeMinute),
+      channel.schedule.hotTimeHour,
+      channel.enableTimeSpan,
+      channel.isHotScheduleActive,
+      channel.name,
+      channel.randomize);
+
+    scheduled["channelName"] = scheduledTime.channelName;
+    scheduled["scheduleTime"] = scheduledTime.scheduleTime;
+    scheduled["isHotSchedule"] = scheduledTime.isHotSchedule;
+    scheduled["isSpanSchedule"] = scheduledTime.isSpanSchedule;
+    scheduled["isHotScheduleActive:"] =  scheduledTime.isHotScheduleActive;
+    scheduled["isRunTaskNow"] = scheduledTime.isRunTaskNow;
+    scheduled["currentTime"] = Utils.eraseLineFeed(ctime(&scheduledTime.currentTime));
+    scheduled["startTimeSeconds"] = scheduledTime.startTime;
+    scheduled["endTimeSeconds"] = scheduledTime.endTime;
+    scheduled["startDateTime"] = Utils.eraseLineFeed(ctime(&scheduledTime.scheduleStartDateTime));
+    
+    if(scheduledTime.isHotSchedule){
+      scheduled["hotTimeEndDateTime"] = Utils.eraseLineFeed(ctime(&scheduledTime.scheduleHotTimeEndDateTime));
+      scheduled["offHotHourDateTime"] = channel.offHotHourDateTime; 
+    }
+    scheduled["controlOffDateTime"] = channel.controlOffDateTime;
+    scheduled["endDateTime"] = Utils.eraseLineFeed(ctime(&scheduledTime.scheduleEndDateTime));  
   }
 
 static void updateChannel(JsonObject& json, Channel& channel) {
@@ -126,7 +158,7 @@ static void updateChannel(JsonObject& json, Channel& channel) {
     channel.schedule.endTimeHour = schedule["endTimeHour"] ? (int)(round(3600 * float(schedule["endTimeHour"]))) : (int)(3600 * channel.schedule.endTimeHour);
     channel.schedule.endTimeMinute = schedule["endTimeMinute"] ? (int)(round(60 * float(schedule["endTimeMinute"]))) : (int)(60 * channel.schedule.endTimeMinute);
     if (channel.schedule.endTimeMinute >= 3600) { channel.schedule.endTimeMinute  = 0; }
-    channel.schedule.hotTimeHour = schedule["hotTimeHour"] ? (int)(round(3600 * float(schedule["hotTimeHour"]))) : channel.schedule.hotTimeHour;
+    channel.schedule.hotTimeHour = schedule["hotTimeHour"] ? (int)(round(3600 * float(schedule["hotTimeHour"]))) : (int)(3600 * channel.schedule.hotTimeHour);
     if ((channel.schedule.hotTimeHour > 57600) | (channel.schedule.hotTimeHour < 0)) { channel.schedule.hotTimeHour  = 0; }
   }
 
