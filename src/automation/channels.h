@@ -4,7 +4,7 @@
 #define CHANNEL_ONE_CONTROL_PIN 5
 #define CHANNEL_ONE_REST_ENDPOINT_PATH "/rest/channelOneState"  //restChannelEndPoint
 #define CHANNEL_ONE_SOCKET_PATH "/ws/channelOneState"  // webSocketChannelEndPoint
-#define CHANNEL_ONE_DEFAULT_NAME "Water Pump" //  defaultChannelName
+#define CHANNEL_ONE_DEFAULT_NAME "Garage Water Pump" //  defaultChannelName
 #define CHANNEL_ONE_CONFIG_JSON_PATH "/config/channelOneState.json"  // channelJsonConfigPath
 #define CHANNEL_ONE_HOME_ASSISTANT_ENTITY "water_pump_switch"
 #define CHANNEL_ONE_DEFAULT_CONTROL_RUN_EVERY 15.0f
@@ -44,7 +44,7 @@
 #define CHANNEL_THREE_CONTROL_PIN 13
 #define CHANNEL_THREE_REST_ENDPOINT_PATH "/rest/channelThreeState"  //restChannelEndPoint
 #define CHANNEL_THREE_SOCKET_PATH "/ws/channelThreeState"  // webSocketChannelEndPoint
-#define CHANNEL_THREE_DEFAULT_NAME "Inside Lights" //  defaultChannelName
+#define CHANNEL_THREE_DEFAULT_NAME "Garage Inside Lights" //  defaultChannelName
 #define CHANNEL_THREE_CONFIG_JSON_PATH "/config/channelThreeState.json"  // channelJsonConfigPath
 #define CHANNEL_THREE_HOME_ASSISTANT_ENTITY "inside_light"    // homeAssistantEntity
 #define CHANNEL_THREE_DEFAULT_CONTROL_RUN_EVERY 20.0f
@@ -61,7 +61,7 @@
 #define CHANNEL_FOUR_CONTROL_PIN 14
 #define CHANNEL_FOUR_REST_ENDPOINT_PATH "/rest/channelFourState"  //restChannelEndPoint
 #define CHANNEL_FOUR_SOCKET_PATH "/ws/channelFourState"  // webSocketChannelEndPoint
-#define CHANNEL_FOUR_DEFAULT_NAME "Outside Lights" //  defaultChannelName
+#define CHANNEL_FOUR_DEFAULT_NAME "Garage Outside Lights" //  defaultChannelName
 #define CHANNEL_FOUR_CONFIG_JSON_PATH "/config/channelFourState.json"  // channelJsonConfigPath
 #define CHANNEL_FOUR_HOME_ASSISTANT_ENTITY "outside_light"    // homeAssistantEntity
 #define CHANNEL_FOUR_DEFAULT_CONTROL_RUN_EVERY 30.0f
