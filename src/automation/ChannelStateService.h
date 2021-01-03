@@ -62,6 +62,10 @@ class ChannelStateService : public StatefulService<ChannelState> {
     String  _channelName;
     bool  _enableTimeSpan;
     bool  _randomize;
+    bool  _isHotScheduleActive;
+    String _offHotHourDateTime;
+    String _controlOffDateTime;
+
 
 #ifdef ESP32
   void onStationModeGotIP(WiFiEvent_t event, WiFiEventInfo_t info);

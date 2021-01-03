@@ -64,6 +64,10 @@ void TaskScheduler::scheduleHotTaskTicker(ScheduledTime schedule){
       if(OffHotHourTime > 1){
         _isHotScheduleActive = true;
       }
+      _channelStateService.update([&](ChannelState& channelState) {
+      channelState.channel.isHotScheduleActive = _isHotScheduleActive;
+      return StateUpdateResult::CHANGED;
+    }, _channel.name);
   }
 
   ScheduleHotTicker.attach(1, +[&](TaskScheduler* task) {
@@ -97,6 +101,10 @@ void TaskScheduler::stopHotTaskTicker(){
 
 void TaskScheduler::stopHotTask(){
   _isHotScheduleActive = false;
+  _channelStateService.update([&](ChannelState& channelState) {
+      channelState.channel.isHotScheduleActive = _isHotScheduleActive;
+      return StateUpdateResult::CHANGED;
+    }, _channel.name);
   controlOff();
 }
 
@@ -149,6 +157,11 @@ void TaskScheduler::controlOnTicker(){
 }
 
 void TaskScheduler::controlOffTicker(){
+  _channelStateService.update([&](ChannelState& channelState) {
+    channelState.channel.controlOffDateTime = Utils.strDeltaLocalTime(ControlOffTime);
+    return StateUpdateResult::CHANGED;
+  }, _channel.name);
+
   ControlOffTicker.attach(1, +[&](TaskScheduler* task) {
     task->ControlOffTime--;
     if(task->ControlOffTime <= 0){
@@ -205,7 +218,7 @@ void TaskScheduler::setSchedule(){
 
     _channelStateService.update([&](ChannelState& channelState) {
       channelState.channel.lastStartedChangeTime = Utils.strLocalTime();
-      channelState.channel.nextRunTime = Utils.strLocalNextRunTime(schedule.scheduleTime);
+      channelState.channel.nextRunTime = Utils.strDeltaLocalTime(schedule.scheduleTime);
       Serial.print("Task set to start at : ");
       Serial.println(channelState.channel.nextRunTime);
       return StateUpdateResult::CHANGED;
@@ -229,17 +242,21 @@ void TaskScheduler::scheduleHotTask(){
 void TaskScheduler::runHotTask(){
   if(_channel.enabled){
     _isHotScheduleActive = true;
+    ScheduledTime schedule = getNextRunTime();
+    OffHotHourTime = schedule.scheduleHotTimeEndDateTime - schedule.currentTime;
+    if(OffHotHourTime < 1) { OffHotHourTime = 1;}
+
     _channelStateService.update([&](ChannelState& channelState) {
+      channelState.channel.isHotScheduleActive = _isHotScheduleActive;
       channelState.channel.controlOn = true;
       channelState.channel.lastStartedChangeTime =  Utils.strLocalTime();
+      channelState.channel.offHotHourDateTime = Utils.strDeltaLocalTime(OffHotHourTime);
+      channelState.channel.controlOffDateTime = channelState.channel.offHotHourDateTime;
       return StateUpdateResult::CHANGED;
     }, _channel.name);
 
-    ScheduledTime schedule = getNextRunTime();
-    OffHotHourTime = schedule.scheduleHotTimeEndDateTime - schedule.currentTime;
     Serial.print("OffHotHourTime:    ");
     Serial.println(OffHotHourTime);
-    if(OffHotHourTime < 1) { OffHotHourTime = 1;}
     stopHotTaskTicker();
   }
 }
@@ -253,7 +270,7 @@ void TaskScheduler::scheduleTimeSpanTask(){
 
 void TaskScheduler::updateStatus(time_t delta){
   _channelStateService.update([&](ChannelState& channelState) {
-  channelState.channel.nextRunTime = Utils.strLocalNextRunTime(delta);;  
+  channelState.channel.nextRunTime = Utils.strDeltaLocalTime(delta);;  
   return StateUpdateResult::CHANGED;
   }, _channel.name);
 }
