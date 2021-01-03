@@ -55,14 +55,17 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
   _runEvery = (int)(round(60 * float(runEvery)));
   _offAfter = (int)(round(60 * float(offAfter)));
   _startTimeHour  = startTimeHour;
-  _startTimeMinute  =startTimeMinute;
+  _startTimeMinute  = startTimeMinute;
   _endTimeHour  = endTimeHour;
   _endTimeMinute  = endTimeMinute;
   _enabled  = enabled;
   _channelName = channelName;
   _enableTimeSpan = enableTimeSpan;
   _randomize = randomize;
-  _hotTimeHour = (int)(round(3600 * float(hotTimeHour)));
+  _hotTimeHour = hotTimeHour;
+  _isHotScheduleActive = false;
+  _offHotHourDateTime = "";
+  _controlOffDateTime = "";
 
   // configure controls to be output
   pinMode(_channelControlPin, OUTPUT);
@@ -175,6 +178,9 @@ void ChannelStateService::begin() {
     _state.channel.enabled = _enabled;
     _state.channel.enableTimeSpan = _enableTimeSpan;
     _state.channel.randomize = _randomize;
+    _state.channel.isHotScheduleActive = _isHotScheduleActive;
+    _state.channel.offHotHourDateTime = _offHotHourDateTime;
+    _state.channel.controlOffDateTime = _controlOffDateTime;
 
     _state.channel.schedule.runEvery =  _runEvery;
     _state.channel.schedule.offAfter =  _offAfter;
