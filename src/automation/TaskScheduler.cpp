@@ -244,8 +244,8 @@ void TaskScheduler::runHotTask(){
     _isHotScheduleActive = true;
     ScheduledTime schedule = getNextRunTime();
     OffHotHourTime = schedule.scheduleHotTimeEndDateTime - schedule.currentTime;
-    Serial.print("OffHotHourTime:    ");
-    Serial.println(OffHotHourTime);
+    if(OffHotHourTime < 1) { OffHotHourTime = 1;}
+
     if(OffHotHourTime < 1) { OffHotHourTime = 1;}
 
     _channelStateService.update([&](ChannelState& channelState) {
@@ -256,6 +256,8 @@ void TaskScheduler::runHotTask(){
       channelState.channel.controlOffDateTime = channelState.channel.offHotHourDateTime;
       return StateUpdateResult::CHANGED;
     }, _channel.name);
+    Serial.print("OffHotHourTime:    ");
+    Serial.println(OffHotHourTime);
     stopHotTaskTicker();
   }
 }

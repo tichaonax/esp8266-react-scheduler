@@ -53,10 +53,10 @@ public:
       }
     }else{  // start 19:00 end 3:00AM
       if(difftime(startDateTime, currentTime) > 0){ // we have not reached startTime
-        if((currentTime + TWENTY_FOUR_HOUR_DURATION) < endDateTime ){
-          return(1);  // we have not reached end time of today start immediately
-        }
-        if(currentTime < endDateTime){ return (1);}
+        //if((currentTime + TWENTY_FOUR_HOUR_DURATION) < endDateTime ){
+        //  return(1);  // we have not reached end time of today start immediately
+        //}
+        // if(currentTime < endDateTime){ return (1);}
         return(startDateTime - currentTime);  // time to startTime
       }else{
         return (1); // start immediately we are between startTime and EndTime
@@ -101,8 +101,8 @@ public:
         && schedule.currentTime < schedule.scheduleEndDateTime;
       }
       else{
-        schedule.isRunTaskNow = ((schedule.currentTime + TWENTY_FOUR_HOUR_DURATION) > schedule.scheduleHotTimeEndDateTime 
-        && (schedule.currentTime + TWENTY_FOUR_HOUR_DURATION) < schedule.scheduleEndDateTime) | schedule.scheduleTime <= 1 ;
+        schedule.isRunTaskNow = schedule.currentTime  > schedule.scheduleHotTimeEndDateTime 
+        && schedule.currentTime < schedule.scheduleEndDateTime | schedule.scheduleTime <= 1;
       }
     }
     schedule.isRunTaskNow = schedule.isRunTaskNow && !schedule.isHotScheduleActive;
