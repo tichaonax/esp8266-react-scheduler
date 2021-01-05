@@ -52,12 +52,15 @@ public:
         return(startDateTime + TWENTY_FOUR_HOUR_DURATION - currentTime);  // we are starting next day
       }
     }else{  // start 19:00 end 3:00AM
+      time_t timeToEndTime = 0;
       if(difftime(startDateTime, currentTime) > 0){ // we have not reached startTime
-        return(startDateTime - currentTime);  // time to startTime
+        timeToEndTime = endDateTime - TWENTY_FOUR_HOUR_DURATION - currentTime; 
+        if(timeToEndTime > 0) { return (1); } 
+        return(startDateTime - currentTime);
       }else{
-        if(currentTime < endDateTime){  // we have not reached end yet
-          return (1);
-        }
+        if(currentTime < endDateTime){ return (1); }
+        timeToEndTime = endDateTime - TWENTY_FOUR_HOUR_DURATION - currentTime;        
+        if(timeToEndTime > 0) { return (1); }
         return (startDateTime - currentTime);
       }
     }
