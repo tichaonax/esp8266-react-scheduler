@@ -244,6 +244,9 @@ void TaskScheduler::runHotTask(){
     _isHotScheduleActive = true;
     ScheduledTime schedule = getNextRunTime();
     OffHotHourTime = schedule.scheduleHotTimeEndDateTime - schedule.currentTime;
+    if(schedule.isHotScheduleAdjust){
+      OffHotHourTime = OffHotHourTime - TWENTY_FOUR_HOUR_DURATION;
+    }
     if(OffHotHourTime < 1) { OffHotHourTime = 1;}
 
     _channelStateService.update([&](ChannelState& channelState) {
