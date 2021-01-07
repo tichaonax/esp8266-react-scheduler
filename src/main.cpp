@@ -13,8 +13,8 @@
 
 #define SERIAL_BAUD_RATE 115200
 #define LED 2  //On board LED
-#define LED_ON = !CONTROL_ON  // LED 2 is inverted
-#define LED_OFF = !CONTROL_OFF
+#define LED_ON !CONTROL_ON  // LED 2 is inverted
+#define LED_OFF !CONTROL_OFF
 
 Ticker blinkerHeartBeat;
 Ticker blinkerHeartBeatOff;
