@@ -15,12 +15,22 @@
 #define LED 2  //On board LED
 
 Ticker blinkerHeartBeat;
+Ticker blinkerHeartBeatOff;
 
 bool validNTP;
 
 void changeState()
 {
   digitalWrite(LED, !(digitalRead(LED)));
+}
+
+void turnLedOff(){
+  digitalWrite(LED, CONTROL_OFF);
+}
+
+void turnLedOn(){
+  digitalWrite(LED, CONTROL_ON);
+  blinkerHeartBeatOff.once(0.125, turnLedOff);
 }
 
 Ticker restartTicker;
@@ -176,7 +186,7 @@ void runSchedules(){
         if(year > 1970){
           validNTP = true;
           blinkerHeartBeat.attach(1, +[&](){}); // disable fast blinker
-          blinkerHeartBeat.attach(0.5, changeState);  // and replace with normal
+          blinkerHeartBeat.attach(1, turnLedOn);  // and replace with normal
           #if defined(CHANNEL_ONE)
             channelOneTaskScheduler.setSchedule();
           #endif  

@@ -4,8 +4,15 @@
 #include <ctime>
 #include <HttpEndpoint.h>
 
+#define CONTROL_ON 0x1
+#define CONTROL_OFF 0x0
 #define MID_NIGHT_SECONDS 86399
 #define TWENTY_FOUR_HOUR_DURATION MID_NIGHT_SECONDS + 1
+
+struct TotalScheduledTime {
+  bool isHotScheduleAdjust;
+  time_t timeToStartSeconds;
+};
 struct ScheduledTime {
   time_t startTime;
   time_t endTime;
@@ -21,6 +28,7 @@ struct ScheduledTime {
   bool isHotScheduleActive;
   String channelName;
   bool isRandomize;
+  bool isHotScheduleAdjust;
 }; 
 
 class Utilities {
@@ -40,27 +48,43 @@ public:
     return eraseLineFeed(ctime(&now)); 
   }
 
-  time_t timeToStartSeconds(time_t currentTime, time_t startTime, time_t endTime, time_t startDateTime, time_t endDateTime){
+  TotalScheduledTime timeToStartSeconds(time_t currentTime, time_t startTime, time_t endTime, time_t startDateTime, time_t endDateTime){
+    TotalScheduledTime totalTime;
+    totalTime.timeToStartSeconds = 1;
+    totalTime.isHotScheduleAdjust = false;
     if(startTime < endTime){  // start 7:00 end 23:00
-      if((difftime(endDateTime, currentTime) > 0)){ // we have not reached endTime
-        if((difftime(startDateTime, currentTime) > 0)){ // we have not reached startTime
-          return(startDateTime - currentTime);  // time to startTime
+      if(endDateTime > currentTime){ // we have not reached endTime
+        if(startDateTime > currentTime){ // we have not reached startTime
+          totalTime.timeToStartSeconds = startDateTime - currentTime;  // time to startTime
         }else{
-          return (1); // start immediately we are between startTime and EndTime
+          totalTime.timeToStartSeconds = 1; // start immediately we are between startTime and EndTime
         }
       }else{  // we are past endTime but before startTime
-        return(startDateTime + TWENTY_FOUR_HOUR_DURATION - currentTime);  // we are starting next day
+        totalTime.timeToStartSeconds = startDateTime + TWENTY_FOUR_HOUR_DURATION - currentTime; // we are starting next day
       }
     }else{  // start 19:00 end 3:00AM
-      if(difftime(startDateTime, currentTime) > 0){ // we have not reached startTime
-        return(startDateTime - currentTime);  // time to startTime
-      }else{
-        if(currentTime < endDateTime){  // we have not reached end yet
-          return (1);
+      time_t timeToEnd = endDateTime - TWENTY_FOUR_HOUR_DURATION - currentTime;
+      if(startDateTime > currentTime){
+        if(timeToEnd > 0) { 
+          totalTime.timeToStartSeconds = 1;
+          totalTime.isHotScheduleAdjust = true;
+        }else{
+          totalTime.timeToStartSeconds = startDateTime - currentTime;
         }
-        return (startDateTime - currentTime);
+      }else{
+        if(currentTime < endDateTime){ 
+          totalTime.timeToStartSeconds = 1; 
+        }else{
+        if(timeToEnd > 0) {
+          totalTime.timeToStartSeconds = 1;
+          totalTime.isHotScheduleAdjust = true;
+        }else{
+            totalTime.timeToStartSeconds = startDateTime - currentTime;
+          }
+        }
       }
     }
+    return totalTime;
   }
 
   ScheduledTime getScheduleTimes(time_t startTime, time_t endTime,
@@ -88,8 +112,10 @@ public:
     schedule.scheduleEndDateTime = schedule.midNightToday + endTime;
     if (startTime > endTime) { schedule.scheduleEndDateTime = schedule.scheduleEndDateTime + TWENTY_FOUR_HOUR_DURATION;}
     
-    schedule.scheduleTime = timeToStartSeconds(schedule.currentTime, startTime, endTime,
+    TotalScheduledTime totalTime = timeToStartSeconds(schedule.currentTime, startTime, endTime,
     schedule.scheduleStartDateTime, schedule.scheduleEndDateTime);
+    schedule.scheduleTime = totalTime.timeToStartSeconds;
+    schedule.isHotScheduleAdjust = totalTime.isHotScheduleAdjust;
     schedule.isHotSchedule = schedule.isRandomize && (hotTimeHour > 0) && !schedule.isSpanSchedule;
    
     if (!schedule.isHotSchedule){
@@ -100,8 +126,13 @@ public:
         && schedule.currentTime < schedule.scheduleEndDateTime;
       }
       else{
+        if(!schedule.isHotScheduleAdjust){
         schedule.isRunTaskNow = schedule.currentTime  > schedule.scheduleHotTimeEndDateTime 
         && schedule.currentTime < schedule.scheduleEndDateTime | schedule.scheduleTime <= 1;
+        }else{
+          schedule.isRunTaskNow = schedule.currentTime  > (schedule.scheduleHotTimeEndDateTime - TWENTY_FOUR_HOUR_DURATION)
+          && schedule.currentTime < (schedule.scheduleEndDateTime - TWENTY_FOUR_HOUR_DURATION);
+        }
       }
     }
     schedule.isRunTaskNow = schedule.isRunTaskNow && !schedule.isHotScheduleActive;
