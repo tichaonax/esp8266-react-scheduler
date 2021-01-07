@@ -25,11 +25,11 @@ void changeState()
 }
 
 void turnLedOff(){
-  digitalWrite(LED, CONTROL_OFF);
+  digitalWrite(LED, !CONTROL_OFF);
 }
 
 void turnLedOn(){
-  digitalWrite(LED, CONTROL_ON);
+  digitalWrite(LED, !CONTROL_ON);
   blinkerHeartBeatOff.once(0.125, turnLedOff);
 }
 
