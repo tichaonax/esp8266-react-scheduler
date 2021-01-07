@@ -13,6 +13,8 @@
 
 #define SERIAL_BAUD_RATE 115200
 #define LED 2  //On board LED
+#define LED_ON = !CONTROL_ON  // LED 2 is inverted
+#define LED_OFF = !CONTROL_OFF
 
 Ticker blinkerHeartBeat;
 Ticker blinkerHeartBeatOff;
@@ -25,11 +27,11 @@ void changeState()
 }
 
 void turnLedOff(){
-  digitalWrite(LED, CONTROL_OFF);
+  digitalWrite(LED, LED_OFF);
 }
 
 void turnLedOn(){
-  digitalWrite(LED, CONTROL_ON);
+  digitalWrite(LED, LED_ON);
   blinkerHeartBeatOff.once(0.125, turnLedOff);
 }
 
