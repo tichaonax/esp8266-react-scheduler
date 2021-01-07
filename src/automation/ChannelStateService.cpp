@@ -1,9 +1,6 @@
 #include "channels.h"
 #include "ChannelStateService.h"
 
-#define CONTROL_ON 0x1
-#define CONTROL_OFF 0x0
-
 ChannelStateService::ChannelStateService(AsyncWebServer* server,
                                       SecurityManager* securityManager,
                                       AsyncMqttClient* mqttClient,

@@ -4,6 +4,8 @@
 #include <ctime>
 #include <HttpEndpoint.h>
 
+#define CONTROL_ON 0x1
+#define CONTROL_OFF 0x0
 #define MID_NIGHT_SECONDS 86399
 #define TWENTY_FOUR_HOUR_DURATION MID_NIGHT_SECONDS + 1
 
