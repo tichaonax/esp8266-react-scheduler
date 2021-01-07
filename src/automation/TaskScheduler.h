@@ -6,9 +6,6 @@
 #include "ChannelMqttSettingsService.h"
 #include "ChannelStateService.h"
 
-#define CONTROL_ON 0x1
-#define CONTROL_OFF 0x0
-
 class TaskScheduler {
     public:
     TaskScheduler(AsyncWebServer* server,
