@@ -14,6 +14,6 @@ ChannelScheduleRestartService::ChannelScheduleRestartService(
 }
 
 void ChannelScheduleRestartService::scheduleRestart(AsyncWebServerRequest* request) {
-  _channel->scheduleRestart();
+  _channel->scheduleRestart(true);
   request->send(200);
 }
