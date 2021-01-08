@@ -29,7 +29,7 @@ class TaskScheduler {
                     bool randomize,
                     float hotTimeHour);
     void begin();
-    void scheduleRestart();
+    void scheduleRestart(bool isTurnOffSwitch);
     void scheduleTimeSpanTask();
     void runTask();
     void runHotTask();
@@ -68,9 +68,13 @@ class TaskScheduler {
     time_t ControlOffTime;
     Ticker ControlOffTicker;
 
+    timer_t ReScheduleTasksTime;
+    Ticker ReScheduleTasksTicker;
+
     TaskScheduler();
     void setSchedule();
     void setScheduleTimes();
+    void reScheduleTasks();
 
     private:
     bool _isHotScheduleActive;
