@@ -192,6 +192,16 @@ void TaskScheduler::setScheduleTimes(){
   _channel.endTime = _channel.schedule.endTimeHour + _channel.schedule.endTimeMinute;
 }
 
+void TaskScheduler::reScheduleTasks(){
+  ReScheduleTasksTime = 3600; // reschedule task after 1 hour
+  ReScheduleTasksTicker.attach(1, +[&](TaskScheduler* task) {
+    task->ReScheduleTasksTime--;
+    if(task->ReScheduleTasksTime <= 0){
+      task->scheduleRestart(false);
+    }
+  }, this);
+}
+
 void TaskScheduler::setSchedule(){
   Serial.println("");
   Serial.print("Current Time: ");
@@ -199,6 +209,7 @@ void TaskScheduler::setSchedule(){
   Serial.print(_channel.name);
 
   if(_channel.enabled){
+    reScheduleTasks();
     CurrentTime current = getCurrentTime();
     ScheduledTime schedule = getNextRunTime();
     printSchedule(schedule);
@@ -408,10 +419,12 @@ time_t TaskScheduler::getScheduleTimeSpanOff(){
   return next;
 }
 
-void TaskScheduler::scheduleRestart(){
+void TaskScheduler::scheduleRestart(bool isTurnOffSwitch){
   tickerDetachAll();
   setScheduleTimes();
-  overrideControlOff();
+  if(isTurnOffSwitch){
+    overrideControlOff();
+  }
   setSchedule();
 }
 
@@ -428,4 +441,5 @@ void TaskScheduler::tickerDetachAll(){
   RunEveryTicker.once(1, +[&](){});
   ControlOnTicker.once(1, +[&](){});
   ControlOffTicker.once(1, +[&](){});
+  ReScheduleTasksTicker.once(1, +[&](){});
 }
