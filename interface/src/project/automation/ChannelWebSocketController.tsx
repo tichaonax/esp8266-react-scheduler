@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 const ChannelWebSocketController = () => {
     const classes = useStyles();
     return (
-      <SectionContent title='Switch status' titleGutter>
+      <SectionContent title='' titleGutter>
         <div className={classes.flexContainer}>
           <div className={classes.flexChild}>
             {(CHANNEL_ONE === 'true') && 
