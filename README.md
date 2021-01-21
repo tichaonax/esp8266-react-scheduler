@@ -4,10 +4,12 @@ I had a unique problem in my rural community and needed to find a sound solution
 
 ## Let's Automate This Home
 ![Let's automate this home](doc/home-sweet-home.jpeg)
+
 Yes a drone took that picture!
 
 ## Original Windows IoT system
 ![Original system control using raspberry pi](doc/rasp-pi-iot.jpeg)
+
 The one thing I miss is the image slide show for the 1000+ photos stored on the sd-card. Original implementation was on .NET windows iot and the code base can be found [here](https://github.com/tichaonax/HwandazaWebService) for the web service. and [here](https://github.com/tichaonax/HwandazaHttpServer) for the Http Server on [github](https://github.com/).
 
 Some video clips on this are on YouTube [here](https://youtu.be/mtPby5VWATM)
@@ -15,14 +17,17 @@ Some video clips on this are on YouTube [here](https://youtu.be/mtPby5VWATM)
 
 ## Solar Panels
 ![Solar Panel Grid](doc/solar-panel-grid.jpeg)
+
 These 10 solar panels each rated at 300 watts generate a total of 3000 watts, ie about 3KW on a full sun. In my area I do get very good sunshine from about 8:00 in the morning to about 4:00 in the afternoon. On the days of good sunshine you actually get a little more that that amount of energy. You cannot store all that hence you need to find ways to use the power realtime once the battery bank is full.
 
 ## Wind Generator
 ![24V Battery Bnk](doc/wind-gen.jpeg)
+
 At night a wind turbine unreliably adds some energy to the battery bank whenever a gust of wind breezes by. 
 
 ## Battery Bank
 ![24V Battery Bank](doc/battery-bank-01.jpeg)
+
 Part of the solar energy is stored in the battery bank. Once the batteries are fully charged excess solar energy could go directly to appliances like cook tops and refrigerators without the need to use the battery bank. Power will go from solar panels to battery charge controllers straight to the inverters. So for example I do my clothes ironing around lunch time or as soon as the batteries are full. 
 
 ## Some Messy Wiring
@@ -30,6 +35,7 @@ Part of the solar energy is stored in the battery bank. Once the batteries are f
 ![Inverter array](doc/inverter-arry.jpeg)
 
 Well without an electrical engineering degree you can only do so much but the wiring is safe. Electrical grounding and lightning protection was my number one.
+
 ##### Now that we got that out of the way lets get to business!
 
 # Problem Statement.
