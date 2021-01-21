@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },  
 
   muiListItemGutters: {
-    width: "400px",
+    width: "300px",
     margin: theme.spacing(1),
   },
 }));

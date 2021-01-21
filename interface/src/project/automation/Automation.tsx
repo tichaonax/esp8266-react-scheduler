@@ -23,7 +23,7 @@ class Automation extends Component<RouteComponentProps> {
     return (
       <MenuAppBar sectionTitle="Automation System">
         <Tabs value={this.props.match.url} onChange={this.handleTabChange} variant="fullWidth">
-          <Tab value={`/${PROJECT_PATH}/auto/information`} label="Information" />
+          <Tab value={`/${PROJECT_PATH}/auto/information`} label="Info" />
           {(CHANNEL_ONE === 'true') &&
            <Tab value={`/${PROJECT_PATH}/auto/channelOne`} label="Channel One" />}
           {(CHANNEL_TWO === 'true') &&
