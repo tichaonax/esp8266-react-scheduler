@@ -3,36 +3,36 @@
 I had a unique problem in my rural community and needed to find a sound solution to address it. A previous attempt using a raspberry pi running windows 10 Iot with a touchscreen was not very successful. This would work for a few days and the system would crash and sometimes difficult to start. I needed a new solution, but before I present the new solution let me describe the problem I was trying to address.
 
 ## Let's Automate This Home
-![Let's automate this home](doc/home-sweet-home.jpeg)
+<img alt=" Let's automate this home" src="doc/home-sweet-home.jpeg" width="768"/>
 
 Yes a drone took that picture!
 
 ## Original Windows IoT system
-![Original system control using raspberry pi](doc/rasp-pi-iot.jpeg)
+<img alt=" Original system control using raspberry pi" src="doc/rasp-pi-iot.jpeg" width="768"/>
 
-The one thing I miss is the image slide show for the 1000+ photos stored on the sd-card. Original implementation was on .NET windows iot and the code base can be found [here](https://github.com/tichaonax/HwandazaWebService) for the web service. and [here](https://github.com/tichaonax/HwandazaHttpServer) for the Http Server on [github](https://github.com/).
+The one thing I miss is the image slide show for the 1000+ photos stored on the sd-card. Original implementation was on .NET windows iot and the code base can be found [*here*](https://github.com/tichaonax/HwandazaWebService) for the web service. and [*here*](https://github.com/tichaonax/HwandazaHttpServer) for the Http Server on [*github*](https://github.com/).
 
-Some video clips on this are on YouTube [here](https://youtu.be/mtPby5VWATM)
+Some video clips on this are on YouTube [*here*](https://youtu.be/mtPby5VWATM)
 
 
 ## Solar Panels
-![Solar Panel Grid](doc/solar-panel-grid.jpeg)
+<img alt=" Solar Panel Grid" src="doc/solar-panel-grid.jpeg" width=768/>
 
-These 10 solar panels each rated at 300 watts generate a total of 3000 watts, ie about 3KW on a full sun. In my area I do get very good sunshine from about 8:00 in the morning to about 4:00 in the afternoon. On the days of good sunshine you actually get a little more that that amount of energy. You cannot store all that hence you need to find ways to use the power realtime once the battery bank is full.
+These 10 solar panels each rated at "768" watts generate a total of "768"0 watts, ie about 3KW on a full sun. In my area I do get very good sunshine from about 8:00 in the morning to about 4:00 in the afternoon. On the days of good sunshine you actually get a little more that that amount of energy. You cannot store all that hence you need to find ways to use the power realtime once the battery bank is full.
 
 ## Wind Generator
-![24V Battery Bnk](doc/wind-gen.jpeg)
+<img alt=" 24V Battery Bnk" src="doc/wind-gen.jpeg" width="768"/>
 
 At night a wind turbine unreliably adds some energy to the battery bank whenever a gust of wind breezes by. 
 
 ## Battery Bank
-![24V Battery Bank](doc/battery-bank-01.jpeg)
+<img alt=" 24V Battery Bank" src="doc/battery-bank-01.jpeg" width="768"/>
 
 Part of the solar energy is stored in the battery bank. Once the batteries are fully charged excess solar energy could go directly to appliances like cook tops and refrigerators without the need to use the battery bank. Power will go from solar panels to battery charge controllers straight to the inverters. So for example I do my clothes ironing around lunch time or as soon as the batteries are full. 
 
 ## Some Messy Wiring
-![Some messy wiring](doc/some-messy-wiring.jpeg)
-![Inverter array](doc/inverter-arry.jpeg)
+<img alt=" Some messy wiring" src="doc/some-messy-wiring.jpeg" width="768"/>
+<img alt=" Inverter array" src="doc/inverter-array.jpeg" width="768"/>
 
 Well without an electrical engineering degree you can only do so much but the wiring is safe. Electrical grounding and lightning protection was my number one.
 
@@ -87,9 +87,9 @@ I need a network of systems that are each service a particular need. Conserving 
 
 Each system needed to control one device or a few at a minimum. I looked into the esp8266 micro-controller and it was the most promising. However there is some basic work that is needed to prepare configure the chip, wifi, file system, webserver interface etc before you can put your system on it.
 
-I did not want to re-invent the wheel, so I researched and found that my best option to build on was work done by [*rjwats*](https://github.com/rjwats/esp8266-react).
+I did not want to re-invent the wheel, so I researched and found that my best option to build on was work done by [*rjwats*] (https://github.com/rjwats/esp8266-react).
 
-### A basic scheduler for ESP8266 and ESP32 base on [*rjwats*](https://github.com/rjwats/esp8266-react).
+### A basic scheduler for ESP8266 and ESP32 based on [*rjwats*](https://github.com/rjwats/esp8266-react).
 
 ## Advantages of the [*rjwats*](https://github.com/rjwats/esp8266-react) framework high-level
 
@@ -100,7 +100,7 @@ I did not want to re-invent the wheel, so I researched and found that my best op
 	4.	MQTT enabled
 	5.	Security features
 	6.	Network Time
-	7. Manual Time settings
+	7.	Manual Time settings
 
 You get all the above right out of the box, kudos to rjwats.	
 On top of the above I added my system functions with configuration via an easy to use UI.
@@ -110,9 +110,9 @@ On top of the above I added my system functions with configuration via an easy t
 	1. Status
 	2. Automation
 
-Make sure you are familiar with building the project by going to [*rjwats*](https://github.com/rjwats/esp8266-react) for more documentation. It might be helpful to just go through the exercise and build that project on its own before you clone my [*react scheduler*](https://github.com/tichaonax/esp8266-react-scheduler).
+Make sure you are familiar with building the project by going to [*rjwats*" src="https://github.com/rjwats/esp8266-react) for more documentation. It might be helpful to just go through the exercise and build that project on its own before you clone my [*react scheduler*" src="https://github.com/tichaonax/esp8266-react-scheduler).
 
-If you run into issues with the date-picker in REACT follow the steps [*here*](https://material-ui-pickers.dev/getting-started/installation), a manual intervention may be needed in that case:
+If you run into issues with the date-picker in REACT follow the steps [*here*" src="https://material-ui-pickers.dev/getting-started/installation), a manual intervention may be needed in that case:
 
 You may need to install the following modules after an attempt on the initial build.
 
@@ -125,49 +125,37 @@ I try to keep updating my master branch from rjwats to take advantage of any new
 
 	Channel Status Desktop
 	
-![Channel Status](doc/status-desktop.jpeg)
+<img alt=" Channel Status" src="doc/status-desktop.jpeg" width="768"/>
 
 	Channel Status Mobile Landscape
 	
-![Channel Status](doc/status-mobile.jpeg)
+<img alt=" Channel Status" src="doc/status-mobile.jpeg" width="1028"/>
 
 	Channel Status Mobile
 	
-![Channel Status](doc/status.jpeg)
+<img alt=" Channel Status" src="doc/status.jpeg" width="400"/>
 
-	Scheduling with normal settings
-	
-![Schedule](doc/schedule-c1-1.jpeg)
+|Scheduling with normal settings|Scheduling with Timespan settings|Scheduling showing the Randomize and Hot-time feature|  
+|---|---|---|
+|<img alt=" Schedule" src="doc/schedule-c1-1.jpeg" width="400"/>|<img alt=" Schedule Timespan" src="doc/schedule-c2-1.jpeg" width="400"/>|<img alt=" Schedule Hot-time and random" src="doc/schedule-c3-1.jpeg" width="400"/>|  
 
-	Scheduling with Timespan settings
-	
-![Schedule Timespan](doc/schedule-c2-1.jpeg)
-
-	Scheduling showing the Randomize and Hot-time feature
-	
-![Schedule Hot-time and random](doc/schedule-c3-1.jpeg)
-
-	MQTT Settings
-	
-![MQTT](doc/mqtt-c1-1.jpeg)
-
-	Status
-	
-![Status](doc/status-c1-1.jpeg)
+|MQTT Settings|Status|
+|---|---|---|
+|<img alt=" MQTT" src="doc/mqtt-c1-1.jpeg" width="400"/>|<img alt=" Status" src="doc/status-c1-1.jpeg" width="400"/>|
 
 	Automation information
 	
-![Automation Information](doc/status-c1-1.jpeg)
+<img alt=" Automation Information" src="doc/status-c1-1.jpeg" width="400"/>
 
 # Homeassistant integration comes for free.
 
 	Desktop
 
-![Homeassistant Desktop](doc/homeassistant-desktop.jpeg)
+<img src=doc/homeassistant-desktop.jpeg width=768/>
 
 	Mobile
 	
-![Homeassistant Desktop](doc/homeassistant-mobile.jpeg)
+<img alt="HomeMobile" src="doc/homeassistant-mobile.jpeg" width="400"/>
 
 
 ## Watch-for
