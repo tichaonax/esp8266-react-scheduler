@@ -2,7 +2,17 @@
 
 I had a unique problem in my rural community and needed to find a sound solution to address it. A previous attempt using a raspberry pi running windows 10 Iot with a touchscreen was not very successful. This would work for a few days and the system would crash and sometimes difficult to start. I needed a new solution, but before I present the new solution let me describe the problem I was trying to address.
 
-[Skip to Problem Statement](#problem-statement)
+# skip to		
+
+[Problem Statement](#problem-statement)
+
+[Solution Space](#solution-space)
+
+[Scheduler Screens](#esp-react-scheduler-screens)
+
+[Homeassistant integration](#homeassistant-integration)
+
+[What to watch for](#what-to-watch-for)
 
 ## Let's Automate This Home
 <img alt=" Let's automate this home" src="doc/home-sweet-home.jpeg" width="768"/>
@@ -34,7 +44,7 @@ Part of the solar energy is stored in the battery bank. Once the batteries are f
 
 ## Some Messy Wiring
 <img alt=" Some messy wiring" src="doc/some-messy-wiring.jpeg" width="768"/>
-<img alt=" Inverter array" src="doc/inverter-arry.jpeg" width="768"/>
+<img alt=" Inverter array" src="doc/inverter-array.jpeg" width="768"/>
 
 Well without an electrical engineering degree you can only do so much but the wiring is safe. Electrical grounding and lightning protection was my number one.
 
@@ -149,7 +159,9 @@ I try to keep updating my master branch from rjwats to take advantage of any new
 	
 <img alt=" Automation Information" src="doc/status-c1-1.jpeg" width="400"/>
 
-# Homeassistant integration comes for free.
+# Homeassistant integration
+
+Homeassistant integration comes for free, check out resource for Homeassistant [*here*](https://www.home-assistant.io/)
 
 	Desktop
 
@@ -160,6 +172,6 @@ I try to keep updating my master branch from rjwats to take advantage of any new
 <img alt="HomeMobile" src="doc/homeassistant-mobile.jpeg" width="400"/>
 
 
-## Watch-for
+## What To Watch For
 
 	TBD - I encountered a number of issues I will list here.
