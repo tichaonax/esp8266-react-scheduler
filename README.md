@@ -32,7 +32,7 @@ Part of the solar energy is stored in the battery bank. Once the batteries are f
 
 ## Some Messy Wiring
 <img alt=" Some messy wiring" src="doc/some-messy-wiring.jpeg" width="768"/>
-<img alt=" Inverter array" src="doc/inverter-array.jpeg" width="768"/>
+<img alt=" Inverter array" src="doc/inverter-arry.jpeg" width="768"/>
 
 Well without an electrical engineering degree you can only do so much but the wiring is safe. Electrical grounding and lightning protection was my number one.
 
@@ -140,7 +140,7 @@ I try to keep updating my master branch from rjwats to take advantage of any new
 |<img alt=" Schedule" src="doc/schedule-c1-1.jpeg" width="400"/>|<img alt=" Schedule Timespan" src="doc/schedule-c2-1.jpeg" width="400"/>|<img alt=" Schedule Hot-time and random" src="doc/schedule-c3-1.jpeg" width="400"/>|  
 
 |MQTT Settings|Status|
-|---|---|---|
+|---|---|
 |<img alt=" MQTT" src="doc/mqtt-c1-1.jpeg" width="400"/>|<img alt=" Status" src="doc/status-c1-1.jpeg" width="400"/>|
 
 	Automation information
