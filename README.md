@@ -2,6 +2,8 @@
 
 I had a unique problem in my rural community and needed to find a sound solution to address it. A previous attempt using a raspberry pi running windows 10 Iot with a touchscreen was not very successful. This would work for a few days and the system would crash and sometimes difficult to start. I needed a new solution, but before I present the new solution let me describe the problem I was trying to address.
 
+[Skip to Problem Statement](#problem-statement)
+
 ## Let's Automate This Home
 <img alt=" Let's automate this home" src="doc/home-sweet-home.jpeg" width="768"/>
 
@@ -38,7 +40,7 @@ Well without an electrical engineering degree you can only do so much but the wi
 
 ##### Now that we got that out of the way lets get to business!
 
-# Problem Statement.
+# Problem Statement
 
 At night time there is no more electricity coming from the solar panels and the wind turbine is unreliable. I rely on whatever has been stored in the batteries if they are still good. For small power usage the battery bank can handle the power needs. In order to have long life for the batteries we need to make sure that heavy appliances are not used after hours.
 
