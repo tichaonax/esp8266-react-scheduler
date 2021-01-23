@@ -83,10 +83,10 @@ I need a network of systems that are each service a particular need. Conserving 
 ### Additional requirements for lights
 
 	1.	Bedroom lights: after 10:30 PM lights must randomly turn on/off for configurable duration until
-		4:30AM when they got off completely.
+		4:30AM when they go off completely.
 	 	
 	2.	Living Room lights: after 10:00 PM lights must randomly turn on/off for configurable duration 
-		until 5:00AM when they got off completely.
+		until 5:00AM when they go off completely.
 
 ### System reliability 
 
@@ -157,15 +157,15 @@ I try to keep updating my master branch from rjwats to take advantage of any new
 
 ### Scheduling Mobile
 
-|Normal settings|Timespan settings|Randomize and Hot-time feature|  
-|:---|:---|:---|
-|<img alt=" Schedule" src="doc/schedule-c1-1.jpeg" width="400"/>|<img alt=" Schedule Timespan" src="doc/schedule-c2-1.jpeg" width="400"/>|<img alt=" Schedule Hot-time and random" src="doc/schedule-c3-1.jpeg" width="400"/>|  
+|Normal settings|Timespan settings|  
+|:---|:---|
+|<img alt=" Schedule" src="doc/schedule-c1-1.jpeg" width="400"/>|<img alt=" Schedule Timespan" src="doc/schedule-c2-1.jpeg" width="400"/>|  
 
 ### MQTT
 
-|MQTT Settings|Status|
+|Randomize and Hot-time feature|MQTT Settings|
 |:---|:---|
-|<img alt=" MQTT" src="doc/mqtt-c1-1.jpeg" width="400"/>|<img alt=" Status" src="doc/status-c1-1.jpeg" width="400"/>|
+|<img alt=" Schedule Hot-time and random" src="doc/schedule-c3-1.jpeg" width="400"/>|<img alt=" MQTT" src="doc/mqtt-c1-1.jpeg" width="400"/>|
 
 ### Status
 	
