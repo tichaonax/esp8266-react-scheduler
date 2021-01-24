@@ -1,6 +1,7 @@
 #ifndef ChannelState_h
 #define ChannelState_h
 
+#include <ESPUtils.h>
 #include "Utilities.h"
 
 #define DEFAULT_LED_STATE false
@@ -47,6 +48,7 @@ struct Channel {
     bool isHotScheduleActive;
     String offHotHourDateTime;
     String controlOffDateTime;
+    String uniqueId;
 };
 
 class ChannelState {
@@ -97,6 +99,7 @@ public:
     jsonObject["nextRunTime"] = channel.nextRunTime;
     jsonObject["randomize"] = channel.randomize;
     jsonObject["IPAddress"] = channel.IP;
+    jsonObject["uniqueId"] = ESPUtils::defaultDeviceValue();
 
     JsonObject schedule = jsonObject.createNestedObject("schedule");
     
