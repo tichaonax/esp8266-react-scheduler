@@ -47,10 +47,15 @@ class ChannelMqttSettings {
       break;
     }
 
-    settings.name = root["name"] | ESPUtils::defaultDeviceValue(settings.channelName + " : ");
+    #ifdef MQTT_FRIENDLY_NAME
+        settings.name = root["name"] | settings.channelName;
+    #else
+        settings.name = root["name"] | ESPUtils::defaultDeviceValue(settings.channelName + " : ");
+    #endif
+
     settings.mqttPath = root["mqtt_path"] | ESPUtils::defaultDeviceValue(topicHeader + settings.homeAssistantEntity + "-" + String(settings.channelControlPin) + "/");
     settings.uniqueId = root["unique_id"] | ESPUtils::defaultDeviceValue(topicType + String(settings.channelControlPin) + "-");
-      
+  
     return StateUpdateResult::CHANGED;
   }
 };

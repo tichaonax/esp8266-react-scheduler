@@ -13,8 +13,13 @@
 
 #define SERIAL_BAUD_RATE 115200
 #define LED 2  //On board LED
-#define LED_ON !CONTROL_ON  // LED 2 is inverted
-#define LED_OFF !CONTROL_OFF
+#ifdef ESP32
+  #define LED_ON CONTROL_ON
+  #define LED_OFF CONTROL_OFF
+#elif defined(ESP8266)
+  #define LED_ON !CONTROL_ON  // LED 2 is inverted
+  #define LED_OFF !CONTROL_OFF
+#endif
 
 Ticker blinkerHeartBeat;
 Ticker blinkerHeartBeatOff;
@@ -32,7 +37,7 @@ void turnLedOff(){
 
 void turnLedOn(){
   digitalWrite(LED, LED_ON);
-  blinkerHeartBeatOff.once(0.125, turnLedOff);
+  blinkerHeartBeatOff.once(0.100, turnLedOff);
 }
 
 Ticker restartTicker;
@@ -187,8 +192,8 @@ void runSchedules(){
         int year = dateText.substring(dateText.lastIndexOf(" ")+1).toInt();
         if(year > 1970){
           validNTP = true;
-          blinkerHeartBeat.attach(1, +[&](){}); // disable fast blinker
-          blinkerHeartBeat.attach(1, turnLedOn);  // and replace with normal
+          blinkerHeartBeat.attach(2, +[&](){}); // disable fast blinker
+          blinkerHeartBeat.attach(2, turnLedOn);  // and replace with normal
           #if defined(CHANNEL_ONE)
             channelOneTaskScheduler.setSchedule();
           #endif  
