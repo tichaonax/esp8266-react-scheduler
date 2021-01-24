@@ -145,10 +145,6 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
         }
       }
       
-      const onGoBack = () => {
-        history.goBack();
-      }
-
       const marks = [
         {
           value: 0,
@@ -391,9 +387,6 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
           </FormButton>
           <FormButton variant="contained" color="secondary" onClick={loadData}>
             Reset
-          </FormButton>
-          <FormButton variant="contained" color="secondary" onClick={onGoBack}>
-            Go Back
           </FormButton>
         </FormActions>
       </ValidatorForm>
