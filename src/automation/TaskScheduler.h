@@ -3,15 +3,8 @@
 
 #include <ctime>
 #include <Ticker.h>
-//#include "ESP8266TimeAlarms.h"
 #include "ChannelMqttSettingsService.h"
 #include "ChannelStateService.h"
-
-#define MID_NIGHT_SECONDS 86399
-#define TWENTY_FOUR_HOUR_DURATION MID_NIGHT_SECONDS + 1
-
-#define CONTROL_ON 0x1
-#define CONTROL_OFF 0x0
 
 class TaskScheduler {
     public:
@@ -23,8 +16,8 @@ class TaskScheduler {
                     char* channelJsonConfigPath,  //  "/config/channelOneState.json" 
                     String restChannelEndPoint, //  "/rest/channelOneState"
                     char* webSocketChannelEndPoint, //  "/ws/channelOneState"
-                    time_t  runEvery,         // run every 30 mins
-                    time_t  offAfter,         // stop after 5 mins
+                    float  runEvery,         // run every 30 mins
+                    float  offAfter,         // stop after 5 mins
                     time_t  startTimeHour,    // 8
                     time_t  startTimeMinute,  // 30
                     time_t  endTimeHour,      // 16
@@ -34,16 +27,15 @@ class TaskScheduler {
                     bool  enableTimeSpan,
                     ChannelMqttSettingsService* channelMqttSettingsService,
                     bool randomize,
-                    time_t hotTimeHour);
+                    float hotTimeHour);
     void begin();
-    void scheduleRestart();
+    void scheduleRestart(bool isTurnOffSwitch);
     void scheduleTimeSpanTask();
     void runTask();
     void runHotTask();
-    void stopHotTask();
     void controlOn();
     void controlOff();
-    void scheduleTask();
+    void scheduleRunEveryTask();
     void scheduleHotTask();
 
     time_t SpanRepeatTime;
@@ -76,11 +68,16 @@ class TaskScheduler {
     time_t ControlOffTime;
     Ticker ControlOffTicker;
 
+    timer_t ReScheduleTasksTime;
+    Ticker ReScheduleTasksTicker;
+
     TaskScheduler();
     void setSchedule();
     void setScheduleTimes();
+    void reScheduleTasks();
 
     private:
+    bool _isHotScheduleActive;
     CurrentTime getCurrentTime(){
         CurrentTime current;
         time_t curr_time;
@@ -93,10 +90,8 @@ class TaskScheduler {
         return current;
     }
 
-    bool _timeSpanActive = false;   
     ChannelStateService _channelStateService;
     Channel _channel;
-    bool    _validNTP = false;       // Wait for NTP to get valid time
     time_t getScheduleTimeSpanOff();
     protected:
 
@@ -104,24 +99,24 @@ class TaskScheduler {
     void digitalClockDisplay(time_t tnow);
 
     ScheduledTime getNextRunTime();
-    ScheduledTime getTimeSpanScheduleNextRunTime(ScheduledTime& schedule);
-    bool shouldRunTask();
+    void updateStatus(time_t delta);
     void updateNextRunStatus();
     time_t getRandomOnTimeSpan();
     time_t getRandomOffTimeSpan();
-    time_t getTimeSpanStartTimeFromNow();
 
     void overrideControlOff(); 
     void tickerDetachAll(); 
     void controlOffTicker();
     void runTaskTicker();
+    void stopHotTask();
     void controlOnTicker();
     void scheduleTaskTicker();
-    void scheduleHotTaskTicker();
+    void scheduleHotTaskTicker(ScheduledTime schedule);
     void runHotTaskTicker();
     void stopHotTaskTicker();
-    void scheduleTimeSpanTaskTicker();
+    void scheduleTimeSpanTaskTicker(ScheduledTime schedule);
     void runSpanTaskTicker();
+    void printSchedule(ScheduledTime schedule);
 };
 
 #endif

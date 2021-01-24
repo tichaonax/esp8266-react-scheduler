@@ -13,8 +13,16 @@
 
 #define SERIAL_BAUD_RATE 115200
 #define LED 2  //On board LED
+#ifdef ESP32
+  #define LED_ON CONTROL_ON
+  #define LED_OFF CONTROL_OFF
+#elif defined(ESP8266)
+  #define LED_ON !CONTROL_ON  // LED 2 is inverted
+  #define LED_OFF !CONTROL_OFF
+#endif
 
 Ticker blinkerHeartBeat;
+Ticker blinkerHeartBeatOff;
 
 bool validNTP;
 
@@ -22,6 +30,21 @@ void changeState()
 {
   digitalWrite(LED, !(digitalRead(LED)));
 }
+
+void turnLedOff(){
+  digitalWrite(LED, LED_OFF);
+}
+
+void turnLedOn(){
+  digitalWrite(LED, LED_ON);
+  blinkerHeartBeatOff.once(0.100, turnLedOff);
+}
+
+Ticker restartTicker;
+struct SystemRestart {
+  int day;
+  time_t restartTime;
+};
 
 AsyncWebServer server(80);
 ESP8266React esp8266React(&server);
@@ -141,6 +164,26 @@ SystemStateService systemStateService = SystemStateService(&server, esp8266React
   ChannelScheduleRestartService channelFourScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelFourTaskScheduler, CHANNEL_FOUR_SCHEDULE_RESTART_SERVICE_PATH);
 #endif
 
+SystemRestart getSystemRestart(time_t tnow){
+  struct tm *lt = localtime(&tnow);
+  lt->tm_hour = 0;
+  lt->tm_min = 0;
+  lt->tm_sec = 0;
+  time_t midNightToday = mktime(lt);
+  SystemRestart restart;
+  restart.restartTime = TWENTY_FOUR_HOUR_DURATION + midNightToday - tnow;
+  tm *ltm = localtime(&tnow);
+  restart.day = ltm->tm_mday;
+  return(restart);
+}
+
+  static void restartNow() {
+    WiFi.disconnect(true);
+    delay(500);
+    ESP.restart();
+  }
+
+
 void runSchedules(){
     // check to see if NTP updated the local time
     if(!validNTP){
@@ -149,8 +192,8 @@ void runSchedules(){
         int year = dateText.substring(dateText.lastIndexOf(" ")+1).toInt();
         if(year > 1970){
           validNTP = true;
-          blinkerHeartBeat.attach(1, +[&](){}); // disable fast blinker
-          blinkerHeartBeat.attach(0.5, changeState);  // and replace with normal
+          blinkerHeartBeat.attach(2, +[&](){}); // disable fast blinker
+          blinkerHeartBeat.attach(2, turnLedOn);  // and replace with normal
           #if defined(CHANNEL_ONE)
             channelOneTaskScheduler.setSchedule();
           #endif  
@@ -163,6 +206,13 @@ void runSchedules(){
           #if defined(CHANNEL_FOUR)
             channelFourTaskScheduler.setSchedule();
           #endif
+
+          SystemRestart restart = getSystemRestart(tnow);
+
+          if(restart.day == 1 && restart.restartTime > 0) {
+            // reset the system midnight first of every month.
+            restartTicker.once(restart.restartTime, restartNow);
+          }
         }
     }
 }
