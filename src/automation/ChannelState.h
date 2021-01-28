@@ -1,7 +1,7 @@
 #ifndef ChannelState_h
 #define ChannelState_h
 
-#include <ESPUtils.h>
+#include <SettingValue.h>
 #include "Utilities.h"
 
 #define DEFAULT_LED_STATE false
@@ -99,7 +99,7 @@ public:
     jsonObject["nextRunTime"] = channel.nextRunTime;
     jsonObject["randomize"] = channel.randomize;
     jsonObject["IPAddress"] = channel.IP;
-    jsonObject["uniqueId"] = ESPUtils::defaultDeviceValue();
+    jsonObject["uniqueId"] = SettingValue::format("#{unique_id}");
 
     JsonObject schedule = jsonObject.createNestedObject("schedule");
     

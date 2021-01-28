@@ -3,7 +3,7 @@
 
 #include <HttpEndpoint.h>
 #include <FSPersistence.h>
-#include <ESPUtils.h>
+#include <SettingValue.h>
 #include "channels.h"
 
 #define CHANNEL_ONE_BROKER_SETTINGS_FILE "/config/channelOneBrokerSettings.json"
@@ -50,11 +50,11 @@ class ChannelMqttSettings {
     #ifdef MQTT_FRIENDLY_NAME
         settings.name = root["name"] | settings.channelName;
     #else
-        settings.name = root["name"] | ESPUtils::defaultDeviceValue(settings.channelName + " : ");
+        settings.name = root["name"] | SettingValue::format(settings.channelName + " : #{unique_id}");
     #endif
 
-    settings.mqttPath = root["mqtt_path"] | ESPUtils::defaultDeviceValue(topicHeader + settings.homeAssistantEntity + "-" + String(settings.channelControlPin) + "/");
-    settings.uniqueId = root["unique_id"] | ESPUtils::defaultDeviceValue(topicType + String(settings.channelControlPin) + "-");
+    settings.mqttPath = root["mqtt_path"] | SettingValue::format(topicHeader + settings.homeAssistantEntity + "-" + String(settings.channelControlPin) + "/#{unique_id}");
+    settings.uniqueId = root["unique_id"] | SettingValue::format(topicType + String(settings.channelControlPin) + "-#{unique_id}");
   
     return StateUpdateResult::CHANGED;
   }
