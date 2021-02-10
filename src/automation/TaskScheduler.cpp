@@ -70,7 +70,6 @@ void TaskScheduler::scheduleHotTaskTicker(ScheduledTime schedule){
     }, _channel.name);
   }
 
-  ScheduleHotTime--;
   ScheduleHotTicker.attach(1, +[&](TaskScheduler* task) {
     task->ScheduleHotTime--;
     if(task->ScheduleHotTime <= 0){
@@ -113,7 +112,6 @@ void TaskScheduler::stopHotTask(){
 void TaskScheduler::scheduleTimeSpanTaskTicker(ScheduledTime schedule){
   if(schedule.scheduleTime > 1){
     SpanTime = schedule.scheduleTime;
-    SpanTime--;
   }else{
     SpanTime = TWENTY_FOUR_HOUR_DURATION - (schedule.currentTime - schedule.scheduleStartDateTime) - 1;
     runTask();
@@ -150,7 +148,6 @@ void TaskScheduler::runSpanTaskTicker(){
 
 void TaskScheduler::controlOnTicker(){
   updateNextRunStatus();
-  ControlOnTime--;
   ControlOnTicker.attach(1, +[&](TaskScheduler* task) {
     task->ControlOnTime--;
     if(task->ControlOnTime <= 0){
@@ -165,7 +162,6 @@ void TaskScheduler::controlOffTicker(){
     return StateUpdateResult::CHANGED;
   }, _channel.name);
 
-  ControlOffTime--;
   ControlOffTicker.attach(1, +[&](TaskScheduler* task) {
     task->ControlOffTime--;
     if(task->ControlOffTime <= 0){
@@ -174,8 +170,11 @@ void TaskScheduler::controlOffTicker(){
   }, this);
 }
 
-void TaskScheduler::scheduleTaskTicker(){
-  ScheduleTime--;
+void TaskScheduler::scheduleTaskTicker(ScheduledTime schedule){
+   if(ScheduleTime == 1){
+    CurrentTime currentTime = getCurrentTime();
+    ScheduleTime = _channel.schedule.runEvery - (currentTime.minutesInSec % _channel.schedule.runEvery);
+  }
   ScheduleTicker.attach(1, +[&](TaskScheduler* task) {
     task->ScheduleTime--;
     if(task->ScheduleTime <= 0){
@@ -215,7 +214,6 @@ void TaskScheduler::setSchedule(){
 
   if(_channel.enabled){
     reScheduleTasks();
-    CurrentTime current = getCurrentTime();
     ScheduledTime schedule = getNextRunTime();
     printSchedule(schedule);
     if (schedule.scheduleTime <= 0) { schedule.scheduleTime = 1; } 
@@ -229,7 +227,7 @@ void TaskScheduler::setSchedule(){
     if(schedule.isSpanSchedule){
       scheduleTimeSpanTaskTicker(schedule);
     }else{
-      scheduleTaskTicker();    
+      scheduleTaskTicker(schedule);    
     }
 
     _channelStateService.update([&](ChannelState& channelState) {
@@ -244,7 +242,6 @@ void TaskScheduler::setSchedule(){
 
 void TaskScheduler::scheduleRunEveryTask(){
   RunEveryTime = _channel.schedule.runEvery;
-  RunEveryTime--;
   runTaskTicker();
   runTask();
  }
@@ -410,14 +407,14 @@ time_t TaskScheduler::getScheduleTimeSpanOff(){
   timer_t next = 1;
   CurrentTime current = getCurrentTime();
   if(_channel.startTime < _channel.endTime){
-    if(current.totalCurrentTime < _channel.endTime ){
-      next = _channel.endTime - current.totalCurrentTime;
+    if(current.totalCurrentTimeInSec < _channel.endTime ){
+      next = _channel.endTime - current.totalCurrentTimeInSec;
     }
   }else{
-    if(current.totalCurrentTime > _channel.endTime){
-      next = MID_NIGHT_SECONDS + _channel.endTime - current.totalCurrentTime + 1;
+    if(current.totalCurrentTimeInSec > _channel.endTime){
+      next = MID_NIGHT_SECONDS + _channel.endTime - current.totalCurrentTimeInSec + 1;
     }else{
-      next = _channel.endTime - current.totalCurrentTime;
+      next = _channel.endTime - current.totalCurrentTimeInSec;
     }
   }
   
