@@ -1,7 +1,7 @@
 #ifndef ChannelState_h
 #define ChannelState_h
 
-#include <ESPUtils.h>
+#include <SettingValue.h>
 #include "Utilities.h"
 
 #define DEFAULT_LED_STATE false
@@ -12,10 +12,8 @@
 #define DEFAULT_JSON_DOCUMENT_SIZE 1024 
 
 struct CurrentTime {
-  time_t hours;
-  time_t minutes;
-  time_t seconds;
-  time_t totalCurrentTime;
+  time_t minutesInSec;
+  time_t totalCurrentTimeInSec;
 };
 
 struct Schedule {
@@ -99,7 +97,7 @@ public:
     jsonObject["nextRunTime"] = channel.nextRunTime;
     jsonObject["randomize"] = channel.randomize;
     jsonObject["IPAddress"] = channel.IP;
-    jsonObject["uniqueId"] = ESPUtils::defaultDeviceValue();
+    jsonObject["uniqueId"] = SettingValue::format("#{unique_id}");
 
     JsonObject schedule = jsonObject.createNestedObject("schedule");
     

@@ -37,7 +37,7 @@ void turnLedOff(){
 
 void turnLedOn(){
   digitalWrite(LED, LED_ON);
-  blinkerHeartBeatOff.once(0.100, turnLedOff);
+  blinkerHeartBeatOff.once(0.125, turnLedOff);
 }
 
 Ticker restartTicker;
