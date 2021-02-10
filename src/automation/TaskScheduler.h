@@ -83,10 +83,8 @@ class TaskScheduler {
         time_t curr_time;
 	    curr_time = time(NULL);
 	    tm *tm_local = localtime(&curr_time);
-	    current.hours = 3600 * tm_local->tm_hour;
-        current.minutes = 60 * tm_local->tm_min;
-        current.seconds = tm_local->tm_sec;
-        current.totalCurrentTime = current.hours + current.minutes + current.seconds;
+        current.minutesInSec = 60 * tm_local->tm_min;
+        current.totalCurrentTimeInSec = 3600 * tm_local->tm_hour + current.minutesInSec + tm_local->tm_sec;
         return current;
     }
 
@@ -110,7 +108,7 @@ class TaskScheduler {
     void runTaskTicker();
     void stopHotTask();
     void controlOnTicker();
-    void scheduleTaskTicker();
+    void scheduleTaskTicker(ScheduledTime schedule);
     void scheduleHotTaskTicker(ScheduledTime schedule);
     void runHotTaskTicker();
     void stopHotTaskTicker();
