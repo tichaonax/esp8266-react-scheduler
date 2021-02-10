@@ -187,7 +187,6 @@ ScheduledTime TaskScheduler::getNextRunTime(){
     ScheduledTime schedule = Utils.getScheduleTimes(_channel.startTime,
     _channel.endTime, _channel.schedule.hotTimeHour, _channel.enableTimeSpan,
     _isHotScheduleActive, _channel.name, _channel.randomize);
-        }
     return schedule;
 }
 
