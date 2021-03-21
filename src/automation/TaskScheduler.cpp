@@ -450,6 +450,8 @@ void TaskScheduler::resetOverrideSchedule(){
       channelState.channel.schedule.isOverrideActive = false;
       return StateUpdateResult::CHANGED;
     }, _channel.name);
+
+    scheduleRestart(false);
 }
 
 void TaskScheduler::setOverrideSchedule(){
