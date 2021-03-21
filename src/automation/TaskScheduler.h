@@ -29,6 +29,8 @@ class TaskScheduler {
                     bool randomize,
                     float hotTimeHour);
     void begin();
+    void resetOverrideSchedule();
+    void setOverrideSchedule();
     void scheduleRestart(bool isTurnOffSwitch);
     void scheduleTimeSpanTask();
     void runTask();
@@ -71,6 +73,8 @@ class TaskScheduler {
     timer_t ReScheduleTasksTime;
     Ticker ReScheduleTasksTicker;
 
+    Ticker ScheduleOverrideTicker;
+
     TaskScheduler();
     void setSchedule();
     void setScheduleTimes();
@@ -78,6 +82,7 @@ class TaskScheduler {
 
     private:
     bool _isHotScheduleActive;
+    bool _isOverrideActive;
     CurrentTime getCurrentTime(){
         CurrentTime current;
         time_t curr_time;

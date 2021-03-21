@@ -29,6 +29,7 @@ struct ScheduledTime {
   String channelName;
   bool isRandomize;
   bool isHotScheduleAdjust;
+  bool isOverrideActive;
 }; 
 
 class Utilities {
@@ -89,7 +90,7 @@ public:
 
   ScheduledTime getScheduleTimes(time_t startTime, time_t endTime,
     time_t hotTimeHour, bool enableTimeSpan, bool isHotScheduleActive,
-    String channelName, bool randomize){
+    String channelName, bool randomize, bool isOverrideActive){
     ScheduledTime schedule;
     schedule.isRandomize = randomize;
     schedule.channelName = channelName;
@@ -98,6 +99,7 @@ public:
     schedule.currentTime = time(nullptr);
     schedule.startTime = startTime;
     schedule.endTime = endTime;
+    schedule.isOverrideActive = isOverrideActive;
 
     struct tm *lt = localtime(&schedule.currentTime);
     lt->tm_hour = 0;
@@ -135,7 +137,7 @@ public:
         }
       }
     }
-    schedule.isRunTaskNow = schedule.isRunTaskNow && !schedule.isHotScheduleActive;
+    schedule.isRunTaskNow = schedule.isRunTaskNow && !schedule.isHotScheduleActive && !schedule.isOverrideActive;;
     return schedule;
   }
 };

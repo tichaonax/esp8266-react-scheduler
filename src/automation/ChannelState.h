@@ -25,6 +25,7 @@ struct Schedule {
     time_t  endTimeMinute;    // 30
     bool    isOverride;       // when true ignore schedule run
     time_t  hotTimeHour;      // default 0 hours [0-16]
+    bool isOverrideActive;    // ignore schedule flag
 };
 
 
@@ -64,13 +65,23 @@ public:
     return StateUpdateResult::UNCHANGED;
   }
   
+   static StateUpdateResult wsUpdate(JsonObject& root, ChannelState& settings) {
+    if (dataIsValid(root, settings)) {
+      updateChannel(root, settings.channel, true);
+      return StateUpdateResult::CHANGED;
+    }
+    return StateUpdateResult::UNCHANGED;
+  }
+
   static void haRead(ChannelState& settings, JsonObject& root) {
     root["state"] = settings.channel.controlOn ? ON_STATE : OFF_STATE;
+    root["isOverride"] = settings.channel.schedule.isOverride;
   }
 
   static StateUpdateResult haUpdate(JsonObject& root, ChannelState& settings) {
     String state = root["state"];
     settings.channel.controlOn = strcmp(ON_STATE, state.c_str()) ? false : true;
+    settings.channel.schedule.isOverride = true;
     boolean newState = false;
     if (state.equals(ON_STATE)) {
       newState = true;
@@ -84,6 +95,7 @@ public:
     }
     return StateUpdateResult::UNCHANGED;
   }
+
   private:
   static void readChannel(Channel& channel, JsonObject jsonObject) {
      time_t tnow = time(nullptr);
@@ -108,6 +120,7 @@ public:
     schedule["hotTimeHour"] = round(float(float(channel.schedule.hotTimeHour)/float(3600)) * 1000)/ 1000;
     schedule["endTimeHour"] = round(float(float(channel.schedule.endTimeHour)/float(3600)) * 1000)/ 1000;
     schedule["endTimeMinute"] = round(float(float(channel.schedule.endTimeMinute)/float(60)) * 1000)/ 1000;
+    schedule["isOverride"] = channel.schedule.isOverride;
 
     JsonObject scheduled = jsonObject.createNestedObject("scheduledTime");
 
@@ -118,7 +131,8 @@ public:
       channel.enableTimeSpan,
       channel.isHotScheduleActive,
       channel.name,
-      channel.randomize);
+      channel.randomize,
+      channel.schedule.isOverrideActive);
 
     scheduled["channelName"] = scheduledTime.channelName;
     scheduled["scheduleTime"] = scheduledTime.scheduleTime;
@@ -136,10 +150,11 @@ public:
       scheduled["offHotHourDateTime"] = channel.offHotHourDateTime; 
     }
     scheduled["controlOffDateTime"] = channel.controlOffDateTime;
-    scheduled["endDateTime"] = Utils.eraseLineFeed(ctime(&scheduledTime.scheduleEndDateTime));  
+    scheduled["endDateTime"] = Utils.eraseLineFeed(ctime(&scheduledTime.scheduleEndDateTime));
+    scheduled["isOverrideActive"] = scheduledTime.isOverrideActive;  
   }
 
-static void updateChannel(JsonObject& json, Channel& channel) {
+static void updateChannel(JsonObject& json, Channel& channel, bool isOverride=false) {
     channel.controlPin = json["controlPin"];
     channel.controlOn = json["controlOn"] | DEFAULT_CONTROL_STATE;
     channel.name = json["name"] | channel.name;
@@ -161,6 +176,8 @@ static void updateChannel(JsonObject& json, Channel& channel) {
     if (channel.schedule.endTimeMinute >= 3600) { channel.schedule.endTimeMinute  = 0; }
     channel.schedule.hotTimeHour = schedule["hotTimeHour"] ? (int)(round(3600 * float(schedule["hotTimeHour"]))) : (int)(3600 * channel.schedule.hotTimeHour);
     if ((channel.schedule.hotTimeHour > 57600) | (channel.schedule.hotTimeHour < 0)) { channel.schedule.hotTimeHour  = 0; }
+
+    channel.schedule.isOverride = isOverride ? true : schedule["isOverride"];
   }
 
   static boolean dataIsValid(JsonObject& json, ChannelState& channelState){

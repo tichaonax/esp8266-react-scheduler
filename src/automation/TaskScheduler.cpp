@@ -45,6 +45,13 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                         hotTimeHour)
                                        {
                                          _isHotScheduleActive = false;
+                                         _isOverrideActive = false;
+
+    _channelStateService.addUpdateHandler([&](const String& originId) {
+      if(_channelStateService.getChannel().schedule.isOverride){
+        this->setOverrideSchedule();
+      }  
+    }, false);
   };
 
 void TaskScheduler::begin(){
@@ -186,7 +193,7 @@ void TaskScheduler::scheduleTaskTicker(ScheduledTime schedule){
 ScheduledTime TaskScheduler::getNextRunTime(){
     ScheduledTime schedule = Utils.getScheduleTimes(_channel.startTime,
     _channel.endTime, _channel.schedule.hotTimeHour, _channel.enableTimeSpan,
-    _isHotScheduleActive, _channel.name, _channel.randomize);
+    _isHotScheduleActive, _channel.name, _channel.randomize, _isOverrideActive);
     return schedule;
 }
 
@@ -330,6 +337,10 @@ void TaskScheduler::printSchedule(ScheduledTime schedule){
   Serial.print(ctime(&schedule.scheduleHotTimeEndDateTime));
   Serial.print("scheduleEndDateTime:         ");
   Serial.print(ctime(&schedule.scheduleEndDateTime));
+  Serial.print("isOverride:                  ");
+  Serial.println(_channel.schedule.isOverride);
+  Serial.print("isOverrideActive:            ");
+  Serial.println(schedule.isOverrideActive);
 }
 
 void TaskScheduler::runTask(){
@@ -352,27 +363,25 @@ void TaskScheduler::runTask(){
 }
 
 void TaskScheduler::controlOn(){
-  if(_channel.enabled){
-    if(!_channel.schedule.isOverride){
-      _channelStateService.update([&](ChannelState& channelState) {
-        channelState.channel.controlOn = true;
-        channelState.channel.lastStartedChangeTime =  Utils.strLocalTime();
-        return StateUpdateResult::CHANGED;
-      }, _channel.name);
+  if(_channel.enabled && !_isOverrideActive){
+    _channelStateService.update([&](ChannelState& channelState) {
+      channelState.channel.controlOn = true;
+      channelState.channel.lastStartedChangeTime =  Utils.strLocalTime();
+      return StateUpdateResult::CHANGED;
+    }, _channel.name);
 
-      if(_channel.enableTimeSpan){
-        ControlOffTime = getScheduleTimeSpanOff();
-        Serial.print("ControlOffTime:    ");
-        Serial.println(ControlOffTime);
+    if(_channel.enableTimeSpan){
+      ControlOffTime = getScheduleTimeSpanOff();
+      Serial.print("ControlOffTime:    ");
+      Serial.println(ControlOffTime);
+      controlOffTicker();
+    }else{
+      if(!_channel.randomize){
+        ControlOffTime = _channel.schedule.offAfter;
         controlOffTicker();
       }else{
-        if(!_channel.randomize){
-          ControlOffTime = _channel.schedule.offAfter;
+          ControlOffTime = getRandomOffTimeSpan();
           controlOffTicker();
-        }else{
-           ControlOffTime = getRandomOffTimeSpan();
-           controlOffTicker();
-        }
       }
     }
   }
@@ -385,11 +394,12 @@ void TaskScheduler::overrideControlOff(){
       channelState.channel.lastStartedChangeTime = Utils.strLocalTime();
       return StateUpdateResult::CHANGED;
     }, _channel.name);
+
     updateNextRunStatus();
 }
 
 void TaskScheduler::controlOff(){
-  if(!_channel.schedule.isOverride){
+  if(!_isOverrideActive){
     overrideControlOff();
   }
 }
@@ -431,13 +441,35 @@ void TaskScheduler::scheduleRestart(bool isTurnOffSwitch){
   setSchedule();
 }
 
+void TaskScheduler::resetOverrideSchedule(){
+  _isOverrideActive = false;
+  _channelStateService.update([&](ChannelState& channelState) {
+      channelState.channel.schedule.isOverride = false;
+      channelState.channel.schedule.isOverrideActive = false;
+      return StateUpdateResult::CHANGED;
+    }, _channel.name);
+}
+
+void TaskScheduler::setOverrideSchedule(){
+  time_t overridePeriod = 7200; // keep current status for two hours
+  _isOverrideActive = true;
+  _channelStateService.update([&](ChannelState& channelState) {
+      channelState.channel.schedule.isOverride = false;
+      channelState.channel.schedule.isOverrideActive = true;
+      return StateUpdateResult::CHANGED;
+    }, _channel.name);
+
+  ScheduleOverrideTicker.once(overridePeriod, +[&](TaskScheduler* task) {
+      task->resetOverrideSchedule();
+  }, this);
+}
+
 void TaskScheduler::tickerDetachAll(){
   HotHourTaskTicker.once(1, +[&](){});
   RunEveryTicker.once(1, +[&](){});
   SpanRepeatTicker.once(1, +[&](){});
   SpanRepeatTicker.once(1, +[&](){});
   OffHotHourTicker.once(1, +[&](){});
-  HotHourTaskTicker.once(1, +[&](){});
   ScheduleTicker.once(1, +[&](){});
   ScheduleHotTicker.once(1, +[&](){});
   SpanTicker.once(1, +[&](){});

@@ -30,7 +30,7 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
                   AuthenticationPredicates::IS_AUTHENTICATED),
     _mqttPubSub(ChannelState::haRead, ChannelState::haUpdate, this, mqttClient),
     _webSocket(ChannelState::read,
-               ChannelState::update,
+               ChannelState::wsUpdate,
                this,
                server,
                webSocketChannelEndPoint,
@@ -63,6 +63,7 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
   _isHotScheduleActive = false;
   _offHotHourDateTime = "";
   _controlOffDateTime = "";
+  _isOverrideActive = false;
 
   // configure controls to be output
   pinMode(_channelControlPin, OUTPUT);
@@ -186,6 +187,7 @@ void ChannelStateService::begin() {
     _state.channel.schedule.endTimeHour = _endTimeHour;
     _state.channel.schedule.endTimeMinute = _endTimeMinute;
     _state.channel.schedule.hotTimeHour = _hotTimeHour;
+    _state.channel.schedule.isOverrideActive = _isOverrideActive;
     
     _fsPersistence.readFromFS();
 

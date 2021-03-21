@@ -65,6 +65,7 @@ class ChannelStateService : public StatefulService<ChannelState> {
     bool  _isHotScheduleActive;
     String _offHotHourDateTime;
     String _controlOffDateTime;
+    bool  _isOverrideActive;
 
 
 #ifdef ESP32
