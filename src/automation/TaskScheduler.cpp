@@ -51,7 +51,7 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
 
     _channelStateService.addUpdateHandler([&](const String& originId) {
       if(_channelStateService.getChannel().schedule.isOverride){
-        this->setOverrideSchedule();
+        this->setOverrideTime();
       }  
     }, false);
   };
@@ -210,7 +210,7 @@ void TaskScheduler::reScheduleTasks(){
   ReScheduleTasksTicker.attach(1, +[&](TaskScheduler* task) {
     task->ReScheduleTasksTime--;
     if(task->ReScheduleTasksTime <= 0){
-      task->scheduleRestart(false);
+      task->scheduleRestart(false, false);
     }
   }, this);
 }
@@ -434,27 +434,29 @@ time_t TaskScheduler::getScheduleTimeSpanOff(){
   return next;
 }
 
-void TaskScheduler::scheduleRestart(bool isTurnOffSwitch){
+void TaskScheduler::scheduleRestart(bool isTurnOffSwitch, bool isResetOverride){
   tickerDetachAll();
   setScheduleTimes();
+  if(isResetOverride){
+    resetOverrideTime();
+  }
   if(isTurnOffSwitch){
     overrideControlOff();
   }
   setSchedule();
 }
 
-void TaskScheduler::resetOverrideSchedule(){
+
+void TaskScheduler::resetOverrideTime(){
   _isOverrideActive = false;
   _channelStateService.update([&](ChannelState& channelState) {
       channelState.channel.schedule.isOverride = false;
       channelState.channel.schedule.isOverrideActive = false;
       return StateUpdateResult::CHANGED;
-    }, _channel.name);
-
-    scheduleRestart(false);
+    }, _channel.name);    
 }
 
-void TaskScheduler::setOverrideSchedule(){
+void TaskScheduler::setOverrideTime(){
   _isOverrideActive = true;
   _channelStateService.update([&](ChannelState& channelState) {
       channelState.channel.schedule.isOverride = false;
@@ -464,7 +466,7 @@ void TaskScheduler::setOverrideSchedule(){
 
   if(_channel.schedule.overrideTime >1){
     ScheduleOverrideTicker.once(_channel.schedule.overrideTime, +[&](TaskScheduler* task) {
-        task->resetOverrideSchedule();
+        task->scheduleRestart(false, true);
     }, this);
   }
 }

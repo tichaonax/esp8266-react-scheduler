@@ -30,9 +30,9 @@ class TaskScheduler {
                     float hotTimeHour,
                     float overrideTime);
     void begin();
-    void resetOverrideSchedule();
-    void setOverrideSchedule();
-    void scheduleRestart(bool isTurnOffSwitch);
+    void resetOverrideTime();
+    void setOverrideTime();
+    void scheduleRestart(bool isTurnOffSwitch, bool isResetOverride);
     void scheduleTimeSpanTask();
     void runTask();
     void runHotTask();
