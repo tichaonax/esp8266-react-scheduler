@@ -20,7 +20,8 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
                                       bool enableTimeSpan,
                                       ChannelMqttSettingsService* channelMqttSettingsService,
                                       bool randomize,
-                                      float hotTimeHour) :
+                                      float hotTimeHour,
+                                      float overrideTime) :
     _httpEndpoint(ChannelState::read,
                   ChannelState::update,
                   this,
@@ -64,6 +65,7 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
   _offHotHourDateTime = "";
   _controlOffDateTime = "";
   _isOverrideActive = false;
+  _overrideTime = overrideTime;
 
   // configure controls to be output
   pinMode(_channelControlPin, OUTPUT);

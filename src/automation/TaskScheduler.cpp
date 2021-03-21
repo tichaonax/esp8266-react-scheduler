@@ -22,7 +22,8 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                               bool  enableTimeSpan,
                               ChannelMqttSettingsService* channelMqttSettingsService,
                               bool randomize,
-                              float hotTimeHour) :
+                              float hotTimeHour,
+                              float overrideTime) :
     _channelStateService(server,
                         securityManager,
                         mqttClient,
@@ -42,7 +43,8 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                         enableTimeSpan,
                         channelMqttSettingsService,
                         randomize,
-                        hotTimeHour)
+                        hotTimeHour,
+                        overrideTime)
                                        {
                                          _isHotScheduleActive = false;
                                          _isOverrideActive = false;
@@ -451,7 +453,6 @@ void TaskScheduler::resetOverrideSchedule(){
 }
 
 void TaskScheduler::setOverrideSchedule(){
-  time_t overridePeriod = 7200; // keep current status for two hours
   _isOverrideActive = true;
   _channelStateService.update([&](ChannelState& channelState) {
       channelState.channel.schedule.isOverride = false;
@@ -459,9 +460,11 @@ void TaskScheduler::setOverrideSchedule(){
       return StateUpdateResult::CHANGED;
     }, _channel.name);
 
-  ScheduleOverrideTicker.once(overridePeriod, +[&](TaskScheduler* task) {
-      task->resetOverrideSchedule();
-  }, this);
+  if(_channel.schedule.overrideTime >1){
+    ScheduleOverrideTicker.once(_channel.schedule.overrideTime, +[&](TaskScheduler* task) {
+        task->resetOverrideSchedule();
+    }, this);
+  }
 }
 
 void TaskScheduler::tickerDetachAll(){

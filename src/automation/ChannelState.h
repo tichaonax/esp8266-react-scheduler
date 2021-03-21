@@ -25,7 +25,8 @@ struct Schedule {
     time_t  endTimeMinute;    // 30
     bool    isOverride;       // when true ignore schedule run
     time_t  hotTimeHour;      // default 0 hours [0-16]
-    bool isOverrideActive;    // ignore schedule flag
+    bool    isOverrideActive;
+    time_t  overrideTime;    // ignore schedule flag
 };
 
 
@@ -121,6 +122,7 @@ public:
     schedule["endTimeHour"] = round(float(float(channel.schedule.endTimeHour)/float(3600)) * 1000)/ 1000;
     schedule["endTimeMinute"] = round(float(float(channel.schedule.endTimeMinute)/float(60)) * 1000)/ 1000;
     schedule["isOverride"] = channel.schedule.isOverride;
+    schedule["overrideTime"] = channel.schedule.overrideTime;
 
     JsonObject scheduled = jsonObject.createNestedObject("scheduledTime");
 
@@ -178,6 +180,8 @@ static void updateChannel(JsonObject& json, Channel& channel, bool isOverride=fa
     if ((channel.schedule.hotTimeHour > 57600) | (channel.schedule.hotTimeHour < 0)) { channel.schedule.hotTimeHour  = 0; }
 
     channel.schedule.isOverride = isOverride ? true : schedule["isOverride"];
+    channel.schedule.overrideTime = schedule["overrideTime"] ? (int)(round(3600 * float(schedule["overrideTime"]))) : (int)(3600 * channel.schedule.overrideTime);
+
   }
 
   static boolean dataIsValid(JsonObject& json, ChannelState& channelState){
