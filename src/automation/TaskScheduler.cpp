@@ -455,6 +455,7 @@ void TaskScheduler::resetOverrideTime(){
 }
 
 void TaskScheduler::setOverrideTime(){
+
   _isOverrideActive = true;
   ScheduleOverrideTicker.once(1, +[&](){});
   ControlOnTicker.once(1, +[&](){});
@@ -465,11 +466,14 @@ void TaskScheduler::setOverrideTime(){
       channelState.channel.schedule.isOverrideActive = true;
       return StateUpdateResult::CHANGED;
     }, _channel.name);
-  
-  time_t overrideTime = _channel.schedule.overrideTime > 1 ? _channel.schedule.overrideTime : 1;
 
-  ScheduleOverrideTicker.once(overrideTime, +[&](TaskScheduler* task) {
-      task->scheduleRestart(true, true);
+  ScheduleOverrideTaskTime = _channel.schedule.overrideTime > 1 ? _channel.schedule.overrideTime : 1;
+
+  ScheduleOverrideTicker.attach(1, +[&](TaskScheduler* task) {
+    task->ScheduleOverrideTaskTime--;
+    if(task->ScheduleOverrideTaskTime <= 0){
+      task->ScheduleOverrideTicker.once(1, +[&](TaskScheduler* once){once->scheduleRestart(true, true);}, task);
+    }
   }, this);
 }
 

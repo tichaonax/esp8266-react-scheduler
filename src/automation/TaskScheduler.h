@@ -74,6 +74,7 @@ class TaskScheduler {
     timer_t ReScheduleTasksTime;
     Ticker ReScheduleTasksTicker;
 
+    timer_t ScheduleOverrideTaskTime;
     Ticker ScheduleOverrideTicker;
 
     TaskScheduler();
