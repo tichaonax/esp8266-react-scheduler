@@ -50,7 +50,7 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                                          _isOverrideActive = false;
 
     _channelStateService.addUpdateHandler([&](const String& originId) {
-      if(_channelStateService.getChannel().schedule.isOverride){
+      if(_channelStateService.getChannel().schedule.isOverride){//_channelStateService.onConfigUpdated(); 
         this->setOverrideTime();
       }  
     }, false);
