@@ -50,7 +50,7 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                                          _isOverrideActive = false;
 
     _channelStateService.addUpdateHandler([&](const String& originId) {
-      if(_channelStateService.getChannel().schedule.isOverride){ 
+      if(_channelStateService.getChannel().schedule.isOverride){
         this->setOverrideTime();
       }  
     }, false);
@@ -224,7 +224,7 @@ void TaskScheduler::setSchedule(){
   if(_channel.enabled){
     reScheduleTasks();
     ScheduledTime schedule = getNextRunTime();
-    printSchedule(schedule);
+    //printSchedule(schedule);
     if (schedule.scheduleTime <= 0) { schedule.scheduleTime = 1; } 
     Serial.print("Time to next task run: ");
     Serial.print(schedule.scheduleTime);
@@ -280,9 +280,6 @@ void TaskScheduler::runHotTask(){
       channelState.channel.controlOffDateTime = channelState.channel.offHotHourDateTime;
       return StateUpdateResult::CHANGED;
     }, _channel.name);
-
-    Serial.print("OffHotHourTime:    ");
-    Serial.println(OffHotHourTime);
     stopHotTaskTicker();
   }
 }
@@ -350,15 +347,13 @@ void TaskScheduler::printSchedule(ScheduledTime schedule){
 
 void TaskScheduler::runTask(){
   ScheduledTime schedule = getNextRunTime();
-  printSchedule(schedule);
+  //printSchedule(schedule);
   if(schedule.isRunTaskNow){
     if(!_channel.randomize){
       controlOn();
     }
     else{
       ControlOnTime = getRandomOnTimeSpan();
-      Serial.print("ControlOnTime:    ");
-      Serial.println(ControlOnTime);
       updateStatus(ControlOnTime);
       controlOnTicker();
     }
@@ -377,8 +372,6 @@ void TaskScheduler::controlOn(){
 
     if(_channel.enableTimeSpan){
       ControlOffTime = getScheduleTimeSpanOff();
-      Serial.print("ControlOffTime:    ");
-      Serial.println(ControlOffTime);
       controlOffTicker();
     }else{
       if(!_channel.randomize){
@@ -440,15 +433,17 @@ time_t TaskScheduler::getScheduleTimeSpanOff(){
 void TaskScheduler::scheduleRestart(bool isTurnOffSwitch, bool isResetOverride){
   tickerDetachAll();
   setScheduleTimes();
-  if(isResetOverride){
-    resetOverrideTime();
-  }
+
   if(isTurnOffSwitch){
     overrideControlOff();
   }
+
+  if(isResetOverride){
+    resetOverrideTime();
+  }
+
   setSchedule();
 }
-
 
 void TaskScheduler::resetOverrideTime(){
   _isOverrideActive = false;
@@ -461,7 +456,7 @@ void TaskScheduler::resetOverrideTime(){
 
 void TaskScheduler::setOverrideTime(){
   _isOverrideActive = true;
-  
+  ScheduleOverrideTicker.once(1, +[&](){});
   ControlOnTicker.once(1, +[&](){});
   ControlOffTicker.once(1, +[&](){});
   
