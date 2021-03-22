@@ -25,7 +25,8 @@ struct Schedule {
     time_t  endTimeMinute;    // 30
     bool    isOverride;       // when true ignore schedule run
     time_t  hotTimeHour;      // default 0 hours [0-16]
-    bool isOverrideActive;    // ignore schedule flag
+    bool    isOverrideActive;
+    time_t  overrideTime;     // time to override schedule
 };
 
 
@@ -52,6 +53,26 @@ struct Channel {
 
 class ChannelState {
 public:
+  static String getMqttUniqueIdOrPath(int controlPin, bool isUniqueIdOrPath, String homeAssistantEntity=""){
+      String topicType;
+      String topicHeader;
+      switch (controlPin)
+      {
+        case CHANNEL_ONE_CONTROL_PIN:
+        case CHANNEL_TWO_CONTROL_PIN:
+          topicHeader = "homeassistant/switch/";
+          topicType = "switch";
+        break;
+        default:
+          topicHeader = "homeassistant/light/";
+          topicType = "light";
+        break;
+      }
+      return isUniqueIdOrPath ? 
+      SettingValue::format(topicType + "-" + String(controlPin) + "-#{unique_id}") :
+      SettingValue::format(topicHeader + homeAssistantEntity + "-" + String(controlPin) + "/#{unique_id}");
+  }
+
  Channel channel;
   static void read(ChannelState& settings, JsonObject& root) {
     readChannel(settings.channel, root);
@@ -59,12 +80,13 @@ public:
 
  static StateUpdateResult update(JsonObject& root, ChannelState& settings) {
     if (dataIsValid(root, settings)) {
-      updateChannel(root, settings.channel);
+      updateChannel(root, settings.channel, false);
       return StateUpdateResult::CHANGED;
     }
     return StateUpdateResult::UNCHANGED;
   }
   
+
    static StateUpdateResult wsUpdate(JsonObject& root, ChannelState& settings) {
     if (dataIsValid(root, settings)) {
       updateChannel(root, settings.channel, true);
@@ -75,7 +97,6 @@ public:
 
   static void haRead(ChannelState& settings, JsonObject& root) {
     root["state"] = settings.channel.controlOn ? ON_STATE : OFF_STATE;
-    root["isOverride"] = settings.channel.schedule.isOverride;
   }
 
   static StateUpdateResult haUpdate(JsonObject& root, ChannelState& settings) {
@@ -109,7 +130,7 @@ public:
     jsonObject["nextRunTime"] = channel.nextRunTime;
     jsonObject["randomize"] = channel.randomize;
     jsonObject["IPAddress"] = channel.IP;
-    jsonObject["uniqueId"] = SettingValue::format("#{unique_id}");
+    jsonObject["uniqueId"] = getMqttUniqueIdOrPath(channel.controlPin, true);
 
     JsonObject schedule = jsonObject.createNestedObject("schedule");
     
@@ -118,9 +139,11 @@ public:
     schedule["startTimeHour"] = round(float(float(channel.schedule.startTimeHour)/float(3600)) * 1000)/ 1000;
     schedule["startTimeMinute"] = round(float(float(channel.schedule.startTimeMinute)/float(60)) * 1000)/ 1000;
     schedule["hotTimeHour"] = round(float(float(channel.schedule.hotTimeHour)/float(3600)) * 1000)/ 1000;
+    schedule["overrideTime"] = round(float(float(channel.schedule.overrideTime)/float(60)) * 1000)/ 1000;
     schedule["endTimeHour"] = round(float(float(channel.schedule.endTimeHour)/float(3600)) * 1000)/ 1000;
     schedule["endTimeMinute"] = round(float(float(channel.schedule.endTimeMinute)/float(60)) * 1000)/ 1000;
     schedule["isOverride"] = channel.schedule.isOverride;
+  
 
     JsonObject scheduled = jsonObject.createNestedObject("scheduledTime");
 
@@ -154,7 +177,7 @@ public:
     scheduled["isOverrideActive"] = scheduledTime.isOverrideActive;  
   }
 
-static void updateChannel(JsonObject& json, Channel& channel, bool isOverride=false) {
+static void updateChannel(JsonObject& json, Channel& channel, bool isOverride) { 
     channel.controlPin = json["controlPin"];
     channel.controlOn = json["controlOn"] | DEFAULT_CONTROL_STATE;
     channel.name = json["name"] | channel.name;
@@ -163,6 +186,7 @@ static void updateChannel(JsonObject& json, Channel& channel, bool isOverride=fa
     channel.lastStartedChangeTime = json["lastStartedChangeTime"] | Utils.strLocalTime();
     channel.nextRunTime = json["nextRunTime"] | "";
     channel.randomize = json["randomize"] | channel.randomize;
+    channel.uniqueId = json["uniqueId"] |  getMqttUniqueIdOrPath(channel.controlPin, true);
 
     JsonObject schedule = json["schedule"];
 
@@ -174,10 +198,16 @@ static void updateChannel(JsonObject& json, Channel& channel, bool isOverride=fa
     channel.schedule.endTimeHour = schedule["endTimeHour"] ? (int)(round(3600 * float(schedule["endTimeHour"]))) : (int)(3600 * channel.schedule.endTimeHour);
     channel.schedule.endTimeMinute = schedule["endTimeMinute"] ? (int)(round(60 * float(schedule["endTimeMinute"]))) : (int)(60 * channel.schedule.endTimeMinute);
     if (channel.schedule.endTimeMinute >= 3600) { channel.schedule.endTimeMinute  = 0; }
-    channel.schedule.hotTimeHour = schedule["hotTimeHour"] ? (int)(round(3600 * float(schedule["hotTimeHour"]))) : (int)(3600 * channel.schedule.hotTimeHour);
-    if ((channel.schedule.hotTimeHour > 57600) | (channel.schedule.hotTimeHour < 0)) { channel.schedule.hotTimeHour  = 0; }
 
     channel.schedule.isOverride = isOverride ? true : schedule["isOverride"];
+
+    channel.schedule.hotTimeHour = schedule["hotTimeHour"] ? (int)(round(3600 * float(schedule["hotTimeHour"]))) : (int)(3600 * channel.schedule.hotTimeHour);
+    channel.schedule.overrideTime = schedule["overrideTime"] ? (int)(round(60 * float(schedule["overrideTime"]))) : (int)(60 * channel.schedule.overrideTime);
+    
+    if ((channel.schedule.hotTimeHour > 57600) | (channel.schedule.hotTimeHour < 0)) { channel.schedule.hotTimeHour  = 0; }
+  
+    if ((channel.schedule.overrideTime > 57600) | (channel.schedule.overrideTime < 0)) { channel.schedule.overrideTime  = 0; }
+
   }
 
   static boolean dataIsValid(JsonObject& json, ChannelState& channelState){

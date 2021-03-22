@@ -20,7 +20,8 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
                                       bool enableTimeSpan,
                                       ChannelMqttSettingsService* channelMqttSettingsService,
                                       bool randomize,
-                                      float hotTimeHour) :
+                                      float hotTimeHour,
+                                      float overrideTime) :
     _httpEndpoint(ChannelState::read,
                   ChannelState::update,
                   this,
@@ -60,6 +61,7 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
   _enableTimeSpan = enableTimeSpan;
   _randomize = randomize;
   _hotTimeHour = hotTimeHour;
+  _overrideTime = overrideTime;
   _isHotScheduleActive = false;
   _offHotHourDateTime = "";
   _controlOffDateTime = "";
@@ -135,7 +137,7 @@ void ChannelStateService::registerConfig() {
     
     switch (settings.channelControlPin)
     {
-      case CHANNEL_ONE_CONTROL_PIN :
+      case CHANNEL_ONE_CONTROL_PIN:
           doc["icon"] = "mdi:water-pump";
           doc["payload_on"] =  "{\"state\":\"ON\"}";
           doc["payload_off"] = "{\"state\":\"OFF\"}";
@@ -144,9 +146,6 @@ void ChannelStateService::registerConfig() {
           doc["icon"] = "mdi:fridge";
           doc["payload_on"] =  "{\"state\":\"ON\"}";
           doc["payload_off"] = "{\"state\":\"OFF\"}";
-        break;
-      case CHANNEL_THREE_CONTROL_PIN:
-          doc["schema"] = "json";
         break;
       default:
           doc["schema"] = "json";
@@ -187,6 +186,7 @@ void ChannelStateService::begin() {
     _state.channel.schedule.endTimeHour = _endTimeHour;
     _state.channel.schedule.endTimeMinute = _endTimeMinute;
     _state.channel.schedule.hotTimeHour = _hotTimeHour;
+    _state.channel.schedule.overrideTime = _overrideTime;
     _state.channel.schedule.isOverrideActive = _isOverrideActive;
     
     _fsPersistence.readFromFS();
