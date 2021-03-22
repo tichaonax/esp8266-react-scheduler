@@ -50,7 +50,7 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                                          _isOverrideActive = false;
 
     _channelStateService.addUpdateHandler([&](const String& originId) {
-      if(_channelStateService.getChannel().schedule.isOverride){//_channelStateService.onConfigUpdated(); 
+      if(_channelStateService.getChannel().schedule.isOverride){ 
         this->setOverrideTime();
       }  
     }, false);
@@ -226,7 +226,7 @@ void TaskScheduler::setSchedule(){
     ScheduledTime schedule = getNextRunTime();
     printSchedule(schedule);
     if (schedule.scheduleTime <= 0) { schedule.scheduleTime = 1; } 
-    Serial.print(": Time to next task run: ");
+    Serial.print("Time to next task run: ");
     Serial.print(schedule.scheduleTime);
     Serial.println("s");
     ScheduleTime = schedule.scheduleTime;
@@ -343,6 +343,9 @@ void TaskScheduler::printSchedule(ScheduledTime schedule){
   Serial.println(_channel.schedule.isOverride);
   Serial.print("isOverrideActive:            ");
   Serial.println(schedule.isOverrideActive);
+  Serial.print("overrideTime:            ");
+  Serial.print(_channel.schedule.overrideTime);
+  Serial.println("s");
 }
 
 void TaskScheduler::runTask(){
@@ -458,17 +461,21 @@ void TaskScheduler::resetOverrideTime(){
 
 void TaskScheduler::setOverrideTime(){
   _isOverrideActive = true;
+  
+  ControlOnTicker.once(1, +[&](){});
+  ControlOffTicker.once(1, +[&](){});
+  
   _channelStateService.update([&](ChannelState& channelState) {
       channelState.channel.schedule.isOverride = false;
       channelState.channel.schedule.isOverrideActive = true;
       return StateUpdateResult::CHANGED;
     }, _channel.name);
+  
+  time_t overrideTime = _channel.schedule.overrideTime > 1 ? _channel.schedule.overrideTime : 1;
 
-  if(_channel.schedule.overrideTime >1){
-    ScheduleOverrideTicker.once(_channel.schedule.overrideTime, +[&](TaskScheduler* task) {
-        task->scheduleRestart(false, true);
-    }, this);
-  }
+  ScheduleOverrideTicker.once(overrideTime, +[&](TaskScheduler* task) {
+      task->scheduleRestart(true, true);
+  }, this);
 }
 
 void TaskScheduler::tickerDetachAll(){
