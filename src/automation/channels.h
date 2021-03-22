@@ -17,7 +17,7 @@
 #define CHANNEL_ONE_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE false
 #define CHANNEL_ONE_DEFAULT_RANDOMIZE_SCHEDULE false
 #define CHANNEL_ONE_DEFAULT_SPAN_TIME 0.0f
-#define CHANNEL_ONE_DEFAULT_OVERRIDE_TIME 15.0f // override time 15minutes
+#define CHANNEL_ONE_DEFAULT_OVERRIDE_TIME 15.0f // override time in minutes
 
 #ifdef SINILINK
   // onboard relay control pin = 4
@@ -41,7 +41,7 @@
 #define CHANNEL_TWO_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE true
 #define CHANNEL_TWO_DEFAULT_RANDOMIZE_SCHEDULE false
 #define CHANNEL_TWO_DEFAULT_SPAN_TIME 0.0f
-#define CHANNEL_TWO_DEFAULT_OVERRIDE_TIME 60.0f // override time one hour
+#define CHANNEL_TWO_DEFAULT_OVERRIDE_TIME 60.0f // override time in minutes
 
 #define CHANNEL_THREE_CONTROL_PIN 13
 #define CHANNEL_THREE_REST_ENDPOINT_PATH "/rest/channelThreeState"  //restChannelEndPoint
@@ -59,7 +59,7 @@
 #define CHANNEL_THREE_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE false
 #define CHANNEL_THREE_DEFAULT_RANDOMIZE_SCHEDULE true
 #define CHANNEL_THREE_DEFAULT_SPAN_TIME 3.0f
-#define CHANNEL_THREE_DEFAULT_OVERRIDE_TIME 120.0f // override time two hours
+#define CHANNEL_THREE_DEFAULT_OVERRIDE_TIME 120.0f // override time in minutes
 
 #define CHANNEL_FOUR_CONTROL_PIN 14
 #define CHANNEL_FOUR_REST_ENDPOINT_PATH "/rest/channelFourState"  //restChannelEndPoint
@@ -77,6 +77,6 @@
 #define CHANNEL_FOUR_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE true
 #define CHANNEL_FOUR_DEFAULT_RANDOMIZE_SCHEDULE false
 #define CHANNEL_FOUR_DEFAULT_SPAN_TIME 0.0f
-#define CHANNEL_FOUR_DEFAULT_OVERRIDE_TIME 0.0f // override time o hours
+#define CHANNEL_FOUR_DEFAULT_OVERRIDE_TIME 0.0f // override time in minutes
 
 #endif
