@@ -441,9 +441,12 @@ void TaskScheduler::scheduleRestart(bool isTurnOffSwitch, bool isResetOverride){
   if(isResetOverride){
     overrideControlOff();
     resetOverrideTime();
+    _isOverrideActive = false;
   }
 
-  setSchedule();
+  if (!_isOverrideActive){
+    setSchedule();
+  }
 }
 
 void TaskScheduler::resetOverrideTime(){
@@ -456,11 +459,7 @@ void TaskScheduler::resetOverrideTime(){
 }
 
 void TaskScheduler::setOverrideTime(){
-
-  ScheduleOverrideTicker.once(0.010, +[&](){});
-  ControlOnTicker.once(0.010, +[&](){});
-  ControlOffTicker.once(0.010, +[&](){});
-  
+  tickerDetachAll();
   _channelStateService.update([&](ChannelState& channelState) {
       channelState.channel.schedule.isOverride = false;
       channelState.channel.schedule.isOverrideActive = true;
