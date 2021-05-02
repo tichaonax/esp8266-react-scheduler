@@ -235,6 +235,17 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
             }
             label="Randomize Switch?"
         />
+         <BlockFormControlLabel
+            control={
+            <Checkbox
+                checked={data.enableMinimumRunTime}
+                disabled={!data.randomize || data.enableTimeSpan }
+                onChange={handleValueChange('enableMinimumRunTime')}
+                color="primary"
+            />
+            }
+            label="Minimum RunTime?"
+        />
         <TextField
           name="name"
           label="Channel Name"

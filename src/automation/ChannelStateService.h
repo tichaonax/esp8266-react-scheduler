@@ -31,7 +31,8 @@ class ChannelStateService : public StatefulService<ChannelState> {
                     ChannelMqttSettingsService* channelMqttSettingsService,
                     bool randomize,
                     float hotTimeHour,
-                    float overrideTime);
+                    float overrideTime,
+                    bool enableMinimumRunTime);
 
   void begin();
   Channel getChannel();
@@ -68,6 +69,7 @@ class ChannelStateService : public StatefulService<ChannelState> {
     String _offHotHourDateTime;
     String _controlOffDateTime;
     bool  _isOverrideActive;
+    bool _enableMinimumRunTime;
 
 
 #ifdef ESP32

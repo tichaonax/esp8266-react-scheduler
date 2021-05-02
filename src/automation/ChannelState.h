@@ -49,6 +49,7 @@ struct Channel {
     String offHotHourDateTime;
     String controlOffDateTime;
     String uniqueId;
+    bool enableMinimumRunTime; // when enabled in randomize time runs at least this minimum time
 };
 
 class ChannelState {
@@ -131,6 +132,7 @@ public:
     jsonObject["randomize"] = channel.randomize;
     jsonObject["IPAddress"] = channel.IP;
     jsonObject["uniqueId"] = getMqttUniqueIdOrPath(channel.controlPin, true);
+    jsonObject["enableMinimumRunTime"] = channel.enableMinimumRunTime;
 
     JsonObject schedule = jsonObject.createNestedObject("schedule");
     
@@ -155,7 +157,8 @@ public:
       channel.isHotScheduleActive,
       channel.name,
       channel.randomize,
-      channel.schedule.isOverrideActive);
+      channel.schedule.isOverrideActive,
+      channel.enableMinimumRunTime);
 
     scheduled["channelName"] = scheduledTime.channelName;
     scheduled["scheduleTime"] = scheduledTime.scheduleTime;
@@ -187,6 +190,7 @@ static void updateChannel(JsonObject& json, Channel& channel, bool isOverride) {
     channel.nextRunTime = json["nextRunTime"] | "";
     channel.randomize = json["randomize"] | channel.randomize;
     channel.uniqueId = json["uniqueId"] |  getMqttUniqueIdOrPath(channel.controlPin, true);
+    channel.enableMinimumRunTime = json["enableMinimumRunTime"] | channel.enableMinimumRunTime;
 
     JsonObject schedule = json["schedule"];
 

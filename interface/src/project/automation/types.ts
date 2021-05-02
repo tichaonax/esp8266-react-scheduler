@@ -28,6 +28,7 @@ export interface LightState {
     controlPin: number;
     nextRunTime: string;
     randomize: boolean;
+    enableMinimumRunTime: boolean;
   }
   
   export interface ChannelMqttSettings { 

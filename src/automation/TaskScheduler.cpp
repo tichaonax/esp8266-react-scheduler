@@ -23,7 +23,8 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                               ChannelMqttSettingsService* channelMqttSettingsService,
                               bool randomize,
                               float hotTimeHour,
-                              float overrideTime) :
+                              float overrideTime,
+                              bool enableMinimumRunTime) :
     _channelStateService(server,
                         securityManager,
                         mqttClient,
@@ -44,7 +45,8 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                         channelMqttSettingsService,
                         randomize,
                         hotTimeHour,
-                        overrideTime)
+                        overrideTime,
+                        enableMinimumRunTime)
                                        {
                                          _isHotScheduleActive = false;
                                          _isOverrideActive = false;
@@ -195,7 +197,8 @@ void TaskScheduler::scheduleTaskTicker(ScheduledTime schedule){
 ScheduledTime TaskScheduler::getNextRunTime(){
     ScheduledTime schedule = Utils.getScheduleTimes(_channel.startTime,
     _channel.endTime, _channel.schedule.hotTimeHour, _channel.enableTimeSpan,
-    _isHotScheduleActive, _channel.name, _channel.randomize, _isOverrideActive);
+    _isHotScheduleActive, _channel.name, _channel.randomize,
+    _isOverrideActive, _channel.enableMinimumRunTime);
     return schedule;
 }
 
@@ -307,6 +310,9 @@ time_t TaskScheduler::getRandomOnTimeSpan(){
 }
 
 time_t TaskScheduler::getRandomOffTimeSpan(){ 
+  if(_channel.enableMinimumRunTime){
+    return(rand() % (_channel.schedule.runEvery - _controlOnTime - _channel.schedule.offAfter) + _channel.schedule.offAfter);
+  }
  return(rand() % _channel.schedule.offAfter + 1);
 }
 
@@ -353,7 +359,8 @@ void TaskScheduler::runTask(){
       controlOn();
     }
     else{
-      ControlOnTime = getRandomOnTimeSpan();
+      _controlOnTime = getRandomOnTimeSpan();
+      ControlOnTime = _controlOnTime;
       updateStatus(ControlOnTime);
       controlOnTicker();
     }

@@ -21,7 +21,8 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
                                       ChannelMqttSettingsService* channelMqttSettingsService,
                                       bool randomize,
                                       float hotTimeHour,
-                                      float overrideTime) :
+                                      float overrideTime,
+                                      bool enableMinimumRunTime) :
     _httpEndpoint(ChannelState::read,
                   ChannelState::update,
                   this,
@@ -66,6 +67,7 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
   _offHotHourDateTime = "";
   _controlOffDateTime = "";
   _isOverrideActive = false;
+  _enableMinimumRunTime = enableMinimumRunTime;
 
   // configure controls to be output
   pinMode(_channelControlPin, OUTPUT);
@@ -178,6 +180,7 @@ void ChannelStateService::begin() {
     _state.channel.isHotScheduleActive = _isHotScheduleActive;
     _state.channel.offHotHourDateTime = _offHotHourDateTime;
     _state.channel.controlOffDateTime = _controlOffDateTime;
+    _state.channel.enableMinimumRunTime = _enableMinimumRunTime;
 
     _state.channel.schedule.runEvery =  _runEvery;
     _state.channel.schedule.offAfter =  _offAfter;

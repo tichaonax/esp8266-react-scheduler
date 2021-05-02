@@ -30,6 +30,7 @@ struct ScheduledTime {
   bool isRandomize;
   bool isHotScheduleAdjust;
   bool isOverrideActive;
+  bool isEnableMinimumRunTime;
 }; 
 
 class Utilities {
@@ -90,7 +91,7 @@ public:
 
   ScheduledTime getScheduleTimes(time_t startTime, time_t endTime,
     time_t hotTimeHour, bool enableTimeSpan, bool isHotScheduleActive,
-    String channelName, bool randomize, bool isOverrideActive){
+    String channelName, bool randomize, bool isOverrideActive, bool enableMinimumRunTime){
     ScheduledTime schedule;
     schedule.isRandomize = randomize;
     schedule.channelName = channelName;
@@ -100,6 +101,7 @@ public:
     schedule.startTime = startTime;
     schedule.endTime = endTime;
     schedule.isOverrideActive = isOverrideActive;
+    schedule.isEnableMinimumRunTime = enableMinimumRunTime;
 
     struct tm *lt = localtime(&schedule.currentTime);
     lt->tm_hour = 0;
