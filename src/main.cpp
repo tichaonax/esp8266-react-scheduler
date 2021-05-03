@@ -77,7 +77,8 @@ SystemStateService systemStateService = SystemStateService(&server, esp8266React
                                                         &channelOneMqttSettingsService,
                                                         CHANNEL_ONE_DEFAULT_RANDOMIZE_SCHEDULE,
                                                         CHANNEL_ONE_DEFAULT_SPAN_TIME,
-                                                        CHANNEL_ONE_DEFAULT_OVERRIDE_TIME);
+                                                        CHANNEL_ONE_DEFAULT_OVERRIDE_TIME,
+                                                        CHANNEL_ONE_DEFAULT_ENABLE_MINIMUM_RUN_TIME_SCHEDULE);
   ChannelScheduleRestartService channelOneScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelOneTaskScheduler, CHANNEL_ONE_SCHEDULE_RESTART_SERVICE_PATH);
 #endif
 #if defined(CHANNEL_TWO)
@@ -106,7 +107,8 @@ SystemStateService systemStateService = SystemStateService(&server, esp8266React
                                                         &channelTwoMqttSettingsService,
                                                         CHANNEL_TWO_DEFAULT_RANDOMIZE_SCHEDULE,
                                                         CHANNEL_TWO_DEFAULT_SPAN_TIME,
-                                                        CHANNEL_TWO_DEFAULT_OVERRIDE_TIME);  
+                                                        CHANNEL_TWO_DEFAULT_OVERRIDE_TIME,
+                                                        CHANNEL_TWO_DEFAULT_ENABLE_MINIMUM_RUN_TIME_SCHEDULE);  
   ChannelScheduleRestartService channelTwoScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelTwoTaskScheduler, CHANNEL_TWO_SCHEDULE_RESTART_SERVICE_PATH);
 #endif
 #if defined(CHANNEL_THREE)
@@ -135,7 +137,8 @@ SystemStateService systemStateService = SystemStateService(&server, esp8266React
                                                         &channelThreeMqttSettingsService,
                                                         CHANNEL_THREE_DEFAULT_RANDOMIZE_SCHEDULE,
                                                         CHANNEL_THREE_DEFAULT_SPAN_TIME,
-                                                        CHANNEL_THREE_DEFAULT_OVERRIDE_TIME);
+                                                        CHANNEL_THREE_DEFAULT_OVERRIDE_TIME,
+                                                        CHANNEL_THREE_DEFAULT_ENABLE_MINIMUM_RUN_TIME_SCHEDULE);
   ChannelScheduleRestartService channelThreeScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelThreeTaskScheduler, CHANNEL_THREE_SCHEDULE_RESTART_SERVICE_PATH);
 #endif  
 #if defined(CHANNEL_FOUR)
@@ -164,7 +167,8 @@ SystemStateService systemStateService = SystemStateService(&server, esp8266React
                                                         &channelFourMqttSettingsService,
                                                         CHANNEL_FOUR_DEFAULT_RANDOMIZE_SCHEDULE,
                                                         CHANNEL_FOUR_DEFAULT_SPAN_TIME,
-                                                        CHANNEL_FOUR_DEFAULT_OVERRIDE_TIME);
+                                                        CHANNEL_FOUR_DEFAULT_OVERRIDE_TIME,
+                                                        CHANNEL_FOUR_DEFAULT_ENABLE_MINIMUM_RUN_TIME_SCHEDULE);
   ChannelScheduleRestartService channelFourScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelFourTaskScheduler, CHANNEL_FOUR_SCHEDULE_RESTART_SERVICE_PATH);
 #endif
 

@@ -17,6 +17,7 @@ export interface ChannelSettings {
     controlPin: number;
     nextRunTime: string;
     randomize: boolean;
+    enableMinimumRunTime: boolean;
     localDateTime: string;
     IPAddress: string;
 }
@@ -37,6 +38,7 @@ export interface Channels {
     controlPin: number;
     nextRunTime: string;
     randomize: boolean;
+    enableMinimumRunTime: boolean;
     onSetChannelSettings: SetChannelSettingsType;
     channels: Channels;
     localDateTime: string;

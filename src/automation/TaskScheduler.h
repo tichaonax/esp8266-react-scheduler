@@ -28,7 +28,8 @@ class TaskScheduler {
                     ChannelMqttSettingsService* channelMqttSettingsService,
                     bool randomize,
                     float hotTimeHour,
-                    float overrideTime);
+                    float overrideTime,
+                    bool enableMinimumRunTime);
     void begin();
     void resetOverrideTime();
     void setOverrideTime();
@@ -94,6 +95,7 @@ class TaskScheduler {
         current.totalCurrentTimeInSec = 3600 * tm_local->tm_hour + current.minutesInSec + tm_local->tm_sec;
         return current;
     }
+    time_t _controlOnTime;
 
     ChannelStateService _channelStateService;
     Channel _channel;
