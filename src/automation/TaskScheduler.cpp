@@ -50,6 +50,7 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                                        {
                                          _isHotScheduleActive = false;
                                          _isOverrideActive = false;
+                                         IsResetSchedule = false;
 
     _channelStateService.addUpdateHandler([&](const String& originId) {
       if(_channelStateService.getChannel().schedule.isOverride){
@@ -125,7 +126,9 @@ void TaskScheduler::scheduleTimeSpanTaskTicker(ScheduledTime schedule){
     SpanTime = schedule.scheduleTime;
   }else{
     SpanTime = TWENTY_FOUR_HOUR_DURATION - (schedule.currentTime - schedule.scheduleStartDateTime) - 1;
-    runTask();
+     if(!IsResetSchedule){
+      runTask();
+     }
   }
   SpanTicker.attach(1, +[&](TaskScheduler* task) {
     task->SpanTime--;
@@ -213,6 +216,7 @@ void TaskScheduler::reScheduleTasks(){
   ReScheduleTasksTicker.attach(1, +[&](TaskScheduler* task) {
     task->ReScheduleTasksTime--;
     if(task->ReScheduleTasksTime <= 0){
+      task->IsResetSchedule = true;
       task->scheduleRestart(false, false);
     }
   }, this);
@@ -255,14 +259,18 @@ void TaskScheduler::setSchedule(){
 void TaskScheduler::scheduleRunEveryTask(){
   RunEveryTime = _channel.schedule.runEvery;
   runTaskTicker();
-  runTask();
+  if(!IsResetSchedule){
+    runTask();
+  }
  }
 
 void TaskScheduler::scheduleHotTask(){
   HotHourTaskTime = TWENTY_FOUR_HOUR_DURATION;
   updateStatus(HotHourTaskTime);
   runHotTaskTicker();
-  runHotTask();
+   if(!IsResetSchedule){
+    runHotTask();
+   }
 }
 
 void TaskScheduler::runHotTask(){
@@ -360,12 +368,9 @@ void TaskScheduler::runTask(){
     }
     else{
       _controlOnTime = getRandomOnTimeSpan();
-      // minimum time 1 second
-      if(_controlOnTime > 1){
-        ControlOnTime = _controlOnTime;
-        updateStatus(ControlOnTime);
-        controlOnTicker();
-      }
+      ControlOnTime = _controlOnTime;
+      updateStatus(ControlOnTime);
+      controlOnTicker();
     }
   }else{
     updateStatus(schedule.scheduleTime);
