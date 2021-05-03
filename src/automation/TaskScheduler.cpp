@@ -360,12 +360,9 @@ void TaskScheduler::runTask(){
     }
     else{
       _controlOnTime = getRandomOnTimeSpan();
-      // minimum time 1 second
-      if(_controlOnTime > 1){
-        ControlOnTime = _controlOnTime;
-        updateStatus(ControlOnTime);
-        controlOnTicker();
-      }
+      ControlOnTime = _controlOnTime;
+      updateStatus(ControlOnTime);
+      controlOnTicker();
     }
   }else{
     updateStatus(schedule.scheduleTime);
