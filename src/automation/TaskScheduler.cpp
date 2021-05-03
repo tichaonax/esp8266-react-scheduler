@@ -311,7 +311,7 @@ time_t TaskScheduler::getRandomOnTimeSpan(){
 
 time_t TaskScheduler::getRandomOffTimeSpan(){ 
   if(_channel.enableMinimumRunTime){
-    return(rand() % (_channel.schedule.runEvery - _controlOnTime - _channel.schedule.offAfter) + _channel.schedule.offAfter);
+    return(rand() % _channel.schedule.offAfter + (_channel.schedule.runEvery - _controlOnTime - _channel.schedule.offAfter));
   }
  return(rand() % _channel.schedule.offAfter + 1);
 }
