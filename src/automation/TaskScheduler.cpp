@@ -361,7 +361,7 @@ void TaskScheduler::runTask(){
     else{
       _controlOnTime = getRandomOnTimeSpan();
       // minimum time 1 second
-      if(_controlOnTime > 1000){
+      if(_controlOnTime > 1){
         ControlOnTime = _controlOnTime;
         updateStatus(ControlOnTime);
         controlOnTicker();
