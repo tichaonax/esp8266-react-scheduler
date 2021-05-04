@@ -205,6 +205,10 @@ to 'End Time'.
 When checked enables 'Hot Time' feature, the switch is on/off randomly within the 'Run Every' and 'Off After'
 limits. Disabled when 'TimeSpan' is active.
 ```
+#### Minimum RunTime?
+```
+When checked enables minimum runtime is at least 'Off After' value enabled when randomize is active
+```
 #### Channel Name
 ```
 User defined channel name that shows on the screen, if one is not provided system defaults to factory
