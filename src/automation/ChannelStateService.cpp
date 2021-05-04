@@ -53,16 +53,16 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
 
   _runEvery = (int)(round(60 * float(runEvery)));
   _offAfter = (int)(round(60 * float(offAfter)));
-  _startTimeHour  = startTimeHour;
-  _startTimeMinute  = startTimeMinute;
-  _endTimeHour  = endTimeHour;
-  _endTimeMinute  = endTimeMinute;
+  _startTimeHour  = (int)(round(3600 * float(startTimeHour)));
+  _startTimeMinute  = (int)(round(60 * float(startTimeMinute)));
+  _endTimeHour  = (int)(round(3600 * float(endTimeHour)));
+  _endTimeMinute  = (int)(round(60 * float(endTimeMinute)));
   _enabled  = enabled;
   _channelName = channelName;
   _enableTimeSpan = enableTimeSpan;
   _randomize = randomize;
-  _hotTimeHour = hotTimeHour;
-  _overrideTime = overrideTime;
+  _hotTimeHour = (int)(round(3600 * float(hotTimeHour)));
+  _overrideTime = (int)(round(60 * float(overrideTime)));
   _isHotScheduleActive = false;
   _offHotHourDateTime = "";
   _controlOffDateTime = "";
