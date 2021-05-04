@@ -1,19 +1,12 @@
+import { Schedule } from "../../types";
+
+//import { Schedule } from 'module';
 export const CHANNEL = '[Channel Schedule]';
 export const RESTART = '[Restart]';
 
 export const SET_CHANNEL_SCHEDULE = `${CHANNEL} Set`;
 export const RESTART_CHANNEL_SCHEDULE = `${CHANNEL} Reset`;
   
-export interface Schedule{
-    runEvery: number;
-    offAfter: number;
-    startTimeHour: number;
-    startTimeMinute: number;
-    endTimeHour: number;
-    endTimeMinute: number;
-    hotTimeHour: number;
- }
-
 export interface ChannelSettings {
     controlOn: boolean;
     name: string;
@@ -24,6 +17,7 @@ export interface ChannelSettings {
     controlPin: number;
     nextRunTime: string;
     randomize: boolean;
+    enableMinimumRunTime: boolean;
     localDateTime: string;
     IPAddress: string;
 }
@@ -44,6 +38,7 @@ export interface Channels {
     controlPin: number;
     nextRunTime: string;
     randomize: boolean;
+    enableMinimumRunTime: boolean;
     onSetChannelSettings: SetChannelSettingsType;
     channels: Channels;
     localDateTime: string;

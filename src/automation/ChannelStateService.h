@@ -30,7 +30,9 @@ class ChannelStateService : public StatefulService<ChannelState> {
                     bool  enableTimeSpan,
                     ChannelMqttSettingsService* channelMqttSettingsService,
                     bool randomize,
-                    float hotTimeHour);
+                    float hotTimeHour,
+                    float overrideTime,
+                    bool enableMinimumRunTime);
 
   void begin();
   Channel getChannel();
@@ -57,7 +59,8 @@ class ChannelStateService : public StatefulService<ChannelState> {
     time_t  _startTimeMinute;  // 30
     time_t  _endTimeHour;      // 16
     time_t  _endTimeMinute;    // 30
-    time_t  _hotTimeHour;     // 0 to 16hr
+    time_t  _hotTimeHour;      // 0 to 16hr
+    time_t  _overrideTime;     //
     bool    _enabled;
     String  _channelName;
     bool  _enableTimeSpan;
@@ -65,6 +68,8 @@ class ChannelStateService : public StatefulService<ChannelState> {
     bool  _isHotScheduleActive;
     String _offHotHourDateTime;
     String _controlOffDateTime;
+    bool  _isOverrideActive;
+    bool _enableMinimumRunTime;
 
 
 #ifdef ESP32

@@ -13,14 +13,13 @@ import {
 } from '@material-ui/pickers';
 
 import { RestFormProps, FormActions, FormButton, BlockFormControlLabel, extractEventValue } from '../../components';
-import history from '../../history';
 
 import { setChannelSettings} from '../automation/redux/actions/channel';
 import { channelSettingsSelector } from '../automation/redux/selectors/channel';
 import { removeLoader } from '../automation/redux/actions/ui';
 import { Loader, LoaderActions, RemoveLoaderType } from './redux/types/ui';
 
-import { ChannelState, Schedule, ChannelSettingsActions, Channels,
+import { ChannelState, ChannelSettingsActions, Channels,
   ChannelSettings, CHANNEL, RESTART, SetChannelSettingsType } from '../automation/redux/types/channel';
 import {
   CHANNEL_ONE_CONTROL_PIN,
@@ -32,6 +31,7 @@ import { connect } from 'react-redux';
 import { AppState } from './redux/store';
 import { uiLoaderProjector } from './redux/selectors/uiLoaderProjector';
 import SystemStateWebSocketController from './SystemStateWebSocketController';
+import { Schedule } from './types';
 
 
 type ChannelStateRestControllerFormProps = RestFormProps<ChannelState>
@@ -234,6 +234,17 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
             />
             }
             label="Randomize Switch?"
+        />
+         <BlockFormControlLabel
+            control={
+            <Checkbox
+                checked={data.enableMinimumRunTime}
+                disabled={!data.randomize || data.enableTimeSpan }
+                onChange={handleValueChange('enableMinimumRunTime')}
+                color="primary"
+            />
+            }
+            label="Minimum RunTime?"
         />
         <TextField
           name="name"
