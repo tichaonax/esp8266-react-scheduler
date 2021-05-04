@@ -17,7 +17,7 @@ export const channelReducer = createReducer(
                     case 3:
                             draft.channelThree = payload;         
                         break;
-                    case 1:
+                    case 4:
                             draft.channelFour = payload;         
                         break;
                     default:
