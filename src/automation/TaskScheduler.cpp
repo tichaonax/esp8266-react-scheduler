@@ -308,12 +308,12 @@ void TaskScheduler::updateNextRunStatus(){
 }
 
 time_t TaskScheduler::getRandomOnTimeSpan(){
-  return(rand() % (_channel.schedule.runEvery - _channel.schedule.offAfter) + 1);
+  return(rand() % (_channel.schedule.runEvery - _channel.schedule.offAfter -1) + 1);
 }
 
-time_t TaskScheduler::getRandomOffTimeSpan(){ 
+time_t TaskScheduler::getRandomOffTimeSpan(){
   if(_channel.enableMinimumRunTime){
-    return(rand() % _channel.schedule.offAfter + (_channel.schedule.runEvery - _controlOnTime - _channel.schedule.offAfter));
+    return(rand() % (_channel.schedule.runEvery - _controlOnTime - _channel.schedule.offAfter) + _channel.schedule.offAfter/2);
   }
  return(rand() % _channel.schedule.offAfter + 1);
 }
