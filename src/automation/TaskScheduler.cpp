@@ -421,7 +421,7 @@ void TaskScheduler::digitalClockDisplay(time_t tnow) {
 }
 
 time_t TaskScheduler::getScheduleTimeSpanOff(){
-  timer_t next = 1;
+  time_t next = 1;
   CurrentTime current = getCurrentTime();
   if(_channel.startTime < _channel.endTime){
     if(current.totalCurrentTimeInSec < _channel.endTime ){
@@ -490,13 +490,12 @@ void TaskScheduler::tickerDetachAll(){
   HotHourTaskTicker.once(0.010, +[&](){});
   RunEveryTicker.once(0.010, +[&](){});
   SpanRepeatTicker.once(0.010, +[&](){});
-  SpanRepeatTicker.once(0.010, +[&](){});
-  OffHotHourTicker.once(0.010, +[&](){});
+  //OffHotHourTicker.once(0.010, +[&](){});
   ScheduleTicker.once(0.010, +[&](){});
   ScheduleHotTicker.once(0.010, +[&](){});
   SpanTicker.once(0.010, +[&](){});
   RunEveryTicker.once(0.010, +[&](){});
   ControlOnTicker.once(0.010, +[&](){});
-  ControlOffTicker.once(0.010, +[&](){});
+  //ControlOffTicker.once(0.010, +[&](){});
   ReScheduleTasksTicker.once(0.010, +[&](){});
 }

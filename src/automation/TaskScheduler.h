@@ -72,10 +72,10 @@ class TaskScheduler {
     time_t ControlOffTime;
     Ticker ControlOffTicker;
 
-    timer_t ReScheduleTasksTime;
+    time_t ReScheduleTasksTime;
     Ticker ReScheduleTasksTicker;
 
-    timer_t ScheduleOverrideTaskTime;
+    time_t ScheduleOverrideTaskTime;
     Ticker ScheduleOverrideTicker;
 
     TaskScheduler();
