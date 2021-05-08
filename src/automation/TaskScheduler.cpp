@@ -50,7 +50,6 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                                        {
                                          _isHotScheduleActive = false;
                                          _isOverrideActive = false;
-                                         IsResetSchedule = false;
 
     _channelStateService.addUpdateHandler([&](const String& originId) {
       if(_channelStateService.getChannel().schedule.isOverride){
@@ -126,9 +125,7 @@ void TaskScheduler::scheduleTimeSpanTaskTicker(ScheduledTime schedule){
     SpanTime = schedule.scheduleTime;
   }else{
     SpanTime = TWENTY_FOUR_HOUR_DURATION - (schedule.currentTime - schedule.scheduleStartDateTime) - 1;
-     if(!IsResetSchedule){
-      runTask();
-     }
+    runTask();
   }
   SpanTicker.attach(1, +[&](TaskScheduler* task) {
     task->SpanTime--;
@@ -200,7 +197,7 @@ void TaskScheduler::scheduleTaskTicker(ScheduledTime schedule){
 ScheduledTime TaskScheduler::getNextRunTime(){
     ScheduledTime schedule = Utils.getScheduleTimes(_channel.startTime,
     _channel.endTime, _channel.schedule.hotTimeHour, _channel.enableTimeSpan,
-    _isHotScheduleActive, _channel.name, _channel.randomize,
+    _channel.isHotScheduleActive, _channel.name, _channel.randomize,
     _isOverrideActive, _channel.enableMinimumRunTime);
     return schedule;
 }
@@ -216,7 +213,6 @@ void TaskScheduler::reScheduleTasks(){
   ReScheduleTasksTicker.attach(1, +[&](TaskScheduler* task) {
     task->ReScheduleTasksTime--;
     if(task->ReScheduleTasksTime <= 0){
-      task->IsResetSchedule = true;
       task->scheduleRestart(false, false);
     }
   }, this);
@@ -259,18 +255,14 @@ void TaskScheduler::setSchedule(){
 void TaskScheduler::scheduleRunEveryTask(){
   RunEveryTime = _channel.schedule.runEvery;
   runTaskTicker();
-  if(!IsResetSchedule){
-    runTask();
-  }
+  runTask();
  }
 
 void TaskScheduler::scheduleHotTask(){
   HotHourTaskTime = TWENTY_FOUR_HOUR_DURATION;
   updateStatus(HotHourTaskTime);
   runHotTaskTicker();
-   if(!IsResetSchedule){
-    runHotTask();
-   }
+  runHotTask();
 }
 
 void TaskScheduler::runHotTask(){
@@ -281,17 +273,19 @@ void TaskScheduler::runHotTask(){
     if(schedule.isHotScheduleAdjust){
       OffHotHourTime = OffHotHourTime - TWENTY_FOUR_HOUR_DURATION;
     }
-    if(OffHotHourTime < 1) { OffHotHourTime = 1;}
+    if(OffHotHourTime < 1) { OffHotHourTime = 1; _isHotScheduleActive = false;}
 
-    _channelStateService.update([&](ChannelState& channelState) {
-      channelState.channel.isHotScheduleActive = _isHotScheduleActive;
-      channelState.channel.controlOn = true;
-      channelState.channel.lastStartedChangeTime =  Utils.strLocalTime();
-      channelState.channel.offHotHourDateTime = Utils.strDeltaLocalTime(OffHotHourTime);
-      channelState.channel.controlOffDateTime = channelState.channel.offHotHourDateTime;
-      return StateUpdateResult::CHANGED;
-    }, _channel.name);
-    stopHotTaskTicker();
+    if(OffHotHourTime > 1){
+      _channelStateService.update([&](ChannelState& channelState) {
+        channelState.channel.isHotScheduleActive = true;
+        channelState.channel.controlOn = true;
+        channelState.channel.lastStartedChangeTime =  Utils.strLocalTime();
+        channelState.channel.offHotHourDateTime = Utils.strDeltaLocalTime(OffHotHourTime);
+        channelState.channel.controlOffDateTime = channelState.channel.offHotHourDateTime;
+        return StateUpdateResult::CHANGED;
+      }, _channel.name);
+      stopHotTaskTicker();
+    }
   }
 }
 
@@ -314,12 +308,12 @@ void TaskScheduler::updateNextRunStatus(){
 }
 
 time_t TaskScheduler::getRandomOnTimeSpan(){
-  return(rand() % (_channel.schedule.runEvery - _channel.schedule.offAfter) + 1);
+  return(rand() % (_channel.schedule.runEvery - _channel.schedule.offAfter -1) + 1);
 }
 
-time_t TaskScheduler::getRandomOffTimeSpan(){ 
+time_t TaskScheduler::getRandomOffTimeSpan(){
   if(_channel.enableMinimumRunTime){
-    return(rand() % _channel.schedule.offAfter + (_channel.schedule.runEvery - _controlOnTime - _channel.schedule.offAfter));
+    return(rand() % (_channel.schedule.runEvery - _controlOnTime - _channel.schedule.offAfter) + _channel.schedule.offAfter/2);
   }
  return(rand() % _channel.schedule.offAfter + 1);
 }
@@ -361,7 +355,7 @@ void TaskScheduler::printSchedule(ScheduledTime schedule){
 
 void TaskScheduler::runTask(){
   ScheduledTime schedule = getNextRunTime();
-  //printSchedule(schedule);
+  // printSchedule(schedule);
   if(schedule.isRunTaskNow){
     if(!_channel.randomize){
       controlOn();
@@ -427,7 +421,7 @@ void TaskScheduler::digitalClockDisplay(time_t tnow) {
 }
 
 time_t TaskScheduler::getScheduleTimeSpanOff(){
-  timer_t next = 1;
+  time_t next = 1;
   CurrentTime current = getCurrentTime();
   if(_channel.startTime < _channel.endTime){
     if(current.totalCurrentTimeInSec < _channel.endTime ){
@@ -496,13 +490,12 @@ void TaskScheduler::tickerDetachAll(){
   HotHourTaskTicker.once(0.010, +[&](){});
   RunEveryTicker.once(0.010, +[&](){});
   SpanRepeatTicker.once(0.010, +[&](){});
-  SpanRepeatTicker.once(0.010, +[&](){});
-  OffHotHourTicker.once(0.010, +[&](){});
+  //OffHotHourTicker.once(0.010, +[&](){});
   ScheduleTicker.once(0.010, +[&](){});
   ScheduleHotTicker.once(0.010, +[&](){});
   SpanTicker.once(0.010, +[&](){});
   RunEveryTicker.once(0.010, +[&](){});
   ControlOnTicker.once(0.010, +[&](){});
-  ControlOffTicker.once(0.010, +[&](){});
+  //ControlOffTicker.once(0.010, +[&](){});
   ReScheduleTasksTicker.once(0.010, +[&](){});
 }
