@@ -47,6 +47,12 @@ class AutoInformation extends Component {
           </ListItem>
           <ListItem>
             <ListItemText
+              primary="Minimum RunTime?"
+              secondary="When checked enables 'Minimum RunTime' of 'Off After' value. Disabled when 'Randomize' is inactive."
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
               primary="Channel Name"
               secondary="User defined channel name that shows on the screen, if one is not provided system defaults to factory settings value."
             />
