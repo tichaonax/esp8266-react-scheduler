@@ -79,13 +79,14 @@ class TaskScheduler {
     Ticker ScheduleOverrideTicker;
 
     TaskScheduler();
-    void setSchedule();
+    void setSchedule(bool isReschedule=false);
     void setScheduleTimes();
     void reScheduleTasks();
 
     private:
     bool _isHotScheduleActive;
     bool _isOverrideActive;
+    bool _isReschedule;
     CurrentTime getCurrentTime(){
         CurrentTime current;
         time_t curr_time;
