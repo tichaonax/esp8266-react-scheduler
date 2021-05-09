@@ -182,7 +182,7 @@ void TaskScheduler::controlOffTicker(){
 }
 
 void TaskScheduler::scheduleTaskTicker(ScheduledTime schedule){
-   if(ScheduleTime == 1){
+   if(ScheduleTime == 1 && !_isReschedule){
     CurrentTime currentTime = getCurrentTime();
     ScheduleTime = _channel.schedule.runEvery - (currentTime.minutesInSec % _channel.schedule.runEvery);
   }
@@ -218,12 +218,12 @@ void TaskScheduler::reScheduleTasks(){
   }, this);
 }
 
-void TaskScheduler::setSchedule(){
+void TaskScheduler::setSchedule(bool isReschedule){
   Serial.println("");
   Serial.print("Current Time: ");
   digitalClockDisplay();
   Serial.print(_channel.name);
-
+  _isReschedule = isReschedule;
   if(_channel.enabled){
     reScheduleTasks();
     ScheduledTime schedule = getNextRunTime();
@@ -313,7 +313,7 @@ time_t TaskScheduler::getRandomOnTimeSpan(){
 
 time_t TaskScheduler::getRandomOffTimeSpan(){
   if(_channel.enableMinimumRunTime){
-    return(rand() % (_channel.schedule.runEvery - _controlOnTime - _channel.schedule.offAfter) + _channel.schedule.offAfter/2);
+    return(rand() % (_channel.schedule.runEvery - _controlOnTime - _channel.schedule.offAfter) + _channel.schedule.offAfter);
   }
  return(rand() % _channel.schedule.offAfter + 1);
 }
@@ -454,7 +454,7 @@ void TaskScheduler::scheduleRestart(bool isTurnOffSwitch, bool isResetOverride){
   }
 
   if (!_isOverrideActive){
-    setSchedule();
+    setSchedule(true);
   }
 }
 
