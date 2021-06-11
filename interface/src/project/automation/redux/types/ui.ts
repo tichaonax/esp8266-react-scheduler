@@ -11,19 +11,20 @@ export interface Loader {
 }
 
 export interface SetLoaderAction {
-    type: typeof SET_LOADER;
+    type: string;
     payload: Loader;
     meta: Feature;
 }
 
 export interface RemoveLoaderAction {
-    type: typeof REMOVE_LOADER;
+    type: string;
     payload: undefined,
     meta: Feature;
 }
 
-  export type LoaderActionTypes = 
-    | SetLoaderAction
-    | RemoveLoaderAction;
+export type RemoveLoaderType = (feature: string) => void;
+export type SetLoaderType = (loader: Loader) => void;
+
+  export type LoaderActions = SetLoaderAction | RemoveLoaderAction;
   
-  export type LoaderActions = LoaderActionTypes;
+  export type LoaderActionsTypes = SetLoaderType | RemoveLoaderType;

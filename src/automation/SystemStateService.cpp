@@ -24,7 +24,6 @@ void changeStateCallbackFunc(SystemStateService* instance) {
 }
 
 void SystemStateService::begin() {
-  //_systemHeartBeat.attach(10, std::bind(&SystemStateService::changeState, this));
   _systemHeartBeat.attach(10, changeStateCallbackFunc, this);
 }
 
