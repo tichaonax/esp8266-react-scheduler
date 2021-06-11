@@ -35,7 +35,7 @@ class ChannelMqttSettings {
 
     #ifdef MQTT_FRIENDLY_NAME
         settings.name = root["name"] | settings.channelName;
-      case CHANNEL_ONE_CONTROL_PIN :
+    #else
         settings.name = root["name"] | SettingValue::format(settings.channelName + " : #{unique_id}");
     #endif
 
