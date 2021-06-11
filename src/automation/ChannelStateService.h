@@ -19,8 +19,8 @@ class ChannelStateService : public StatefulService<ChannelState> {
                     char* channelJsonConfigPath,  //  "/config/channelOneState.json"
                     String restChannelEndPoint, //  "/rest/channelOneState"
                     char* webSocketChannelEndPoint, //  "/ws/channelOneState"
-                    time_t  runEvery,         // run every 30 mins
-                    time_t  offAfter,         // stop after 5 mins
+                    float  runEvery,         // run every 30 mins
+                    float  offAfter,         // stop after 5 mins
                     time_t  startTimeHour,    // 8
                     time_t  startTimeMinute,  // 30
                     time_t  endTimeHour,      // 16
@@ -30,7 +30,9 @@ class ChannelStateService : public StatefulService<ChannelState> {
                     bool  enableTimeSpan,
                     ChannelMqttSettingsService* channelMqttSettingsService,
                     bool randomize,
-                    time_t hotTimeHour);
+                    float hotTimeHour,
+                    float overrideTime,
+                    bool enableMinimumRunTime);
 
   void begin();
   Channel getChannel();
@@ -57,11 +59,18 @@ class ChannelStateService : public StatefulService<ChannelState> {
     time_t  _startTimeMinute;  // 30
     time_t  _endTimeHour;      // 16
     time_t  _endTimeMinute;    // 30
-    time_t  _hotTimeHour;     // 0 to 4hr
+    time_t  _hotTimeHour;      // 0 to 16hr
+    time_t  _overrideTime;     //
     bool    _enabled;
     String  _channelName;
     bool  _enableTimeSpan;
     bool  _randomize;
+    bool  _isHotScheduleActive;
+    String _offHotHourDateTime;
+    String _controlOffDateTime;
+    bool  _isOverrideActive;
+    bool _enableMinimumRunTime;
+
 
 #ifdef ESP32
   void onStationModeGotIP(WiFiEvent_t event, WiFiEventInfo_t info);
@@ -76,8 +85,6 @@ class ChannelStateService : public StatefulService<ChannelState> {
 
   void registerConfig();
   void onConfigUpdated();
-  //void updateStateTime();
   void updateStateIP(String IPAddress);
-  //void mqttRepublish();
 };
 #endif

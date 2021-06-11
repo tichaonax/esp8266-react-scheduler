@@ -1,8 +1,7 @@
 import React from 'react';
 import { ValidatorForm } from 'react-material-ui-form-validator';
 import history from '../../history';
-import { Switch, Typography, ListItem, Avatar, ListItemText } from '@material-ui/core';
-import BeachAccessIcon from '@material-ui/icons/BeachAccess';
+import { Switch, Typography, ListItem, ListItemText } from '@material-ui/core';
 import { WebSocketFormProps } from '../../components';
 import { BlockFormControlLabel } from '../../components';
 
@@ -28,19 +27,14 @@ const ChannelStateWebSocketControllerForm = (props: ChannelStateWebSocketControl
     switch (data.controlPin) {
       case CHANNEL_ONE_CONTROL_PIN:
         return ("/project/auto/channelOne");
-        break;
       case CHANNEL_TWO_CONTROL_PIN:
         return ("/project/auto/channelTwo");
-        break;
       case CHANNEL_THREE_CONTROL_PIN:
         return ("/project/auto/channelThree");
-        break;
       case CHANNEL_FOUR_CONTROL_PIN:
         return ("/project/auto/channelFour");
-        break;
       default:
         return ("/project/auto/channelOne");
-        break;
     }
   }
 
