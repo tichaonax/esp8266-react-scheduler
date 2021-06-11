@@ -199,20 +199,6 @@ ScheduledTime TaskScheduler::getNextRunTime(){
     _channel.endTime, _channel.schedule.hotTimeHour, _channel.enableTimeSpan,
     _channel.isHotScheduleActive, _channel.name, _channel.randomize,
     _isOverrideActive, _channel.enableMinimumRunTime);
-  }else{
-    if( (current.totalCurrentTime > _channel.startTime) && (current.totalCurrentTime < _channel.endTime)){
-      schedule.scheduleTime = 0;
-      }else{ 
-        schedule.scheduleTime = getTimeSpanStartTimeFromNow() ;
-        if(_channel.randomize){
-          schedule.scheduleTime = schedule.scheduleTime;
-          if((current.totalCurrentTime > _channel.startTime) 
-            && (_channel.startTime > _channel.endTime)
-            && (current.totalCurrentTime > _channel.endTime)){
-            schedule.scheduleTime = 0;
-          }
-        }
-    }  
     return schedule;
 }
 
