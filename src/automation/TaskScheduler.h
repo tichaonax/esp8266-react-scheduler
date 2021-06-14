@@ -6,12 +6,6 @@
 #include "ChannelMqttSettingsService.h"
 #include "ChannelStateService.h"
 
-#define MID_NIGHT_SECONDS 86399
-#define TWENTY_FOUR_HOUR_DURATION MID_NIGHT_SECONDS + 1
-
-#define CONTROL_ON 0x1
-#define CONTROL_OFF 0x0
-
 class TaskScheduler {
     public:
     TaskScheduler(AsyncWebServer* server,
@@ -33,16 +27,19 @@ class TaskScheduler {
                     bool  enableTimeSpan,
                     ChannelMqttSettingsService* channelMqttSettingsService,
                     bool randomize,
-                    float hotTimeHour);
+                    float hotTimeHour,
+                    float overrideTime,
+                    bool enableMinimumRunTime);
     void begin();
-    void scheduleRestart();
+    void resetOverrideTime();
+    void setOverrideTime();
+    void scheduleRestart(bool isTurnOffSwitch, bool isResetOverride);
     void scheduleTimeSpanTask();
     void runTask();
     void runHotTask();
-    void stopHotTask();
     void controlOn();
     void controlOff();
-    void scheduleTask();
+    void scheduleRunEveryTask();
     void scheduleHotTask();
 
     time_t SpanRepeatTime;
@@ -75,27 +72,34 @@ class TaskScheduler {
     time_t ControlOffTime;
     Ticker ControlOffTicker;
 
+    time_t ReScheduleTasksTime;
+    Ticker ReScheduleTasksTicker;
+
+    time_t ScheduleOverrideTaskTime;
+    Ticker ScheduleOverrideTicker;
+
     TaskScheduler();
-    void setSchedule();
+    void setSchedule(bool isReschedule=false);
     void setScheduleTimes();
+    void reScheduleTasks();
 
     private:
+    bool _isHotScheduleActive;
+    bool _isOverrideActive;
+    bool _isReschedule;
     CurrentTime getCurrentTime(){
         CurrentTime current;
         time_t curr_time;
 	    curr_time = time(NULL);
 	    tm *tm_local = localtime(&curr_time);
-	    current.hours = 3600 * tm_local->tm_hour;
-        current.minutes = 60 * tm_local->tm_min;
-        current.seconds = tm_local->tm_sec;
-        current.totalCurrentTime = current.hours + current.minutes + current.seconds;
+        current.minutesInSec = 60 * tm_local->tm_min;
+        current.totalCurrentTimeInSec = 3600 * tm_local->tm_hour + current.minutesInSec + tm_local->tm_sec;
         return current;
     }
+    time_t _controlOnTime;
 
-    bool _timeSpanActive = false;   
     ChannelStateService _channelStateService;
     Channel _channel;
-    bool    _validNTP = false;       // Wait for NTP to get valid time
     time_t getScheduleTimeSpanOff();
     protected:
 
@@ -103,24 +107,24 @@ class TaskScheduler {
     void digitalClockDisplay(time_t tnow);
 
     ScheduledTime getNextRunTime();
-    ScheduledTime getTimeSpanScheduleNextRunTime(ScheduledTime& schedule);
-    bool shouldRunTask();
+    void updateStatus(time_t delta);
     void updateNextRunStatus();
     time_t getRandomOnTimeSpan();
     time_t getRandomOffTimeSpan();
-    time_t getTimeSpanStartTimeFromNow();
 
     void overrideControlOff(); 
     void tickerDetachAll(); 
     void controlOffTicker();
     void runTaskTicker();
+    void stopHotTask();
     void controlOnTicker();
-    void scheduleTaskTicker();
-    void scheduleHotTaskTicker();
+    void scheduleTaskTicker(ScheduledTime schedule);
+    void scheduleHotTaskTicker(ScheduledTime schedule);
     void runHotTaskTicker();
     void stopHotTaskTicker();
-    void scheduleTimeSpanTaskTicker();
+    void scheduleTimeSpanTaskTicker(ScheduledTime schedule);
     void runSpanTaskTicker();
+    void printSchedule(ScheduledTime schedule);
 };
 
 #endif
