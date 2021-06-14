@@ -3,8 +3,9 @@
 
 #include <HttpEndpoint.h>
 #include <FSPersistence.h>
-#include <ESPUtils.h>
+#include <SettingValue.h>
 #include "channels.h"
+#include "ChannelState.h"
 
 #define CHANNEL_ONE_BROKER_SETTINGS_FILE "/config/channelOneBrokerSettings.json"
 #define CHANNEL_ONE_BROKER_SETTINGS_PATH "/rest/channelOneBrokerSettings"
@@ -31,31 +32,19 @@ class ChannelMqttSettings {
   }
 
   static StateUpdateResult update(JsonObject& root, ChannelMqttSettings& settings) {
-    String topicHeader;
-    String topicType;
-    
-    switch (settings.channelControlPin)
-    {
-      case CHANNEL_ONE_CONTROL_PIN :
-      case CHANNEL_TWO_CONTROL_PIN:
-        topicHeader = "homeassistant/switch/";
-        topicType = "switch-";
-      break;
-      default:
-        topicHeader = "homeassistant/light/";
-        topicType = "light-";
-      break;
-    }
 
     #ifdef MQTT_FRIENDLY_NAME
         settings.name = root["name"] | settings.channelName;
     #else
-        settings.name = root["name"] | ESPUtils::defaultDeviceValue(settings.channelName + " : ");
+        settings.name = root["name"] | SettingValue::format(settings.channelName + " : #{unique_id}");
     #endif
 
-    settings.mqttPath = root["mqtt_path"] | ESPUtils::defaultDeviceValue(topicHeader + settings.homeAssistantEntity + "-" + String(settings.channelControlPin) + "/");
-    settings.uniqueId = root["unique_id"] | ESPUtils::defaultDeviceValue(topicType + String(settings.channelControlPin) + "-");
-  
+    bool mqttPath = false;
+    settings.mqttPath = root["mqtt_path"] | ChannelState::getMqttUniqueIdOrPath(settings.channelControlPin, mqttPath, settings.homeAssistantEntity); 
+    
+    bool uniqueId = true;
+    settings.uniqueId = root["unique_id"] | ChannelState::getMqttUniqueIdOrPath(settings.channelControlPin, uniqueId);
+    
     return StateUpdateResult::CHANGED;
   }
 };

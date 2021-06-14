@@ -27,9 +27,13 @@ class TaskScheduler {
                     bool  enableTimeSpan,
                     ChannelMqttSettingsService* channelMqttSettingsService,
                     bool randomize,
-                    float hotTimeHour);
+                    float hotTimeHour,
+                    float overrideTime,
+                    bool enableMinimumRunTime);
     void begin();
-    void scheduleRestart(bool isTurnOffSwitch);
+    void resetOverrideTime();
+    void setOverrideTime();
+    void scheduleRestart(bool isTurnOffSwitch, bool isResetOverride);
     void scheduleTimeSpanTask();
     void runTask();
     void runHotTask();
@@ -68,27 +72,31 @@ class TaskScheduler {
     time_t ControlOffTime;
     Ticker ControlOffTicker;
 
-    timer_t ReScheduleTasksTime;
+    time_t ReScheduleTasksTime;
     Ticker ReScheduleTasksTicker;
 
+    time_t ScheduleOverrideTaskTime;
+    Ticker ScheduleOverrideTicker;
+
     TaskScheduler();
-    void setSchedule();
+    void setSchedule(bool isReschedule=false);
     void setScheduleTimes();
     void reScheduleTasks();
 
     private:
     bool _isHotScheduleActive;
+    bool _isOverrideActive;
+    bool _isReschedule;
     CurrentTime getCurrentTime(){
         CurrentTime current;
         time_t curr_time;
 	    curr_time = time(NULL);
 	    tm *tm_local = localtime(&curr_time);
-	    current.hours = 3600 * tm_local->tm_hour;
-        current.minutes = 60 * tm_local->tm_min;
-        current.seconds = tm_local->tm_sec;
-        current.totalCurrentTime = current.hours + current.minutes + current.seconds;
+        current.minutesInSec = 60 * tm_local->tm_min;
+        current.totalCurrentTimeInSec = 3600 * tm_local->tm_hour + current.minutesInSec + tm_local->tm_sec;
         return current;
     }
+    time_t _controlOnTime;
 
     ChannelStateService _channelStateService;
     Channel _channel;
@@ -110,7 +118,7 @@ class TaskScheduler {
     void runTaskTicker();
     void stopHotTask();
     void controlOnTicker();
-    void scheduleTaskTicker();
+    void scheduleTaskTicker(ScheduledTime schedule);
     void scheduleHotTaskTicker(ScheduledTime schedule);
     void runHotTaskTicker();
     void stopHotTaskTicker();
