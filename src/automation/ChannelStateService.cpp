@@ -1,9 +1,6 @@
 #include "channels.h"
 #include "ChannelStateService.h"
 
-#define CONTROL_ON 0x1
-#define CONTROL_OFF 0x0
-
 ChannelStateService::ChannelStateService(AsyncWebServer* server,
                                       SecurityManager* securityManager,
                                       AsyncMqttClient* mqttClient,
@@ -12,8 +9,8 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
                                       char* channelJsonConfigPath,
                                       String restChannelEndPoint,
                                       char* webSocketChannelEndPoint,
-                                      time_t  runEvery,
-                                      time_t  offAfter,
+                                      float  runEvery,
+                                      float  offAfter,
                                       time_t  startTimeHour,
                                       time_t  startTimeMinute,
                                       time_t  endTimeHour,
@@ -23,7 +20,9 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
                                       bool enableTimeSpan,
                                       ChannelMqttSettingsService* channelMqttSettingsService,
                                       bool randomize,
-                                      time_t hotTimeHour) :
+                                      float hotTimeHour,
+                                      float overrideTime,
+                                      bool enableMinimumRunTime) :
     _httpEndpoint(ChannelState::read,
                   ChannelState::update,
                   this,
@@ -33,7 +32,7 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
                   AuthenticationPredicates::IS_AUTHENTICATED),
     _mqttPubSub(ChannelState::haRead, ChannelState::haUpdate, this, mqttClient),
     _webSocket(ChannelState::read,
-               ChannelState::update,
+               ChannelState::wsUpdate,
                this,
                server,
                webSocketChannelEndPoint,
@@ -52,17 +51,23 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
   _restChannelEndPoint = restChannelEndPoint;
   _webSocketChannelEndPoint = webSocketChannelEndPoint;
 
-  _runEvery = runEvery;
-  _offAfter = offAfter;
-  _startTimeHour  = startTimeHour;
-  _startTimeMinute  =startTimeMinute;
-  _endTimeHour  = endTimeHour;
-  _endTimeMinute  = endTimeMinute;
+  _runEvery = (int)(round(60 * float(runEvery)));
+  _offAfter = (int)(round(60 * float(offAfter)));
+  _startTimeHour  = (int)(round(3600 * float(startTimeHour)));
+  _startTimeMinute  = (int)(round(60 * float(startTimeMinute)));
+  _endTimeHour  = (int)(round(3600 * float(endTimeHour)));
+  _endTimeMinute  = (int)(round(60 * float(endTimeMinute)));
   _enabled  = enabled;
   _channelName = channelName;
   _enableTimeSpan = enableTimeSpan;
   _randomize = randomize;
-  _hotTimeHour = hotTimeHour;
+  _hotTimeHour = (int)(round(3600 * float(hotTimeHour)));
+  _overrideTime = (int)(round(60 * float(overrideTime)));
+  _isHotScheduleActive = false;
+  _offHotHourDateTime = "";
+  _controlOffDateTime = "";
+  _isOverrideActive = false;
+  _enableMinimumRunTime = enableMinimumRunTime;
 
   // configure controls to be output
   pinMode(_channelControlPin, OUTPUT);
@@ -134,7 +139,7 @@ void ChannelStateService::registerConfig() {
     
     switch (settings.channelControlPin)
     {
-      /*case CHANNEL_ONE_CONTROL_PIN :
+      case CHANNEL_ONE_CONTROL_PIN:
           doc["icon"] = "mdi:water-pump";
           doc["payload_on"] =  "{\"state\":\"ON\"}";
           doc["payload_off"] = "{\"state\":\"OFF\"}";
@@ -143,9 +148,6 @@ void ChannelStateService::registerConfig() {
           doc["icon"] = "mdi:fridge";
           doc["payload_on"] =  "{\"state\":\"ON\"}";
           doc["payload_off"] = "{\"state\":\"OFF\"}";
-        break;
-      case CHANNEL_THREE_CONTROL_PIN:
-          doc["schema"] = "json";
         break;
       default:
           doc["schema"] = "json";
@@ -175,6 +177,10 @@ void ChannelStateService::begin() {
     _state.channel.enabled = _enabled;
     _state.channel.enableTimeSpan = _enableTimeSpan;
     _state.channel.randomize = _randomize;
+    _state.channel.isHotScheduleActive = _isHotScheduleActive;
+    _state.channel.offHotHourDateTime = _offHotHourDateTime;
+    _state.channel.controlOffDateTime = _controlOffDateTime;
+    _state.channel.enableMinimumRunTime = _enableMinimumRunTime;
 
     _state.channel.schedule.runEvery =  _runEvery;
     _state.channel.schedule.offAfter =  _offAfter;
@@ -183,15 +189,15 @@ void ChannelStateService::begin() {
     _state.channel.schedule.endTimeHour = _endTimeHour;
     _state.channel.schedule.endTimeMinute = _endTimeMinute;
     _state.channel.schedule.hotTimeHour = _hotTimeHour;
+    _state.channel.schedule.overrideTime = _overrideTime;
+    _state.channel.schedule.isOverrideActive = _isOverrideActive;
     
     _fsPersistence.readFromFS();
 
     _state.channel.controlOn = DEFAULT_CONTROL_STATE; // must be off on start up
     onConfigUpdated();
-    //_deviceTime.attach(10, std::bind(&ChannelStateService::updateStateTime, this));
     _deviceTime.attach(10, updateStateTimeTicker, this);
-    //_mqttRepublish.attach(60, std::bind(&ChannelStateService::mqttRepublish, this));
-    _mqttRepublish.attach(60, mqttRepublishTicker, this);
+    _mqttRepublish.attach(30, mqttRepublishTicker, this);
     _channelMqttSettingsService->begin();
 }
 

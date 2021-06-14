@@ -47,6 +47,12 @@ class AutoInformation extends Component {
           </ListItem>
           <ListItem>
             <ListItemText
+              primary="Minimum RunTime?"
+              secondary="When checked enables 'Minimum RunTime' of 'Off After' value. Disabled when 'Randomize' is inactive."
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
               primary="Channel Name"
               secondary="User defined channel name that shows on the screen, if one is not provided system defaults to factory settings value."
             />
@@ -72,13 +78,13 @@ class AutoInformation extends Component {
           <ListItem>
             <ListItemText
               primary="Hot Time"
-              secondary="The duration that the switch is on before randomize feature takes over."
+              secondary="The duration that the switch is permanently on before randomize feature takes over."
             />
           </ListItem>
           <ListItem>
             <ListItemText
               primary="End Time"
-              secondary="The end time when the schedule is active."
+              secondary="The time after which the schedule is no longer active."
             />
           </ListItem> 
         </List>
