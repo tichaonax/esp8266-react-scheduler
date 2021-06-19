@@ -60,7 +60,6 @@ public:
       switch (controlPin)
       {
         case CHANNEL_ONE_CONTROL_PIN:
-        case CHANNEL_TWO_CONTROL_PIN:
           topicHeader = "homeassistant/switch/";
           topicType = "switch";
         break;

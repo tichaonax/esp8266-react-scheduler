@@ -144,11 +144,11 @@ void ChannelStateService::registerConfig() {
           doc["payload_on"] =  "{\"state\":\"ON\"}";
           doc["payload_off"] = "{\"state\":\"OFF\"}";
         break;
-      case CHANNEL_TWO_CONTROL_PIN:
+      /*case CHANNEL_TWO_CONTROL_PIN:
           doc["icon"] = "mdi:fridge";
           doc["payload_on"] =  "{\"state\":\"ON\"}";
           doc["payload_off"] = "{\"state\":\"OFF\"}";
-        break;
+        break;*/
       default:
           doc["schema"] = "json";
         break;
