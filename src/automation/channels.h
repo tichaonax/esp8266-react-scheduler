@@ -1,7 +1,7 @@
 #ifndef Channels_h
 #define Channels_h
 
-#define CHANNEL_ONE_CONTROL_PIN 5
+#define CHANNEL_ONE_CONTROL_PIN 13
 #define CHANNEL_ONE_REST_ENDPOINT_PATH "/rest/channelOneState"  //restChannelEndPoint
 #define CHANNEL_ONE_SOCKET_PATH "/ws/channelOneState"  // webSocketChannelEndPoint
 #define CHANNEL_ONE_DEFAULT_NAME "East Gate Light" //  defaultChannelName
@@ -47,7 +47,7 @@
 #endif
 #define CHANNEL_THREE_REST_ENDPOINT_PATH "/rest/channelThreeState"  //restChannelEndPoint
 #define CHANNEL_THREE_SOCKET_PATH "/ws/channelThreeState"  // webSocketChannelEndPoint
-#define CHANNEL_THREE_DEFAULT_NAME "East Gate Lights" //  defaultChannelName
+#define CHANNEL_THREE_DEFAULT_NAME "East Gate Light" //  defaultChannelName
 #define CHANNEL_THREE_CONFIG_JSON_PATH "/config/channelThreeState.json"  // channelJsonConfigPath
 #define CHANNEL_THREE_HOME_ASSISTANT_ENTITY "east_gate_light"    // homeAssistantEntity
 #define CHANNEL_THREE_DEFAULT_CONTROL_RUN_EVERY 30.0f
