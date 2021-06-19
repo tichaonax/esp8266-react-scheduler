@@ -1,7 +1,7 @@
 #ifndef Channels_h
 #define Channels_h
 
-#define CHANNEL_ONE_CONTROL_PIN 5
+#define CHANNEL_ONE_CONTROL_PIN 13
 #define CHANNEL_ONE_REST_ENDPOINT_PATH "/rest/channelOneState"  //restChannelEndPoint
 #define CHANNEL_ONE_SOCKET_PATH "/ws/channelOneState"  // webSocketChannelEndPoint
 #define CHANNEL_ONE_DEFAULT_NAME "Water Pump" //  defaultChannelName
