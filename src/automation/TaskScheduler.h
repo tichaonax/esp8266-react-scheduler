@@ -72,20 +72,21 @@ class TaskScheduler {
     time_t ControlOffTime;
     Ticker ControlOffTicker;
 
-    timer_t ReScheduleTasksTime;
+    time_t ReScheduleTasksTime;
     Ticker ReScheduleTasksTicker;
 
-    timer_t ScheduleOverrideTaskTime;
+    time_t ScheduleOverrideTaskTime;
     Ticker ScheduleOverrideTicker;
 
     TaskScheduler();
-    void setSchedule();
+    void setSchedule(bool isReschedule=false);
     void setScheduleTimes();
     void reScheduleTasks();
 
     private:
     bool _isHotScheduleActive;
     bool _isOverrideActive;
+    bool _isReschedule;
     CurrentTime getCurrentTime(){
         CurrentTime current;
         time_t curr_time;

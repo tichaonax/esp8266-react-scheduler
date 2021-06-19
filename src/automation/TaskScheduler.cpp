@@ -182,7 +182,7 @@ void TaskScheduler::controlOffTicker(){
 }
 
 void TaskScheduler::scheduleTaskTicker(ScheduledTime schedule){
-   if(ScheduleTime == 1){
+   if(ScheduleTime == 1 && !_isReschedule){
     CurrentTime currentTime = getCurrentTime();
     ScheduleTime = _channel.schedule.runEvery - (currentTime.minutesInSec % _channel.schedule.runEvery);
   }
@@ -199,12 +199,6 @@ ScheduledTime TaskScheduler::getNextRunTime(){
     _channel.endTime, _channel.schedule.hotTimeHour, _channel.enableTimeSpan,
     _channel.isHotScheduleActive, _channel.name, _channel.randomize,
     _isOverrideActive, _channel.enableMinimumRunTime);
-          if((current.totalCurrentTime > _channel.startTime) 
-            && (_channel.startTime > _channel.endTime)
-            && (current.totalCurrentTime > _channel.endTime)){
-            schedule.scheduleTime = 0;
-          }
-        }
     return schedule;
 }
 
@@ -224,12 +218,12 @@ void TaskScheduler::reScheduleTasks(){
   }, this);
 }
 
-void TaskScheduler::setSchedule(){
+void TaskScheduler::setSchedule(bool isReschedule){
   Serial.println("");
   Serial.print("Current Time: ");
   digitalClockDisplay();
   Serial.print(_channel.name);
-
+  _isReschedule = isReschedule;
   if(_channel.enabled){
     reScheduleTasks();
     ScheduledTime schedule = getNextRunTime();
@@ -314,12 +308,12 @@ void TaskScheduler::updateNextRunStatus(){
 }
 
 time_t TaskScheduler::getRandomOnTimeSpan(){
-  return(rand() % (_channel.schedule.runEvery - _channel.schedule.offAfter) + 1);
+  return(rand() % (_channel.schedule.runEvery - _channel.schedule.offAfter -1) + 1);
 }
 
-time_t TaskScheduler::getRandomOffTimeSpan(){ 
+time_t TaskScheduler::getRandomOffTimeSpan(){
   if(_channel.enableMinimumRunTime){
-    return(rand() % _channel.schedule.offAfter + (_channel.schedule.runEvery - _controlOnTime - _channel.schedule.offAfter));
+    return(rand() % (_channel.schedule.runEvery - _controlOnTime - _channel.schedule.offAfter) + _channel.schedule.offAfter);
   }
  return(rand() % _channel.schedule.offAfter + 1);
 }
@@ -427,7 +421,7 @@ void TaskScheduler::digitalClockDisplay(time_t tnow) {
 }
 
 time_t TaskScheduler::getScheduleTimeSpanOff(){
-  timer_t next = 1;
+  time_t next = 1;
   CurrentTime current = getCurrentTime();
   if(_channel.startTime < _channel.endTime){
     if(current.totalCurrentTimeInSec < _channel.endTime ){
@@ -460,7 +454,7 @@ void TaskScheduler::scheduleRestart(bool isTurnOffSwitch, bool isResetOverride){
   }
 
   if (!_isOverrideActive){
-    setSchedule();
+    setSchedule(true);
   }
 }
 
@@ -496,13 +490,12 @@ void TaskScheduler::tickerDetachAll(){
   HotHourTaskTicker.once(0.010, +[&](){});
   RunEveryTicker.once(0.010, +[&](){});
   SpanRepeatTicker.once(0.010, +[&](){});
-  SpanRepeatTicker.once(0.010, +[&](){});
-  OffHotHourTicker.once(0.010, +[&](){});
+  //OffHotHourTicker.once(0.010, +[&](){});
   ScheduleTicker.once(0.010, +[&](){});
   ScheduleHotTicker.once(0.010, +[&](){});
   SpanTicker.once(0.010, +[&](){});
   RunEveryTicker.once(0.010, +[&](){});
   ControlOnTicker.once(0.010, +[&](){});
-  ControlOffTicker.once(0.010, +[&](){});
+  //ControlOffTicker.once(0.010, +[&](){});
   ReScheduleTasksTicker.once(0.010, +[&](){});
 }
