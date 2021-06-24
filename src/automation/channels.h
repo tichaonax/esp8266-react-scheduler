@@ -1,7 +1,7 @@
 #ifndef Channels_h
 #define Channels_h
 
-#define CHANNEL_ONE_CONTROL_PIN 5
+#define CHANNEL_ONE_CONTROL_PIN 12
 #define CHANNEL_ONE_REST_ENDPOINT_PATH "/rest/channelOneState"  //restChannelEndPoint
 #define CHANNEL_ONE_SOCKET_PATH "/ws/channelOneState"  // webSocketChannelEndPoint
 #define CHANNEL_ONE_DEFAULT_NAME "Water Pump" //  defaultChannelName
@@ -24,14 +24,14 @@
   // onboard relay control pin = 4
   #define CHANNEL_TWO_CONTROL_PIN 4
 #else
-    #define CHANNEL_TWO_CONTROL_PIN 12
+    #define CHANNEL_TWO_CONTROL_PIN 5
 #endif
 
 #define CHANNEL_TWO_REST_ENDPOINT_PATH "/rest/channelTwoState"  //restChannelEndPoint
 #define CHANNEL_TWO_SOCKET_PATH "/ws/channelTwoState"  // webSocketChannelEndPoint
-#define CHANNEL_TWO_DEFAULT_NAME "Main Fridge" //  defaultChannelName
+#define CHANNEL_TWO_DEFAULT_NAME "Deep Freezer" //  defaultChannelName
 #define CHANNEL_TWO_CONFIG_JSON_PATH "/config/channelTwoState.json"  // channelJsonConfigPath
-#define CHANNEL_TWO_HOME_ASSISTANT_ENTITY "channel_two"
+#define CHANNEL_TWO_HOME_ASSISTANT_ENTITY "deep_freezer"
 #define CHANNEL_TWO_DEFAULT_CONTROL_RUN_EVERY 30.0f
 #define CHANNEL_TWO_DEFAULT_CONTROL_OFF_AFTER 15.0f
 #define CHANNEL_TWO_DEFAULT_CONTROL_START_TIME_HOUR 8
