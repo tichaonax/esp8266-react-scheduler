@@ -11,7 +11,7 @@ class FSPersistence {
                 JsonStateUpdater<T> stateUpdater,
                 StatefulService<T>* statefulService,
                 FS* fs,
-                char const* filePath,
+                const char* filePath,
                 size_t bufferSize = DEFAULT_BUFFER_SIZE) :
       _stateReader(stateReader),
       _stateUpdater(stateUpdater),
@@ -38,9 +38,11 @@ class FSPersistence {
       settingsFile.close();
     }
 
-    // If we reach here we have not been successful in loading the config,
-    // hard-coded emergency defaults are now applied.
+    // If we reach here we have not been successful in loading the config and hard-coded defaults are now applied.
+    // The settings are then written back to the file system so the defaults persist between resets. This last step is
+    // required as in some cases defaults contain randomly generated values which would otherwise be modified on reset.
     applyDefaults();
+    writeToFS();
   }
 
   bool writeToFS() {
@@ -81,7 +83,7 @@ class FSPersistence {
   JsonStateUpdater<T> _stateUpdater;
   StatefulService<T>* _statefulService;
   FS* _fs;
-  char const* _filePath;
+  const char* _filePath;
   size_t _bufferSize;
   update_handler_id_t _updateHandlerId;
 

@@ -6,5 +6,6 @@
 /lib/framework/WWWData.h
 /interface/build
 /interface/node_modules
+/interface/.eslintcache
 .vscode
 *.orig
