@@ -81,17 +81,17 @@ void TaskScheduler::scheduleHotTaskTicker(ScheduledTime schedule){
     }, _channel.name);
   }
 
-  ScheduleHotTicker.attach(1, +[&](TaskScheduler* task) {
+  ScheduleHotTicker.attach(1, +[](TaskScheduler* task) {
     task->ScheduleHotTime--;
     if(task->ScheduleHotTime <= 0){
-      task->ScheduleHotTicker.once(0.010, +[&](TaskScheduler* once){once->scheduleHotTask();}, task);
+      task->ScheduleHotTicker.once(0.010, +[](TaskScheduler* once){once->scheduleHotTask();}, task);
     }
   }, this);
 }
 
 void TaskScheduler::runHotTaskTicker(){
   HotHourTaskTimeCopy = HotHourTaskTime;
-  HotHourTaskTicker.attach(1, +[&](TaskScheduler* task) {
+  HotHourTaskTicker.attach(1, +[](TaskScheduler* task) {
      task->HotHourTaskTime--;
      if(task->HotHourTaskTime <= 0){
       task->HotHourTaskTime = task->HotHourTaskTimeCopy;
@@ -102,10 +102,10 @@ void TaskScheduler::runHotTaskTicker(){
 }
 
 void TaskScheduler::stopHotTaskTicker(){
-  OffHotHourTicker.attach(1, +[&](TaskScheduler* task) {
+  OffHotHourTicker.attach(1, +[](TaskScheduler* task) {
     task->OffHotHourTime--;
     if(task->OffHotHourTime <= 0){
-      task->OffHotHourTicker.once(0.010, +[&](TaskScheduler* once){once->stopHotTask();}, task);
+      task->OffHotHourTicker.once(0.010, +[](TaskScheduler* once){once->stopHotTask();}, task);
     }
   }, this);
 }
@@ -127,17 +127,17 @@ void TaskScheduler::scheduleTimeSpanTaskTicker(ScheduledTime schedule){
     SpanTime = TWENTY_FOUR_HOUR_DURATION - (schedule.currentTime - schedule.scheduleStartDateTime) - 1;
     runTask();
   }
-  SpanTicker.attach(1, +[&](TaskScheduler* task) {
+  SpanTicker.attach(1, +[](TaskScheduler* task) {
     task->SpanTime--;
     if(task->SpanTime <= 0){
-      task->SpanTicker.once(0.010, +[&](TaskScheduler* once){once->scheduleTimeSpanTask();}, task);
+      task->SpanTicker.once(0.010, +[](TaskScheduler* once){once->scheduleTimeSpanTask();}, task);
     }
   }, this);
 }
 
 void TaskScheduler::runTaskTicker(){
   RunEveryTimeCopy = RunEveryTime;
-  RunEveryTicker.attach(1, +[&](TaskScheduler* task) {
+  RunEveryTicker.attach(1, +[](TaskScheduler* task) {
     task->RunEveryTime--;
     if(task->RunEveryTime <= 0){
       task->RunEveryTime = task->RunEveryTimeCopy;
@@ -148,7 +148,7 @@ void TaskScheduler::runTaskTicker(){
 
 void TaskScheduler::runSpanTaskTicker(){
   SpanRepeatTimeCopy = SpanRepeatTime;
-  SpanRepeatTicker.attach(1, +[&](TaskScheduler* task) {
+  SpanRepeatTicker.attach(1, +[](TaskScheduler* task) {
     task->SpanRepeatTime--;
     if(task->SpanRepeatTime <= 0){
       task->SpanRepeatTime = task->SpanRepeatTimeCopy;
@@ -159,10 +159,10 @@ void TaskScheduler::runSpanTaskTicker(){
 
 void TaskScheduler::controlOnTicker(){
   updateNextRunStatus();
-  ControlOnTicker.attach(1, +[&](TaskScheduler* task) {
+  ControlOnTicker.attach(1, +[](TaskScheduler* task) {
     task->ControlOnTime--;
     if(task->ControlOnTime <= 0){
-      task->ControlOnTicker.once(0.010, +[&](TaskScheduler* once){once->controlOn();}, task);
+      task->ControlOnTicker.once(0.010, +[](TaskScheduler* once){once->controlOn();}, task);
     }
   }, this);
 }
@@ -173,10 +173,10 @@ void TaskScheduler::controlOffTicker(){
     return StateUpdateResult::CHANGED;
   }, _channel.name);
 
-  ControlOffTicker.attach(1, +[&](TaskScheduler* task) {
+  ControlOffTicker.attach(1, +[](TaskScheduler* task) {
     task->ControlOffTime--;
     if(task->ControlOffTime <= 0){
-      task->ControlOffTicker.once(0.010, +[&](TaskScheduler* once){once->controlOff();}, task);
+      task->ControlOffTicker.once(0.010, +[](TaskScheduler* once){once->controlOff();}, task);
     }
   }, this);
 }
@@ -186,10 +186,10 @@ void TaskScheduler::scheduleTaskTicker(ScheduledTime schedule){
     CurrentTime currentTime = getCurrentTime();
     ScheduleTime = _channel.schedule.runEvery - (currentTime.minutesInSec % _channel.schedule.runEvery);
   }
-  ScheduleTicker.attach(1, +[&](TaskScheduler* task) {
+  ScheduleTicker.attach(1, +[](TaskScheduler* task) {
     task->ScheduleTime--;
     if(task->ScheduleTime <= 0){
-      task->ScheduleTicker.once(0.010, +[&](TaskScheduler* once){once->scheduleRunEveryTask();}, task);
+      task->ScheduleTicker.once(0.010, +[](TaskScheduler* once){once->scheduleRunEveryTask();}, task);
     }
   }, this);
 }
@@ -210,7 +210,7 @@ void TaskScheduler::setScheduleTimes(){
 
 void TaskScheduler::reScheduleTasks(){
   ReScheduleTasksTime = 3600; // reschedule task after 1 hour
-  ReScheduleTasksTicker.attach(1, +[&](TaskScheduler* task) {
+  ReScheduleTasksTicker.attach(1, +[](TaskScheduler* task) {
     task->ReScheduleTasksTime--;
     if(task->ReScheduleTasksTime <= 0){
       task->scheduleRestart(false, false);
@@ -478,24 +478,24 @@ void TaskScheduler::setOverrideTime(){
   _isOverrideActive = true;
   ScheduleOverrideTaskTime = _channel.schedule.overrideTime > 1 ? _channel.schedule.overrideTime : 1;
 
-  ScheduleOverrideTicker.attach(1, +[&](TaskScheduler* task) {
+  ScheduleOverrideTicker.attach(1, +[](TaskScheduler* task) {
     task->ScheduleOverrideTaskTime--;
     if(task->ScheduleOverrideTaskTime <= 0){
-      task->ScheduleOverrideTicker.once(0.010, +[&](TaskScheduler* once){once->scheduleRestart(true, true);}, task);
+      task->ScheduleOverrideTicker.once(0.010, +[](TaskScheduler* once){once->scheduleRestart(true, true);}, task);
     }
   }, this);
 }
 
 void TaskScheduler::tickerDetachAll(){
-  HotHourTaskTicker.once(0.010, +[&](){});
-  RunEveryTicker.once(0.010, +[&](){});
-  SpanRepeatTicker.once(0.010, +[&](){});
+  HotHourTaskTicker.once(0.010, +[](){});
+  RunEveryTicker.once(0.010, +[](){});
+  SpanRepeatTicker.once(0.010, +[](){});
   //OffHotHourTicker.once(0.010, +[&](){});
-  ScheduleTicker.once(0.010, +[&](){});
-  ScheduleHotTicker.once(0.010, +[&](){});
-  SpanTicker.once(0.010, +[&](){});
-  RunEveryTicker.once(0.010, +[&](){});
-  ControlOnTicker.once(0.010, +[&](){});
+  ScheduleTicker.once(0.010, +[](){});
+  ScheduleHotTicker.once(0.010, +[](){});
+  SpanTicker.once(0.010, +[](){});
+  //RunEveryTicker.once(0.010, +[](){});
+  ControlOnTicker.once(0.010, +[](){});
   //ControlOffTicker.once(0.010, +[&](){});
-  ReScheduleTasksTicker.once(0.010, +[&](){});
+  ReScheduleTasksTicker.once(0.010, +[](){});
 }

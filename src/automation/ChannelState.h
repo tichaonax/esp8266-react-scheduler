@@ -161,14 +161,14 @@ public:
       channel.enableMinimumRunTime);
 
     scheduled["channelName"] = scheduledTime.channelName;
-    scheduled["scheduleTime"] = scheduledTime.scheduleTime;
+    scheduled["scheduleTime"] = (int)scheduledTime.scheduleTime;
     scheduled["isHotSchedule"] = scheduledTime.isHotSchedule;
     scheduled["isSpanSchedule"] = scheduledTime.isSpanSchedule;
     scheduled["isHotScheduleActive:"] =  scheduledTime.isHotScheduleActive;
     scheduled["isRunTaskNow"] = scheduledTime.isRunTaskNow;
     scheduled["currentTime"] = Utils.eraseLineFeed(ctime(&scheduledTime.currentTime));
-    scheduled["startTimeSeconds"] = scheduledTime.startTime;
-    scheduled["endTimeSeconds"] = scheduledTime.endTime;
+    scheduled["startTimeSeconds"] = (int)scheduledTime.startTime;
+    scheduled["endTimeSeconds"] = (int)scheduledTime.endTime;
     scheduled["startDateTime"] = Utils.eraseLineFeed(ctime(&scheduledTime.scheduleStartDateTime));
     
     if(scheduledTime.isHotSchedule){
