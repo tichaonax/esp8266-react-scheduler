@@ -494,7 +494,7 @@ void TaskScheduler::tickerDetachAll(){
   ScheduleTicker.once(0.010, +[](){});
   ScheduleHotTicker.once(0.010, +[](){});
   SpanTicker.once(0.010, +[](){});
-  RunEveryTicker.once(0.010, +[](){});
+  //RunEveryTicker.once(0.010, +[](){});
   ControlOnTicker.once(0.010, +[](){});
   //ControlOffTicker.once(0.010, +[&](){});
   ReScheduleTasksTicker.once(0.010, +[](){});
