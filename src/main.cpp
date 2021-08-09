@@ -200,7 +200,7 @@ void runSchedules(){
         int year = dateText.substring(dateText.lastIndexOf(" ")+1).toInt();
         if(year > 1970){
           validNTP = true;
-          blinkerHeartBeat.attach(2, +[&](){}); // disable fast blinker
+          blinkerHeartBeat.attach(2, +[](){}); // disable fast blinker
           blinkerHeartBeat.attach(2, turnLedOn);  // and replace with normal
           #if defined(CHANNEL_ONE)
             channelOneTaskScheduler.setSchedule();
