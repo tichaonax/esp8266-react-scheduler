@@ -43,7 +43,7 @@ void turnLedOn(){
 Ticker restartTicker;
 struct SystemRestart {
   int day;
-  time_t restartTime;
+  int restartTime;
 };
 
 AsyncWebServer server(80);

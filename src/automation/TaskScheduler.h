@@ -18,10 +18,10 @@ class TaskScheduler {
                     char* webSocketChannelEndPoint, //  "/ws/channelOneState"
                     float  runEvery,         // run every 30 mins
                     float  offAfter,         // stop after 5 mins
-                    time_t  startTimeHour,    // 8
-                    time_t  startTimeMinute,  // 30
-                    time_t  endTimeHour,      // 16
-                    time_t  endTimeMinute,    // 30
+                    int  startTimeHour,    // 8
+                    int  startTimeMinute,  // 30
+                    int  endTimeHour,      // 16
+                    int  endTimeMinute,    // 30
                     bool    enabled,
                     String  channelName,
                     bool  enableTimeSpan,
@@ -42,40 +42,44 @@ class TaskScheduler {
     void scheduleRunEveryTask();
     void scheduleHotTask();
 
-    time_t SpanRepeatTime;
-    time_t SpanRepeatTimeCopy;
+#ifdef ESP32
+    Utilities utils;
+#endif
+
+    int SpanRepeatTime;
+    int SpanRepeatTimeCopy;
     Ticker SpanRepeatTicker;
 
-    time_t OffHotHourTime;
+    int OffHotHourTime;
     Ticker OffHotHourTicker;
 
-    time_t HotHourTaskTime;
-    time_t HotHourTaskTimeCopy;
+    int HotHourTaskTime;
+    int HotHourTaskTimeCopy;
     Ticker HotHourTaskTicker;
     
-    time_t ScheduleTime;
+    int ScheduleTime;
     Ticker ScheduleTicker;
 
-    time_t ScheduleHotTime;
+    int ScheduleHotTime;
     Ticker ScheduleHotTicker;
 
-    time_t SpanTime;
+    int SpanTime;
     Ticker SpanTicker;
 
-    time_t RunEveryTime;
-    time_t RunEveryTimeCopy;
+    int RunEveryTime;
+    int RunEveryTimeCopy;
     Ticker RunEveryTicker;
 
-    time_t ControlOnTime;
+    short ControlOnTime;
     Ticker ControlOnTicker;
 
-    time_t ControlOffTime;
+    int ControlOffTime;
     Ticker ControlOffTicker;
 
-    time_t ReScheduleTasksTime;
+    int ReScheduleTasksTime;
     Ticker ReScheduleTasksTicker;
 
-    time_t ScheduleOverrideTaskTime;
+    int ScheduleOverrideTaskTime;
     Ticker ScheduleOverrideTicker;
 
     TaskScheduler();
@@ -96,21 +100,21 @@ class TaskScheduler {
         current.totalCurrentTimeInSec = 3600 * tm_local->tm_hour + current.minutesInSec + tm_local->tm_sec;
         return current;
     }
-    time_t _controlOnTime;
+    int _controlOnTime;
 
     ChannelStateService _channelStateService;
     Channel _channel;
-    time_t getScheduleTimeSpanOff();
+    int getScheduleTimeSpanOff();
     protected:
 
     void digitalClockDisplay();
     void digitalClockDisplay(time_t tnow);
 
     ScheduledTime getNextRunTime();
-    void updateStatus(time_t delta);
+    void updateStatus(short delta);
     void updateNextRunStatus();
-    time_t getRandomOnTimeSpan();
-    time_t getRandomOffTimeSpan();
+    int getRandomOnTimeSpan();
+    int getRandomOffTimeSpan();
 
     void overrideControlOff(); 
     void tickerDetachAll(); 

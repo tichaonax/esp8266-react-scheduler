@@ -6,7 +6,7 @@ import { restController, RestControllerProps } from '../../components';
 import { ChannelState} from '../automation/redux/types/channel';
 import ChannelSectionContent from './ChannelSectionContent';
 
-export const CONTROL_SETTINGS_ENDPOINT = ENDPOINT_ROOT + "channelThreeState";
+export const CONTROL_SETTINGS_ENDPOINT = ENDPOINT_ROOT + "ch-3State";
 
 type ChannelStateRestControllerProps = RestControllerProps<ChannelState>;
 

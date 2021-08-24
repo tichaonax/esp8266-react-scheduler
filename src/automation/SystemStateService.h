@@ -29,7 +29,7 @@ class SystemState {
 	  localTime["tm_min"] = date->tm_min;		/* minutes after the hour [0-59] */
 	  localTime["tm_hour"] = date->tm_hour;	/* hours since midnight [0-23] */
 
-    jsonObject["localDateTime"] = Utils.eraseLineFeed(ctime(&tnow));
+    jsonObject["localDateTime"] = utils.eraseLineFeed(ctime(&tnow));
   }
 
   static StateUpdateResult update(JsonObject& root, SystemState& settings) {
@@ -50,6 +50,5 @@ class SystemStateService : public StatefulService<SystemState> {
 
   void registerConfig();
   void onConfigUpdated();
-  //void changeState();
 };
 #endif

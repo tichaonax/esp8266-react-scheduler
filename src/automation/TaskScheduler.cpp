@@ -13,10 +13,10 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                               char* webSocketChannelEndPoint,
                               float  runEvery,
                               float  offAfter,
-                              time_t  startTimeHour,
-                              time_t  startTimeMinute,
-                              time_t  endTimeHour,
-                              time_t  endTimeMinute,
+                              int  startTimeHour,
+                              int  startTimeMinute,
+                              int  endTimeHour,
+                              int  endTimeMinute,
                               bool    enabled,
                               String  channelName,
                               bool  enableTimeSpan,
@@ -169,7 +169,7 @@ void TaskScheduler::controlOnTicker(){
 
 void TaskScheduler::controlOffTicker(){
   _channelStateService.update([&](ChannelState& channelState) {
-    channelState.channel.controlOffDateTime = Utils.strDeltaLocalTime(ControlOffTime);
+    channelState.channel.controlOffDateTime = utils.strDeltaLocalTime(ControlOffTime);
     return StateUpdateResult::CHANGED;
   }, _channel.name);
 
@@ -195,7 +195,7 @@ void TaskScheduler::scheduleTaskTicker(ScheduledTime schedule){
 }
 
 ScheduledTime TaskScheduler::getNextRunTime(){
-    ScheduledTime schedule = Utils.getScheduleTimes(_channel.startTime,
+    ScheduledTime schedule = utils.getScheduleTimes(_channel.startTime,
     _channel.endTime, _channel.schedule.hotTimeHour, _channel.enableTimeSpan,
     _channel.isHotScheduleActive, _channel.name, _channel.randomize,
     _isOverrideActive, _channel.enableMinimumRunTime);
@@ -219,8 +219,8 @@ void TaskScheduler::reScheduleTasks(){
 }
 
 void TaskScheduler::setSchedule(bool isReschedule){
-  Serial.println("");
-  Serial.print("Current Time: ");
+  Serial.println(F(""));
+  Serial.print(F("Current Time: "));
   digitalClockDisplay();
   Serial.print(_channel.name);
   _isReschedule = isReschedule;
@@ -229,9 +229,9 @@ void TaskScheduler::setSchedule(bool isReschedule){
     ScheduledTime schedule = getNextRunTime();
     //printSchedule(schedule);
     if (schedule.scheduleTime <= 0) { schedule.scheduleTime = 1; } 
-    Serial.print("Time to next task run: ");
+    Serial.print(F("Time to next task run: "));
     Serial.print(schedule.scheduleTime);
-    Serial.println("s");
+    Serial.println(F("s"));
     ScheduleTime = schedule.scheduleTime;
 
     if(schedule.isHotSchedule){scheduleHotTaskTicker(schedule);}
@@ -243,9 +243,9 @@ void TaskScheduler::setSchedule(bool isReschedule){
     }
 
     _channelStateService.update([&](ChannelState& channelState) {
-      channelState.channel.lastStartedChangeTime = Utils.strLocalTime();
-      channelState.channel.nextRunTime = Utils.strDeltaLocalTime(schedule.scheduleTime);
-      Serial.print("Task set to start at : ");
+      channelState.channel.lastStartedChangeTime = utils.strLocalTime();
+      channelState.channel.nextRunTime = utils.strDeltaLocalTime(schedule.scheduleTime);
+      Serial.print(F("Task set to start at : "));
       Serial.println(channelState.channel.nextRunTime);
       return StateUpdateResult::CHANGED;
     }, _channel.name);
@@ -279,8 +279,8 @@ void TaskScheduler::runHotTask(){
       _channelStateService.update([&](ChannelState& channelState) {
         channelState.channel.isHotScheduleActive = true;
         channelState.channel.controlOn = true;
-        channelState.channel.lastStartedChangeTime =  Utils.strLocalTime();
-        channelState.channel.offHotHourDateTime = Utils.strDeltaLocalTime(OffHotHourTime);
+        channelState.channel.lastStartedChangeTime =  utils.strLocalTime();
+        channelState.channel.offHotHourDateTime = utils.strDeltaLocalTime(OffHotHourTime);
         channelState.channel.controlOffDateTime = channelState.channel.offHotHourDateTime;
         return StateUpdateResult::CHANGED;
       }, _channel.name);
@@ -296,9 +296,9 @@ void TaskScheduler::scheduleTimeSpanTask(){
   runTask();
 }
 
-void TaskScheduler::updateStatus(time_t delta){
+void TaskScheduler::updateStatus(short delta){
   _channelStateService.update([&](ChannelState& channelState) {
-  channelState.channel.nextRunTime = Utils.strDeltaLocalTime(delta);;  
+  channelState.channel.nextRunTime = utils.strDeltaLocalTime(delta);;  
   return StateUpdateResult::CHANGED;
   }, _channel.name);
 }
@@ -307,11 +307,11 @@ void TaskScheduler::updateNextRunStatus(){
   updateStatus(getNextRunTime().scheduleTime);
 }
 
-time_t TaskScheduler::getRandomOnTimeSpan(){
+int TaskScheduler::getRandomOnTimeSpan(){
   return(rand() % (_channel.schedule.runEvery - _channel.schedule.offAfter -1) + 1);
 }
 
-time_t TaskScheduler::getRandomOffTimeSpan(){
+int TaskScheduler::getRandomOffTimeSpan(){
   if(_channel.enableMinimumRunTime){
     return(rand() % (_channel.schedule.runEvery - _controlOnTime - _channel.schedule.offAfter) + _channel.schedule.offAfter);
   }
@@ -319,38 +319,38 @@ time_t TaskScheduler::getRandomOffTimeSpan(){
 }
 
 void TaskScheduler::printSchedule(ScheduledTime schedule){
-  Serial.println(" ");
-  Serial.print("channelName:         ");
+  Serial.println(F(" "));
+  Serial.print(F("channelName:         "));
   Serial.println(schedule.channelName);
-  Serial.print("scheduleTime:        ");
+  Serial.print(F("scheduleTime:        "));
   Serial.println(schedule.scheduleTime);
-  Serial.print("isHotSchedule:       ");
+  Serial.print(F("isHotSchedule:       "));
   Serial.println(schedule.isHotSchedule);
-  Serial.print("isSpanSchedule:      ");
+  Serial.print(F("isSpanSchedule:      "));
   Serial.println(schedule.isSpanSchedule);
-  Serial.print("isHotScheduleActive:        ");
+  Serial.print(F("isHotScheduleActive:        "));
   Serial.println(schedule.isHotScheduleActive);
-  Serial.print("isRunTaskNow:        ");
+  Serial.print(F("isRunTaskNow:        "));
   Serial.println(schedule.isRunTaskNow);
-  Serial.print("currentTime:                 ");
+  Serial.print(F("currentTime:                 "));
   Serial.print(ctime(&schedule.currentTime));
-  Serial.print("startTime:                   ");
+  Serial.print(F("startTime:                   "));
   Serial.println(schedule.startTime);
-  Serial.print("endTime:                     ");
+  Serial.print(F("endTime:                     "));
   Serial.println(schedule.endTime);
-  Serial.print("scheduleStartDateTime:       ");
+  Serial.print(F("scheduleStartDateTime:       "));
   Serial.print(ctime(&schedule.scheduleStartDateTime));
-  Serial.print("scheduleHotTimeEndDateTime:  ");
+  Serial.print(F("scheduleHotTimeEndDateTime:  "));
   Serial.print(ctime(&schedule.scheduleHotTimeEndDateTime));
-  Serial.print("scheduleEndDateTime:         ");
+  Serial.print(F("scheduleEndDateTime:         "));
   Serial.print(ctime(&schedule.scheduleEndDateTime));
-  Serial.print("isOverride:                  ");
+  Serial.print(F("isOverride:                  "));
   Serial.println(_channel.schedule.isOverride);
-  Serial.print("isOverrideActive:            ");
+  Serial.print(F("isOverrideActive:            "));
   Serial.println(schedule.isOverrideActive);
-  Serial.print("overrideTime:            ");
+  Serial.print(F("overrideTime:            "));
   Serial.print(_channel.schedule.overrideTime);
-  Serial.println("s");
+  Serial.println(F("s"));
 }
 
 void TaskScheduler::runTask(){
@@ -375,7 +375,7 @@ void TaskScheduler::controlOn(){
   if(_channel.enabled && !_isOverrideActive){
     _channelStateService.update([&](ChannelState& channelState) {
       channelState.channel.controlOn = true;
-      channelState.channel.lastStartedChangeTime =  Utils.strLocalTime();
+      channelState.channel.lastStartedChangeTime =  utils.strLocalTime();
       return StateUpdateResult::CHANGED;
     }, _channel.name);
 
@@ -398,7 +398,7 @@ void TaskScheduler::controlOn(){
 void TaskScheduler::overrideControlOff(){
   _channelStateService.update([&](ChannelState& channelState) {
       channelState.channel.controlOn = false;
-      channelState.channel.lastStartedChangeTime = Utils.strLocalTime();
+      channelState.channel.lastStartedChangeTime = utils.strLocalTime();
       return StateUpdateResult::CHANGED;
     }, _channel.name);
 
@@ -420,8 +420,8 @@ void TaskScheduler::digitalClockDisplay(time_t tnow) {
   Serial.println(ctime(&tnow));
 }
 
-time_t TaskScheduler::getScheduleTimeSpanOff(){
-  time_t next = 1;
+int TaskScheduler::getScheduleTimeSpanOff(){
+  int next = 1;
   CurrentTime current = getCurrentTime();
   if(_channel.startTime < _channel.endTime){
     if(current.totalCurrentTimeInSec < _channel.endTime ){
@@ -496,6 +496,6 @@ void TaskScheduler::tickerDetachAll(){
   SpanTicker.once(0.010, +[](){});
   //RunEveryTicker.once(0.010, +[](){});
   ControlOnTicker.once(0.010, +[](){});
-  //ControlOffTicker.once(0.010, +[&](){});
+  ControlOffTicker.once(0.010, +[](){});
   ReScheduleTasksTicker.once(0.010, +[](){});
 }
