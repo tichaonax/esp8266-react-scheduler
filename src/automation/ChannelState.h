@@ -32,7 +32,7 @@ struct Schedule {
 
 struct Channel {
     bool    controlOn;
-    int     controlPin;
+    uint8_t     controlPin;
     int  startTime;
     int  endTime;
     bool    enabled;
@@ -54,7 +54,7 @@ struct Channel {
 
 class ChannelState {
 public:
-  static String getMqttUniqueIdOrPath(int controlPin, bool isUniqueIdOrPath, String homeAssistantEntity=""){
+  static String getMqttUniqueIdOrPath(uint8_t controlPin, bool isUniqueIdOrPath, String homeAssistantEntity=""){
       String topicType;
       String topicHeader;
       switch (controlPin)

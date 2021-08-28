@@ -7,21 +7,21 @@
 #include "channels.h"
 #include "ChannelState.h"
 
-#define CHANNEL_ONE_BROKER_SETTINGS_FILE "/config/channelOneBrokerSettings.json"
-#define CHANNEL_ONE_BROKER_SETTINGS_PATH "/rest/channelOneBrokerSettings"
-#define CHANNEL_TWO_BROKER_SETTINGS_FILE "/config/channelTwoBrokerSettings.json"
-#define CHANNEL_TWO_BROKER_SETTINGS_PATH "/rest/channelTwoBrokerSettings"
-#define CHANNEL_THREE_BROKER_SETTINGS_FILE "/config/channelThreeBrokerSettings.json"
-#define CHANNEL_THREE_BROKER_SETTINGS_PATH "/rest/channelThreeBrokerSettings"
-#define CHANNEL_FOUR_BROKER_SETTINGS_FILE "/config/channelFourBrokerSettings.json"
-#define CHANNEL_FOUR_BROKER_SETTINGS_PATH "/rest/channelFourBrokerSettings"
+#define CHANNEL_ONE_BROKER_SETTINGS_FILE "/config/c1.json"
+#define CHANNEL_ONE_BROKER_SETTINGS_PATH "/rest/c1"
+#define CHANNEL_TWO_BROKER_SETTINGS_FILE "/config/c2.json"
+#define CHANNEL_TWO_BROKER_SETTINGS_PATH "/rest/c2"
+#define CHANNEL_THREE_BROKER_SETTINGS_FILE "/config/c3.json"
+#define CHANNEL_THREE_BROKER_SETTINGS_PATH "/rest/c3"
+#define CHANNEL_FOUR_BROKER_SETTINGS_FILE "/config/c4.json"
+#define CHANNEL_FOUR_BROKER_SETTINGS_PATH "/rest/c4"
 
 class ChannelMqttSettings {
  public:
   String mqttPath;
   String name;
   String uniqueId;
-  int channelControlPin;
+  uint8_t channelControlPin;
   String channelName;
   String homeAssistantEntity;
 
@@ -52,14 +52,14 @@ class ChannelMqttSettings {
 class ChannelMqttSettingsService : public StatefulService<ChannelMqttSettings> {
  public:
   ChannelMqttSettingsService(AsyncWebServer* server, FS* fs, SecurityManager* securityManager,
-  char* brokerJsonConfigPath, String restBrokerEndPoint, int channelControlPin, String  channelName,
+  char* brokerJsonConfigPath, String restBrokerEndPoint, uint8_t channelControlPin, String  channelName,
   String homeAssistantEntity);
   void begin();
 
  private:
   HttpEndpoint<ChannelMqttSettings> _httpEndpoint;
   FSPersistence<ChannelMqttSettings> _fsPersistence;
-  int _channelControlPin;
+  uint8_t _channelControlPin;
   String _channelName;
   String _homeAssistantEntity;
 };

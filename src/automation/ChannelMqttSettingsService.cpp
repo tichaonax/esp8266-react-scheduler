@@ -1,7 +1,7 @@
 #include "ChannelMqttSettingsService.h"
 
 ChannelMqttSettingsService::ChannelMqttSettingsService(AsyncWebServer* server, FS* fs, SecurityManager* securityManager,
-char* brokerJsonConfigPath, String restBrokerEndPoint, int channelControlPin, String  channelName, String homeAssistantEntity) :
+char* brokerJsonConfigPath, String restBrokerEndPoint, uint8_t channelControlPin, String  channelName, String homeAssistantEntity) :
     _httpEndpoint(ChannelMqttSettings::read,
                   ChannelMqttSettings::update,
                   this,

@@ -15,7 +15,7 @@ class ChannelStateService : public StatefulService<ChannelState> {
                     SecurityManager* securityManager,
                     AsyncMqttClient* mqttClient,
                     FS* fs,
-                    int channelControlPin,  // 5
+                    uint8_t channelControlPin,  // 5
                     char* channelJsonConfigPath,  //  "/config/channelOneState.json"
                     String restChannelEndPoint, //  "/rest/channelOneState"
                     char* webSocketChannelEndPoint, //  "/ws/channelOneState"
@@ -46,7 +46,7 @@ class ChannelStateService : public StatefulService<ChannelState> {
   AsyncMqttClient* _mqttClient;
   ChannelMqttSettingsService* _channelMqttSettingsService;
   FSPersistence<ChannelState> _fsPersistence;
-  int _channelControlPin;
+  uint8_t _channelControlPin;
   String _defaultChannelName;
   String _restChannelEndPoint;
   String _webSocketChannelEndPoint;
