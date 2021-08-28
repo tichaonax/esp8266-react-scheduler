@@ -12,29 +12,29 @@
 #define DEFAULT_JSON_DOCUMENT_SIZE 1024 
 
 struct CurrentTime {
-  time_t minutesInSec;
-  time_t totalCurrentTimeInSec;
+  int minutesInSec;
+  int totalCurrentTimeInSec;
 };
 
 struct Schedule {
-    time_t  runEvery;         // run every 30 mins
-    time_t  offAfter;         // stop after 5 mins
-    time_t  startTimeHour;    // 8
-    time_t  startTimeMinute;  // 30
-    time_t  endTimeHour;      // 16
-    time_t  endTimeMinute;    // 30
-    bool    isOverride;       // when true ignore schedule run
-    time_t  hotTimeHour;      // default 0 hours [0-16]
+    int  runEvery;         // run every 30 mins
+    int  offAfter;         // stop after 5 mins
+    int  startTimeHour;    // 8
+    int  startTimeMinute;  // 30
+    int  endTimeHour;      // 16
+    int  endTimeMinute;    // 30
+    bool isOverride;       // when true ignore schedule run
+    int  hotTimeHour;      // default 0 hours [0-16]
     bool    isOverrideActive;
-    time_t  overrideTime;     // time to override schedule
+    int  overrideTime;     // time to override schedule
 };
 
 
 struct Channel {
     bool    controlOn;
     int     controlPin;
-    time_t  startTime;
-    time_t  endTime;
+    int  startTime;
+    int  endTime;
     bool    enabled;
     String  name;            // control name e.g, Pump
     Schedule schedule;
@@ -70,8 +70,8 @@ public:
         break;
       }
       return isUniqueIdOrPath ? 
-      SettingValue::format(topicType + "-" + String(controlPin) + "-#{unique_id}") :
-      SettingValue::format(topicHeader + homeAssistantEntity + "-" + String(controlPin) + "/#{unique_id}");
+      SettingValue::format(topicType + "-pin-" + String(controlPin) + "-#{unique_id}") :
+      SettingValue::format(topicHeader + homeAssistantEntity + "-pin-" + String(controlPin) + "/#{unique_id}");
   }
 
  Channel channel;
@@ -98,6 +98,7 @@ public:
 
   static void haRead(ChannelState& settings, JsonObject& root) {
     root["state"] = settings.channel.controlOn ? ON_STATE : OFF_STATE;
+    root["espAdminUrl"] = "http://" + settings.channel.IP;
   }
 
   static StateUpdateResult haUpdate(JsonObject& root, ChannelState& settings) {
@@ -121,7 +122,7 @@ public:
   private:
   static void readChannel(Channel& channel, JsonObject jsonObject) {
      time_t tnow = time(nullptr);
-    jsonObject["localDateTime"] = Utils.eraseLineFeed(ctime(&tnow));
+    jsonObject["localDateTime"] = utils.eraseLineFeed(ctime(&tnow));
     jsonObject["controlPin"] = channel.controlPin;
     jsonObject["controlOn"] = channel.controlOn;
     jsonObject["name"] = channel.name;
@@ -149,7 +150,7 @@ public:
 
     JsonObject scheduled = jsonObject.createNestedObject("scheduledTime");
 
-    ScheduledTime scheduledTime = Utils.getScheduleTimes(
+    ScheduledTime scheduledTime = utils.getScheduleTimes(
       (channel.schedule.startTimeHour + channel.schedule.startTimeMinute),
       (channel.schedule.endTimeHour + channel.schedule.endTimeMinute),
       channel.schedule.hotTimeHour,
@@ -161,22 +162,22 @@ public:
       channel.enableMinimumRunTime);
 
     scheduled["channelName"] = scheduledTime.channelName;
-    scheduled["scheduleTime"] = scheduledTime.scheduleTime;
+    scheduled["scheduleTime"] = (int)scheduledTime.scheduleTime;
     scheduled["isHotSchedule"] = scheduledTime.isHotSchedule;
     scheduled["isSpanSchedule"] = scheduledTime.isSpanSchedule;
     scheduled["isHotScheduleActive:"] =  scheduledTime.isHotScheduleActive;
     scheduled["isRunTaskNow"] = scheduledTime.isRunTaskNow;
-    scheduled["currentTime"] = Utils.eraseLineFeed(ctime(&scheduledTime.currentTime));
-    scheduled["startTimeSeconds"] = scheduledTime.startTime;
-    scheduled["endTimeSeconds"] = scheduledTime.endTime;
-    scheduled["startDateTime"] = Utils.eraseLineFeed(ctime(&scheduledTime.scheduleStartDateTime));
+    scheduled["currentTime"] = utils.eraseLineFeed(ctime(&scheduledTime.currentTime));
+    scheduled["startTimeSeconds"] = (int)scheduledTime.startTime;
+    scheduled["endTimeSeconds"] = (int)scheduledTime.endTime;
+    scheduled["startDateTime"] = utils.eraseLineFeed(ctime(&scheduledTime.scheduleStartDateTime));
     
     if(scheduledTime.isHotSchedule){
-      scheduled["hotTimeEndDateTime"] = Utils.eraseLineFeed(ctime(&scheduledTime.scheduleHotTimeEndDateTime));
+      scheduled["hotTimeEndDateTime"] = utils.eraseLineFeed(ctime(&scheduledTime.scheduleHotTimeEndDateTime));
       scheduled["offHotHourDateTime"] = channel.offHotHourDateTime; 
     }
     scheduled["controlOffDateTime"] = channel.controlOffDateTime;
-    scheduled["endDateTime"] = Utils.eraseLineFeed(ctime(&scheduledTime.scheduleEndDateTime));
+    scheduled["endDateTime"] = utils.eraseLineFeed(ctime(&scheduledTime.scheduleEndDateTime));
     scheduled["isOverrideActive"] = scheduledTime.isOverrideActive;  
   }
 
@@ -186,7 +187,7 @@ static void updateChannel(JsonObject& json, Channel& channel, bool isOverride) {
     channel.name = json["name"] | channel.name;
     channel.enabled = json["enabled"] | channel.enabled;
     channel.enableTimeSpan = json["enableTimeSpan"] | channel.enableTimeSpan;
-    channel.lastStartedChangeTime = json["lastStartedChangeTime"] | Utils.strLocalTime();
+    channel.lastStartedChangeTime = json["lastStartedChangeTime"] | utils.strLocalTime();
     channel.nextRunTime = json["nextRunTime"] | "";
     channel.randomize = json["randomize"] | channel.randomize;
     channel.uniqueId = json["uniqueId"] |  getMqttUniqueIdOrPath(channel.controlPin, true);
@@ -217,8 +218,8 @@ static void updateChannel(JsonObject& json, Channel& channel, bool isOverride) {
   static boolean dataIsValid(JsonObject& json, ChannelState& channelState){
     // TO DO to be expanded for more validation
     JsonObject schedule = json["schedule"];
-    time_t runEvery = schedule["runEvery"] ? (int)(round(60 * float(schedule["runEvery"]))) : channelState.channel.schedule.runEvery;
-    time_t offAfter = schedule["offAfter"] ? (int)(round(60 * float(schedule["offAfter"]))) : channelState.channel.schedule.offAfter;
+    int runEvery = schedule["runEvery"] ? (int)(round(60 * float(schedule["runEvery"]))) : channelState.channel.schedule.runEvery;
+    int offAfter = schedule["offAfter"] ? (int)(round(60 * float(schedule["offAfter"]))) : channelState.channel.schedule.offAfter;
     if(runEvery > offAfter){ return true; }
     return false;
   }

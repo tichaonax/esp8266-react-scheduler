@@ -5,7 +5,7 @@ import { WebSocketControllerProps, WebSocketFormLoader, webSocketController } fr
 import { ChannelState} from '../automation/redux/types/channel';
 import ChannelStateWebSocketControllerForm from './ChannelStateWebSocketControllerForm';
 
-export const SWITCH_SETTINGS_WEBSOCKET_URL = WEB_SOCKET_ROOT + "channelFourState";
+export const SWITCH_SETTINGS_WEBSOCKET_URL = WEB_SOCKET_ROOT + "ch-4State";
 
 type ChannelWebSocketControllerProps = WebSocketControllerProps<ChannelState>;
 

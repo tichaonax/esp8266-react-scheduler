@@ -11,10 +11,10 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
                                       char* webSocketChannelEndPoint,
                                       float  runEvery,
                                       float  offAfter,
-                                      time_t  startTimeHour,
-                                      time_t  startTimeMinute,
-                                      time_t  endTimeHour,
-                                      time_t  endTimeMinute,
+                                      int  startTimeHour,
+                                      int  startTimeMinute,
+                                      int  endTimeHour,
+                                      int  endTimeMinute,
                                       bool    enabled,
                                       String  channelName,
                                       bool enableTimeSpan,
@@ -126,7 +126,7 @@ void ChannelStateService::registerConfig() {
   String subTopic;
   String pubTopic;
 
-  DynamicJsonDocument doc(256);
+  DynamicJsonDocument doc(512);
   _channelMqttSettingsService->read([&](ChannelMqttSettings& settings) {
     configTopic = settings.mqttPath + "/config";
     subTopic = settings.mqttPath + "/set";
@@ -134,23 +134,28 @@ void ChannelStateService::registerConfig() {
     doc["~"] = settings.mqttPath;
     doc["name"] = settings.name;
     doc["unique_id"] = settings.uniqueId;
+    doc["json_attributes_topic"] = "~/state";
     doc["cmd_t"] = "~/set";
     doc["stat_t"] = "~/state";
     
+    String espAdminUrl = "http://" + _state.channel.IP;
+    String payloadOn = "{\"state\":\"ON\",\"espAdminUrl\":\"" + espAdminUrl +"\"}";
+    String payloadOff = "{\"state\":\"OFF\",\"espAdminUrl\":\"" + espAdminUrl +"\"}";
+
     switch (settings.channelControlPin)
     {
       case CHANNEL_ONE_CONTROL_PIN:
-          doc["icon"] = "mdi:water-pump";
-          doc["payload_on"] =  "{\"state\":\"ON\"}";
-          doc["payload_off"] = "{\"state\":\"OFF\"}";
+        doc["icon"] = "mdi:water-pump";
+        doc["payload_on"] = payloadOn;
+        doc["payload_off"] = payloadOff;
         break;
       case CHANNEL_TWO_CONTROL_PIN:
-          doc["icon"] = "mdi:fridge";
-          doc["payload_on"] =  "{\"state\":\"ON\"}";
-          doc["payload_off"] = "{\"state\":\"OFF\"}";
+        doc["icon"] = "mdi:fridge";
+        doc["payload_on"] = payloadOn;
+        doc["payload_off"] = payloadOff;
         break;
       default:
-          doc["schema"] = "json";
+        doc["schema"] = "json";
         break;
     }
   });

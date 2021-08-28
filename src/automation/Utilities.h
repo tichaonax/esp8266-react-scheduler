@@ -11,13 +11,13 @@
 
 struct TotalScheduledTime {
   bool isHotScheduleAdjust;
-  time_t timeToStartSeconds;
+  int timeToStartSeconds;
 };
 struct ScheduledTime {
-  time_t startTime;
-  time_t endTime;
-  time_t scheduleTime;
-  time_t midNightToday;
+  int startTime;
+  int endTime;
+  int scheduleTime;
+  int midNightToday;
   time_t currentTime;
   time_t scheduleStartDateTime;
   time_t scheduleEndDateTime;
@@ -45,12 +45,12 @@ public:
     return eraseLineFeed(ctime(&now));
   }
 
-  String strDeltaLocalTime(time_t delta){
+  String strDeltaLocalTime(short delta){
     time_t now = time(0) + delta;
     return eraseLineFeed(ctime(&now)); 
   }
 
-  TotalScheduledTime timeToStartSeconds(time_t currentTime, time_t startTime, time_t endTime, time_t startDateTime, time_t endDateTime){
+  TotalScheduledTime timeToStartSeconds(time_t currentTime, int startTime, int endTime, time_t startDateTime, time_t endDateTime){
     TotalScheduledTime totalTime;
     totalTime.timeToStartSeconds = 1;
     totalTime.isHotScheduleAdjust = false;
@@ -65,7 +65,7 @@ public:
         totalTime.timeToStartSeconds = startDateTime + TWENTY_FOUR_HOUR_DURATION - currentTime; // we are starting next day
       }
     }else{  // start 19:00 end 3:00AM
-      time_t timeToEnd = endDateTime - TWENTY_FOUR_HOUR_DURATION - currentTime;
+      int timeToEnd = endDateTime - TWENTY_FOUR_HOUR_DURATION - currentTime;
       if(startDateTime > currentTime){
         if(timeToEnd > 0) { 
           totalTime.timeToStartSeconds = 1;
@@ -89,8 +89,8 @@ public:
     return totalTime;
   }
 
-  ScheduledTime getScheduleTimes(time_t startTime, time_t endTime,
-    time_t hotTimeHour, bool enableTimeSpan, bool isHotScheduleActive,
+  ScheduledTime getScheduleTimes(int startTime, int endTime,
+    int hotTimeHour, bool enableTimeSpan, bool isHotScheduleActive,
     String channelName, bool randomize, bool isOverrideActive, bool enableMinimumRunTime){
     ScheduledTime schedule;
     schedule.isRandomize = randomize;
@@ -144,6 +144,6 @@ public:
   }
 };
 
-extern Utilities Utils;  // make an instance for the user
+extern Utilities utils;  // make an instance for the user
 
 #endif

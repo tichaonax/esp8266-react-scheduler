@@ -21,10 +21,10 @@ class ChannelStateService : public StatefulService<ChannelState> {
                     char* webSocketChannelEndPoint, //  "/ws/channelOneState"
                     float  runEvery,         // run every 30 mins
                     float  offAfter,         // stop after 5 mins
-                    time_t  startTimeHour,    // 8
-                    time_t  startTimeMinute,  // 30
-                    time_t  endTimeHour,      // 16
-                    time_t  endTimeMinute,    // 30
+                    int  startTimeHour,    // 8
+                    int  startTimeMinute,  // 30
+                    int  endTimeHour,      // 16
+                    int  endTimeMinute,    // 30
                     bool    enabled,
                     String  channelName,
                     bool  enableTimeSpan,
@@ -53,14 +53,14 @@ class ChannelStateService : public StatefulService<ChannelState> {
   Ticker _deviceTime;
   Ticker _mqttRepublish;
 
-    time_t  _runEvery;         // run every 30 mins
-    time_t  _offAfter;         // stop after 5 mins
-    time_t  _startTimeHour;    // 8
-    time_t  _startTimeMinute;  // 30
-    time_t  _endTimeHour;      // 16
-    time_t  _endTimeMinute;    // 30
-    time_t  _hotTimeHour;      // 0 to 16hr
-    time_t  _overrideTime;     //
+    int  _runEvery;         // run every 30 mins
+    int  _offAfter;         // stop after 5 mins
+    int  _startTimeHour;    // 8
+    int  _startTimeMinute;  // 30
+    int  _endTimeHour;      // 16
+    int  _endTimeMinute;    // 30
+    int  _hotTimeHour;      // 0 to 16hr
+    int  _overrideTime;     //
     bool    _enabled;
     String  _channelName;
     bool  _enableTimeSpan;
