@@ -6,7 +6,7 @@ import { restController, RestControllerProps, RestFormLoader, SectionContent } f
 import { ChannelMqttSettings } from './types';
 import ChannelMqttSettingsControllerForm from './ChannelMqttSettingsControllerForm';
 
-export const CHANNEL_BROKER_SETTINGS_ENDPOINT = ENDPOINT_ROOT + "channelTwoBrokerSettings";
+export const CHANNEL_BROKER_SETTINGS_ENDPOINT = ENDPOINT_ROOT + "c2";
 
 type ChannelMqttSettingsControllerProps = RestControllerProps<ChannelMqttSettings>;
 

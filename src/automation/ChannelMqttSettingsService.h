@@ -7,14 +7,14 @@
 #include "channels.h"
 #include "ChannelState.h"
 
-#define CHANNEL_ONE_BROKER_SETTINGS_FILE "/config/channelOneBrokerSettings.json"
-#define CHANNEL_ONE_BROKER_SETTINGS_PATH "/rest/channelOneBrokerSettings"
-#define CHANNEL_TWO_BROKER_SETTINGS_FILE "/config/channelTwoBrokerSettings.json"
-#define CHANNEL_TWO_BROKER_SETTINGS_PATH "/rest/channelTwoBrokerSettings"
-#define CHANNEL_THREE_BROKER_SETTINGS_FILE "/config/channelThreeBrokerSettings.json"
-#define CHANNEL_THREE_BROKER_SETTINGS_PATH "/rest/channelThreeBrokerSettings"
-#define CHANNEL_FOUR_BROKER_SETTINGS_FILE "/config/channelFourBrokerSettings.json"
-#define CHANNEL_FOUR_BROKER_SETTINGS_PATH "/rest/channelFourBrokerSettings"
+#define CHANNEL_ONE_BROKER_SETTINGS_FILE "/config/c1.json"
+#define CHANNEL_ONE_BROKER_SETTINGS_PATH "/rest/c1"
+#define CHANNEL_TWO_BROKER_SETTINGS_FILE "/config/c2.json"
+#define CHANNEL_TWO_BROKER_SETTINGS_PATH "/rest/c2"
+#define CHANNEL_THREE_BROKER_SETTINGS_FILE "/config/c3.json"
+#define CHANNEL_THREE_BROKER_SETTINGS_PATH "/rest/c3"
+#define CHANNEL_FOUR_BROKER_SETTINGS_FILE "/config/c4.json"
+#define CHANNEL_FOUR_BROKER_SETTINGS_PATH "/rest/c4"
 
 class ChannelMqttSettings {
  public:
