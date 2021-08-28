@@ -12,7 +12,7 @@ class TaskScheduler {
                     SecurityManager* securityManager,
                     AsyncMqttClient* mqttClient,
                     FS* fs,
-                    int channelControlPin,  // 5
+                    uint8_t channelControlPin,  // 5
                     char* channelJsonConfigPath,  //  "/config/channelOneState.json" 
                     String restChannelEndPoint, //  "/rest/channelOneState"
                     char* webSocketChannelEndPoint, //  "/ws/channelOneState"

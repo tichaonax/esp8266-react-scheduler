@@ -21,7 +21,7 @@ class ChannelMqttSettings {
   String mqttPath;
   String name;
   String uniqueId;
-  int channelControlPin;
+  uint8_t channelControlPin;
   String channelName;
   String homeAssistantEntity;
 
@@ -52,14 +52,14 @@ class ChannelMqttSettings {
 class ChannelMqttSettingsService : public StatefulService<ChannelMqttSettings> {
  public:
   ChannelMqttSettingsService(AsyncWebServer* server, FS* fs, SecurityManager* securityManager,
-  char* brokerJsonConfigPath, String restBrokerEndPoint, int channelControlPin, String  channelName,
+  char* brokerJsonConfigPath, String restBrokerEndPoint, uint8_t channelControlPin, String  channelName,
   String homeAssistantEntity);
   void begin();
 
  private:
   HttpEndpoint<ChannelMqttSettings> _httpEndpoint;
   FSPersistence<ChannelMqttSettings> _fsPersistence;
-  int _channelControlPin;
+  uint8_t _channelControlPin;
   String _channelName;
   String _homeAssistantEntity;
 };
