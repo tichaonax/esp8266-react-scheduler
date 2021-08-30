@@ -1,6 +1,8 @@
 #ifndef Channels_h
 #define Channels_h
 
+#include "Homeassistant.h"
+
 #ifdef CHANNEL_ONE_LIGHT
   // onboard relay control pin = 5
   #define CHANNEL_ONE_CONTROL_PIN 5 // use channel 3
@@ -29,6 +31,8 @@
 #define CHANNEL_ONE_DEFAULT_SPAN_TIME 0.0f
 #define CHANNEL_ONE_DEFAULT_OVERRIDE_TIME 15.0f // override time in minutes
 #define CHANNEL_ONE_DEFAULT_ENABLE_MINIMUM_RUN_TIME_SCHEDULE false
+#define CHANNEL_ONE_HOMEASSISTANT_TOPIC_TYPE HOMEASSISTANT_TOPIC_TYPE_SWITCH
+#define CHANNEL_ONE_HOMEASSISTANT_ICON MDI_WATER_PUMP
 
 #ifdef CHANNEL_TWO_LIGHT
   // onboard relay control pin = 5
@@ -44,7 +48,7 @@
 
 #define CHANNEL_TWO_REST_ENDPOINT_PATH "/rest/ch-2State"  //restChannelEndPoint
 #define CHANNEL_TWO_SOCKET_PATH "/ws/ch-2State"  // webSocketChannelEndPoint
-#define CHANNEL_TWO_DEFAULT_NAME "Solar Fridge" //  defaultChannelName
+#define CHANNEL_TWO_DEFAULT_NAME "Living Room Fridge" //  defaultChannelName
 #define CHANNEL_TWO_CONFIG_JSON_PATH "/config/ch-2State.json"  // channelJsonConfigPath
 #define CHANNEL_TWO_HOME_ASSISTANT_ENTITY "ch-2"
 #define CHANNEL_TWO_DEFAULT_CONTROL_RUN_EVERY 30.0f
@@ -59,6 +63,8 @@
 #define CHANNEL_TWO_DEFAULT_SPAN_TIME 0.0f
 #define CHANNEL_TWO_DEFAULT_OVERRIDE_TIME 60.0f // override time in minutes
 #define CHANNEL_TWO_DEFAULT_ENABLE_MINIMUM_RUN_TIME_SCHEDULE false
+#define CHANNEL_TWO_HOMEASSISTANT_TOPIC_TYPE HOMEASSISTANT_TOPIC_TYPE_SWITCH
+#define CHANNEL_TWO_HOMEASSISTANT_ICON MDI_FRIDGE
 
 #ifdef CHANNEL_THREE_LIGHT
   // onboard relay control pin = 5
@@ -74,7 +80,7 @@
 
 #define CHANNEL_THREE_REST_ENDPOINT_PATH "/rest/ch-3State"  //restChannelEndPoint
 #define CHANNEL_THREE_SOCKET_PATH "/ws/ch-3State"  // webSocketChannelEndPoint
-#define CHANNEL_THREE_DEFAULT_NAME "Bedside Light" //  defaultChannelName
+#define CHANNEL_THREE_DEFAULT_NAME "LG TV" //  defaultChannelName
 #define CHANNEL_THREE_CONFIG_JSON_PATH "/config/ch-3State.json"  // channelJsonConfigPath
 #define CHANNEL_THREE_HOME_ASSISTANT_ENTITY "ch-3"    // homeAssistantEntity
 #define CHANNEL_THREE_DEFAULT_CONTROL_RUN_EVERY 30.0f
@@ -89,6 +95,8 @@
 #define CHANNEL_THREE_DEFAULT_SPAN_TIME 3.0f
 #define CHANNEL_THREE_DEFAULT_OVERRIDE_TIME 120.0f // override time in minutes
 #define CHANNEL_THREE_DEFAULT_ENABLE_MINIMUM_RUN_TIME_SCHEDULE false
+#define CHANNEL_THREE_HOMEASSISTANT_TOPIC_TYPE HOMEASSISTANT_TOPIC_TYPE_SWITCH
+#define CHANNEL_THREE_HOMEASSISTANT_ICON MDI_POWER
 
 #ifdef CHANNEL_FOUR_LIGHT
   // onboard relay control pin = 5p
@@ -119,5 +127,7 @@
 #define CHANNEL_FOUR_DEFAULT_SPAN_TIME 0.0f
 #define CHANNEL_FOUR_DEFAULT_OVERRIDE_TIME 120.0f // override time in minutes
 #define CHANNEL_FOUR_DEFAULT_ENABLE_MINIMUM_RUN_TIME_SCHEDULE false
+#define CHANNEL_FOUR_HOMEASSISTANT_TOPIC_TYPE HOMEASSISTANT_TOPIC_TYPE_LIGHT
+#define CHANNEL_FOUR_HOMEASSISTANT_ICON MDI_LIGHTBULB
 
 #endif

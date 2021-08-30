@@ -17,7 +17,7 @@ const ChannelMqttSettingsControllerForm = (props: ChannelMqttSettingsControllerF
       <Typography variant="h6">{data.name} <SystemStateWebSocketController/></Typography>
       <Box bgcolor="primary.main" color="primary.contrastText" p={2} mt={2} mb={2}>
         <Typography variant="body1">
-          The channel switch is controllable via MQTT designed to work with Home Assistant's auto discovery feature.
+          Controllable via MQTT with Home Assistant's auto discovery feature.
         </Typography>
       </Box>
       <TextValidator

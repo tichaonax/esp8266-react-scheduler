@@ -1,6 +1,4 @@
 #include <ESP8266React.h>
-#include <LightMqttSettingsService.h>
-#include <LightStateService.h>
 #include <Ticker.h>
 
 #include "./automation/Utilities.h"
@@ -55,7 +53,8 @@ SystemStateService systemStateService = SystemStateService(&server, esp8266React
   ChannelMqttSettingsService channelOneMqttSettingsService =
     ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
     CHANNEL_ONE_BROKER_SETTINGS_FILE, CHANNEL_ONE_BROKER_SETTINGS_PATH, CHANNEL_ONE_CONTROL_PIN,
-    CHANNEL_ONE_DEFAULT_NAME, CHANNEL_ONE_HOME_ASSISTANT_ENTITY);
+    CHANNEL_ONE_DEFAULT_NAME, CHANNEL_ONE_HOME_ASSISTANT_ENTITY, CHANNEL_ONE_HOMEASSISTANT_TOPIC_TYPE,
+    CHANNEL_ONE_HOMEASSISTANT_ICON);
 
   TaskScheduler channelOneTaskScheduler = TaskScheduler(&server,
                                                         esp8266React.getSecurityManager(),
@@ -78,14 +77,17 @@ SystemStateService systemStateService = SystemStateService(&server, esp8266React
                                                         CHANNEL_ONE_DEFAULT_RANDOMIZE_SCHEDULE,
                                                         CHANNEL_ONE_DEFAULT_SPAN_TIME,
                                                         CHANNEL_ONE_DEFAULT_OVERRIDE_TIME,
-                                                        CHANNEL_ONE_DEFAULT_ENABLE_MINIMUM_RUN_TIME_SCHEDULE);
+                                                        CHANNEL_ONE_DEFAULT_ENABLE_MINIMUM_RUN_TIME_SCHEDULE,
+                                                        CHANNEL_ONE_HOMEASSISTANT_TOPIC_TYPE,
+                                                        CHANNEL_ONE_HOMEASSISTANT_ICON);
   ChannelScheduleRestartService channelOneScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelOneTaskScheduler, CHANNEL_ONE_SCHEDULE_RESTART_SERVICE_PATH);
 #endif
 #if defined(CHANNEL_TWO)
   ChannelMqttSettingsService channelTwoMqttSettingsService =
     ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
     CHANNEL_TWO_BROKER_SETTINGS_FILE, CHANNEL_TWO_BROKER_SETTINGS_PATH, CHANNEL_TWO_CONTROL_PIN,
-    CHANNEL_TWO_DEFAULT_NAME, CHANNEL_TWO_HOME_ASSISTANT_ENTITY);
+    CHANNEL_TWO_DEFAULT_NAME, CHANNEL_TWO_HOME_ASSISTANT_ENTITY, CHANNEL_TWO_HOMEASSISTANT_TOPIC_TYPE,
+    CHANNEL_TWO_HOMEASSISTANT_ICON);
 
   TaskScheduler channelTwoTaskScheduler = TaskScheduler(&server,
                                                         esp8266React.getSecurityManager(),
@@ -108,14 +110,17 @@ SystemStateService systemStateService = SystemStateService(&server, esp8266React
                                                         CHANNEL_TWO_DEFAULT_RANDOMIZE_SCHEDULE,
                                                         CHANNEL_TWO_DEFAULT_SPAN_TIME,
                                                         CHANNEL_TWO_DEFAULT_OVERRIDE_TIME,
-                                                        CHANNEL_TWO_DEFAULT_ENABLE_MINIMUM_RUN_TIME_SCHEDULE);  
+                                                        CHANNEL_TWO_DEFAULT_ENABLE_MINIMUM_RUN_TIME_SCHEDULE,
+                                                        CHANNEL_TWO_HOMEASSISTANT_TOPIC_TYPE,
+                                                        CHANNEL_TWO_HOMEASSISTANT_ICON);  
   ChannelScheduleRestartService channelTwoScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelTwoTaskScheduler, CHANNEL_TWO_SCHEDULE_RESTART_SERVICE_PATH);
 #endif
 #if defined(CHANNEL_THREE)
  ChannelMqttSettingsService channelThreeMqttSettingsService =
     ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
     CHANNEL_THREE_BROKER_SETTINGS_FILE, CHANNEL_THREE_BROKER_SETTINGS_PATH, CHANNEL_THREE_CONTROL_PIN,
-     CHANNEL_THREE_DEFAULT_NAME, CHANNEL_THREE_HOME_ASSISTANT_ENTITY);
+     CHANNEL_THREE_DEFAULT_NAME, CHANNEL_THREE_HOME_ASSISTANT_ENTITY, CHANNEL_THREE_HOMEASSISTANT_TOPIC_TYPE,
+    CHANNEL_THREE_HOMEASSISTANT_ICON);
 
   TaskScheduler channelThreeTaskScheduler = TaskScheduler(&server,
                                                         esp8266React.getSecurityManager(),
@@ -138,14 +143,17 @@ SystemStateService systemStateService = SystemStateService(&server, esp8266React
                                                         CHANNEL_THREE_DEFAULT_RANDOMIZE_SCHEDULE,
                                                         CHANNEL_THREE_DEFAULT_SPAN_TIME,
                                                         CHANNEL_THREE_DEFAULT_OVERRIDE_TIME,
-                                                        CHANNEL_THREE_DEFAULT_ENABLE_MINIMUM_RUN_TIME_SCHEDULE);
+                                                        CHANNEL_THREE_DEFAULT_ENABLE_MINIMUM_RUN_TIME_SCHEDULE,
+                                                        CHANNEL_THREE_HOMEASSISTANT_TOPIC_TYPE,
+                                                        CHANNEL_THREE_HOMEASSISTANT_ICON);
   ChannelScheduleRestartService channelThreeScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelThreeTaskScheduler, CHANNEL_THREE_SCHEDULE_RESTART_SERVICE_PATH);
 #endif  
 #if defined(CHANNEL_FOUR)
  ChannelMqttSettingsService channelFourMqttSettingsService =
     ChannelMqttSettingsService(&server, &SPIFFS, esp8266React.getSecurityManager(),
     CHANNEL_FOUR_BROKER_SETTINGS_FILE, CHANNEL_FOUR_BROKER_SETTINGS_PATH, CHANNEL_FOUR_CONTROL_PIN,
-    CHANNEL_FOUR_DEFAULT_NAME, CHANNEL_FOUR_HOME_ASSISTANT_ENTITY);
+    CHANNEL_FOUR_DEFAULT_NAME, CHANNEL_FOUR_HOME_ASSISTANT_ENTITY, CHANNEL_FOUR_HOMEASSISTANT_TOPIC_TYPE,
+    CHANNEL_FOUR_HOMEASSISTANT_ICON);
 
  TaskScheduler channelFourTaskScheduler = TaskScheduler(&server,
                                                         esp8266React.getSecurityManager(),
@@ -168,7 +176,9 @@ SystemStateService systemStateService = SystemStateService(&server, esp8266React
                                                         CHANNEL_FOUR_DEFAULT_RANDOMIZE_SCHEDULE,
                                                         CHANNEL_FOUR_DEFAULT_SPAN_TIME,
                                                         CHANNEL_FOUR_DEFAULT_OVERRIDE_TIME,
-                                                        CHANNEL_FOUR_DEFAULT_ENABLE_MINIMUM_RUN_TIME_SCHEDULE);
+                                                        CHANNEL_FOUR_DEFAULT_ENABLE_MINIMUM_RUN_TIME_SCHEDULE,
+                                                        CHANNEL_FOUR_HOMEASSISTANT_TOPIC_TYPE,
+                                                        CHANNEL_FOUR_HOMEASSISTANT_ICON);
   ChannelScheduleRestartService channelFourScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelFourTaskScheduler, CHANNEL_FOUR_SCHEDULE_RESTART_SERVICE_PATH);
 #endif
 

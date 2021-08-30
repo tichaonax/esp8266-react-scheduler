@@ -11,7 +11,7 @@ import ChannelOne from './ChannelOne';
 import ChannelTwo from './ChannelTwo';
 import ChannelThree from './ChannelThree';
 import ChannelFour from './ChannelFour';
-import AutoInformation from './AutoInformation';
+//import AutoInformation from './AutoInformation';
 
 class Automation extends Component<RouteComponentProps> {
 
@@ -20,10 +20,22 @@ class Automation extends Component<RouteComponentProps> {
   };
 
   render() {
+
+    let defaultShow;
+    if(CHANNEL_ONE === 'true'){
+      defaultShow = 'channelOne';
+    } else if (CHANNEL_TWO === 'true') {
+      defaultShow = 'channelTwo';
+    } else if(CHANNEL_THREE === 'true') {
+      defaultShow = 'channelThree';
+    } else if(CHANNEL_FOUR === 'true'){
+      defaultShow = 'channelFour';
+    }
+
     return (
       <MenuAppBar sectionTitle="Automation System">
         <Tabs value={this.props.match.url} onChange={this.handleTabChange} variant="fullWidth">
-          <Tab value={`/${PROJECT_PATH}/auto/information`} label="Info" />
+          {/*<Tab value={`/${PROJECT_PATH}/auto/information`} label="Info" /> */}
           {(CHANNEL_ONE === 'true') &&
            <Tab value={`/${PROJECT_PATH}/auto/channelOne`} label="Channel One" />}
           {(CHANNEL_TWO === 'true') &&
@@ -34,7 +46,7 @@ class Automation extends Component<RouteComponentProps> {
             <Tab value={`/${PROJECT_PATH}/auto/channelFour`} label="Channel Four" />}
         </Tabs>
         <Switch>
-          <AuthenticatedRoute exact path={`/${PROJECT_PATH}/auto/information`} component={AutoInformation} />
+          {/*<AuthenticatedRoute exact path={`/${PROJECT_PATH}/auto/information`} component={AutoInformation} />*/}
           {(CHANNEL_ONE === 'true') &&
             <AuthenticatedRoute exact path={`/${PROJECT_PATH}/auto/channelOne`} component={ChannelOne} />}
           {(CHANNEL_TWO === 'true') &&
@@ -43,7 +55,8 @@ class Automation extends Component<RouteComponentProps> {
             <AuthenticatedRoute exact path={`/${PROJECT_PATH}/auto/channelThree`} component={ChannelThree} />}
           {(CHANNEL_FOUR === 'true') &&
             <AuthenticatedRoute exact path={`/${PROJECT_PATH}/auto/channelFour`} component={ChannelFour} />}
-          <Redirect to={`/${PROJECT_PATH}/auto/information`} />
+        
+          <Redirect to={`/${PROJECT_PATH}/auto/${defaultShow}`} />
         </Switch>
       </MenuAppBar>
     )

@@ -24,6 +24,8 @@ class ChannelMqttSettings {
   uint8_t channelControlPin;
   String channelName;
   String homeAssistantEntity;
+  uint8_t homeAssistantTopicType;
+  String homeAssistantIcon;
 
   static void read(ChannelMqttSettings& settings, JsonObject& root) {
     root["mqtt_path"] = settings.mqttPath;
@@ -40,10 +42,10 @@ class ChannelMqttSettings {
     #endif
 
     bool mqttPath = false;
-    settings.mqttPath = root["mqtt_path"] | ChannelState::getMqttUniqueIdOrPath(settings.channelControlPin, mqttPath, settings.homeAssistantEntity); 
+    settings.mqttPath = root["mqtt_path"] | ChannelState::getMqttUniqueIdOrPath(settings.channelControlPin, settings.homeAssistantTopicType, mqttPath, settings.homeAssistantEntity); 
     
     bool uniqueId = true;
-    settings.uniqueId = root["unique_id"] | ChannelState::getMqttUniqueIdOrPath(settings.channelControlPin, uniqueId);
+    settings.uniqueId = root["unique_id"] | ChannelState::getMqttUniqueIdOrPath(settings.channelControlPin, settings.homeAssistantTopicType, uniqueId);
     
     return StateUpdateResult::CHANGED;
   }
@@ -53,7 +55,8 @@ class ChannelMqttSettingsService : public StatefulService<ChannelMqttSettings> {
  public:
   ChannelMqttSettingsService(AsyncWebServer* server, FS* fs, SecurityManager* securityManager,
   char* brokerJsonConfigPath, String restBrokerEndPoint, uint8_t channelControlPin, String  channelName,
-  String homeAssistantEntity);
+  String homeAssistantEntity, uint8_t homeAssistantTopicType, String homeAssistantIcon);
+  
   void begin();
 
  private:
@@ -62,6 +65,8 @@ class ChannelMqttSettingsService : public StatefulService<ChannelMqttSettings> {
   uint8_t _channelControlPin;
   String _channelName;
   String _homeAssistantEntity;
+  uint8_t _homeAssistantTopicType;
+  String _homeAssistantIcon;
 };
 
 #endif  // end ChannelMqttSettingsService_h
