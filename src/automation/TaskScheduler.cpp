@@ -24,7 +24,9 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                               bool randomize,
                               float hotTimeHour,
                               float overrideTime,
-                              bool enableMinimumRunTime) :
+                              bool enableMinimumRunTime,
+                              uint8_t homeAssistantTopicType,
+                              String homeAssistantIcon) :
     _channelStateService(server,
                         securityManager,
                         mqttClient,
@@ -46,7 +48,9 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                         randomize,
                         hotTimeHour,
                         overrideTime,
-                        enableMinimumRunTime)
+                        enableMinimumRunTime,
+                        homeAssistantTopicType,
+                        homeAssistantIcon)
                                        {
                                          _isHotScheduleActive = false;
                                          _isOverrideActive = false;

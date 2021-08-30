@@ -29,7 +29,9 @@ class TaskScheduler {
                     bool randomize,
                     float hotTimeHour,
                     float overrideTime,
-                    bool enableMinimumRunTime);
+                    bool enableMinimumRunTime,
+                    uint8_t homeAssistantTopicType,
+                    String homeAssistantIcon);
     void begin();
     void resetOverrideTime();
     void setOverrideTime();

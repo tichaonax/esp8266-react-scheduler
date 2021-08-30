@@ -22,7 +22,9 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
                                       bool randomize,
                                       float hotTimeHour,
                                       float overrideTime,
-                                      bool enableMinimumRunTime) :
+                                      bool enableMinimumRunTime,
+                                      uint8_t homeAssistantTopicType,
+                                      String homeAssistantIcon) :
     _httpEndpoint(ChannelState::read,
                   ChannelState::update,
                   this,
@@ -142,15 +144,10 @@ void ChannelStateService::registerConfig() {
     String payloadOn = "{\"state\":\"ON\",\"espAdminUrl\":\"" + espAdminUrl +"\"}";
     String payloadOff = "{\"state\":\"OFF\",\"espAdminUrl\":\"" + espAdminUrl +"\"}";
 
-    switch (settings.channelControlPin)
+    switch (settings.homeAssistantTopicType)
     {
-      case CHANNEL_ONE_CONTROL_PIN:
-        doc["icon"] = "mdi:water-pump";
-        doc["payload_on"] = payloadOn;
-        doc["payload_off"] = payloadOff;
-        break;
-      case CHANNEL_TWO_CONTROL_PIN:
-        doc["icon"] = "mdi:fridge";
+      case HOMEASSISTANT_TOPIC_TYPE_SWITCH:
+        doc["icon"] = settings.homeAssistantIcon; //"mdi:water-pump";
         doc["payload_on"] = payloadOn;
         doc["payload_off"] = payloadOff;
         break;

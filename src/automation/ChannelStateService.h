@@ -32,7 +32,9 @@ class ChannelStateService : public StatefulService<ChannelState> {
                     bool randomize,
                     float hotTimeHour,
                     float overrideTime,
-                    bool enableMinimumRunTime);
+                    bool enableMinimumRunTime,
+                    uint8_t homeAssistantTopicType,
+                    String homeAssistantIcon);
 
   void begin();
   Channel getChannel();
@@ -53,24 +55,25 @@ class ChannelStateService : public StatefulService<ChannelState> {
   Ticker _deviceTime;
   Ticker _mqttRepublish;
 
-    int  _runEvery;         // run every 30 mins
-    int  _offAfter;         // stop after 5 mins
-    int  _startTimeHour;    // 8
-    int  _startTimeMinute;  // 30
-    int  _endTimeHour;      // 16
-    int  _endTimeMinute;    // 30
-    int  _hotTimeHour;      // 0 to 16hr
-    int  _overrideTime;     //
-    bool    _enabled;
-    String  _channelName;
-    bool  _enableTimeSpan;
-    bool  _randomize;
-    bool  _isHotScheduleActive;
-    String _offHotHourDateTime;
-    String _controlOffDateTime;
-    bool  _isOverrideActive;
-    bool _enableMinimumRunTime;
-
+  int  _runEvery;         // run every 30 mins
+  int  _offAfter;         // stop after 5 mins
+  int  _startTimeHour;    // 8
+  int  _startTimeMinute;  // 30
+  int  _endTimeHour;      // 16
+  int  _endTimeMinute;    // 30
+  int  _hotTimeHour;      // 0 to 16hr
+  int  _overrideTime;     //
+  bool    _enabled;
+  String  _channelName;
+  bool  _enableTimeSpan;
+  bool  _randomize;
+  bool  _isHotScheduleActive;
+  String _offHotHourDateTime;
+  String _controlOffDateTime;
+  bool  _isOverrideActive;
+  bool _enableMinimumRunTime;
+  uint8_t _homeAssistantTopicType;
+  String _homeAssistantIcon;
 
 #ifdef ESP32
   void onStationModeGotIP(WiFiEvent_t event, WiFiEventInfo_t info);
