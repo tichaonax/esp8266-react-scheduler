@@ -14,7 +14,7 @@
     #define CHANNEL_ONE_CONTROL_PIN 5
   #endif
 #endif
-#define CHANNEL_ONE_DEFAULT_NAME "Onboard Pump" //  defaultChannelName
+#define CHANNEL_ONE_DEFAULT_NAME "AC" //  defaultChannelName
 #define CHANNEL_ONE_REST_ENDPOINT_PATH "/rest/ch-1State"  //restChannelEndPoint
 #define CHANNEL_ONE_SOCKET_PATH "/ws/ch-1State"  // webSocketChannelEndPoint
 #define CHANNEL_ONE_CONFIG_JSON_PATH "/config/ch-1State.json"  // channelJsonConfigPath
@@ -32,7 +32,7 @@
 #define CHANNEL_ONE_DEFAULT_OVERRIDE_TIME 15.0f // override time in minutes
 #define CHANNEL_ONE_DEFAULT_ENABLE_MINIMUM_RUN_TIME_SCHEDULE false
 #define CHANNEL_ONE_HOMEASSISTANT_TOPIC_TYPE HOMEASSISTANT_TOPIC_TYPE_SWITCH
-#define CHANNEL_ONE_HOMEASSISTANT_ICON MDI_WATER_PUMP
+#define CHANNEL_ONE_HOMEASSISTANT_ICON MDI_POWER
 
 #ifdef CHANNEL_TWO_LIGHT
   // onboard relay control pin = 5
