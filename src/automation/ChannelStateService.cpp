@@ -50,6 +50,8 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
                 {
 
   _channelControlPin = channelControlPin;
+  _homeAssistantIcon = homeAssistantIcon;
+  _homeAssistantTopicType = homeAssistantTopicType;
   _restChannelEndPoint = restChannelEndPoint;
   _webSocketChannelEndPoint = webSocketChannelEndPoint;
 
@@ -130,12 +132,28 @@ void ChannelStateService::registerConfig() {
 
   DynamicJsonDocument doc(512);
   _channelMqttSettingsService->read([&](ChannelMqttSettings& settings) {
-    configTopic = settings.mqttPath + "/config";
-    subTopic = settings.mqttPath + "/set";
-    pubTopic = settings.mqttPath + "/state";
-    doc["~"] = settings.mqttPath;
-    doc["name"] = settings.name;
-    doc["unique_id"] = settings.uniqueId;
+    String mqttPath = utils.getMqttUniqueIdOrPath(_state.channel.controlPin,
+    _state.channel.homeAssistantTopicType,
+    false,
+    settings.homeAssistantEntity);
+
+    String uniqueId = utils.getMqttUniqueIdOrPath(_state.channel.controlPin,
+    _state.channel.homeAssistantTopicType,
+    true);
+
+    String name;
+    #ifdef MQTT_FRIENDLY_NAME
+        name = _state.channel.name;
+    #else
+        name = SettingValue::format(_state.channel.name + " : #{unique_id}");
+    #endif
+
+    configTopic = mqttPath + "/config";
+    subTopic = mqttPath + "/set";
+    pubTopic = mqttPath + "/state";
+    doc["~"] = mqttPath;
+    doc["name"] = name;
+    doc["unique_id"] = uniqueId;
     doc["json_attributes_topic"] = "~/state";
     doc["cmd_t"] = "~/set";
     doc["stat_t"] = "~/state";
@@ -144,10 +162,10 @@ void ChannelStateService::registerConfig() {
     String payloadOn = "{\"state\":\"ON\",\"espAdminUrl\":\"" + espAdminUrl +"\"}";
     String payloadOff = "{\"state\":\"OFF\",\"espAdminUrl\":\"" + espAdminUrl +"\"}";
 
-    switch (settings.homeAssistantTopicType)
+    switch (_state.channel.homeAssistantTopicType)
     {
       case HOMEASSISTANT_TOPIC_TYPE_SWITCH:
-        doc["icon"] = settings.homeAssistantIcon; //"mdi:water-pump";
+        doc["icon"] = _state.channel.homeAssistantIcon; //"mdi:water-pump";
         doc["payload_on"] = payloadOn;
         doc["payload_off"] = payloadOff;
         break;
@@ -175,6 +193,8 @@ void mqttRepublishTicker(ChannelStateService* channelStateService){
 void ChannelStateService::begin() {
     _state.channel.controlPin = _channelControlPin;
     _state.channel.name = _channelName;
+    _state.channel.homeAssistantIcon = _homeAssistantIcon;
+    _state.channel.homeAssistantTopicType = _homeAssistantTopicType;
     _state.channel.channelEndPoint = _restChannelEndPoint;
     _state.channel.enabled = _enabled;
     _state.channel.enableTimeSpan = _enableTimeSpan;
@@ -193,7 +213,6 @@ void ChannelStateService::begin() {
     _state.channel.schedule.hotTimeHour = _hotTimeHour;
     _state.channel.schedule.overrideTime = _overrideTime;
     _state.channel.schedule.isOverrideActive = _isOverrideActive;
-    
     _fsPersistence.readFromFS();
 
     _state.channel.controlOn = DEFAULT_CONTROL_STATE; // must be off on start up

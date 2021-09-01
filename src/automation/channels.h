@@ -15,11 +15,11 @@
   #endif
 #endif
 
-#define CHANNEL_ONE_REST_ENDPOINT_PATH "/rest/ch-1State"  //restChannelEndPoint
-#define CHANNEL_ONE_SOCKET_PATH "/ws/ch-1State"  // webSocketChannelEndPoint
+#define CHANNEL_ONE_REST_ENDPOINT_PATH "/rest/channelOneState"  //restChannelEndPoint
+#define CHANNEL_ONE_SOCKET_PATH "/ws/channelOneState"  // webSocketChannelEndPoint
 #define CHANNEL_ONE_DEFAULT_NAME "Water Pump" //  defaultChannelName
-#define CHANNEL_ONE_CONFIG_JSON_PATH "/config/ch-1State.json"  // channelJsonConfigPath
-#define CHANNEL_ONE_HOME_ASSISTANT_ENTITY "ch-1"
+#define CHANNEL_ONE_CONFIG_JSON_PATH "/config/channelOneState.json"  // channelJsonConfigPath
+#define CHANNEL_ONE_HOME_ASSISTANT_ENTITY "ch1"
 #define CHANNEL_ONE_DEFAULT_CONTROL_RUN_EVERY 15.0f
 #define CHANNEL_ONE_DEFAULT_CONTROL_OFF_AFTER 3.0f
 #define CHANNEL_ONE_DEFAULT_CONTROL_START_TIME_HOUR 8
@@ -47,11 +47,11 @@
   #endif
 #endif
 
-#define CHANNEL_TWO_REST_ENDPOINT_PATH "/rest/ch-2State"  //restChannelEndPoint
-#define CHANNEL_TWO_SOCKET_PATH "/ws/ch-2State"  // webSocketChannelEndPoint
+#define CHANNEL_TWO_REST_ENDPOINT_PATH "/rest/channelTwoState"  //restChannelEndPoint
+#define CHANNEL_TWO_SOCKET_PATH "/ws/channelTwoState"  // webSocketChannelEndPoint
 #define CHANNEL_TWO_DEFAULT_NAME "Living Room Fridge" //  defaultChannelName
-#define CHANNEL_TWO_CONFIG_JSON_PATH "/config/ch-2State.json"  // channelJsonConfigPath
-#define CHANNEL_TWO_HOME_ASSISTANT_ENTITY "ch-2"
+#define CHANNEL_TWO_CONFIG_JSON_PATH "/config/channelTwoState.json"  // channelJsonConfigPath
+#define CHANNEL_TWO_HOME_ASSISTANT_ENTITY "ch2"
 #define CHANNEL_TWO_DEFAULT_CONTROL_RUN_EVERY 30.0f
 #define CHANNEL_TWO_DEFAULT_CONTROL_OFF_AFTER 15.0f
 #define CHANNEL_TWO_DEFAULT_CONTROL_START_TIME_HOUR 8
@@ -79,11 +79,11 @@
   #endif
 #endif
 
-#define CHANNEL_THREE_REST_ENDPOINT_PATH "/rest/ch-3State"  //restChannelEndPoint
-#define CHANNEL_THREE_SOCKET_PATH "/ws/ch-3State"  // webSocketChannelEndPoint
+#define CHANNEL_THREE_REST_ENDPOINT_PATH "/rest/channelThreeState"  //restChannelEndPoint
+#define CHANNEL_THREE_SOCKET_PATH "/ws/channelThreeState"  // webSocketChannelEndPoint
 #define CHANNEL_THREE_DEFAULT_NAME "LG TV" //  defaultChannelName
-#define CHANNEL_THREE_CONFIG_JSON_PATH "/config/ch-3State.json"  // channelJsonConfigPath
-#define CHANNEL_THREE_HOME_ASSISTANT_ENTITY "ch-3"    // homeAssistantEntity
+#define CHANNEL_THREE_CONFIG_JSON_PATH "/config/channelThreeState.json"  // channelJsonConfigPath
+#define CHANNEL_THREE_HOME_ASSISTANT_ENTITY "ch3"    // homeAssistantEntity
 #define CHANNEL_THREE_DEFAULT_CONTROL_RUN_EVERY 30.0f
 #define CHANNEL_THREE_DEFAULT_CONTROL_OFF_AFTER 5.0f
 #define CHANNEL_THREE_DEFAULT_CONTROL_START_TIME_HOUR 1
@@ -111,11 +111,11 @@
   #endif
 #endif
 
-#define CHANNEL_FOUR_REST_ENDPOINT_PATH "/rest/ch-4State"  //restChannelEndPoint
-#define CHANNEL_FOUR_SOCKET_PATH "/ws/ch-4State"  // webSocketChannelEndPoint
+#define CHANNEL_FOUR_REST_ENDPOINT_PATH "/rest/channelFourState"  //restChannelEndPoint
+#define CHANNEL_FOUR_SOCKET_PATH "/ws/channelFourState"  // webSocketChannelEndPoint
 #define CHANNEL_FOUR_DEFAULT_NAME "Outside Lights" //  defaultChannelName
-#define CHANNEL_FOUR_CONFIG_JSON_PATH "/config/ch-4State.json"  // channelJsonConfigPath
-#define CHANNEL_FOUR_HOME_ASSISTANT_ENTITY "ch-4"    // homeAssistantEntity
+#define CHANNEL_FOUR_CONFIG_JSON_PATH "/config/channelFourState.json"  // channelJsonConfigPath
+#define CHANNEL_FOUR_HOME_ASSISTANT_ENTITY "ch4"    // homeAssistantEntity
 #define CHANNEL_FOUR_DEFAULT_CONTROL_RUN_EVERY 30.0f
 #define CHANNEL_FOUR_DEFAULT_CONTROL_OFF_AFTER 5.0f
 #define CHANNEL_FOUR_DEFAULT_CONTROL_START_TIME_HOUR 19

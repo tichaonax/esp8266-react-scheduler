@@ -31,6 +31,8 @@ class ChannelMqttSettings {
     root["mqtt_path"] = settings.mqttPath;
     root["name"] = settings.name;
     root["unique_id"] = settings.uniqueId;
+    root["homeAssistantTopicType"] = settings.homeAssistantTopicType;
+    root["homeAssistantIcon"] = settings.homeAssistantIcon;
   }
 
   static StateUpdateResult update(JsonObject& root, ChannelMqttSettings& settings) {
@@ -42,11 +44,14 @@ class ChannelMqttSettings {
     #endif
 
     bool mqttPath = false;
-    settings.mqttPath = root["mqtt_path"] | ChannelState::getMqttUniqueIdOrPath(settings.channelControlPin, settings.homeAssistantTopicType, mqttPath, settings.homeAssistantEntity); 
+    settings.mqttPath = root["mqtt_path"] | utils.getMqttUniqueIdOrPath(settings.channelControlPin, settings.homeAssistantTopicType, mqttPath, settings.homeAssistantEntity); 
     
     bool uniqueId = true;
-    settings.uniqueId = root["unique_id"] | ChannelState::getMqttUniqueIdOrPath(settings.channelControlPin, settings.homeAssistantTopicType, uniqueId);
+    settings.uniqueId = root["unique_id"] | utils.getMqttUniqueIdOrPath(settings.channelControlPin, settings.homeAssistantTopicType, uniqueId);
     
+    settings.homeAssistantTopicType = root["homeAssistantTopicType"] | settings.homeAssistantTopicType;
+    settings.homeAssistantIcon = root["homeAssistantIcon"] | settings.homeAssistantIcon;
+
     return StateUpdateResult::CHANGED;
   }
 };

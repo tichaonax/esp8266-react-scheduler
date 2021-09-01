@@ -36,6 +36,8 @@ export interface Channels {
     enableTimeSpan: boolean;
     lastStartedChangeTime: string;
     controlPin: number;
+    homeAssistantTopicType: number;
+    homeAssistantIcon: string;
     nextRunTime: string;
     randomize: boolean;
     enableMinimumRunTime: boolean;

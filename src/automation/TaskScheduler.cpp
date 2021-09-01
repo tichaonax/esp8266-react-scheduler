@@ -227,6 +227,7 @@ void TaskScheduler::setSchedule(bool isReschedule){
   Serial.print(F("Current Time: "));
   digitalClockDisplay();
   Serial.print(_channel.name);
+  Serial.print(": " );
   _isReschedule = isReschedule;
   if(_channel.enabled){
     reScheduleTasks();

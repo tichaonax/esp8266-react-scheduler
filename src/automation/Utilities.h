@@ -3,6 +3,8 @@
 
 #include <ctime>
 #include <HttpEndpoint.h>
+#include <SettingValue.h>
+#include "Homeassistant.h"
 
 #define CONTROL_ON 0x1
 #define CONTROL_OFF 0x0
@@ -141,6 +143,28 @@ public:
     }
     schedule.isRunTaskNow = schedule.isRunTaskNow && !schedule.isHotScheduleActive && !schedule.isOverrideActive;
     return schedule;
+  }
+
+  static String getMqttUniqueIdOrPath(uint8_t controlPin, uint8_t homeAssistantTopicType, bool isUniqueIdOrPath, String homeAssistantEntity=""){
+      String topicType;
+      String topicHeader;
+      switch (homeAssistantTopicType)
+      {
+        case HOMEASSISTANT_TOPIC_TYPE_SWITCH:
+          topicHeader = "homeassistant/switch/";
+          topicType = "switch";
+        break;
+        case HOMEASSISTANT_TOPIC_TYPE_LIGHT:
+          topicHeader = "homeassistant/light/";
+          topicType = "light";
+        break;
+        default:
+        break;
+      }
+
+      return isUniqueIdOrPath ? 
+      SettingValue::format(topicType + "-pin-" + String(controlPin) + "-#{unique_id}") :
+      SettingValue::format(topicHeader + homeAssistantEntity + "-pin-" + String(controlPin) + "/#{unique_id}");
   }
 };
 
