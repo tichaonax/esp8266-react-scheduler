@@ -9,7 +9,7 @@
 #define OFF_STATE "OFF"
 #define ON_STATE "ON"
 
-#define DEFAULT_JSON_DOCUMENT_SIZE 1024 
+#define DEFAULT_JSON_DOCUMENT_SIZE 2048
 
 struct CurrentTime {
   int minutesInSec;
@@ -33,6 +33,8 @@ struct Schedule {
 struct Channel {
     bool  controlOn;
     uint8_t controlPin;
+    uint8_t homeAssistantTopicType;
+    String homeAssistantIcon;
     int  startTime;
     int  endTime;
     bool    enabled;
@@ -50,34 +52,10 @@ struct Channel {
     String controlOffDateTime;
     String uniqueId;
     bool enableMinimumRunTime; // when enabled in randomize time runs at least this minimum time
-    uint8_t homeAssistantTopicType;
-    String homeAssistantIcon;
 };
 
 class ChannelState {
 public:
-  static String getMqttUniqueIdOrPath(uint8_t controlPin, uint8_t homeAssistantTopicType, bool isUniqueIdOrPath, String homeAssistantEntity=""){
-      String topicType;
-      String topicHeader;
-      switch (homeAssistantTopicType)
-      {
-        case HOMEASSISTANT_TOPIC_TYPE_SWITCH:
-          topicHeader = "homeassistant/switch/";
-          topicType = "switch";
-        break;
-        case HOMEASSISTANT_TOPIC_TYPE_LIGHT:
-          topicHeader = "homeassistant/light/";
-          topicType = "light";
-        break;
-        default:
-        break;
-      }
-
-      return isUniqueIdOrPath ? 
-      SettingValue::format(topicType + "-pin-" + String(controlPin) + "-#{unique_id}") :
-      SettingValue::format(topicHeader + homeAssistantEntity + "-pin-" + String(controlPin) + "/#{unique_id}");
-  }
-
  Channel channel;
   static void read(ChannelState& settings, JsonObject& root) {
     readChannel(settings.channel, root);
@@ -137,7 +115,7 @@ public:
     jsonObject["nextRunTime"] = channel.nextRunTime;
     jsonObject["randomize"] = channel.randomize;
     jsonObject["IPAddress"] = channel.IP;
-    jsonObject["uniqueId"] = getMqttUniqueIdOrPath(channel.controlPin, channel.homeAssistantTopicType, true);
+    jsonObject["uniqueId"] = utils.getMqttUniqueIdOrPath(channel.controlPin, channel.homeAssistantTopicType, true);
     jsonObject["enableMinimumRunTime"] = channel.enableMinimumRunTime;
 
     JsonObject schedule = jsonObject.createNestedObject("schedule");
@@ -186,6 +164,8 @@ public:
 
 static void updateChannel(JsonObject& json, Channel& channel, bool isOverride) { 
     channel.controlPin = json["controlPin"];
+    channel.homeAssistantTopicType = json["homeAssistantTopicType"] | channel.homeAssistantTopicType ;
+    channel.homeAssistantIcon = json["homeAssistantIcon"] | channel.homeAssistantIcon;
     channel.controlOn = json["controlOn"] | DEFAULT_CONTROL_STATE;
     channel.name = json["name"] | channel.name;
     channel.enabled = json["enabled"] | channel.enabled;
@@ -193,7 +173,7 @@ static void updateChannel(JsonObject& json, Channel& channel, bool isOverride) {
     channel.lastStartedChangeTime = json["lastStartedChangeTime"] | utils.strLocalTime();
     channel.nextRunTime = json["nextRunTime"] | "";
     channel.randomize = json["randomize"] | channel.randomize;
-    channel.uniqueId = json["uniqueId"] |  getMqttUniqueIdOrPath(channel.controlPin, channel.homeAssistantTopicType, true);
+    channel.uniqueId = json["uniqueId"] |  utils.getMqttUniqueIdOrPath(channel.controlPin, channel.homeAssistantTopicType, true);
     channel.enableMinimumRunTime = json["enableMinimumRunTime"] | channel.enableMinimumRunTime;
 
     JsonObject schedule = json["schedule"];
@@ -215,9 +195,6 @@ static void updateChannel(JsonObject& json, Channel& channel, bool isOverride) {
     if ((channel.schedule.hotTimeHour > 57600) | (channel.schedule.hotTimeHour < 0)) { channel.schedule.hotTimeHour  = 0; }
   
     if ((channel.schedule.overrideTime > 57600) | (channel.schedule.overrideTime < 0)) { channel.schedule.overrideTime  = 0; }
-
-    channel.homeAssistantTopicType = json["homeAssistantTopicType"];
-    channel.homeAssistantIcon = json["homeAssistantIcon"] | channel.homeAssistantIcon;
   }
 
   static boolean dataIsValid(JsonObject& json, ChannelState& channelState){

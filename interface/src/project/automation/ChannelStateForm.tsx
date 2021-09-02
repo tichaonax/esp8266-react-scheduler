@@ -7,6 +7,24 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Grid from '@material-ui/core/Grid';
 import Select from "@material-ui/core/Select";
 import DateFnsUtils from '@date-io/date-fns';
+import SpeakerIcon from '@material-ui/icons/Speaker';
+import LinkedCameraIcon from '@material-ui/icons/LinkedCamera';
+import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
+import TvIcon from '@material-ui/icons/Tv';
+import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects';
+import PrintIcon from '@material-ui/icons/Print';
+import AcUnitIcon from '@material-ui/icons/AcUnit';
+import KitchenIcon from '@material-ui/icons/Kitchen';
+import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
+import ToysIcon from '@material-ui/icons/Toys';
+import SpeakerGroupIcon from '@material-ui/icons/SpeakerGroup';
+import SettingsSystemDaydreamIcon from '@material-ui/icons/SettingsSystemDaydream';
+import LocalGasStationIcon from '@material-ui/icons/LocalGasStation';
+import DriveEtaIcon from '@material-ui/icons/DriveEta';
+import AutorenewIcon from '@material-ui/icons/Autorenew';
+import PersonalVideoIcon from '@material-ui/icons/PersonalVideo';
+import ViewHeadlineIcon from '@material-ui/icons/ViewHeadline';
+
 import {
   MuiPickersUtilsProvider,
   KeyboardTimePicker,
@@ -145,6 +163,16 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
         }
       }
       
+      const handleHomeAssistantTopicType = (name: keyof ChannelState) => (event: any) => {
+        const homeAssistantTopicType: number = event.target.value;
+        setData({ ...data, homeAssistantTopicType });
+      };
+
+      const handleHomeAssistantIcon = (name: keyof ChannelState) => (event: any) => {
+        const homeAssistantIcon: string = event.target.value;
+        setData({ ...data, homeAssistantIcon });
+      };
+      
       const marks = [
         {
           value: 0,
@@ -255,6 +283,47 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
           onChange={handleValueChange('name')}
           margin="normal"
         />
+        <BlockFormControlLabel
+              control={
+                <Select style={{ marginLeft: 10 }}
+                value={data.homeAssistantIcon}
+                onChange={handleHomeAssistantIcon('homeAssistantIcon')}>
+                <MenuItem value={"mdi:lightbulb"}><EmojiObjectsIcon/>light</MenuItem>
+                <MenuItem value={"mdi:speaker-wireless"}><SpeakerGroupIcon/>speaker-wireless</MenuItem>
+                <MenuItem value={"mdi:speaker"}><SpeakerIcon/>speaker</MenuItem>
+                <MenuItem value={"mdi:garage-variant"}><DriveEtaIcon/>garage-variant</MenuItem>
+                <MenuItem value={"mdi:garage"}><DriveEtaIcon/>garage</MenuItem>
+                <MenuItem value={"mdi:power"}><PowerSettingsNewIcon/>power</MenuItem>
+                <MenuItem value={"mdi:fridge"}><KitchenIcon/>fridge</MenuItem>
+                <MenuItem value={"mdi:microwave"}><AutorenewIcon/>microwave</MenuItem>
+                <MenuItem value={"mdi:toaster-oven"}><ViewHeadlineIcon/>toaster-oven</MenuItem>
+                <MenuItem value={"mdi:toaster"}><SettingsSystemDaydreamIcon/>toaster</MenuItem>
+                <MenuItem value={"mdi:fan"}><ToysIcon/>fan</MenuItem>
+                <MenuItem value={"mdi:fan-chevron-down"}><ToysIcon/>fan-chevron-down</MenuItem>
+                <MenuItem value={"mdi:water-pump"}><LocalGasStationIcon/>pump</MenuItem>
+                <MenuItem value={"mdi:camera"}><PhotoCameraIcon/>camera</MenuItem>
+                <MenuItem value={"mdi:camera-wireless"}><LinkedCameraIcon/>camera-wireless</MenuItem>
+                <MenuItem value={"mdi:printer-wireless"}><PrintIcon/>printer-wireless</MenuItem>
+                <MenuItem value={"mdi:printer"}><PrintIcon/>printer</MenuItem>
+                <MenuItem value={"mdi:television-ambient-light"}><PersonalVideoIcon/>television-ambient-light</MenuItem>
+                <MenuItem value={"mdi:television"}><TvIcon/>television</MenuItem>
+                <MenuItem value={"mdi:air-conditioner"}><AcUnitIcon/>mdi:air-conditioner</MenuItem>
+              </Select>
+              }
+              label="MDI Icon"
+        />
+        <br/>
+        <BlockFormControlLabel
+              control={
+                <Select style={{ marginLeft: 10 }}
+                value={data.homeAssistantTopicType}
+                onChange={handleHomeAssistantTopicType('homeAssistantTopicType')}>
+                <MenuItem value={0}>Light</MenuItem>
+                <MenuItem value={1}>Switch</MenuItem>
+              </Select>
+              }
+              label="Homeassistant Topic Type"
+            />
         {!data.enableTimeSpan && (
           <div>
             <BlockFormControlLabel
