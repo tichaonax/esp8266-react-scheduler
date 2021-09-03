@@ -322,7 +322,7 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
                 <MenuItem value={1}>Switch</MenuItem>
               </Select>
               }
-              label="Homeassistant Topic Type"
+              label="Topic Type"
             />
         {!data.enableTimeSpan && (
           <div>
