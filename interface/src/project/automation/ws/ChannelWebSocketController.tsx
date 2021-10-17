@@ -1,6 +1,6 @@
 import React from 'react';
-import { SectionContent } from '../../components';
-import { CHANNEL_ONE, CHANNEL_TWO, CHANNEL_THREE, CHANNEL_FOUR } from '../../api';
+import { SectionContent } from '../../../components';
+import { CHANNEL_ONE, CHANNEL_TWO, CHANNEL_THREE, CHANNEL_FOUR } from '../../../api';
 
 import ChannelOneWebSocketController from './ChannelOneWebSocketController';
 import ChannelTwoWebSocketController from './ChannelTwoWebSocketController';

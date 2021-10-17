@@ -3,12 +3,12 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Typography from '@material-ui/core/Typography';
 import 'react-tabs/style/react-tabs.css';
 
-import { SectionContent } from '../../components';
-import ChannelThreeStateRestController from './ChannelThreeStateRestController';
-import ChannelThreeWebSocketController from './ChannelThreeWebSocketController';
-import ChannelThreeMqttSettingsController from './ChannelThreeMqttSettingsController';
+import { SectionContent } from '../../../components';
+import ChannelTwoStateRestController from '../rest/ChannelTwoStateRestController';
+import ChannelTwoWebSocketController from '../ws/ChannelTwoWebSocketController';
+import ChannelTwoMqttSettingsController from '../mqtt/ChannelTwoMqttSettingsController';
 
-const ChannelThree = () => {
+const ChannelTwo = () => {
   return(
     <SectionContent title='' titleGutter>
     <Tabs>
@@ -30,17 +30,17 @@ const ChannelThree = () => {
         </Tab>
       </TabList>
       <TabPanel style={{marginLeft: -23, marginRight: -23, marginTop: -35}}>
-        <ChannelThreeStateRestController/>
+        <ChannelTwoStateRestController/>
       </TabPanel>
       <TabPanel style={{marginLeft: -23, marginRight: -23, marginTop: -35}}>
-        <ChannelThreeMqttSettingsController/>
+        <ChannelTwoMqttSettingsController/>
       </TabPanel>
       <TabPanel>
-        <ChannelThreeWebSocketController/>
+        <ChannelTwoWebSocketController/>
       </TabPanel>
     </Tabs>
     </SectionContent>
   );
 }
 
-export default ChannelThree;
+export default ChannelTwo;

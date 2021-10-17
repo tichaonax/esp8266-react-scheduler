@@ -79,7 +79,7 @@ public:
 
   static void haRead(ChannelState& settings, JsonObject& root) {
     root["state"] = settings.channel.controlOn ? ON_STATE : OFF_STATE;
-    root["espAdminUrl"] = "http://" + settings.channel.IP;
+    root["iotAdminUrl"] = "http://" + settings.channel.IP + utils.getDeviceChannelUrl(settings.channel.controlPin);
   }
 
   static StateUpdateResult haUpdate(JsonObject& root, ChannelState& settings) {
@@ -119,7 +119,7 @@ public:
     jsonObject["enableMinimumRunTime"] = channel.enableMinimumRunTime;
 
     JsonObject schedule = jsonObject.createNestedObject("schedule");
-    
+      
     schedule["runEvery"] = round(float(float(channel.schedule.runEvery)/float(60)) * 1000)/ 1000;
     schedule["offAfter"] = round(float(float(channel.schedule.offAfter)/float(60)) * 1000)/ 1000;
     schedule["startTimeHour"] = round(float(float(channel.schedule.startTimeHour)/float(3600)) * 1000)/ 1000;
@@ -177,7 +177,6 @@ static void updateChannel(JsonObject& json, Channel& channel, bool isOverride) {
     channel.enableMinimumRunTime = json["enableMinimumRunTime"] | channel.enableMinimumRunTime;
 
     JsonObject schedule = json["schedule"];
-
     channel.schedule.runEvery = schedule["runEvery"] ? (int)(round(60 * float(schedule["runEvery"]))) : channel.schedule.runEvery;
     channel.schedule.offAfter = schedule["offAfter"] ? (int)(round(60 * float(schedule["offAfter"]))) : channel.schedule.offAfter;
     channel.schedule.startTimeHour = schedule["startTimeHour"] ? (int)(round(3600 * float(schedule["startTimeHour"]))) : channel.schedule.startTimeHour;
@@ -202,8 +201,7 @@ static void updateChannel(JsonObject& json, Channel& channel, bool isOverride) {
     JsonObject schedule = json["schedule"];
     int runEvery = schedule["runEvery"] ? (int)(round(60 * float(schedule["runEvery"]))) : channelState.channel.schedule.runEvery;
     int offAfter = schedule["offAfter"] ? (int)(round(60 * float(schedule["offAfter"]))) : channelState.channel.schedule.offAfter;
-    if(runEvery > offAfter){ return true; }
-    return false;
+    return (runEvery > offAfter);
   }
 };
 

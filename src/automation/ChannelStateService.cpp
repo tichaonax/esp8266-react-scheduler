@@ -157,10 +157,11 @@ void ChannelStateService::registerConfig() {
     doc["json_attributes_topic"] = "~/state";
     doc["cmd_t"] = "~/set";
     doc["stat_t"] = "~/state";
-    
-    String espAdminUrl = "http://" + _state.channel.IP;
-    String payloadOn = "{\"state\":\"ON\",\"espAdminUrl\":\"" + espAdminUrl +"\"}";
-    String payloadOff = "{\"state\":\"OFF\",\"espAdminUrl\":\"" + espAdminUrl +"\"}";
+
+    String iotAdminUrl = "http://" + _state.channel.IP +  utils.getDeviceChannelUrl(_state.channel.controlPin);
+
+    String payloadOn = "{\"state\":\"ON\",\"iotAdminUrl\":\"" + iotAdminUrl +"\"}";
+    String payloadOff = "{\"state\":\"OFF\",\"iotAdminUrl\":\"" + iotAdminUrl +"\"}";
 
     switch (_state.channel.homeAssistantTopicType)
     {

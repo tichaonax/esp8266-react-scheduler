@@ -5,6 +5,17 @@
 #include <HttpEndpoint.h>
 #include <SettingValue.h>
 #include "Homeassistant.h"
+#include "Channels.h"
+
+#define DEBUG 0
+
+#if DEBUG == 1
+  #define debug(x) Serial.print(x)
+  #define debugln(x) Serial.println(x)
+#else
+  #define debug(x)
+  #define debugln(x)
+#endif // DEBUG
 
 #define CONTROL_ON 0x1
 #define CONTROL_OFF 0x0
@@ -165,6 +176,34 @@ public:
       return isUniqueIdOrPath ? 
       SettingValue::format(topicType + "-pin-" + String(controlPin) + "-#{unique_id}") :
       SettingValue::format(topicHeader + homeAssistantEntity + "-pin-" + String(controlPin) + "/#{unique_id}");
+  }
+
+  static String getDeviceChannelUrl(int controlPin){
+    String relativePath;
+    switch (controlPin)
+    {
+      case CHANNEL_ONE_CONTROL_PIN:
+        relativePath = "/project/auto/channelOne";
+      break;
+
+      case CHANNEL_TWO_CONTROL_PIN:
+        relativePath = "/project/auto/channelTwo";
+      break;
+
+      case CHANNEL_THREE_CONTROL_PIN:
+        relativePath = "/project/auto/channelThree";
+      break;
+
+      case CHANNEL_FOUR_CONTROL_PIN:
+        relativePath = "/project/auto/channelFour";
+      break;
+
+      default:
+        relativePath = "";
+      break;
+    }
+
+    return relativePath;
   }
 };
 

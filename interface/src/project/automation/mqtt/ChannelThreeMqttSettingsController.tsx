@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 
-import { ENDPOINT_ROOT } from '../../api';
-import { restController, RestControllerProps, RestFormLoader, SectionContent } from '../../components';
+import { ENDPOINT_ROOT } from '../../../api';
+import { restController, RestControllerProps, RestFormLoader, SectionContent } from '../../../components';
 
-import { ChannelMqttSettings } from './types';
+import { ChannelMqttSettings } from '../types';
 import ChannelMqttSettingsControllerForm from './ChannelMqttSettingsControllerForm';
 
-export const CHANNEL_BROKER_SETTINGS_ENDPOINT = ENDPOINT_ROOT + "c1";
+export const CHANNEL_BROKER_SETTINGS_ENDPOINT = ENDPOINT_ROOT + "c3";
 
 type ChannelMqttSettingsControllerProps = RestControllerProps<ChannelMqttSettings>;
 
-class ChannelOneMqttSettingsController extends Component<ChannelMqttSettingsControllerProps> {
+class ChannelThreeMqttSettingsController extends Component<ChannelMqttSettingsControllerProps> {
 
   componentDidMount() {
     this.props.loadData();
@@ -28,7 +28,6 @@ class ChannelOneMqttSettingsController extends Component<ChannelMqttSettingsCont
       </SectionContent>
     )
   }
-
 }
 
-export default restController(CHANNEL_BROKER_SETTINGS_ENDPOINT, ChannelOneMqttSettingsController);
+export default restController(CHANNEL_BROKER_SETTINGS_ENDPOINT, ChannelThreeMqttSettingsController);

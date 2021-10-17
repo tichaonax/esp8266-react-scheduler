@@ -1,15 +1,15 @@
 import React from 'react';
 import { ValidatorForm } from 'react-material-ui-form-validator';
-import history from '../../history';
+import history from '../../../history';
 import { Switch, Typography, ListItem, ListItemText } from '@material-ui/core';
-import { WebSocketFormProps } from '../../components';
-import { BlockFormControlLabel } from '../../components';
+import { WebSocketFormProps } from '../../../components';
+import { BlockFormControlLabel } from '../../../components';
 
-import { ChannelState} from '../automation/redux/types/channel';
+import { ChannelState} from '../redux/types/channel';
 import { CHANNEL_ONE_CONTROL_PIN,
         CHANNEL_TWO_CONTROL_PIN,
         CHANNEL_THREE_CONTROL_PIN, 
-        CHANNEL_FOUR_CONTROL_PIN } from './constants';
+        CHANNEL_FOUR_CONTROL_PIN } from '../constants';
 import { useLocation } from 'react-router';
 
 type ChannelStateWebSocketControllerFormProps = WebSocketFormProps<ChannelState>;

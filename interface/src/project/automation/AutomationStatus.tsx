@@ -5,7 +5,7 @@ import { PROJECT_PATH } from '../../api';
 import { MenuAppBar } from '../../components';
 import { AuthenticatedRoute } from '../../authentication';
 
-import ChannelWebSocketController from './ChannelWebSocketController';
+import ChannelWebSocketController from './ws/ChannelWebSocketController';
 
 
 class AutomationStatus extends Component<RouteComponentProps> {
