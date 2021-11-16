@@ -130,7 +130,7 @@ void ChannelStateService::registerConfig() {
   String subTopic;
   String pubTopic;
 
-  DynamicJsonDocument doc(768);
+  DynamicJsonDocument doc(1024);
   _channelMqttSettingsService->read([&](ChannelMqttSettings& settings) {
     String mqttPath = utils.getMqttUniqueIdOrPath(_state.channel.controlPin,
     _state.channel.homeAssistantTopicType,
