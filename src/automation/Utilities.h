@@ -45,7 +45,41 @@ struct ScheduledTime {
   bool isOverrideActive;
   bool isEnableMinimumRunTime;
 }; 
-
+struct Schedule {
+    int  runEvery;         // run every 30 mins
+    int  offAfter;         // stop after 5 mins
+    int  startTimeHour;    // 8
+    int  startTimeMinute;  // 30
+    int  endTimeHour;      // 16
+    int  endTimeMinute;    // 30
+    bool isOverride;       // when true ignore schedule run
+    int  hotTimeHour;      // default 0 hours [0-16]
+    bool    isOverrideActive;
+    int  overrideTime;     // time to override schedule
+};
+struct Channel {
+    bool  controlOn;
+    uint8_t controlPin;
+    uint8_t homeAssistantTopicType;
+    String homeAssistantIcon;
+    int  startTime;
+    int  endTime;
+    bool    enabled;
+    String  name;            // control name e.g, Pump
+    Schedule schedule;
+    bool    enableTimeSpan;  // when enable control is on between startTime and endTime
+    String  channelEndPoint; //
+    String  lastStartedChangeTime;  //last time the switch was toggled
+    String  nextRunTime;
+    bool    randomize;      // when enabled randomize the on/off
+    String localDateTime;
+    String IP;
+    bool isHotScheduleActive;
+    String offHotHourDateTime;
+    String controlOffDateTime;
+    String uniqueId;
+    bool enableMinimumRunTime; // when enabled in randomize time runs at least this minimum time
+};
 class Utilities {
 public:
   String eraseLineFeed(std::string str){
@@ -205,6 +239,83 @@ public:
 
     return relativePath;
   }
+
+  static String formatTime(int hour, int minute){
+    String hours = String(hour/3600);
+    int intMinutes = minute/60;
+    String strMins = ":" + String(intMinutes);
+    
+    if(intMinutes < 10){
+      if(intMinutes < 1){
+        strMins = ":00";
+      }
+      else{
+        strMins = ":0"+String(intMinutes);
+      }
+    }
+    return (hours + strMins);
+  }
+
+  static String makeConfigPayload(boolean payloadStatus, Channel channel){
+    String status = payloadStatus ? "ON" : "OFF";
+    
+    String iotAdminUrl = "http://" + channel.IP + getDeviceChannelUrl(channel.controlPin);
+    
+    String payload = "{\"state\":\"" + status +"\",\"iotAdminUrl\":\"" + iotAdminUrl + "\"";
+
+    if(!channel.enabled){
+      return(payload + "}");
+    }
+
+    String startTime = formatTime(channel.schedule.startTimeHour, channel.schedule.startTimeMinute);
+    String endTime = formatTime(channel.schedule.endTimeHour, channel.schedule.endTimeMinute);
+    
+    payload = payload + ",\"startTime\":\"" + startTime + "\",\"endTime\":\"" + endTime  + "\"";
+
+    if(channel.enableTimeSpan){
+      return(payload + "}");
+    }
+
+    payload = payload + ",\"runEvery\":\"" + formatTimePeriod(channel.schedule.runEvery) + "\",\"offAfter\":\"" + formatTimePeriod(channel.schedule.offAfter) + "\"";
+
+    if(!channel.randomize){
+      return(payload + "}");
+    }
+
+    if(channel.schedule.hotTimeHour > 0){
+      payload = payload + ",\"hotTime\":\"" + formatTimePeriod(channel.schedule.hotTimeHour) + "\"";
+    }
+
+    if(!channel.enableMinimumRunTime){
+      return(payload + "}");
+    }
+    return(payload + ",\"minimumRunTime\":\"true\"}");
+  }
+
+  static String formatTimePeriod(int timePeriod){
+    byte hours = timePeriod/3600;
+    byte minutes = (timePeriod-hours*3600)/60;
+    byte seconds = timePeriod%60;
+    String period;
+    if(hours > 0){
+      period = String(hours) + "h";
+      if(minutes > 0){
+      period = period + "-" + String(minutes) +"m";
+      }
+      if(seconds > 0){
+        period = period + "-" + String(seconds) + "s";
+      }
+    }else if(minutes > 0){
+      period = period + String(minutes) +"m";
+      if(seconds > 0){
+        period = period + "-" + String(seconds) + "s";
+      }
+    }else if(seconds > 0){
+      period = String(seconds) + "s";
+    }
+    return period;
+  }
+
 };
 
 extern Utilities utils;  // make an instance for the user

@@ -130,7 +130,7 @@ void ChannelStateService::registerConfig() {
   String subTopic;
   String pubTopic;
 
-  DynamicJsonDocument doc(512);
+  DynamicJsonDocument doc(768);
   _channelMqttSettingsService->read([&](ChannelMqttSettings& settings) {
     String mqttPath = utils.getMqttUniqueIdOrPath(_state.channel.controlPin,
     _state.channel.homeAssistantTopicType,
@@ -158,17 +158,12 @@ void ChannelStateService::registerConfig() {
     doc["cmd_t"] = "~/set";
     doc["stat_t"] = "~/state";
 
-    String iotAdminUrl = "http://" + _state.channel.IP +  utils.getDeviceChannelUrl(_state.channel.controlPin);
-
-    String payloadOn = "{\"state\":\"ON\",\"iotAdminUrl\":\"" + iotAdminUrl +"\"}";
-    String payloadOff = "{\"state\":\"OFF\",\"iotAdminUrl\":\"" + iotAdminUrl +"\"}";
-
     switch (_state.channel.homeAssistantTopicType)
     {
       case HOMEASSISTANT_TOPIC_TYPE_SWITCH:
         doc["icon"] = _state.channel.homeAssistantIcon; //"mdi:water-pump";
-        doc["payload_on"] = payloadOn;
-        doc["payload_off"] = payloadOff;
+        doc["payload_on"] = utils.makeConfigPayload(true, _state.channel);
+        doc["payload_off"] = utils.makeConfigPayload(false, _state.channel);
         break;
       default:
         doc["schema"] = "json";

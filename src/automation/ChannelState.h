@@ -16,44 +16,6 @@ struct CurrentTime {
   int totalCurrentTimeInSec;
 };
 
-struct Schedule {
-    int  runEvery;         // run every 30 mins
-    int  offAfter;         // stop after 5 mins
-    int  startTimeHour;    // 8
-    int  startTimeMinute;  // 30
-    int  endTimeHour;      // 16
-    int  endTimeMinute;    // 30
-    bool isOverride;       // when true ignore schedule run
-    int  hotTimeHour;      // default 0 hours [0-16]
-    bool    isOverrideActive;
-    int  overrideTime;     // time to override schedule
-};
-
-
-struct Channel {
-    bool  controlOn;
-    uint8_t controlPin;
-    uint8_t homeAssistantTopicType;
-    String homeAssistantIcon;
-    int  startTime;
-    int  endTime;
-    bool    enabled;
-    String  name;            // control name e.g, Pump
-    Schedule schedule;
-    bool    enableTimeSpan;  // when enable control is on between startTime and endTime
-    String  channelEndPoint; //
-    String  lastStartedChangeTime;  //last time the switch was toggled
-    String  nextRunTime;
-    bool    randomize;      // when enabled randomize the on/off
-    String localDateTime;
-    String IP;
-    bool isHotScheduleActive;
-    String offHotHourDateTime;
-    String controlOffDateTime;
-    String uniqueId;
-    bool enableMinimumRunTime; // when enabled in randomize time runs at least this minimum time
-};
-
 class ChannelState {
 public:
  Channel channel;
@@ -80,6 +42,25 @@ public:
   static void haRead(ChannelState& settings, JsonObject& root) {
     root["state"] = settings.channel.controlOn ? ON_STATE : OFF_STATE;
     root["iotAdminUrl"] = "http://" + settings.channel.IP + utils.getDeviceChannelUrl(settings.channel.controlPin);
+    if(settings.channel.enabled){
+      root["startTime"] = utils.formatTime(settings.channel.schedule.startTimeHour, settings.channel.schedule.startTimeMinute);
+      root["endTime"] = utils.formatTime(settings.channel.schedule.endTimeHour, settings.channel.schedule.endTimeMinute);
+
+      if(!settings.channel.enableTimeSpan){
+        root["runEvery"] = utils.formatTimePeriod(settings.channel.schedule.runEvery);
+        root["offAfter"] = utils.formatTimePeriod(settings.channel.schedule.offAfter);
+
+        if(settings.channel.randomize){
+          if(settings.channel.schedule.hotTimeHour > 0){
+            root["hotTimeHour"] = utils.formatTimePeriod(settings.channel.schedule.hotTimeHour);
+          }
+
+          if(settings.channel.enableMinimumRunTime){
+            root["minimumRunTime"] = settings.channel.enableMinimumRunTime;
+          }
+        }
+      }
+    }
   }
 
   static StateUpdateResult haUpdate(JsonObject& root, ChannelState& settings) {
