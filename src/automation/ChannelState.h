@@ -23,7 +23,7 @@ public:
     readChannel(settings.channel, root);
   }
 
- static StateUpdateResult update(JsonObject& root, ChannelState& settings) {
+  static StateUpdateResult update(JsonObject& root, ChannelState& settings) {
     if (dataIsValid(root, settings)) {
       updateChannel(root, settings.channel, false);
       return StateUpdateResult::CHANGED;
@@ -31,7 +31,7 @@ public:
     return StateUpdateResult::UNCHANGED;
   }
   
-   static StateUpdateResult wsUpdate(JsonObject& root, ChannelState& settings) {
+  static StateUpdateResult wsUpdate(JsonObject& root, ChannelState& settings) {
     if (dataIsValid(root, settings)) {
       updateChannel(root, settings.channel, true);
       return StateUpdateResult::CHANGED;
@@ -41,10 +41,14 @@ public:
 
   static void haRead(ChannelState& settings, JsonObject& root) {
     root["state"] = settings.channel.controlOn ? ON_STATE : OFF_STATE;
-    root["iotAdminUrl"] = "http://" + settings.channel.IP + utils.getDeviceChannelUrl(settings.channel.controlPin);
+    root["iotAdminUrl"] = utils.getDeviceChannelUrl(settings.channel);
     if(settings.channel.enabled){
       root["startTime"] = utils.formatTime(settings.channel.schedule.startTimeHour, settings.channel.schedule.startTimeMinute);
       root["endTime"] = utils.formatTime(settings.channel.schedule.endTimeHour, settings.channel.schedule.endTimeMinute);
+
+      if(settings.channel.schedule.overrideTime > 0){
+        root["overrideTime"] = utils.formatTimePeriod(settings.channel.schedule.overrideTime);
+      }
 
       if(!settings.channel.enableTimeSpan){
         root["runEvery"] = utils.formatTimePeriod(settings.channel.schedule.runEvery);
@@ -56,26 +60,29 @@ public:
           }
 
           if(settings.channel.enableMinimumRunTime){
-            root["minimumRunTime"] = settings.channel.enableMinimumRunTime;
+            root["enableMinimumRunTime"] = "true";
           }
         }
       }
+    }else{
+      root["scheduleDisabled"] = "true";
     }
   }
 
   static StateUpdateResult haUpdate(JsonObject& root, ChannelState& settings) {
     String state = root["state"];
     settings.channel.controlOn = strcmp(ON_STATE, state.c_str()) ? false : true;
-    settings.channel.schedule.isOverride = true;
     boolean newState = false;
     if (state.equals(ON_STATE)) {
       newState = true;
     } else if (!state.equals(OFF_STATE)) {
       return StateUpdateResult::ERROR;
     }
+
     // change the new state, if required
     if (settings.channel.controlOn  != newState) {
       settings.channel.controlOn  = newState;
+      settings.channel.schedule.isOverride = true;
       return StateUpdateResult::CHANGED;
     }
     return StateUpdateResult::UNCHANGED;

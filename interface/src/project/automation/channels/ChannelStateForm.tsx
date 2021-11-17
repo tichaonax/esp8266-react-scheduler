@@ -109,7 +109,7 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
           break;
       }
     }
-  },[loader, enqueueSnackbar, channels, data.controlPin, restartSuccessMessage]);
+  },[loader, enqueueSnackbar, channels, data.controlPin]);
 
     const restartSchedule = () => {
       switch (data.controlPin) {
@@ -130,9 +130,30 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
       }
     }
   
+    const checkForRequiredValues = () => {
+      if(data.enableTimeSpan) return true;
+      
+      if(!(data.schedule.runEvery > 0)){
+        enqueueSnackbar("RunEvery required!", { variant: 'error' });
+        return false;
+      }
+
+      if(!(data.schedule.offAfter > 0)){
+        enqueueSnackbar("OffAfter required!", { variant: 'error' });
+        return false;
+      }
+
+      if(!(data.schedule.runEvery > data.schedule.offAfter)){
+        enqueueSnackbar("RunEvery must be greater than OffAfter!", { variant: 'error' });
+        return false;
+      }
+      return true;
+    }
     const saveFormAndRestartSchedule = () => {
-      saveData();
-      restartSchedule();
+      if(checkForRequiredValues()){
+        saveData();
+        restartSchedule();
+      }
     }
 
     const makeDateFromTime = (hour: number, minute: number) => {

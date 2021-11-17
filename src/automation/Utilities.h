@@ -212,9 +212,9 @@ public:
       SettingValue::format(topicHeader + homeAssistantEntity + "-pin-" + String(controlPin) + "/#{unique_id}");
   }
 
-  static String getDeviceChannelUrl(int controlPin){
+  static String getDeviceChannelUrl(Channel channel){
     String relativePath;
-    switch (controlPin)
+    switch (channel.controlPin)
     {
       case CHANNEL_ONE_CONTROL_PIN:
         relativePath = "/project/auto/channelOne";
@@ -237,7 +237,7 @@ public:
       break;
     }
 
-    return relativePath;
+    return "http://" + channel.IP + relativePath;
   }
 
   static String formatTime(int hour, int minute){
@@ -259,18 +259,22 @@ public:
   static String makeConfigPayload(boolean payloadStatus, Channel channel){
     String status = payloadStatus ? "ON" : "OFF";
     
-    String iotAdminUrl = "http://" + channel.IP + getDeviceChannelUrl(channel.controlPin);
+    String iotAdminUrl = getDeviceChannelUrl(channel);
     
     String payload = "{\"state\":\"" + status +"\",\"iotAdminUrl\":\"" + iotAdminUrl + "\"";
 
     if(!channel.enabled){
-      return(payload + "}");
+      return(payload + ",\"scheduleDisabled\":\"true\"}");
     }
 
     String startTime = formatTime(channel.schedule.startTimeHour, channel.schedule.startTimeMinute);
     String endTime = formatTime(channel.schedule.endTimeHour, channel.schedule.endTimeMinute);
     
     payload = payload + ",\"startTime\":\"" + startTime + "\",\"endTime\":\"" + endTime  + "\"";
+
+    if(channel.schedule.overrideTime > 0){
+      payload = payload + ",\"overrideTime\":\"" + formatTimePeriod(channel.schedule.overrideTime) + "\"";
+    }
 
     if(channel.enableTimeSpan){
       return(payload + "}");
@@ -283,13 +287,13 @@ public:
     }
 
     if(channel.schedule.hotTimeHour > 0){
-      payload = payload + ",\"hotTime\":\"" + formatTimePeriod(channel.schedule.hotTimeHour) + "\"";
+      payload = payload + ",\"hotTimeHour\":\"" + formatTimePeriod(channel.schedule.hotTimeHour) + "\"";
     }
 
     if(!channel.enableMinimumRunTime){
       return(payload + "}");
     }
-    return(payload + ",\"minimumRunTime\":\"true\"}");
+    return(payload + ",\"enableMinimumRunTime\":\"true\"}");
   }
 
   static String formatTimePeriod(int timePeriod){

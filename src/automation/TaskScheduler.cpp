@@ -445,6 +445,7 @@ int TaskScheduler::getScheduleTimeSpanOff(){
 }
 
 void TaskScheduler::scheduleRestart(bool isTurnOffSwitch, bool isResetOverride){
+  _channelStateService.mqttRepublish();
   tickerDetachAll();
   setScheduleTimes();
 
