@@ -9,8 +9,8 @@
   #ifdef SINILINK
     #ifdef CHANNEL_ONE
       #define CHANNEL_ONE_CONTROL_PIN 4
-    else
-        #define CHANNEL_ONE_CONTROL_PIN 5
+    #else
+      #define CHANNEL_ONE_CONTROL_PIN 5
     #endif
   #else
     #define CHANNEL_ONE_CONTROL_PIN 5
@@ -45,7 +45,7 @@
     #ifdef CHANNEL_TWO
       #define CHANNEL_TWO_CONTROL_PIN 4
     #else
-        #define CHANNEL_TWO_CONTROL_PIN 12
+      #define CHANNEL_TWO_CONTROL_PIN 12
     #endif
   #else
     #define CHANNEL_TWO_CONTROL_PIN 12
@@ -79,7 +79,7 @@
     #ifdef CHANNEL_THREE
       #define CHANNEL_THREE_CONTROL_PIN 4
     #else
-        #define CHANNEL_THREE_CONTROL_PIN 13
+      #define CHANNEL_THREE_CONTROL_PIN 13
     #endif
   #else
     #define CHANNEL_THREE_CONTROL_PIN 13
@@ -113,7 +113,7 @@
     #ifdef CHANNEL_FOUR
       #define CHANNEL_FOUR_CONTROL_PIN 4
     #else
-        #define CHANNEL_FOUR_CONTROL_PIN 14
+      #define CHANNEL_FOUR_CONTROL_PIN 14
     #endif
   #else
     #define CHANNEL_FOUR_CONTROL_PIN 14
