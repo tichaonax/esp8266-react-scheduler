@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { RestFormLoader, SectionContent, RestControllerProps } from '../../components';
+import { RestFormLoader, SectionContent, RestControllerProps } from '../../../components';
 
 import ChannelStateForm from './ChannelStateForm';
-import { ChannelState } from '../automation/redux/types/channel';
+import { ChannelState } from '../redux/types/channel';
 
 type ChannelStateRestControllerFormProps = RestControllerProps<ChannelState>;
 const ChannelSectionContent = (props : ChannelStateRestControllerFormProps) => {

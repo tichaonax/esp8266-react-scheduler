@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { WEB_SOCKET_ROOT } from '../../api';
-import { WebSocketControllerProps, WebSocketFormLoader, webSocketController } from '../../components';
+import { WEB_SOCKET_ROOT } from '../../../api';
+import { WebSocketControllerProps, WebSocketFormLoader, webSocketController } from '../../../components';
 
-import { SystemState } from './redux/types/system';
+import { SystemState } from '../redux/types/system';
 import SystemStateWebSocketControllerForm from './SystemStateWebSocketControllerForm';
 
 export const SYSTEM_STATE_WEBSOCKET_URL = WEB_SOCKET_ROOT + "systemState";

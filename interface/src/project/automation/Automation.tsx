@@ -7,10 +7,10 @@ import { PROJECT_PATH, CHANNEL_ONE, CHANNEL_TWO, CHANNEL_THREE, CHANNEL_FOUR } f
 import { MenuAppBar } from '../../components';
 import { AuthenticatedRoute } from '../../authentication';
 
-import ChannelOne from './ChannelOne';
-import ChannelTwo from './ChannelTwo';
-import ChannelThree from './ChannelThree';
-import ChannelFour from './ChannelFour';
+import ChannelOne from './channels/ChannelOne';
+import ChannelTwo from './channels/ChannelTwo';
+import ChannelThree from './channels/ChannelThree';
+import ChannelFour from './channels/ChannelFour';
 //import AutoInformation from './AutoInformation';
 
 class Automation extends Component<RouteComponentProps> {

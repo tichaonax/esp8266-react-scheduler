@@ -4,12 +4,14 @@
 #include "Homeassistant.h"
 
 #ifdef CHANNEL_ONE_LIGHT
-  // onboard relay control pin = 5
   #define CHANNEL_ONE_CONTROL_PIN 5 // use channel 3
 #else
   #ifdef SINILINK
-    // onboard relay control pin = 4
-    #define CHANNEL_ONE_CONTROL_PIN 4
+    #ifdef CHANNEL_ONE
+      #define CHANNEL_ONE_CONTROL_PIN 4
+    #else
+      #define CHANNEL_ONE_CONTROL_PIN 5
+    #endif
   #else
     #define CHANNEL_ONE_CONTROL_PIN 5
   #endif
@@ -19,6 +21,7 @@
 #define CHANNEL_ONE_SOCKET_PATH "/ws/channelOneState"  // webSocketChannelEndPoint
 #define CHANNEL_ONE_CONFIG_JSON_PATH "/config/channelOneState.json"  // channelJsonConfigPath
 #define CHANNEL_ONE_HOME_ASSISTANT_ENTITY "ch1"
+#define CHANNEL_ONE_DEFAULT_CONTROL_MIN_RUN_EVERY 15.0f
 #define CHANNEL_ONE_DEFAULT_CONTROL_RUN_EVERY 15.0f
 #define CHANNEL_ONE_DEFAULT_CONTROL_OFF_AFTER 5.0f
 #define CHANNEL_ONE_DEFAULT_CONTROL_START_TIME_HOUR 2
@@ -35,12 +38,14 @@
 #define CHANNEL_ONE_HOMEASSISTANT_ICON MDI_LIGHTBULB
 
 #ifdef CHANNEL_TWO_LIGHT
-  // onboard relay control pin = 5
   #define CHANNEL_TWO_CONTROL_PIN 5
 #else
   #ifdef SINILINK
-    // onboard relay control pin = 4
-    #define CHANNEL_TWO_CONTROL_PIN 4
+    #ifdef CHANNEL_TWO
+      #define CHANNEL_TWO_CONTROL_PIN 4
+    #else
+      #define CHANNEL_TWO_CONTROL_PIN 12
+    #endif
   #else
     #define CHANNEL_TWO_CONTROL_PIN 12
   #endif
@@ -67,12 +72,14 @@
 #define CHANNEL_TWO_HOMEASSISTANT_ICON MDI_FRIDGE
 
 #ifdef CHANNEL_THREE_LIGHT
-  // onboard relay control pin = 5
   #define CHANNEL_THREE_CONTROL_PIN 5
 #else
   #ifdef SINILINK
-    // onboard relay control pin = 4
-    #define CHANNEL_THREE_CONTROL_PIN 4
+    #ifdef CHANNEL_THREE
+      #define CHANNEL_THREE_CONTROL_PIN 4
+    #else
+      #define CHANNEL_THREE_CONTROL_PIN 13
+    #endif
   #else
     #define CHANNEL_THREE_CONTROL_PIN 13
   #endif
@@ -99,12 +106,14 @@
 #define CHANNEL_THREE_HOMEASSISTANT_ICON MDI_POWER
 
 #ifdef CHANNEL_FOUR_LIGHT
-  // onboard relay control pin = 5p
   #define CHANNEL_FOUR_CONTROL_PIN 5
 #else
   #ifdef SINILINK
-    // onboard relay control pin = 4
-    #define CHANNEL_FOUR_CONTROL_PIN 4
+    #ifdef CHANNEL_FOUR
+      #define CHANNEL_FOUR_CONTROL_PIN 4
+    #else
+      #define CHANNEL_FOUR_CONTROL_PIN 14
+    #endif
   #else
     #define CHANNEL_FOUR_CONTROL_PIN 14
   #endif

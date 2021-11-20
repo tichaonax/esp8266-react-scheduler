@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 
-import { ENDPOINT_ROOT } from '../../api';
-import { restController, RestControllerProps, RestFormLoader, SectionContent } from '../../components';
+import { ENDPOINT_ROOT } from '../../../api';
+import { restController, RestControllerProps, RestFormLoader, SectionContent } from '../../../components';
 
-import { ChannelMqttSettings } from './types';
+import { ChannelMqttSettings } from '../types';
 import ChannelMqttSettingsControllerForm from './ChannelMqttSettingsControllerForm';
 
 export const CHANNEL_BROKER_SETTINGS_ENDPOINT = ENDPOINT_ROOT + "c2";

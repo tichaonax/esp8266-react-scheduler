@@ -4,9 +4,9 @@ import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 import { Typography, Box } from '@material-ui/core';
 import SaveIcon from '@material-ui/icons/Save';
 
-import { RestFormProps, FormActions, FormButton } from '../../components';
-import { ChannelMqttSettings } from './types';
-import SystemStateWebSocketController from './SystemStateWebSocketController';
+import { RestFormProps, FormActions, FormButton } from '../../../components';
+import { ChannelMqttSettings } from '../types';
+import SystemStateWebSocketController from '../ws/SystemStateWebSocketController';
 
 type ChannelMqttSettingsControllerFormProps = RestFormProps<ChannelMqttSettings>;
 

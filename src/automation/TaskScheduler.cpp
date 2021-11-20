@@ -223,20 +223,20 @@ void TaskScheduler::reScheduleTasks(){
 }
 
 void TaskScheduler::setSchedule(bool isReschedule){
-  Serial.println(F(""));
-  Serial.print(F("Current Time: "));
+  debugln(F(""));
+  debug(F("Current Time: "));
   digitalClockDisplay();
-  Serial.print(_channel.name);
-  Serial.print(": " );
+  debug(_channel.name);
+  debug(": " );
   _isReschedule = isReschedule;
   if(_channel.enabled){
     reScheduleTasks();
     ScheduledTime schedule = getNextRunTime();
-    //printSchedule(schedule);
+    printSchedule(schedule);
     if (schedule.scheduleTime <= 0) { schedule.scheduleTime = 1; } 
-    Serial.print(F("Time to next task run: "));
-    Serial.print(schedule.scheduleTime);
-    Serial.println(F("s"));
+    debug(F("Time to next task run: "));
+    debug(schedule.scheduleTime);
+    debugln(F("s"));
     ScheduleTime = schedule.scheduleTime;
 
     if(schedule.isHotSchedule){scheduleHotTaskTicker(schedule);}
@@ -250,8 +250,8 @@ void TaskScheduler::setSchedule(bool isReschedule){
     _channelStateService.update([&](ChannelState& channelState) {
       channelState.channel.lastStartedChangeTime = utils.strLocalTime();
       channelState.channel.nextRunTime = utils.strDeltaLocalTime(schedule.scheduleTime);
-      Serial.print(F("Task set to start at : "));
-      Serial.println(channelState.channel.nextRunTime);
+      debug(F("Task set to start at : "));
+      debugln(channelState.channel.nextRunTime);
       return StateUpdateResult::CHANGED;
     }, _channel.name);
   }
@@ -324,38 +324,38 @@ int TaskScheduler::getRandomOffTimeSpan(){
 }
 
 void TaskScheduler::printSchedule(ScheduledTime schedule){
-  Serial.println(F(" "));
-  Serial.print(F("channelName:         "));
-  Serial.println(schedule.channelName);
-  Serial.print(F("scheduleTime:        "));
-  Serial.println(schedule.scheduleTime);
-  Serial.print(F("isHotSchedule:       "));
-  Serial.println(schedule.isHotSchedule);
-  Serial.print(F("isSpanSchedule:      "));
-  Serial.println(schedule.isSpanSchedule);
-  Serial.print(F("isHotScheduleActive:        "));
-  Serial.println(schedule.isHotScheduleActive);
-  Serial.print(F("isRunTaskNow:        "));
-  Serial.println(schedule.isRunTaskNow);
-  Serial.print(F("currentTime:                 "));
-  Serial.print(ctime(&schedule.currentTime));
-  Serial.print(F("startTime:                   "));
-  Serial.println(schedule.startTime);
-  Serial.print(F("endTime:                     "));
-  Serial.println(schedule.endTime);
-  Serial.print(F("scheduleStartDateTime:       "));
-  Serial.print(ctime(&schedule.scheduleStartDateTime));
-  Serial.print(F("scheduleHotTimeEndDateTime:  "));
-  Serial.print(ctime(&schedule.scheduleHotTimeEndDateTime));
-  Serial.print(F("scheduleEndDateTime:         "));
-  Serial.print(ctime(&schedule.scheduleEndDateTime));
-  Serial.print(F("isOverride:                  "));
-  Serial.println(_channel.schedule.isOverride);
-  Serial.print(F("isOverrideActive:            "));
-  Serial.println(schedule.isOverrideActive);
-  Serial.print(F("overrideTime:            "));
-  Serial.print(_channel.schedule.overrideTime);
-  Serial.println(F("s"));
+  debugln(F(" "));
+  debug(F("channelName:         "));
+  debugln(schedule.channelName);
+  debug(F("scheduleTime:        "));
+  debugln(schedule.scheduleTime);
+  debug(F("isHotSchedule:       "));
+  debugln(schedule.isHotSchedule);
+  debug(F("isSpanSchedule:      "));
+  debugln(schedule.isSpanSchedule);
+  debug(F("isHotScheduleActive:        "));
+  debugln(schedule.isHotScheduleActive);
+  debug(F("isRunTaskNow:        "));
+  debugln(schedule.isRunTaskNow);
+  debug(F("currentTime:                 "));
+  debug(ctime(&schedule.currentTime));
+  debug(F("startTime:                   "));
+  debugln(schedule.startTime);
+  debug(F("endTime:                     "));
+  debugln(schedule.endTime);
+  debug(F("scheduleStartDateTime:       "));
+  debug(ctime(&schedule.scheduleStartDateTime));
+  debug(F("scheduleHotTimeEndDateTime:  "));
+  debug(ctime(&schedule.scheduleHotTimeEndDateTime));
+  debug(F("scheduleEndDateTime:         "));
+  debug(ctime(&schedule.scheduleEndDateTime));
+  debug(F("isOverride:                  "));
+  debugln(_channel.schedule.isOverride);
+  debug(F("isOverrideActive:            "));
+  debugln(schedule.isOverrideActive);
+  debug(F("overrideTime:            "));
+  debug(_channel.schedule.overrideTime);
+  debugln(F("s"));
 }
 
 void TaskScheduler::runTask(){
@@ -418,11 +418,11 @@ void TaskScheduler::controlOff(){
 
 void TaskScheduler::digitalClockDisplay() {
   time_t tnow = time(nullptr);
-  Serial.print(ctime(&tnow));
+  debug(ctime(&tnow));
 }
 
 void TaskScheduler::digitalClockDisplay(time_t tnow) {
-  Serial.println(ctime(&tnow));
+  debugln(ctime(&tnow));
 }
 
 int TaskScheduler::getScheduleTimeSpanOff(){
@@ -445,6 +445,7 @@ int TaskScheduler::getScheduleTimeSpanOff(){
 }
 
 void TaskScheduler::scheduleRestart(bool isTurnOffSwitch, bool isResetOverride){
+  _channelStateService.mqttRepublish();
   tickerDetachAll();
   setScheduleTimes();
 

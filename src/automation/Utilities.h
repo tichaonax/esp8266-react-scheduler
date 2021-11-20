@@ -5,6 +5,17 @@
 #include <HttpEndpoint.h>
 #include <SettingValue.h>
 #include "Homeassistant.h"
+#include "Channels.h"
+
+#define DEBUG 0
+
+#if DEBUG == 1
+  #define debug(x) Serial.print(x)
+  #define debugln(x) Serial.println(x)
+#else
+  #define debug(x)
+  #define debugln(x)
+#endif // DEBUG
 
 #define CONTROL_ON 0x1
 #define CONTROL_OFF 0x0
@@ -34,7 +45,41 @@ struct ScheduledTime {
   bool isOverrideActive;
   bool isEnableMinimumRunTime;
 }; 
-
+struct Schedule {
+    int  runEvery;         // run every 30 mins
+    int  offAfter;         // stop after 5 mins
+    int  startTimeHour;    // 8
+    int  startTimeMinute;  // 30
+    int  endTimeHour;      // 16
+    int  endTimeMinute;    // 30
+    bool isOverride;       // when true ignore schedule run
+    int  hotTimeHour;      // default 0 hours [0-16]
+    bool    isOverrideActive;
+    int  overrideTime;     // time to override schedule
+};
+struct Channel {
+    bool  controlOn;
+    uint8_t controlPin;
+    uint8_t homeAssistantTopicType;
+    String homeAssistantIcon;
+    int  startTime;
+    int  endTime;
+    bool    enabled;
+    String  name;            // control name e.g, Pump
+    Schedule schedule;
+    bool    enableTimeSpan;  // when enable control is on between startTime and endTime
+    String  channelEndPoint; //
+    String  lastStartedChangeTime;  //last time the switch was toggled
+    String  nextRunTime;
+    bool    randomize;      // when enabled randomize the on/off
+    String localDateTime;
+    String IP;
+    bool isHotScheduleActive;
+    String offHotHourDateTime;
+    String controlOffDateTime;
+    String uniqueId;
+    bool enableMinimumRunTime; // when enabled in randomize time runs at least this minimum time
+};
 class Utilities {
 public:
   String eraseLineFeed(std::string str){
@@ -166,6 +211,123 @@ public:
       SettingValue::format(topicType + "-pin-" + String(controlPin) + "-#{unique_id}") :
       SettingValue::format(topicHeader + homeAssistantEntity + "-pin-" + String(controlPin) + "/#{unique_id}");
   }
+
+  static String getDeviceChannelUrl(Channel channel){
+    String relativePath;
+    switch (channel.controlPin)
+    {
+      case CHANNEL_ONE_CONTROL_PIN:
+        relativePath = "/project/auto/channelOne";
+      break;
+
+      case CHANNEL_TWO_CONTROL_PIN:
+        relativePath = "/project/auto/channelTwo";
+      break;
+
+      case CHANNEL_THREE_CONTROL_PIN:
+        relativePath = "/project/auto/channelThree";
+      break;
+
+      case CHANNEL_FOUR_CONTROL_PIN:
+        relativePath = "/project/auto/channelFour";
+      break;
+
+      default:
+        relativePath = "";
+      break;
+    }
+
+    return "http://" + channel.IP + relativePath;
+  }
+
+  static String formatTime(int hour, int minute){
+    String hours = String(hour/3600);
+    int intMinutes = minute/60;
+    String strMins = ":" + String(intMinutes);
+    
+    if(intMinutes < 10){
+      if(intMinutes < 1){
+        strMins = ":00";
+      }
+      else{
+        strMins = ":0"+String(intMinutes);
+      }
+    }
+    return (hours + strMins);
+  }
+
+  static String makeConfigPayload(boolean payloadStatus, Channel channel){
+    String status = payloadStatus ? "ON" : "OFF";
+    
+    String iotAdminUrl = getDeviceChannelUrl(channel);
+    
+    String payload = "{\"state\":\"" + status +"\",\"iotAdminUrl\":\"" + iotAdminUrl + "\"";
+
+    payload = payload + ",\"controlPin\":" + channel.controlPin;
+
+    payload = payload + ",\"channelName\":\"" + channel.name  + "\"";
+    
+    payload = payload + ",\"MAC\":\"" + SettingValue::format("#{unique_id}")  + "\"";
+
+    payload = payload + ",\"IP\":\"" + channel.IP  + "\"";
+    
+    if(!channel.enabled){
+      return(payload + ",\"scheduleDisabled\":\"true\"}");
+    }
+
+    String startTime = formatTime(channel.schedule.startTimeHour, channel.schedule.startTimeMinute);
+    String endTime = formatTime(channel.schedule.endTimeHour, channel.schedule.endTimeMinute);
+    
+    payload = payload + ",\"startTime\":\"" + startTime + "\",\"endTime\":\"" + endTime  + "\"";
+
+    if(channel.schedule.overrideTime > 0){
+      payload = payload + ",\"overrideTime\":\"" + formatTimePeriod(channel.schedule.overrideTime) + "\"";
+    }
+
+    if(channel.enableTimeSpan){
+      return(payload + "}");
+    }
+
+    payload = payload + ",\"runEvery\":\"" + formatTimePeriod(channel.schedule.runEvery) + "\",\"offAfter\":\"" + formatTimePeriod(channel.schedule.offAfter) + "\"";
+
+    if(!channel.randomize){
+      return(payload + "}");
+    }
+
+    if(channel.schedule.hotTimeHour > 0){
+      payload = payload + ",\"hotTimeHour\":\"" + formatTimePeriod(channel.schedule.hotTimeHour) + "\"";
+    }
+
+    if(!channel.enableMinimumRunTime){
+      return(payload + "}");
+    }
+    return(payload + ",\"enableMinimumRunTime\":\"true\"}");
+  }
+
+  static String formatTimePeriod(int timePeriod){
+    byte hours = timePeriod/3600;
+    byte minutes = (timePeriod-hours*3600)/60;
+    byte seconds = timePeriod%60;
+    String period;
+    if(hours > 0){
+      period = String(hours) + "h";
+      if(minutes > 0){
+      period = period + "-" + String(minutes) +"m";
+      }
+      if(seconds > 0){
+        period = period + "-" + String(seconds) + "s";
+      }
+    }else if(minutes > 0){
+      period = period + String(minutes) +"m";
+      if(seconds > 0){
+        period = period + "-" + String(seconds) + "s";
+      }
+    }else if(seconds > 0){
+      period = String(seconds) + "s";
+    }
+    return period;
+  }
+
 };
 
 extern Utilities utils;  // make an instance for the user

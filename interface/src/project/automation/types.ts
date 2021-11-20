@@ -16,6 +16,7 @@ export interface LightState {
     endTimeHour: number;
     endTimeMinute: number;
     hotTimeHour: number;
+    overrideTime: number;
  }
 
   export interface ChannelState {

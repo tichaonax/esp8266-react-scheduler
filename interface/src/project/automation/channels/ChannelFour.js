@@ -3,12 +3,12 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Typography from '@material-ui/core/Typography';
 import 'react-tabs/style/react-tabs.css';
 
-import { SectionContent } from '../../components';
-import ChannelOneStateRestController from './ChannelOneStateRestController';
-import ChannelOneWebSocketController from './ChannelOneWebSocketController';
-import ChannelOneMqttSettingsController from './ChannelOneMqttSettingsController';
+import { SectionContent } from '../../../components';
+import ChannelFourStateRestController from '../rest/ChannelFourStateRestController';
+import ChannelFourWebSocketController from '../ws/ChannelFourWebSocketController';
+import ChannelFourMqttSettingsController from '../mqtt/ChannelFourMqttSettingsController';
 
-const ChannelOne = () => {
+const ChannelFour = () => {
   return(
     <SectionContent title='' titleGutter>
     <Tabs>
@@ -30,17 +30,17 @@ const ChannelOne = () => {
         </Tab>
       </TabList>
       <TabPanel style={{marginLeft: -23, marginRight: -23, marginTop: -35}}>
-        <ChannelOneStateRestController/>
+        <ChannelFourStateRestController/>
       </TabPanel>
       <TabPanel style={{marginLeft: -23, marginRight: -23, marginTop: -35}}>
-        <ChannelOneMqttSettingsController/>
+        <ChannelFourMqttSettingsController/>
       </TabPanel>
       <TabPanel>
-        <ChannelOneWebSocketController/>
+        <ChannelFourWebSocketController/>
       </TabPanel>
     </Tabs>
     </SectionContent>
   );
 }
 
-export default ChannelOne;
+export default ChannelFour;

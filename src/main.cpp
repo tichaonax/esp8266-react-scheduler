@@ -3,7 +3,6 @@
 
 #include "./automation/Utilities.h"
 #include "./automation/ChannelMqttSettingsService.h"
-#include "./automation/Channels.h"
 #include "./automation/TaskScheduler.h"
 #include "./automation/ChannelStateService.h"
 #include "./automation/ChannelScheduleRestartService.h"

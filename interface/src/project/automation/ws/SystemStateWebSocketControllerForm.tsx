@@ -1,8 +1,8 @@
 import React from 'react';
 import { Typography } from '@material-ui/core';
-import { WebSocketFormProps } from '../../components';
+import { WebSocketFormProps } from '../../../components';
 
-import { SystemState } from './redux/types/system';
+import { SystemState } from '../redux/types/system';
 
 type SystemStateWebSocketControllerFormProps = WebSocketFormProps<SystemState>;
 

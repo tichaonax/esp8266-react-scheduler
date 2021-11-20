@@ -41,7 +41,7 @@ class AutoInformation extends Component {
           </ListItem> 
           <ListItem>
             <ListItemText
-              primary="Randomize Switch?"
+              primary="Randomize Switch"
               secondary="When checked enables 'Hot Time' feature, the switch is on/off randomly within the 'Run Every' and 'Off After' limits. Disabled when 'TimeSpan' is active."
             />
           </ListItem>
