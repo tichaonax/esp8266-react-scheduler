@@ -42,6 +42,10 @@ public:
   static void haRead(ChannelState& settings, JsonObject& root) {
     root["state"] = settings.channel.controlOn ? ON_STATE : OFF_STATE;
     root["iotAdminUrl"] = utils.getDeviceChannelUrl(settings.channel);
+    root["controlPin"] = settings.channel.controlPin;
+    root["channelName"] = settings.channel.name;
+    root["MAC"] = SettingValue::format("#{unique_id}");
+
     if(settings.channel.enabled){
       root["startTime"] = utils.formatTime(settings.channel.schedule.startTimeHour, settings.channel.schedule.startTimeMinute);
       root["endTime"] = utils.formatTime(settings.channel.schedule.endTimeHour, settings.channel.schedule.endTimeMinute);

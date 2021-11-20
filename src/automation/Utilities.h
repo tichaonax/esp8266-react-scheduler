@@ -263,6 +263,12 @@ public:
     
     String payload = "{\"state\":\"" + status +"\",\"iotAdminUrl\":\"" + iotAdminUrl + "\"";
 
+    payload = payload + ",\"controlPin\":\"" + channel.controlPin  + "\"";
+
+    payload = payload + ",\"channelName\":\"" + channel.name  + "\"";
+    
+    payload = payload + ",\"MAC\":\"" + SettingValue::format("#{unique_id}")  + "\"";
+    
     if(!channel.enabled){
       return(payload + ",\"scheduleDisabled\":\"true\"}");
     }

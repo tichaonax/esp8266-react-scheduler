@@ -8,8 +8,10 @@
   #define CHANNEL_ONE_CONTROL_PIN 5 // use channel 3
 #else
   #ifdef SINILINK
-    // onboard relay control pin = 4
-    #define CHANNEL_ONE_CONTROL_PIN 4
+    #ifdef CHANNEL_ONE
+      // onboard relay control pin = 4
+      #define CHANNEL_ONE_CONTROL_PIN 4
+    #endif
   #else
     #define CHANNEL_ONE_CONTROL_PIN 5
   #endif
@@ -41,8 +43,10 @@
   #define CHANNEL_TWO_CONTROL_PIN 5
 #else
   #ifdef SINILINK
-    // onboard relay control pin = 4
-    #define CHANNEL_TWO_CONTROL_PIN 4
+    #ifdef CHANNEL_TWO
+      // onboard relay control pin = 4
+      #define CHANNEL_TWO_CONTROL_PIN 4
+    #endif
   #else
     #define CHANNEL_TWO_CONTROL_PIN 12
   #endif
@@ -73,8 +77,10 @@
   #define CHANNEL_THREE_CONTROL_PIN 5
 #else
   #ifdef SINILINK
-    // onboard relay control pin = 4
-    #define CHANNEL_THREE_CONTROL_PIN 4
+    #ifdef CHANNEL_THREE
+      // onboard relay control pin = 4
+      #define CHANNEL_THREE_CONTROL_PIN 4
+    #endif
   #else
     #define CHANNEL_THREE_CONTROL_PIN 13
   #endif
@@ -105,8 +111,10 @@
   #define CHANNEL_FOUR_CONTROL_PIN 5
 #else
   #ifdef SINILINK
-    // onboard relay control pin = 4
-    #define CHANNEL_FOUR_CONTROL_PIN 4
+    #ifdef CHANNEL_FOUR
+      // onboard relay control pin = 4
+      #define CHANNEL_FOUR_CONTROL_PIN 4
+    #endif
   #else
     #define CHANNEL_FOUR_CONTROL_PIN 14
   #endif
