@@ -4,13 +4,13 @@
 #include "Homeassistant.h"
 
 #ifdef CHANNEL_ONE_LIGHT
-  // onboard relay control pin = 5
   #define CHANNEL_ONE_CONTROL_PIN 5 // use channel 3
 #else
   #ifdef SINILINK
     #ifdef CHANNEL_ONE
-      // onboard relay control pin = 4
       #define CHANNEL_ONE_CONTROL_PIN 4
+    else
+        #define CHANNEL_ONE_CONTROL_PIN 5
     #endif
   #else
     #define CHANNEL_ONE_CONTROL_PIN 5
@@ -39,13 +39,13 @@
 #define CHANNEL_ONE_HOMEASSISTANT_ICON MDI_WATER_PUMP
 
 #ifdef CHANNEL_TWO_LIGHT
-  // onboard relay control pin = 5
   #define CHANNEL_TWO_CONTROL_PIN 5
 #else
   #ifdef SINILINK
     #ifdef CHANNEL_TWO
-      // onboard relay control pin = 4
       #define CHANNEL_TWO_CONTROL_PIN 4
+    #else
+        #define CHANNEL_TWO_CONTROL_PIN 12
     #endif
   #else
     #define CHANNEL_TWO_CONTROL_PIN 12
@@ -73,13 +73,13 @@
 #define CHANNEL_TWO_HOMEASSISTANT_ICON MDI_FRIDGE
 
 #ifdef CHANNEL_THREE_LIGHT
-  // onboard relay control pin = 5
   #define CHANNEL_THREE_CONTROL_PIN 5
 #else
   #ifdef SINILINK
     #ifdef CHANNEL_THREE
-      // onboard relay control pin = 4
       #define CHANNEL_THREE_CONTROL_PIN 4
+    #else
+        #define CHANNEL_THREE_CONTROL_PIN 13
     #endif
   #else
     #define CHANNEL_THREE_CONTROL_PIN 13
@@ -107,13 +107,13 @@
 #define CHANNEL_THREE_HOMEASSISTANT_ICON MDI_POWER
 
 #ifdef CHANNEL_FOUR_LIGHT
-  // onboard relay control pin = 5p
   #define CHANNEL_FOUR_CONTROL_PIN 5
 #else
   #ifdef SINILINK
     #ifdef CHANNEL_FOUR
-      // onboard relay control pin = 4
       #define CHANNEL_FOUR_CONTROL_PIN 4
+    #else
+        #define CHANNEL_FOUR_CONTROL_PIN 14
     #endif
   #else
     #define CHANNEL_FOUR_CONTROL_PIN 14
