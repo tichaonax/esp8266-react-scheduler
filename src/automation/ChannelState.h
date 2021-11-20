@@ -45,6 +45,7 @@ public:
     root["controlPin"] = settings.channel.controlPin;
     root["channelName"] = settings.channel.name;
     root["MAC"] = SettingValue::format("#{unique_id}");
+    root["IP"] = settings.channel.IP;
 
     if(settings.channel.enabled){
       root["startTime"] = utils.formatTime(settings.channel.schedule.startTimeHour, settings.channel.schedule.startTimeMinute);
