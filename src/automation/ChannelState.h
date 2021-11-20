@@ -77,17 +77,16 @@ public:
   static StateUpdateResult haUpdate(JsonObject& root, ChannelState& settings) {
     String state = root["state"];
     settings.channel.controlOn = strcmp(ON_STATE, state.c_str()) ? false : true;
+    settings.channel.schedule.isOverride = true;
     boolean newState = false;
     if (state.equals(ON_STATE)) {
       newState = true;
     } else if (!state.equals(OFF_STATE)) {
       return StateUpdateResult::ERROR;
     }
-
     // change the new state, if required
     if (settings.channel.controlOn  != newState) {
       settings.channel.controlOn  = newState;
-      settings.channel.schedule.isOverride = true;
       return StateUpdateResult::CHANGED;
     }
     return StateUpdateResult::UNCHANGED;
