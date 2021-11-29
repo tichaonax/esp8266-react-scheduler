@@ -24,6 +24,7 @@ import DriveEtaIcon from '@material-ui/icons/DriveEta';
 import AutorenewIcon from '@material-ui/icons/Autorenew';
 import PersonalVideoIcon from '@material-ui/icons/PersonalVideo';
 import ViewHeadlineIcon from '@material-ui/icons/ViewHeadline';
+import { makeStyles } from "@material-ui/core/styles";
 
 import {
   MuiPickersUtilsProvider,
@@ -61,8 +62,17 @@ import { OffAfter } from './tooltips/OffAfter';
 import { StartTime } from './tooltips/StartTime';
 import { EndTime } from './tooltips/EndTime';
 import { HotTime } from './tooltips/HotTime';
-import { VerticalAlignCenterSharp } from '@material-ui/icons';
 import './svg-styles.css';
+import { RemoteUtils } from '../../../utils/remoteUtils';
+
+const useStyles = makeStyles({
+  alert: {
+    color: "#fc0303"
+  },
+  ip: {
+    color: "#2205fa"
+  }
+});
 
 type ChannelStateRestControllerFormProps = RestFormProps<ChannelState>
 & ({channels: Channels, loader: Loader, onSetChannelSettings: SetChannelSettingsType, onRemoveLoader: RemoveLoaderType });
@@ -262,8 +272,16 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
         return (hString + mString + sString);
       }
 
+    const classes = useStyles();
+
     return (
       <ValidatorForm onSubmit={saveFormAndRestartSchedule}>
+       {RemoteUtils.isRemoteIpDevice() && 
+       <Typography variant="body1" color="secondary"className={classes.alert} >
+          Remote configuration enabled for device:
+          <span className={classes.ip}>{RemoteUtils.getRemoteDeviceIp()}</span>
+        </Typography>
+       }
         <TextField
           name="name"
           label= "Channel Name"
