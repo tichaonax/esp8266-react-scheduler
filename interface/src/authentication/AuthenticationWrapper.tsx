@@ -4,10 +4,10 @@ import jwtDecode from 'jwt-decode';
 
 import history from '../history'
 import { VERIFY_AUTHORIZATION_ENDPOINT } from '../api';
-import { ACCESS_TOKEN, authorizedFetch, getStorage } from './Authentication';
 import { AuthenticationContext, AuthenticationContextValue, Me } from './AuthenticationContext';
 import FullScreenLoading from '../components/FullScreenLoading';
 import { withFeatures, WithFeaturesProps } from '../features/FeaturesContext';
+import { RemoteUtils } from '../utils/remoteUtils';
 
 export const decodeMeJWT = (accessToken: string): Me => jwtDecode(accessToken) as Me;
 
@@ -63,9 +63,9 @@ class AuthenticationWrapper extends React.Component<AuthenticationWrapperProps, 
       this.setState({ initialized: true, context: { ...this.state.context, me: { admin: true, username: "admin" } } });
       return;
     }
-    const accessToken = getStorage().getItem(ACCESS_TOKEN)
+    const accessToken = RemoteUtils.getLocalAccessToken();
     if (accessToken) {
-      authorizedFetch(VERIFY_AUTHORIZATION_ENDPOINT)
+      RemoteUtils.authorizedFetch(VERIFY_AUTHORIZATION_ENDPOINT)
         .then(response => {
           const me = response.status === 200 ? decodeMeJWT(accessToken) : undefined;
           this.setState({ initialized: true, context: { ...this.state.context, me } });
@@ -82,7 +82,7 @@ class AuthenticationWrapper extends React.Component<AuthenticationWrapperProps, 
 
   signIn = (accessToken: string) => {
     try {
-      getStorage().setItem(ACCESS_TOKEN, accessToken);
+      RemoteUtils.getStorage().setItem(RemoteUtils.ACCESS_TOKEN, accessToken);
       const me: Me = decodeMeJWT(accessToken);
       this.setState({ context: { ...this.state.context, me } });
       this.props.enqueueSnackbar(`Logged in as ${me.username}`, { variant: 'success' });
@@ -93,7 +93,7 @@ class AuthenticationWrapper extends React.Component<AuthenticationWrapperProps, 
   }
 
   signOut = () => {
-    getStorage().removeItem(ACCESS_TOKEN);
+    RemoteUtils.getStorage().removeItem(RemoteUtils.ACCESS_TOKEN);
     this.setState({
       context: {
         ...this.state.context,

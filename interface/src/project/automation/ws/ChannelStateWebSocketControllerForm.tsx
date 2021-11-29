@@ -4,6 +4,7 @@ import history from '../../../history';
 import { Switch, Typography, ListItem, ListItemText } from '@material-ui/core';
 import { WebSocketFormProps } from '../../../components';
 import { BlockFormControlLabel } from '../../../components';
+import { RemoteUtils } from '../../../utils/remoteUtils';
 
 import { ChannelState} from '../redux/types/channel';
 import { CHANNEL_ONE_CONTROL_PIN,
@@ -52,6 +53,7 @@ const ChannelStateWebSocketControllerForm = (props: ChannelStateWebSocketControl
             checked={data.controlOn}
             onChange={handleControlValueChange}
             color="primary"
+            disabled={RemoteUtils.isRemoteIpDevice()}
           />
         }
         label
