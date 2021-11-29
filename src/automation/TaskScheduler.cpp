@@ -26,7 +26,9 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                               float overrideTime,
                               bool enableMinimumRunTime,
                               uint8_t homeAssistantTopicType,
-                              String homeAssistantIcon) :
+                              String homeAssistantIcon,
+                              bool enableRemoteConfiguration,
+                              String masterIPAddress) :
     _channelStateService(server,
                         securityManager,
                         mqttClient,
@@ -50,7 +52,9 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                         overrideTime,
                         enableMinimumRunTime,
                         homeAssistantTopicType,
-                        homeAssistantIcon)
+                        homeAssistantIcon,
+                        enableRemoteConfiguration,
+                        masterIPAddress)
                                        {
                                          _isHotScheduleActive = false;
                                          _isOverrideActive = false;

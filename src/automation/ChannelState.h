@@ -109,6 +109,9 @@ public:
     jsonObject["IPAddress"] = channel.IP;
     jsonObject["uniqueId"] = utils.getMqttUniqueIdOrPath(channel.controlPin, channel.homeAssistantTopicType, true);
     jsonObject["enableMinimumRunTime"] = channel.enableMinimumRunTime;
+    jsonObject["enableRemoteConfiguration"] = channel.enableRemoteConfiguration;
+    jsonObject["masterIPAddress"] = channel.masterIPAddress;
+
 
     JsonObject schedule = jsonObject.createNestedObject("schedule");
       
@@ -167,6 +170,8 @@ static void updateChannel(JsonObject& json, Channel& channel, bool isOverride) {
     channel.randomize = json["randomize"] | channel.randomize;
     channel.uniqueId = json["uniqueId"] |  utils.getMqttUniqueIdOrPath(channel.controlPin, channel.homeAssistantTopicType, true);
     channel.enableMinimumRunTime = json["enableMinimumRunTime"] | channel.enableMinimumRunTime;
+    channel.enableRemoteConfiguration = json["enableRemoteConfiguration"] | channel.enableRemoteConfiguration;
+    channel.masterIPAddress = json["masterIPAddress"] | channel.masterIPAddress;
 
     JsonObject schedule = json["schedule"];
     channel.schedule.runEvery = schedule["runEvery"] ? (int)(round(60 * float(schedule["runEvery"]))) : channel.schedule.runEvery;

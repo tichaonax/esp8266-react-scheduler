@@ -31,7 +31,9 @@ class TaskScheduler {
                     float overrideTime,
                     bool enableMinimumRunTime,
                     uint8_t homeAssistantTopicType,
-                    String homeAssistantIcon);
+                    String homeAssistantIcon,
+                    bool enableRemoteConfiguration,
+                    String masterIPAddress);
     void begin();
     void resetOverrideTime();
     void setOverrideTime();

@@ -34,7 +34,9 @@ class ChannelStateService : public StatefulService<ChannelState> {
                     float overrideTime,
                     bool enableMinimumRunTime,
                     uint8_t homeAssistantTopicType,
-                    String homeAssistantIcon);
+                    String homeAssistantIcon,
+                    bool enableRemoteConfiguration,
+                    String masterIPAddress);
 
   void begin();
   Channel getChannel();
@@ -74,6 +76,8 @@ class ChannelStateService : public StatefulService<ChannelState> {
   bool _enableMinimumRunTime;
   uint8_t _homeAssistantTopicType;
   String _homeAssistantIcon;
+  bool _enableRemoteConfiguration;
+  String _masterIPAddress;
 
 #ifdef ESP32
   void onStationModeGotIP(WiFiEvent_t event, WiFiEventInfo_t info);

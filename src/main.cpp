@@ -78,7 +78,9 @@ SystemStateService systemStateService = SystemStateService(&server, esp8266React
                                                         CHANNEL_ONE_DEFAULT_OVERRIDE_TIME,
                                                         CHANNEL_ONE_DEFAULT_ENABLE_MINIMUM_RUN_TIME_SCHEDULE,
                                                         CHANNEL_ONE_HOMEASSISTANT_TOPIC_TYPE,
-                                                        CHANNEL_ONE_HOMEASSISTANT_ICON);
+                                                        CHANNEL_ONE_HOMEASSISTANT_ICON,
+                                                        REMOTE_CONFIG_ENABLED,
+                                                        MASTER_DEVICE);
   ChannelScheduleRestartService channelOneScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelOneTaskScheduler, CHANNEL_ONE_SCHEDULE_RESTART_SERVICE_PATH);
 #endif
 #if defined(CHANNEL_TWO)
@@ -111,7 +113,9 @@ SystemStateService systemStateService = SystemStateService(&server, esp8266React
                                                         CHANNEL_TWO_DEFAULT_OVERRIDE_TIME,
                                                         CHANNEL_TWO_DEFAULT_ENABLE_MINIMUM_RUN_TIME_SCHEDULE,
                                                         CHANNEL_TWO_HOMEASSISTANT_TOPIC_TYPE,
-                                                        CHANNEL_TWO_HOMEASSISTANT_ICON);  
+                                                        CHANNEL_TWO_HOMEASSISTANT_ICON,
+                                                        REMOTE_CONFIG_ENABLED,
+                                                        MASTER_DEVICE);  
   ChannelScheduleRestartService channelTwoScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelTwoTaskScheduler, CHANNEL_TWO_SCHEDULE_RESTART_SERVICE_PATH);
 #endif
 #if defined(CHANNEL_THREE)
@@ -144,7 +148,9 @@ SystemStateService systemStateService = SystemStateService(&server, esp8266React
                                                         CHANNEL_THREE_DEFAULT_OVERRIDE_TIME,
                                                         CHANNEL_THREE_DEFAULT_ENABLE_MINIMUM_RUN_TIME_SCHEDULE,
                                                         CHANNEL_THREE_HOMEASSISTANT_TOPIC_TYPE,
-                                                        CHANNEL_THREE_HOMEASSISTANT_ICON);
+                                                        CHANNEL_THREE_HOMEASSISTANT_ICON,
+                                                        REMOTE_CONFIG_ENABLED,
+                                                        MASTER_DEVICE);
   ChannelScheduleRestartService channelThreeScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelThreeTaskScheduler, CHANNEL_THREE_SCHEDULE_RESTART_SERVICE_PATH);
 #endif  
 #if defined(CHANNEL_FOUR)
@@ -177,7 +183,9 @@ SystemStateService systemStateService = SystemStateService(&server, esp8266React
                                                         CHANNEL_FOUR_DEFAULT_OVERRIDE_TIME,
                                                         CHANNEL_FOUR_DEFAULT_ENABLE_MINIMUM_RUN_TIME_SCHEDULE,
                                                         CHANNEL_FOUR_HOMEASSISTANT_TOPIC_TYPE,
-                                                        CHANNEL_FOUR_HOMEASSISTANT_ICON);
+                                                        CHANNEL_FOUR_HOMEASSISTANT_ICON,
+                                                        REMOTE_CONFIG_ENABLED,
+                                                        MASTER_DEVICE);
   ChannelScheduleRestartService channelFourScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelFourTaskScheduler, CHANNEL_FOUR_SCHEDULE_RESTART_SERVICE_PATH);
 #endif
 

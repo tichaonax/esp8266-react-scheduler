@@ -79,6 +79,8 @@ struct Channel {
     String controlOffDateTime;
     String uniqueId;
     bool enableMinimumRunTime; // when enabled in randomize time runs at least this minimum time
+    bool enableRemoteConfiguration; // when enabled
+    String masterIPAddress;
 };
 class Utilities {
 public:
@@ -236,8 +238,11 @@ public:
         relativePath = "";
       break;
     }
-
-    return "http://" + channel.IP + relativePath;
+    if(!channel.enableRemoteConfiguration){
+      return "http://" + channel.IP + relativePath;
+    }else{
+      return "http://" + channel.masterIPAddress + relativePath + "#?device=" + channel.IP;
+    }
   }
 
   static String formatTime(int hour, int minute){
