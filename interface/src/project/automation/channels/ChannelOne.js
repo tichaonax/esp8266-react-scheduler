@@ -7,6 +7,7 @@ import { SectionContent } from '../../../components';
 import ChannelOneStateRestController from '../rest/ChannelOneStateRestController';
 import ChannelOneWebSocketController from '../ws/ChannelOneWebSocketController';
 import ChannelOneMqttSettingsController from '../mqtt/ChannelOneMqttSettingsController';
+import { RemoteUtils } from '../../../utils/remoteUtils';
 
 const ChannelOne = () => {
   return(
@@ -18,16 +19,17 @@ const ChannelOne = () => {
             Schedule
           </Typography>
         </Tab>
-        <Tab>
-          <Typography variant="overline">
-            Mqtt
-          </Typography>
-        </Tab>
-        <Tab>
-          <Typography variant="overline">
-            Status
-          </Typography>
-        </Tab>
+        { !RemoteUtils.isRemoteIpDevice() && (
+        <><Tab>
+              <Typography variant="overline">
+                Mqtt
+              </Typography>
+            </Tab><Tab>
+                <Typography variant="overline">
+                  Status
+                </Typography>
+              </Tab></>
+        )}
       </TabList>
       <TabPanel style={{marginLeft: -23, marginRight: -23, marginTop: -35}}>
         <ChannelOneStateRestController/>

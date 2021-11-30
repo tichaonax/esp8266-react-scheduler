@@ -7,7 +7,6 @@ import SaveIcon from '@material-ui/icons/Save';
 import { RestFormProps, FormActions, FormButton } from '../../../components';
 import { ChannelMqttSettings } from '../types';
 import SystemStateWebSocketController from '../ws/SystemStateWebSocketController';
-import { RemoteUtils } from '../../../utils/remoteUtils';
 
 type ChannelMqttSettingsControllerFormProps = RestFormProps<ChannelMqttSettings>;
 
@@ -31,7 +30,6 @@ const ChannelMqttSettingsControllerForm = (props: ChannelMqttSettingsControllerF
         value={data.unique_id}
         onChange={handleValueChange('unique_id')}
         margin="normal"
-        disabled={RemoteUtils.isRemoteIpDevice()}
       />
       <TextValidator
         validators={['required']}
@@ -43,7 +41,6 @@ const ChannelMqttSettingsControllerForm = (props: ChannelMqttSettingsControllerF
         value={data.name}
         onChange={handleValueChange('name')}
         margin="normal"
-        disabled={RemoteUtils.isRemoteIpDevice()}
       />
       <TextValidator
         validators={['required']}
@@ -55,13 +52,12 @@ const ChannelMqttSettingsControllerForm = (props: ChannelMqttSettingsControllerF
         value={data.mqtt_path}
         onChange={handleValueChange('mqtt_path')}
         margin="normal"
-        disabled={RemoteUtils.isRemoteIpDevice()}
       />
       <FormActions>
-        <FormButton startIcon={<SaveIcon />} variant="contained" color="primary" type="submit" disabled={RemoteUtils.isRemoteIpDevice()} >
+        <FormButton startIcon={<SaveIcon />} variant="contained" color="primary" type="submit" >
           Save
         </FormButton>
-        <FormButton variant="contained" color="secondary" onClick={loadData} disabled={RemoteUtils.isRemoteIpDevice()}>
+        <FormButton variant="contained" color="secondary" onClick={loadData} >
           Reset
         </FormButton>
       </FormActions>

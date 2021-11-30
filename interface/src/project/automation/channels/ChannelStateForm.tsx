@@ -1,5 +1,5 @@
 import React, { Dispatch, useEffect } from 'react';
-import { ValidatorForm } from 'react-material-ui-form-validator';
+import {TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import { TextField, Checkbox, Typography } from '@material-ui/core';
 import Slider from '@material-ui/core/Slider';
 import SaveIcon from '@material-ui/icons/Save';
@@ -64,6 +64,8 @@ import { EndTime } from './tooltips/EndTime';
 import { HotTime } from './tooltips/HotTime';
 import './svg-styles.css';
 import { RemoteUtils } from '../../../utils/remoteUtils';
+import { RemoteConfigEnabled } from './tooltips/RemoteConfigEnabled';
+import { isIP } from '../../../validators';
 
 const useStyles = makeStyles({
   alert: {
@@ -90,6 +92,8 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
       }
       onRemoveLoader(`${CHANNEL}${RESTART}`);
   }
+
+  ValidatorForm.addValidationRule('isIP', isIP);
 
   useEffect(() => {
     if(loader && !loader.loading && channels ){
@@ -558,6 +562,29 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
             Reset
           </FormButton>
         </FormActions>
+        <BlockFormControlLabel
+            control={
+            <Checkbox
+                checked={data.enableRemoteConfiguration}
+                onChange={handleValueChange('enableRemoteConfiguration')}
+                color="primary"
+            />
+            }
+            label={(<RemoteConfigEnabled/>)}
+        />
+        {data.enableRemoteConfiguration &&
+         <TextValidator
+              validators={['required', 'isIP']}
+              errorMessages={['Master IP is required', 'Must be an IP address']}
+              name="masterIPAddress"
+              label="Master IP"
+              fullWidth
+              variant="outlined"
+              value={data.masterIPAddress}
+              onChange={handleValueChange('masterIPAddress')}
+              margin="normal"
+            />
+        }
       </ValidatorForm>
     );
 }

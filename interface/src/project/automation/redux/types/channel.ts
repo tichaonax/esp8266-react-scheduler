@@ -1,6 +1,5 @@
 import { Schedule } from "../../types";
 
-//import { Schedule } from 'module';
 export const CHANNEL = '[Channel Schedule]';
 export const RESTART = '[Restart]';
 
@@ -45,11 +44,12 @@ export interface Channels {
     channels: Channels;
     localDateTime: string;
     IPAddress: string;
+    enableRemoteConfiguration: boolean;
+    masterIPAddress: string;
   }
 export interface ChannelStateFuncs {
   onRestartChannelSchedule: RestartChannelScheduleType; 
   onSetChannelSettings: SetChannelSettingsType;
-  //onRemoveLoader: RemoveLoaderType; 
 } 
 
 export interface SetChannelScheduleAction {

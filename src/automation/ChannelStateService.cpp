@@ -204,7 +204,7 @@ void ChannelStateService::begin() {
     _state.channel.controlOffDateTime = _controlOffDateTime;
     _state.channel.enableMinimumRunTime = _enableMinimumRunTime;
     _state.channel.enableRemoteConfiguration = _enableRemoteConfiguration;
-    //_state.channel.masterIPAddress = _masterIPAddress;
+    _state.channel.masterIPAddress = _masterIPAddress;
 
     _state.channel.schedule.runEvery =  _runEvery;
     _state.channel.schedule.offAfter =  _offAfter;
@@ -217,7 +217,6 @@ void ChannelStateService::begin() {
     _state.channel.schedule.isOverrideActive = _isOverrideActive;
     _fsPersistence.readFromFS();
 
-    _state.channel.masterIPAddress = _masterIPAddress;
     _state.channel.controlOn = DEFAULT_CONTROL_STATE; // must be off on start up
     onConfigUpdated();
     _deviceTime.attach(10, updateStateTimeTicker, this);
