@@ -62,6 +62,7 @@ import { OffAfter } from './tooltips/OffAfter';
 import { StartTime } from './tooltips/StartTime';
 import { EndTime } from './tooltips/EndTime';
 import { HotTime } from './tooltips/HotTime';
+import { ControlPin } from './tooltips/ControlPin';
 import './svg-styles.css';
 import { RemoteUtils } from '../../../utils/remoteUtils';
 import { RemoteConfigEnabled } from './tooltips/RemoteConfigEnabled';
@@ -415,6 +416,22 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
               </Select>
               }
               label={(<SwitchType/>)}
+        />
+        <br/>
+        <BlockFormControlLabel
+              control={
+                <Select style={{ marginLeft: 10 }}
+                value={data.controlPin}
+                onChange={handleHomeAssistantTopicType('controlPin')}>
+                <MenuItem value={0}>GPIO0</MenuItem>
+                <MenuItem value={4}>GPIO4</MenuItem>
+                <MenuItem value={5}>GPIO5</MenuItem>
+                <MenuItem value={12}>GPIO12</MenuItem>
+                <MenuItem value={13}>GPIO13</MenuItem>
+                <MenuItem value={14}>GPIO14</MenuItem>
+              </Select>
+              }
+              label={(<ControlPin/>)}
         />
         <br/>
         {!data.enableTimeSpan && (
