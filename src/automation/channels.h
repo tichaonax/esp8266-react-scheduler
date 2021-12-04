@@ -10,16 +10,16 @@
     #ifdef CHANNEL_ONE
       #define CHANNEL_ONE_CONTROL_PIN 4
     #else
-      #define CHANNEL_ONE_CONTROL_PIN 5
+      #define CHANNEL_ONE_CONTROL_PIN 0
     #endif
   #else
-    #define CHANNEL_ONE_CONTROL_PIN 5
+    #define CHANNEL_ONE_CONTROL_PIN 0
   #endif
 #endif
 
 #define CHANNEL_ONE_REST_ENDPOINT_PATH "/rest/channelOneState"  //restChannelEndPoint
 #define CHANNEL_ONE_SOCKET_PATH "/ws/channelOneState"  // webSocketChannelEndPoint
-#define CHANNEL_ONE_DEFAULT_NAME "Water Pump" //  defaultChannelName
+#define CHANNEL_ONE_DEFAULT_NAME "ESP-01s Relay" //  defaultChannelName
 #define CHANNEL_ONE_CONFIG_JSON_PATH "/config/channelOneState.json"  // channelJsonConfigPath
 #define CHANNEL_ONE_HOME_ASSISTANT_ENTITY "ch1"
 #define CHANNEL_ONE_DEFAULT_CONTROL_MIN_RUN_EVERY 15.0f
