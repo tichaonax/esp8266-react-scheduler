@@ -7,6 +7,7 @@ import { SectionContent } from '../../../components';
 import ChannelTwoStateRestController from '../rest/ChannelTwoStateRestController';
 import ChannelTwoWebSocketController from '../ws/ChannelTwoWebSocketController';
 import ChannelTwoMqttSettingsController from '../mqtt/ChannelTwoMqttSettingsController';
+import { RemoteUtils } from '../../../utils/remoteUtils';
 
 const ChannelTwo = () => {
   return(
@@ -18,16 +19,17 @@ const ChannelTwo = () => {
             Schedule
           </Typography>
         </Tab>
-        <Tab>
-          <Typography variant="overline">
-            Mqtt
-          </Typography>
-        </Tab>
-        <Tab>
-          <Typography variant="overline">
-            Status
-          </Typography>
-        </Tab>
+        { !RemoteUtils.isRemoteIpDevice() && (
+        <><Tab>
+              <Typography variant="overline">
+                Mqtt
+              </Typography>
+            </Tab><Tab>
+                <Typography variant="overline">
+                  Status
+                </Typography>
+              </Tab></>
+        )}
       </TabList>
       <TabPanel style={{marginLeft: -23, marginRight: -23, marginTop: -35}}>
         <ChannelTwoStateRestController/>

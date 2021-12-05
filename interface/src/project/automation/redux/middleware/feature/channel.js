@@ -6,6 +6,7 @@ import {setLoader} from "../../actions/ui";
 import {setNotification} from "../../actions/notification";
 
 import { ENDPOINT_ROOT } from '../../../../../api';
+import { RemoteUtils } from '../../../../../utils/remoteUtils';
 
 export const channelMiddleware = () => (next) => (action) => {
 
@@ -33,7 +34,7 @@ export const channelMiddleware = () => (next) => (action) => {
           break;
       }
 
-      const url = `${ENDPOINT_ROOT}${channel}`;
+      const url = `${RemoteUtils.correctEndPointUrl(ENDPOINT_ROOT)}${channel}`;
       next([
           apiRequest({body: null, method: 'POST', url, feature: `${CHANNEL}${RESTART}`}),
           setLoader({loading: true, success: false, feature: `${CHANNEL}${RESTART}`})

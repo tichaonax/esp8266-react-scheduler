@@ -1,5 +1,5 @@
 import React, { Dispatch, useEffect } from 'react';
-import { ValidatorForm } from 'react-material-ui-form-validator';
+import {TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import { TextField, Checkbox, Typography } from '@material-ui/core';
 import Slider from '@material-ui/core/Slider';
 import SaveIcon from '@material-ui/icons/Save';
@@ -24,6 +24,7 @@ import DriveEtaIcon from '@material-ui/icons/DriveEta';
 import AutorenewIcon from '@material-ui/icons/Autorenew';
 import PersonalVideoIcon from '@material-ui/icons/PersonalVideo';
 import ViewHeadlineIcon from '@material-ui/icons/ViewHeadline';
+import { makeStyles } from "@material-ui/core/styles";
 
 import {
   MuiPickersUtilsProvider,
@@ -61,8 +62,20 @@ import { OffAfter } from './tooltips/OffAfter';
 import { StartTime } from './tooltips/StartTime';
 import { EndTime } from './tooltips/EndTime';
 import { HotTime } from './tooltips/HotTime';
-import { VerticalAlignCenterSharp } from '@material-ui/icons';
+import { ControlPin } from './tooltips/ControlPin';
 import './svg-styles.css';
+import { RemoteUtils } from '../../../utils/remoteUtils';
+import { RemoteConfigEnabled } from './tooltips/RemoteConfigEnabled';
+import { isIP } from '../../../validators';
+
+const useStyles = makeStyles({
+  alert: {
+    color: "#fc0303"
+  },
+  ip: {
+    color: "#2205fa"
+  }
+});
 
 type ChannelStateRestControllerFormProps = RestFormProps<ChannelState>
 & ({channels: Channels, loader: Loader, onSetChannelSettings: SetChannelSettingsType, onRemoveLoader: RemoveLoaderType });
@@ -80,6 +93,8 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
       }
       onRemoveLoader(`${CHANNEL}${RESTART}`);
   }
+
+  ValidatorForm.addValidationRule('isIP', isIP);
 
   useEffect(() => {
     if(loader && !loader.loading && channels ){
@@ -196,15 +211,24 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
         }
       }
       
-      const handleHomeAssistantTopicType = (name: keyof ChannelState) => (event: any) => {
-        const homeAssistantTopicType: number = event.target.value;
-        setData({ ...data, homeAssistantTopicType });
-      };
-
-      const handleHomeAssistantIcon = (name: keyof ChannelState) => (event: any) => {
-        const homeAssistantIcon: string = event.target.value;
-        setData({ ...data, homeAssistantIcon });
-      };
+      const handleChannelStateValueChange = (name: keyof ChannelState) => (event: any) => {
+        switch (name) {
+          case 'homeAssistantIcon':
+              const homeAssistantIcon: string = event.target.value;
+              setData({ ...data, homeAssistantIcon });
+            break;
+            case 'homeAssistantTopicType':
+              const homeAssistantTopicType: number = event.target.value;
+              setData({ ...data, homeAssistantTopicType });
+            break;
+            case 'controlPin':
+              const controlPin: number = event.target.value;
+              setData({ ...data, controlPin });
+            break;
+          default:
+            break;
+        }
+      }
       
       const marks = [
         {
@@ -262,8 +286,16 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
         return (hString + mString + sString);
       }
 
+    const classes = useStyles();
+
     return (
       <ValidatorForm onSubmit={saveFormAndRestartSchedule}>
+       {RemoteUtils.isRemoteIpDevice() && 
+       <Typography variant="body1" color="secondary"className={classes.alert} >
+          Remote configuration enabled for device:
+          <span className={classes.ip}>{RemoteUtils.getRemoteDeviceIp()}</span>
+        </Typography>
+       }
         <TextField
           name="name"
           label= "Channel Name"
@@ -282,6 +314,22 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
             />
             }
             label={(<ScheduleEnabled/>)}
+        />
+        <BlockFormControlLabel
+              control={
+                <Select style={{ marginLeft: 10 }}
+                value={data.controlPin}
+                disabled={data.enabled}
+                onChange={handleChannelStateValueChange('controlPin')}>
+                <MenuItem value={0}>GPIO0</MenuItem>
+                <MenuItem value={4}>GPIO4</MenuItem>
+                <MenuItem value={5}>GPIO5</MenuItem>
+                <MenuItem value={12}>GPIO12</MenuItem>
+                <MenuItem value={13}>GPIO13</MenuItem>
+                <MenuItem value={14}>GPIO14</MenuItem>
+              </Select>
+              }
+              label={(<ControlPin/>)}
         />
         <BlockFormControlLabel
             control={
@@ -357,7 +405,7 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
               control={
                 <Select style={{ marginLeft: 10, verticalAlign: "middle" }}
                 value={data.homeAssistantIcon}
-                onChange={handleHomeAssistantIcon('homeAssistantIcon')}>
+                onChange={handleChannelStateValueChange('homeAssistantIcon')}>
                 <MenuItem value={"mdi:lightbulb"}><EmojiObjectsIcon/>light</MenuItem>
                 <MenuItem value={"mdi:speaker-wireless"}><SpeakerGroupIcon/>speaker-wireless</MenuItem>
                 <MenuItem value={"mdi:speaker"}><SpeakerIcon/>speaker</MenuItem>
@@ -387,14 +435,13 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
               control={
                 <Select style={{ marginLeft: 10 }}
                 value={data.homeAssistantTopicType}
-                onChange={handleHomeAssistantTopicType('homeAssistantTopicType')}>
+                onChange={handleChannelStateValueChange('homeAssistantTopicType')}>
                 <MenuItem value={0}>Light</MenuItem>
                 <MenuItem value={1}>Switch</MenuItem>
               </Select>
               }
               label={(<SwitchType/>)}
         />
-        <br/>
         {!data.enableTimeSpan && (
           <div>
             <BlockFormControlLabel
@@ -540,6 +587,29 @@ const ChannelStateForm = (props : ChannelStateRestControllerFormProps) => {
             Reset
           </FormButton>
         </FormActions>
+        <BlockFormControlLabel
+            control={
+            <Checkbox
+                checked={data.enableRemoteConfiguration}
+                onChange={handleValueChange('enableRemoteConfiguration')}
+                color="primary"
+            />
+            }
+            label={(<RemoteConfigEnabled/>)}
+        />
+        {data.enableRemoteConfiguration &&
+         <TextValidator
+              validators={['required', 'isIP']}
+              errorMessages={['Master IP is required', 'Must be an IP address']}
+              name="masterIPAddress"
+              label="Master IP"
+              fullWidth
+              variant="outlined"
+              value={data.masterIPAddress}
+              onChange={handleValueChange('masterIPAddress')}
+              margin="normal"
+            />
+        }
       </ValidatorForm>
     );
 }

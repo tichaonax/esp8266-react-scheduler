@@ -2,6 +2,7 @@ import React from 'react';
 import { withSnackbar, WithSnackbarProps } from 'notistack';
 
 import { redirectingAuthorizedFetch } from '../authentication';
+import { RemoteUtils } from '../utils/remoteUtils';
 
 export interface RestControllerProps<D> extends WithSnackbarProps {
   handleValueChange: (name: keyof D) => (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -32,6 +33,7 @@ interface RestControllerState<D> {
   errorMessage?: string;
 }
 
+
 export function restController<D, P extends RestControllerProps<D>>(endpointUrl: string, RestController: React.ComponentType<P & RestControllerProps<D>>) {
   return withSnackbar(
     class extends React.Component<Omit<P, keyof RestControllerProps<D>> & WithSnackbarProps, RestControllerState<D>> {
@@ -56,7 +58,7 @@ export function restController<D, P extends RestControllerProps<D>>(endpointUrl:
           loading: true,
           errorMessage: undefined
         });
-        redirectingAuthorizedFetch(endpointUrl).then(response => {
+        redirectingAuthorizedFetch(RemoteUtils.correctEndPointUrl(endpointUrl)).then(response => {
           if (response.status === 200) {
             return response.json();
           }
@@ -72,7 +74,7 @@ export function restController<D, P extends RestControllerProps<D>>(endpointUrl:
 
       saveData = () => {
         this.setState({ loading: true });
-        redirectingAuthorizedFetch(endpointUrl, {
+        redirectingAuthorizedFetch(RemoteUtils.correctEndPointUrl(endpointUrl), {
           method: 'POST',
           body: JSON.stringify(this.state.data),
           headers: {

@@ -24,7 +24,9 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
                                       float overrideTime,
                                       bool enableMinimumRunTime,
                                       uint8_t homeAssistantTopicType,
-                                      String homeAssistantIcon) :
+                                      String homeAssistantIcon,
+                                      bool enableRemoteConfiguration,
+                                      String masterIPAddress) :
     _httpEndpoint(ChannelState::read,
                   ChannelState::update,
                   this,
@@ -72,6 +74,8 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
   _controlOffDateTime = "";
   _isOverrideActive = false;
   _enableMinimumRunTime = enableMinimumRunTime;
+  _enableRemoteConfiguration = enableRemoteConfiguration;
+  _masterIPAddress = masterIPAddress;
 
   // configure controls to be output
   pinMode(_channelControlPin, OUTPUT);
@@ -199,6 +203,8 @@ void ChannelStateService::begin() {
     _state.channel.offHotHourDateTime = _offHotHourDateTime;
     _state.channel.controlOffDateTime = _controlOffDateTime;
     _state.channel.enableMinimumRunTime = _enableMinimumRunTime;
+    _state.channel.enableRemoteConfiguration = _enableRemoteConfiguration;
+    _state.channel.masterIPAddress = _masterIPAddress;
 
     _state.channel.schedule.runEvery =  _runEvery;
     _state.channel.schedule.offAfter =  _offAfter;
