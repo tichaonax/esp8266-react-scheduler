@@ -1,0 +1,28 @@
+POST http://192.168.0.153/rest/signIn
+content-type: application/json
+
+{
+   "username":"admin",
+   "password":"admin"
+}
+
+###
+GET http://192.168.0.153/rest/channelOneState
+Accept: application/json
+Content-Type: text/plain
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiYWRtaW4iOnRydWV9.sw-OLkgHfJrhv6BF-tlayS5NgsIB96JipqkQdW8ZfKE
+
+###
+POST http://192.168.0.172/rest/signIn
+content-type: application/json
+
+{
+   "username":"admin",
+   "password":"admin"
+}
+
+###
+GET http://192.168.0.172/rest/channelFourState
+Accept: application/json
+Content-Type: text/plain
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiYWRtaW4iOnRydWV9.XgrS41PluJVlUbkIb0huEFHS-eJX6Zb0jESoBGGEMXg
