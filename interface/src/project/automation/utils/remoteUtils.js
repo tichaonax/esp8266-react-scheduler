@@ -4,12 +4,8 @@ import { isValidIpAddress } from '../../../validators/shared';
 import { store } from '../redux/store';
 import { deviceProxySelector } from '../redux/selectors/proxy';
 
-const SIGN_IN_ENDPOINT = '/rest/signIn';
-
 export class RemoteUtils {
-  static RemoteToken;
-  static PROXY = "device";
-  static LOCALHOST ='localhost;'
+  static DEVICE = "device";
 
   static getProxy() {
       let isProxy = false;
@@ -71,7 +67,7 @@ export class RemoteUtils {
     }
 
     static getRemoteDeviceUrl(){
-        return this.getParameterByName(this.PROXY);
+        return this.getParameterByName(this.DEVICE);
     }
 
     static isRemoteDevice(){
@@ -87,60 +83,12 @@ export class RemoteUtils {
       return(!isRemote || (isRemote && this.isRoute(route)));
     }
 
-    static correctEndPointUrl(endpointUrl){
-     const remoteUrl = this.getRemoteDeviceUrl();
-     if(remoteUrl){
-       const {protocol, pathname, search} = this.parseUrl(endpointUrl);
-       return(`${protocol}//${remoteUrl}${pathname}${search}`);
-     }
-     return (endpointUrl);
-    }
-
     static getAccessToken(){
-        return this.getStorage().getItem(this.ACCESS_TOKEN);
-    }
-
-    static getRemoteAccessToken(username, password) {
-       return fetch(this.correctEndPointUrl(SIGN_IN_ENDPOINT), {
-          method: 'POST',
-          body: JSON.stringify({ username, password }),
-          headers: new Headers({
-            'Content-Type': 'application/json'
-          })
-        })
-        .then((response) => {
-        if (response.status === 200) {
-            return response.json();
-        } else if (response.status === 401) {
-            throw Error("Invalid credentials.");
-        } else {
-            throw Error("Invalid status code: " + response.status);
-        }
-        }).then((json) => {
-        return (json.access_token);
-        })
-        .catch(() => {
-            throw Error("Could not login to remote devices.");
-        });
+        return this.getStorage().getItem(ACCESS_TOKEN);
     }
 
     static getStorage(){
       return localStorage || sessionStorage;
-    }
-
-    static makeParams(_params){
-      let accessToken = this.getLocalAccessToken() || "";
-      if(this.isRemoteDevice()) accessToken = this.RemoteToken;
-      const makeParams = (params) => {
-        params = params || {};
-        params.credentials = 'include';
-        params.headers = {
-          ...params.headers,
-          "Authorization": 'Bearer ' + accessToken
-        };
-        return params;
-      };
-      return makeParams(_params);
     }
 
     static getNavigationLink(route, endPoint){

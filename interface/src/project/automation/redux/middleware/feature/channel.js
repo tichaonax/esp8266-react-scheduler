@@ -15,7 +15,7 @@ export const channelMiddleware = () => (next) => (action) => {
   switch (action.type) {
 
     case RESTART_CHANNEL_SCHEDULE:
-      const url = `${RemoteUtils.correctEndPointUrl(API_BASE_URL)}${action.payload}`;
+      const url = `${RemoteUtils.getApiBaseAddress()}${action.payload}`;
       next([
           apiRequest({body: null, method: 'POST', url, feature: `${CHANNEL}${RESTART}`}),
           setLoader({loading: true, success: false, feature: `${CHANNEL}${RESTART}`})
