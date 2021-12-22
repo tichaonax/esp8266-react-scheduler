@@ -9,14 +9,10 @@ import { updateValue, useWs } from '../../../../utils';
 import { ChannelState} from '../../redux/types/channel';
 import { RemoteUtils } from '../../utils/remoteUtils';
 import { ChannelStateWebSocketFormProps } from './ws';
-import { REMOTE_WEB_SOCKET_ROOT } from '../../api/remote';
-import { WEB_SOCKET_ROOT } from '../../../../api/endpoints';
 import RemoteConfiguration from '../RemoteConfiguration';
 
 const ChannelStateWebSocketForm: FC<ChannelStateWebSocketFormProps> = ({websocketEndPoint}) => {
-  const { connected, updateData, data } = useWs<ChannelState>(
-    (RemoteUtils.isRemoteIpDevice() ? REMOTE_WEB_SOCKET_ROOT : WEB_SOCKET_ROOT)
-    + websocketEndPoint);
+  const { connected, updateData, data } = useWs<ChannelState>(`${RemoteUtils.getWsBaseAddress()}${websocketEndPoint}`);
   const updateFormValue = updateValue(updateData);
   const pathname = useLocation().pathname;
   const showLink = pathname.includes('/status');

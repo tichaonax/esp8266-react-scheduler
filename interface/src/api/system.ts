@@ -1,28 +1,29 @@
 import { AxiosPromise } from 'axios';
+import { RemoteUtils } from '../project/automation/utils/remoteUtils';
 
 import { OTASettings, SystemStatus } from '../types';
 import { AXIOS, FileUploadConfig, uploadFile } from './endpoints';
 
 export function readSystemStatus(): AxiosPromise<SystemStatus> {
-  return AXIOS.get('/systemStatus');
+  return AXIOS.get(`${RemoteUtils.getApiBaseAddress()}systemStatus`);
 }
 
 export function restart(): AxiosPromise<void> {
-  return AXIOS.post('/restart');
+  return AXIOS.post(`${RemoteUtils.getApiBaseAddress()}restart`);
 }
 
 export function factoryReset(): AxiosPromise<void> {
-  return AXIOS.post('/factoryReset');
+  return AXIOS.post(`${RemoteUtils.getApiBaseAddress()}factoryReset`);
 }
 
 export function readOTASettings(): AxiosPromise<OTASettings> {
-  return AXIOS.get('/otaSettings');
+  return AXIOS.get(`${RemoteUtils.getApiBaseAddress()}otaSettings`);
 }
 
 export function updateOTASettings(otaSettings: OTASettings): AxiosPromise<OTASettings> {
-  return AXIOS.post('/otaSettings', otaSettings);
+  return AXIOS.post(`${RemoteUtils.getApiBaseAddress()}otaSettings`, otaSettings);
 }
 
 export const uploadFirmware = (file: File, config?: FileUploadConfig): AxiosPromise<void> => (
-  uploadFile('/uploadFirmware', file, config)
+  uploadFile(`${RemoteUtils.getApiBaseAddress()}uploadFirmware`, file, config)
 );

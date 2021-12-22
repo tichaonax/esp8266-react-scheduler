@@ -2,8 +2,6 @@ import axios from 'axios';
 import {API_REQUEST, apiError, apiSuccess} from "../../actions/api";
 import { RemoteUtils } from '../../../utils/remoteUtils';
 
-RemoteUtils.setRemoteToken();
-
 export const apiMiddleware = ({dispatch}) => (next) => (action) => {
     next(action);
     if (action.type.includes(API_REQUEST)) {

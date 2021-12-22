@@ -16,10 +16,10 @@ const RemoteConfiguration: FC = () => {
   const classes = useStyles();
   return (
     <>
-    {RemoteUtils.isRemoteIpDevice() &&
+    {RemoteUtils.isRemoteDevice() &&
     <Typography variant="body1" color="secondary"className={classes.alert} >
        Device:
-       <span className={classes.ip}>{RemoteUtils.getRemoteDeviceIp()}</span>
+       <span className={classes.ip}>{RemoteUtils.getRemoteDeviceUrl()}</span>
     </Typography>}
     </>
   );

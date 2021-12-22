@@ -119,8 +119,8 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
       return (<FormLoader onRetry={loadData} errorMessage={errorMessage} />);
     }
 
-    if(!data.schedule && RemoteUtils.isRemoteIpDevice()){
-      const networkErrorMessage = `Remote device ${RemoteUtils.getRemoteDeviceIp()} unreachable`;
+    if(!data.schedule && RemoteUtils.isRemoteDevice()){
+      const networkErrorMessage = `Remote device ${RemoteUtils.getRemoteDeviceUrl()} unreachable`;
       return (<FormLoader onRetry={loadData} errorMessage={networkErrorMessage} />);
     }
 

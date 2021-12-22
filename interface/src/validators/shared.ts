@@ -16,7 +16,7 @@ export const validate = <T extends object>(validator: Schema, source: Partial<T>
 
 // eslint-disable-next-line max-len
 const IP_ADDRESS_REGEXP = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-const isValidIpAddress = (value: string) => IP_ADDRESS_REGEXP.test(value);
+export const isValidIpAddress = (value: string) => IP_ADDRESS_REGEXP.test(value);
 
 export const IP_ADDRESS_VALIDATOR = {
   validator(rule: InternalRuleItem, value: string, callback: (error?: string) => void) {

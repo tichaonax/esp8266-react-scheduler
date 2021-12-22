@@ -11,11 +11,13 @@ import { notificationMiddleware} from "./middleware/core/notification";
 import { uiReducer } from "./reducers/uiReducer";
 import { notificationsReducer } from "./reducers/notificationReducer";
 import { channelReducer } from './reducers/channelReducer';
+import { proxyReducer } from './reducers/proxyReducer';
 
 const rootReducer = combineReducers({
   ui: uiReducer,
   notification: notificationsReducer,
   channels: channelReducer,
+  host: proxyReducer
 });
 
 export type AppState = ReturnType<typeof rootReducer>;

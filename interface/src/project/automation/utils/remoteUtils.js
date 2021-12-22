@@ -1,12 +1,40 @@
-import { ACCESS_TOKEN } from '../../../api/endpoints';
+import { WS_BASE_URL, API_BASE_URL, ACCESS_TOKEN } from '../../../api/endpoints';
+import { isValidIpAddress } from '../../../validators/shared';
+
+import { store } from '../redux/store';
+import { deviceProxySelector } from '../redux/selectors/proxy';
+
 const SIGN_IN_ENDPOINT = '/rest/signIn';
 
 export class RemoteUtils {
-    static RemoteToken;
-    // eslint-disable-next-line max-len
-    static ipRegex = /\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/g;
-    static REMOTE_IP = "device";
-    static ACCESS_TOKEN = 'access_token';
+  static RemoteToken;
+  static PROXY = "device";
+  static LOCALHOST ='localhost;'
+
+  static getProxy() {
+      let isProxy = false;
+      const localhost = this.parseUrl(this.getUrlAddress());
+      let remote = this.getRemoteDeviceUrl();
+      let proxy = localhost;
+      if(remote){
+        if(isValidIpAddress(remote)){
+          remote = `http://${remote}`;
+        }
+        proxy = this.parseUrl(remote);
+        if (proxy.hostname !== localhost.hostname){
+          isProxy = true;
+        }
+      }
+      return({
+        isProxy,
+        localhost,
+        proxy,
+        channelOne : this.isChannelEnabled('channelOne'),
+        channelTwo : this.isChannelEnabled('channelTwo'),
+        channelThree : this.isChannelEnabled('channelThree'),
+        channelFour : this.isChannelEnabled('channelFour'),
+      });
+    }
 
     static parseUrl(url) {
       let link = document.createElement('a');
@@ -42,12 +70,12 @@ export class RemoteUtils {
       return decodeURIComponent(results[2].replace(/\+/g, ' '));
     }
 
-    static getRemoteDeviceIp(){
-        return this.getParameterByName(this.REMOTE_IP);
+    static getRemoteDeviceUrl(){
+        return this.getParameterByName(this.PROXY);
     }
 
-    static isRemoteIpDevice(){
-        return (this.getRemoteDeviceIp() != null);
+    static isRemoteDevice(){
+        return (this.getRemoteDeviceUrl() != null);
     }
 
     static isRoute(route){
@@ -55,29 +83,23 @@ export class RemoteUtils {
     }
 
     static isChannelEnabled(route){
-      const isRemote = this.isRemoteIpDevice();
+      const isRemote = this.isRemoteDevice();
       return(!isRemote || (isRemote && this.isRoute(route)));
     }
 
     static correctEndPointUrl(endpointUrl){
-     const remoteIp = this.getRemoteDeviceIp();
-     if(remoteIp){
+     const remoteUrl = this.getRemoteDeviceUrl();
+     if(remoteUrl){
        const {protocol, pathname, search} = this.parseUrl(endpointUrl);
-       //const url = endpointUrl.replace(this.ipRegex, remoteIp);
-       return(`${protocol}//${remoteIp}${pathname}${search}`);
+       return(`${protocol}//${remoteUrl}${pathname}${search}`);
      }
      return (endpointUrl);
     }
 
-    static setRemoteToken(){
-      RemoteUtils.getRemoteAccessToken("admin", "admin").then((response) => {
-        RemoteUtils.RemoteToken = response;
-      });
-    }
-
-    static getLocalAccessToken(){
+    static getAccessToken(){
         return this.getStorage().getItem(this.ACCESS_TOKEN);
     }
+
     static getRemoteAccessToken(username, password) {
        return fetch(this.correctEndPointUrl(SIGN_IN_ENDPOINT), {
           method: 'POST',
@@ -103,16 +125,12 @@ export class RemoteUtils {
     }
 
     static getStorage(){
-         return localStorage || sessionStorage;
-    }
-
-    static getAccessToken(){
-      return this.isRemoteIpDevice() ? this.RemoteToken : localStorage.getItem(ACCESS_TOKEN);
+      return localStorage || sessionStorage;
     }
 
     static makeParams(_params){
       let accessToken = this.getLocalAccessToken() || "";
-      if(this.isRemoteIpDevice()) accessToken = this.RemoteToken;
+      if(this.isRemoteDevice()) accessToken = this.RemoteToken;
       const makeParams = (params) => {
         params = params || {};
         params.credentials = 'include';
@@ -130,6 +148,31 @@ export class RemoteUtils {
       let navToUrl = `/project/${route}/${path}`;
       const state = "State";
       return(navToUrl.substring(0, navToUrl.length - state.length));
+    }
+
+    static getApiBaseAddress() {
+      const host = deviceProxySelector(store.getState());
+      if(host.isProxy){
+        return `${host.proxy.protocol}//${host.proxy.hostname}:${host.proxy.port}${API_BASE_URL}`;
+      }else{
+        return `${host.localhost.protocol}//${host.localhost.hostname}:${host.localhost.port}${API_BASE_URL}`;
+      }
+    }
+
+    static getWsBaseAddress() {
+      const host = deviceProxySelector(store.getState());
+      let webProtocol;
+      if(host.isProxy){
+        webProtocol = host.proxy.protocol === "https:" ? "wss:" : "ws:";
+        return `${webProtocol}//${host.proxy.hostname}${WS_BASE_URL}`;
+      }else{
+        webProtocol = host.localhost.protocol === "https:" ? "wss:" : "ws:";
+        return `${webProtocol}//${host.localhost.hostname}${WS_BASE_URL}`;
+      }
+    }
+
+    static getDeviceHost(){
+      return deviceProxySelector(store.getState());
     }
   }
 

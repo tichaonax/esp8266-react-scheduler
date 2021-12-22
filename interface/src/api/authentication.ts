@@ -15,11 +15,11 @@ export const SIGN_IN_SEARCH = 'loginSearch';
 export const getDefaultRoute = (features: Features) => features.project ? `/${PROJECT_PATH}` : "/wifi";
 
 export function verifyAuthorization(): AxiosPromise<void> {
-  return AXIOS.get('/verifyAuthorization');
+  return AXIOS.get(`${RemoteUtils.getApiBaseAddress()}verifyAuthorization`);
 }
 
 export function signIn(request: SignInRequest): AxiosPromise<SignInResponse> {
-  return AXIOS.post('/signIn', request);
+  return AXIOS.post(`${RemoteUtils.getApiBaseAddress()}signIn`, request);
 }
 
 /**
@@ -55,10 +55,7 @@ export const clearAccessToken = () => localStorage.removeItem(ACCESS_TOKEN);
 export const decodeMeJWT = (accessToken: string): Me => jwtDecode(accessToken) as Me;
 
 export function addAccessTokenParameter(url: string) {
-  let accessToken = getStorage().getItem(ACCESS_TOKEN);
-  if(RemoteUtils.isRemoteIpDevice()){
-    accessToken = RemoteUtils.RemoteToken;
-  }
+  const accessToken = getStorage().getItem(ACCESS_TOKEN);
   if (!accessToken) {
     return url;
   }

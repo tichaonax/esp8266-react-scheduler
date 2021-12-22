@@ -8,4 +8,3 @@ export interface Schedule{
     hotTimeHour: number;
     overrideTime: number;
   }
-  

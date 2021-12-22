@@ -1,6 +1,7 @@
 
 import { FC } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 import { Tab } from '@mui/material';
 
@@ -15,10 +16,13 @@ import { RemoteUtils } from './utils/remoteUtils';
 const Schedule: FC = () => {
   useLayoutTitle("Schedule");
   const { routerTab } = useRouterTab();
-  const isChannelOne = RemoteUtils.isChannelEnabled('channelOne');
-  const isChannelTwo = RemoteUtils.isChannelEnabled('channelTwo');
-  const isChannelThree = RemoteUtils.isChannelEnabled('channelThree');
-  const isChannelFour = RemoteUtils.isChannelEnabled('channelFour');
+  const {
+    channelOne: isChannelOne,
+    channelTwo: isChannelTwo,
+    channelThree: isChannelThree,
+    channelFour: isChannelFour
+  } = RemoteUtils.getDeviceHost();
+
   return (
     <>
       <RouterTabs value={routerTab}>
