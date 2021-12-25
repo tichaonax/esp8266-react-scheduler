@@ -13,7 +13,7 @@ import * as Api from '../../api/channelApi';
 import { ChannelMqttSettings } from "../../redux/types/mqtt";
 import { CHANNEL_MQTT_SETTINGS_VALIDATOR } from "../validators";
 import { ChannelMqttSettingsFormProps } from "./mqtt";
-import RemoteConfiguration from '../RemoteConfiguration';
+import { RemoteUtils } from "../../utils/remoteUtils";
 
 const ChannelMqttSettingsForm: FC<ChannelMqttSettingsFormProps> = ({ channelId }) => {
   const [fieldErrors, setFieldErrors] = useState<ValidateFieldsError>();
@@ -39,6 +39,16 @@ const ChannelMqttSettingsForm: FC<ChannelMqttSettingsFormProps> = ({ channelId }
       return (<FormLoader onRetry={loadData} errorMessage={errorMessage} />);
     }
 
+    if(!data.unique_id && RemoteUtils.isRemoteDevice()){
+      const networkErrorMessage = `Remote device ${RemoteUtils.getRemoteDeviceUrl()} unreachable`;
+      return (<FormLoader onRetry={loadData} errorMessage={networkErrorMessage} />);
+    }
+
+    if(!data.unique_id){
+      const networkErrorMessage = `Requested ${RemoteUtils.getLastPathItem(window.location.pathname)} is not configured`;
+      return (<FormLoader onRetry={loadData} errorMessage={networkErrorMessage} />);
+    }
+
     const validateAndSubmit = async () => {
       try {
         setFieldErrors(undefined);
@@ -51,7 +61,6 @@ const ChannelMqttSettingsForm: FC<ChannelMqttSettingsFormProps> = ({ channelId }
 
     return (
       <>
-        <RemoteConfiguration/>
         <ValidatedTextField
           fieldErrors={fieldErrors}
           name="unique_id"

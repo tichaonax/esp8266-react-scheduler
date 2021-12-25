@@ -10,13 +10,23 @@
 #include "./ChannelScheduleRestartService.h"
 #include "./SystemStateService.h"
 
-#define LED 2  //On board LED
+#ifdef LILYGO
+  #define LED 25
+#else
+ #define LED 2 
+#endif
+
 
 #ifdef ESP32
-  #define LED_ON CONTROL_ON
-  #define LED_OFF CONTROL_OFF
+  #ifdef LILYGO
+     #define LED_ON !CONTROL_ON
+  #define LED_OFF !CONTROL_OFF
+  #else
+    #define LED_ON CONTROL_ON
+    #define LED_OFF CONTROL_OFF
+  #endif
 #elif defined(ESP8266)
-  #define LED_ON !CONTROL_ON  // LED 2 is inverted
+  #define LED_ON !CONTROL_ON
   #define LED_OFF !CONTROL_OFF
 #endif
 

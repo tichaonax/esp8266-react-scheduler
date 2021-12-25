@@ -30,14 +30,14 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 
 const Status: FC = () => {
   const classes = useStyles();
-  useLayoutTitle('Status');
   const {
     channelOne: isChannelOne,
     channelTwo: isChannelTwo,
     channelThree: isChannelThree,
-    channelFour: isChannelFour
+    channelFour: isChannelFour,
   } = RemoteUtils.getDeviceHost();
 
+  useLayoutTitle("Status");
   return (
     <>
       <div className={classes.flexContainer}>

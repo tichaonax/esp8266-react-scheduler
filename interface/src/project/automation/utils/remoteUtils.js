@@ -10,17 +10,19 @@ export class RemoteUtils {
   static getProxy() {
       let isProxy = false;
       const localhost = this.parseUrl(this.getUrlAddress());
-      let remote = this.getRemoteDeviceUrl();
+      let device = this.getRemoteDeviceUrl();
+      let remote = device;
       let proxy = localhost;
-      if(remote){
+      if(device){
         if(isValidIpAddress(remote)){
-          remote = `http://${remote}`;
+          device = `http://${device}`;
         }
-        proxy = this.parseUrl(remote);
+        proxy = this.parseUrl(device);
         if (proxy.hostname !== localhost.hostname){
           isProxy = true;
         }
       }
+      if(remote === null || remote.length < 2) { remote = "";}
       return({
         isProxy,
         localhost,
@@ -29,6 +31,7 @@ export class RemoteUtils {
         channelTwo : this.isChannelEnabled('channelTwo'),
         channelThree : this.isChannelEnabled('channelThree'),
         channelFour : this.isChannelEnabled('channelFour'),
+        remote,
       });
     }
 
@@ -48,11 +51,6 @@ export class RemoteUtils {
       link = null;
 
     return retValue;
-    }
-
-    static getUrlBaseAddress() {
-      const newUrl = this.parseUrl(this.getUrlAddress());
-      return `${newUrl.protocol}//${newUrl.hostname}:${newUrl.port}`;
     }
 
     static getUrlAddress = () => window.location.href;
@@ -122,6 +120,8 @@ export class RemoteUtils {
     static getDeviceHost(){
       return deviceProxySelector(store.getState());
     }
+
+    static getLastPathItem = (thePath) => thePath.substring(thePath.lastIndexOf('/') + 1);
   }
 
   const remoteUtils = { RemoteUtils };
