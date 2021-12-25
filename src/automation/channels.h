@@ -21,13 +21,21 @@
   #ifdef ESP32
     #define CHANNEL_ONE_CONTROL_PIN 21
   #else
-    #define CHANNEL_ONE_CONTROL_PIN 0
+    #ifdef SONOFF
+      #define CHANNEL_ONE_CONTROL_PIN 12 
+    #else
+      #ifdef ESP01_M
+        #define CHANNEL_ONE_CONTROL_PIN 0 
+      #else
+        #define CHANNEL_ONE_CONTROL_PIN 5 
+      #endif 
+    #endif
   #endif
 #endif
 
 #define CHANNEL_ONE_REST_ENDPOINT_PATH "/rest/channelOneState"  //restChannelEndPoint
 #define CHANNEL_ONE_SOCKET_PATH "/ws/channelOneState"  // webSocketChannelEndPoint
-#define CHANNEL_ONE_DEFAULT_NAME "Esp-01 Express" //  defaultChannelName
+#define CHANNEL_ONE_DEFAULT_NAME "SonOff" //  defaultChannelName
 #define CHANNEL_ONE_CONFIG_JSON_PATH "/config/channelOneState.json"  // channelJsonConfigPath
 #define CHANNEL_ONE_HOME_ASSISTANT_ENTITY "ch1"
 #define CHANNEL_ONE_DEFAULT_CONTROL_RUN_EVERY 15.0f
@@ -39,8 +47,8 @@
 #define CHANNEL_ONE_DEFAULT_ENABLED_STATE true
 #define CHANNEL_ONE_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE false
 #define CHANNEL_ONE_DEFAULT_RANDOMIZE_SCHEDULE true
-#define CHANNEL_ONE_DEFAULT_SPAN_TIME 0.0f  //minimum runtime or hotTime hours
-#define CHANNEL_ONE_DEFAULT_OVERRIDE_TIME 0.0f // override time in minutes
+#define CHANNEL_ONE_DEFAULT_SPAN_TIME 3.0f  //minimum runtime or hotTime hours
+#define CHANNEL_ONE_DEFAULT_OVERRIDE_TIME 60.0f // override time in minutes
 #define CHANNEL_ONE_DEFAULT_ENABLE_MINIMUM_RUN_TIME_SCHEDULE true
 #define CHANNEL_ONE_HOMEASSISTANT_TOPIC_TYPE HOMEASSISTANT_TOPIC_TYPE_SWITCH
 #define CHANNEL_ONE_HOMEASSISTANT_ICON MDI_WATER_PUMP

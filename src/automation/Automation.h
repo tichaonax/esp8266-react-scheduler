@@ -13,9 +13,12 @@
 #ifdef LILYGO
   #define LED 25
 #else
- #define LED 2 
+  #ifdef SONOFF
+   #define LED 13 
+  #else
+   #define LED 2 
+  #endif
 #endif
-
 
 #ifdef ESP32
   #ifdef LILYGO
