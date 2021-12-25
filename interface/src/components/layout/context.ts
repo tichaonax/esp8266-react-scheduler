@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useContext } from 'react';
+import { RemoteUtils } from '../../project/automation/utils/remoteUtils';
 
 export interface LayoutContextValue {
   title: string;
@@ -11,13 +12,18 @@ export const LayoutContext = React.createContext(
 );
 
 export const useLayoutTitle = (myTitle: string) => {
-
+  let massagedTitle: string = myTitle;
+  const { isProxy, remote } = RemoteUtils.getDeviceHost();
+  if(isProxy){
+    massagedTitle = `${massagedTitle} ${remote}`;
+  }
   const { title, setTitle } = useContext(LayoutContext);
+
   const previousTitle = useRef(title);
 
   useEffect(() => {
-    setTitle(myTitle);
-  }, [setTitle, myTitle]);
+    setTitle(massagedTitle);
+  }, [setTitle, massagedTitle]);
 
   useEffect(() => () => {
     setTitle(previousTitle.current);
