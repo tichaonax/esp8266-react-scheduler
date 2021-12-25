@@ -94,7 +94,7 @@
 
 #define CHANNEL_THREE_REST_ENDPOINT_PATH "/rest/channelThreeState"  //restChannelEndPoint
 #define CHANNEL_THREE_SOCKET_PATH "/ws/channelThreeState"  // webSocketChannelEndPoint
-#define CHANNEL_THREE_DEFAULT_NAME "Bedroom Light" //  defaultChannelName
+#define CHANNEL_THREE_DEFAULT_NAME "Master Bedroom" //  defaultChannelName
 #define CHANNEL_THREE_CONFIG_JSON_PATH "/config/channelThreeState.json"  // channelJsonConfigPath
 #define CHANNEL_THREE_HOME_ASSISTANT_ENTITY "ch3"    // homeAssistantEntity
 #define CHANNEL_THREE_DEFAULT_CONTROL_RUN_EVERY 30.0f
@@ -106,7 +106,7 @@
 #define CHANNEL_THREE_DEFAULT_ENABLED_STATE true
 #define CHANNEL_THREE_DEFAULT_ENABLE_TIME_SPAN_SCHEDULE false
 #define CHANNEL_THREE_DEFAULT_RANDOMIZE_SCHEDULE true
-#define CHANNEL_THREE_DEFAULT_SPAN_TIME 3.0f  //minimum runtime
+#define CHANNEL_THREE_DEFAULT_SPAN_TIME 2.5f  //minimum runtime
 #define CHANNEL_THREE_DEFAULT_OVERRIDE_TIME 120.0f // override time in minutes
 #define CHANNEL_THREE_DEFAULT_ENABLE_MINIMUM_RUN_TIME_SCHEDULE false
 #define CHANNEL_THREE_HOMEASSISTANT_TOPIC_TYPE HOMEASSISTANT_TOPIC_TYPE_LIGHT
