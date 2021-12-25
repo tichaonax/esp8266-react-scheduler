@@ -9,7 +9,6 @@ import { updateValue, useWs } from '../../../../utils';
 import { ChannelState} from '../../redux/types/channel';
 import { RemoteUtils } from '../../utils/remoteUtils';
 import { ChannelStateWebSocketFormProps } from './ws';
-import RemoteConfiguration from '../RemoteConfiguration';
 
 const ChannelStateWebSocketForm: FC<ChannelStateWebSocketFormProps> = ({websocketEndPoint}) => {
   const { connected, updateData, data } = useWs<ChannelState>(`${RemoteUtils.getWsBaseAddress()}${websocketEndPoint}`);
@@ -23,9 +22,19 @@ const ChannelStateWebSocketForm: FC<ChannelStateWebSocketFormProps> = ({websocke
     if (!connected || !data) {
       return (<FormLoader message="Connecting to WebSocket…" />);
     }
+
+    if(!data.schedule && RemoteUtils.isRemoteDevice()){
+      const networkErrorMessage = `Remote device ${RemoteUtils.getRemoteDeviceUrl()} unreachable`;
+      return (<FormLoader  errorMessage={networkErrorMessage} />);
+    }
+
+    if(!data.schedule){
+      const networkErrorMessage = `Requested ${RemoteUtils.getLastPathItem(window.location.pathname)} is not configured`;
+      return (<FormLoader errorMessage={networkErrorMessage} />);
+    }
+
     return (
       <>
-        <RemoteConfiguration/>
         <Typography variant="subtitle1">{data.name}</Typography>
         <Typography variant="body2">{`Channel control pin ${data.controlPin}`}</Typography>
         <ListItem>

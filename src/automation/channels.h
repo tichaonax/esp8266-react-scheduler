@@ -17,7 +17,11 @@
     #define CHANNEL_ONE_CONTROL_PIN 5
   #endif
 #else
-  #define CHANNEL_ONE_CONTROL_PIN 5
+  #ifdef ESP32
+    #define CHANNEL_ONE_CONTROL_PIN 21
+  #else
+    #define CHANNEL_ONE_CONTROL_PIN 5
+  #endif
 #endif
 
 #define CHANNEL_ONE_REST_ENDPOINT_PATH "/rest/channelOneState"  //restChannelEndPoint
@@ -47,7 +51,11 @@
     #define CHANNEL_TWO_CONTROL_PIN 12
   #endif
 #else
-  #define CHANNEL_TWO_CONTROL_PIN 12
+  #ifdef ESP32
+    #define CHANNEL_TWO_CONTROL_PIN 19
+  #else
+    #define CHANNEL_TWO_CONTROL_PIN 12
+  #endif
 #endif
 
 #define CHANNEL_TWO_REST_ENDPOINT_PATH "/rest/channelTwoState"  //restChannelEndPoint
@@ -77,7 +85,11 @@
     #define CHANNEL_THREE_CONTROL_PIN 13
   #endif
 #else
-  #define CHANNEL_THREE_CONTROL_PIN 13
+  #ifdef ESP32
+    #define CHANNEL_THREE_CONTROL_PIN 18
+  #else
+    #define CHANNEL_THREE_CONTROL_PIN 13
+  #endif
 #endif
 
 #define CHANNEL_THREE_REST_ENDPOINT_PATH "/rest/channelThreeState"  //restChannelEndPoint
@@ -107,7 +119,11 @@
     #define CHANNEL_FOUR_CONTROL_PIN 14
   #endif
 #else
-  #define CHANNEL_FOUR_CONTROL_PIN 14
+  #ifdef ESP32
+    #define CHANNEL_FOUR_CONTROL_PIN 5
+  #else
+    #define CHANNEL_FOUR_CONTROL_PIN 14
+  #endif
 #endif
 
 #define CHANNEL_FOUR_REST_ENDPOINT_PATH "/rest/channelFourState"  //restChannelEndPoint
