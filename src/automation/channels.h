@@ -20,7 +20,15 @@
   #ifdef ESP32
     #define CHANNEL_ONE_CONTROL_PIN 21
   #else
-    #define CHANNEL_ONE_CONTROL_PIN 5
+    #ifdef SONOFF
+      #define CHANNEL_ONE_CONTROL_PIN 12 
+    #else
+      #ifdef ESP01_M
+        #define CHANNEL_ONE_CONTROL_PIN 0 
+      #else
+        #define CHANNEL_ONE_CONTROL_PIN 5 
+      #endif 
+    #endif
   #endif
 #endif
 
