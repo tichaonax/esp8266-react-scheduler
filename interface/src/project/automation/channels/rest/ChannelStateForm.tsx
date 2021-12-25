@@ -56,7 +56,6 @@ import { validate } from '../../../../validators';
 import { extractEventValue } from '../../../../utils';
 import { ChannelStateRestFormProps } from "./rest";
 import * as Api from '../../api/channelApi';
-import RemoteConfiguration from '../RemoteConfiguration';
 
 import '../svg-styles.css';
 
@@ -121,6 +120,11 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
 
     if(!data.schedule && RemoteUtils.isRemoteDevice()){
       const networkErrorMessage = `Remote device ${RemoteUtils.getRemoteDeviceUrl()} unreachable`;
+      return (<FormLoader onRetry={loadData} errorMessage={networkErrorMessage} />);
+    }
+
+    if(!data.schedule){
+      const networkErrorMessage = `Requested ${RemoteUtils.getLastPathItem(window.location.pathname)} is not configured`;
       return (<FormLoader onRetry={loadData} errorMessage={networkErrorMessage} />);
     }
 
@@ -241,7 +245,6 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
 
     return (
       <>
-        <RemoteConfiguration/>
         <ValidatedTextField
           fieldErrors={fieldErrors}
           name="name"
@@ -272,12 +275,15 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
                   disabled={data.enabled}
                   onChange={handleChannelStateValueChange('controlPin')}
                 >
-                <MenuItem value={0}>GPIO0</MenuItem>
-                <MenuItem value={4}>GPIO4</MenuItem>
-                <MenuItem value={5}>GPIO5</MenuItem>
-                <MenuItem value={12}>GPIO12</MenuItem>
-                <MenuItem value={13}>GPIO13</MenuItem>
-                <MenuItem value={14}>GPIO14</MenuItem>
+                  <MenuItem value={0}>GPIO0</MenuItem>
+                  <MenuItem value={4}>GPIO4</MenuItem>
+                  <MenuItem value={5}>GPIO5</MenuItem>
+                  <MenuItem value={12}>GPIO12</MenuItem>
+                  <MenuItem value={13}>GPIO13</MenuItem>
+                  <MenuItem value={14}>GPIO14</MenuItem>
+                  <MenuItem value={18}>GPIO18</MenuItem>
+                  <MenuItem value={19}>GPIO19</MenuItem>
+                  <MenuItem value={21}>GPIO21</MenuItem>
                 </Select>
               }
               label={(<ControlPin/>)}

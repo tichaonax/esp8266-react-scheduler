@@ -5,7 +5,6 @@ import {API_ERROR, API_SUCCESS, apiRequest} from "../../actions/api";
 import {setLoader} from "../../actions/ui";
 import {setNotification} from "../../actions/notification";
 
-import { API_BASE_URL } from '../../../../../api/endpoints';
 import { RemoteUtils } from '../../../utils/remoteUtils';
 
 export const channelMiddleware = () => (next) => (action) => {

@@ -1,7 +1,6 @@
 
 import { FC } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 
 import { Tab } from '@mui/material';
 
@@ -14,14 +13,21 @@ import ChannelFour from './channels/ChannelFour';
 import { RemoteUtils } from './utils/remoteUtils';
 
 const Schedule: FC = () => {
-  useLayoutTitle("Schedule");
   const { routerTab } = useRouterTab();
   const {
     channelOne: isChannelOne,
     channelTwo: isChannelTwo,
     channelThree: isChannelThree,
-    channelFour: isChannelFour
+    channelFour: isChannelFour,
   } = RemoteUtils.getDeviceHost();
+
+  let defaultChannel: string = "";
+  if(isChannelOne){defaultChannel = "channelOne";}
+  else if(isChannelTwo){defaultChannel="channelTwo";}
+  else if(isChannelThree){defaultChannel="channelThree";}
+  else if(isChannelFour){defaultChannel="channelFour";}
+
+  useLayoutTitle("Schedule");
 
   return (
     <>
@@ -36,7 +42,7 @@ const Schedule: FC = () => {
         <Route path="channelTwo" element={<ChannelTwo />} />
         <Route path="channelThree" element={<ChannelThree />} />
         <Route path="channelFour" element={<ChannelFour />} />
-        <Route path="/*" element={<Navigate replace to="channelOne" />} />
+        <Route path="/*" element={<Navigate replace to={defaultChannel} />} />
       </Routes>
     </>
   );
