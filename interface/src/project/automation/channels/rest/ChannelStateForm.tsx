@@ -585,7 +585,7 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
 
   return (
     <ThemeProvider theme={theme}>
-      <SectionContent title='' titleGutter>
+      <SectionContent title='Channel Schedule' titleGutter>
         {content()}
       </SectionContent>
     </ThemeProvider>
