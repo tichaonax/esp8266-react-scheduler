@@ -402,7 +402,7 @@ channel four ```GPIO 14```
 
 ## ```sinilink device```
 
-channel two ```GPIO 12```
+channel two ```GPIO 4```
 
 ## ```esp-01```
 
