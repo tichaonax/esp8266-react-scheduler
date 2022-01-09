@@ -9,21 +9,21 @@ I had a unique problem in my rural community and needed to find a sound solution
 
 [Schedule Screens](#esp-react-scheduler-screens)
 
+[Remote configuration](#remote-configuration)
+
 [Homeassistant integration](#homeassistant-integration)
 
 [Schedule](#scheduling-mobile) - settings
 
 [MQTT](#mqtt)- setting up
 
-[What to watch for](#what-to-watch-for) - potentil problems to watch for, memory restriction etc.
+[What to watch for](#what-to-watch-for) - potential problems to watch for, memory restriction etc.
 
 [Boards](#boards-tested-with-the-project) - These boards have been tested to work.
 
 [GPIO pins](#default-gpio-pins) - Default GPIO pins
 
-[System Defaults](#system-defaults)
-
-[MQTT Settings](#mqtt-settings) - extras
+[Low Memory devices](#low-memory-devices)
 
 ## Let's Automate This Home
 <img alt=" Let's automate this home" src="doc/home-sweet-home.jpeg" width="768"/>
@@ -132,12 +132,6 @@ On top of the above I added my system functions with configuration via an easy t
 
 Make sure you are familiar with building the project by going to [*rjwats*](https://github.com/rjwats/esp8266-react) for more documentation. It might be helpful to just go through the exercise and build that project on its own before you clone my [*react scheduler*](https://github.com/tichaonax/esp8266-react-scheduler).
 
-If you run into issues with the date-picker in REACT follow the steps [*here*](https://material-ui-pickers.dev/getting-started/installation), a manual intervention may be needed in that case:
-
-You may need to install the following modules after an attempt on the initial build.
-
-	npm i @material-ui/pickers
-	npm i @date-io/date-fns@1.x date-fns
 	
 I try to keep updating my master branch from rjwats to take advantage of any new updates that may be useful.
 
@@ -145,31 +139,66 @@ I try to keep updating my master branch from rjwats to take advantage of any new
 
 ### Channel Status Desktop
 	
-<img alt=" Channel Status" src="doc/status-desktop.jpeg" width="768"/>
+<img alt=" Channel Status" src="doc/status-desktop.png"/>
 
-### Channel Status Mobile Landscape
-	
-<img alt=" Channel Status" src="doc/status-mobile.jpeg" width="1028"/>
-
-### Channel Status Mobile
-	
-<img alt=" Channel Status" src="doc/status.jpeg" width="400"/>
+<br /> 
 
 ### Scheduling Mobile
 
-|Normal settings|Timespan settings|  
-|:---|:---|
-|<img alt=" Schedule" src="doc/schedule-c1-1.jpeg" width="400"/>|<img alt=" Schedule Timespan" src="doc/schedule-c2-1.jpeg" width="400"/>|  
+ <style>
+td, th {
+   border: none!important;
+}
+</style>
+<table>
+  <tr>
+    <td>Normal settings</td>
+    <td>Timespan settings</td>
+  </tr>
+  <tr>
+    <td valign="top"><img src="doc/schedule-c1-1.png"></td>
+    <td valign="top"><img src="doc/schedule-c2-1.png"></td>
+  </tr>
+</table>
+
+<br />
 
 ### MQTT
 
-|Randomize and Hot-time feature|MQTT Settings|
-|:---|:---|
-|<img alt=" Schedule Hot-time and random" src="doc/schedule-c3-1.jpeg" width="400"/>|<img alt=" MQTT" src="doc/mqtt-c1-1.jpeg" width="400"/>|
+<table>
+  <tr>
+    <td>Randomize and Hot-time</td>
+    <td>MQTT Settings</td>
+  </tr>
+  <tr>
+    <td valign="top"><img src="doc/schedule-c3-1a.jpeg"></td>
+    <td valign="top"><img src="doc/mqtt-c3-1a.jpg"></td>
+  </tr>
+</table>
+
+<br /> 
 
 ### Status
 	
-<img alt="Automation Information" src="doc/status-c1-1.jpeg" width="400"/>
+<img alt="Automation Information" src="doc/status-c1-1.jpeg"/>
+
+<br />
+
+### Remote configuration
+
+<table>
+  <tr>
+    <td valign="top"><img src="doc/remote-config.png"></td>
+  </tr>
+</table>
+
+You will notice that as you add new features to the project you quickly run out of memory. To get around that the complete UI is deployed to a device that has more memory like the ```ESP32```. This is then configured as the master device on the target device. The other device will only deploy the backend code which implements the apis but not the UI. This saves memory and cpu cycles on the smaller device. To remotely configure the chip you need to point to the master device, i.e the device that has the whole UI. The following URL will configure device on ip ```192.168.0.172``` from the UI on device ip ```192.168.0.190```. Adding the remote device ip makes it possible to directly manage the device from [homeassistant](#homeassistant-integration)
+
+http://192.168.0.190/project/auto/channelOne#?device=192.168.0.172
+
+With homeassistant integration the URL is created for you and you just need to click from the homeassistant screens under [attributes](#mobile-attributes).
+
+This will allow you to do all the device configuration of the remote device from the device with more memory with the remote device doing the authentication if enabled.
 
 ### Automation information
 ```
@@ -246,35 +275,45 @@ Homeassistant integration comes for free, check out resource for Homeassistant [
 
 ### Desktop
 
-<img alt="Homeassistant" src=doc/homeassistant-desktop.jpeg width=768/>
+<img alt="Homeassistant" src="doc/homeassistant-desktop-a.png"/>
 
 ### Mobile
 	
 <img alt="HomeMobile" src="doc/homeassistant-mobile.jpeg" width="400"/>
 
+<img alt="HomeMobile" src="doc/homeassistant-mobile-a.jpeg" width="400"/>
+<br/>
+
+### Mobile attributes
+
+<img alt="HomeMobile" src="doc/homeassistant-mobile-b.jpeg" width="400"/>
+
+When properly integrated homeassistant will show the schedule attributes from homeassistant which the device registers with the ```MQTT``` auto-discovery feature of homeassistant without any custom configuration on homeassistant. This out of the box integration feature with homeassistant makes it possible to just add new devices and managing them from homeassistant. The IP address of the devices is sent to homeassistant as part of config payload data.  
 
 ## What To Watch For
 
 	Like every project, it comes with challenges and lots of frustration. But they say no pain no gain,
-	besides solving a hard problem brings a lot of satisfation in the end. Below are some of gotchas
+	besides solving a hard problem brings a lot of satisfaction in the end. Below are some of gotchas
 	to watch for.
 	
-	The most important thing is to get your environ properly set for esp, VSCode makes it easier to work
-	on the project and there are tons of articles to get that to work.
+	The most important thing is to get your environ properly setup for esp, VSCode makes it easier to work
+	on the project and there are tons of articles to get you up to speed.
 	
-	Do not have a long running process in your loop, the system watch-dog will yank the carpert underneath
-	your code without notice and will be very hard to debug. If you see your chip resetting oftern that may
+	Do not have a long running process in your loop, the system watch-dog will yank the carpet underneath
+	your code without notice and will be very hard to debug. If you see your chip resetting often that may
 	be the case.
 	
-	If successfully deployed to the microcontroller the onboard led will blink fast and then when it gets
+	If successfully deployed to the microcontroller the onboard led will blink fast while looking for an access point and then when it gets
 	wifi connection it will blink slow. If you see the led flash again after it has gotten wifi it indicates
 	the system crashed and restarted.
 
 #### Selecting the chip
 	
-	The project has four independant channels that can turn on a switch per the schedule defined. Hower only
-	the ESP32 can load all the four channels on the chip and work well. ESP8266 can aonly handle one channel
+	The project has four independent channels that can turn on a switch per the schedule defined. However only
+	the ESP32 can load all the four channels on the chip and work well. ESP8266 can only handle one channel
 	especially if you want to be able to override the system defaults by using the React UI.
+
+	The Esp-01 cannot deploy the UI.
 	
 ### Choosing which channels to load on chip
 
@@ -292,16 +331,90 @@ Homeassistant integration comes for free, check out resource for Homeassistant [
 
 ## Boards tested with the project
 
-TBD
+### esp32 board
+
+This board supports all the four channels. You can use this as the master device for to contain the UI to configure the devices with less resources.
+
+```esp32```
+<img alt="ESP-32 board" src="doc/esp32.jpeg"/>
+
+<br/>
+
+### esp32 lilygo relay board
+
+This board supports all the four channels and comes with four onboard relays. 
+
+```esp 32 lilygo relay board```
+<img alt="ESP-32 board" src="doc/lillygo-relay-board.jpeg"/>
+
+<br/>
+
+### esp8266 board
+
+```esp8266```
+<img alt="ESP-32 board" src="doc/esp-8266.jpg"/>
+
+<br/>
+### sinilink  board
+
+This board supports one channel with an onboard relay. You can do OTA but need to disable ```PROGMEM_WWW``` and similar steps for ```esp-01``` described below.
+
+```esp8266 sinilink```
+<img alt="ESP-32 board" src="doc/sinilink_XY-WF36V.jpg"/>
+
+<img alt="ESP-32 board" src="doc/sinilink_XY-WF36V-prog-pins.jpg"/>
+
+<br/>
+
+### esp-01 board
+
+You will need to make sure you select right device in ```platform.ini```, disable ```PROGMEM_WWW```
+and do not upload the react image, this device can only support one scheduler channel and will not support OTA as there is limited  memory on the device. This is a cheap device that is abundant and good enough for controlling as simple switch.
+
+```esp-01```
+<img alt="ESP-32 board" src="doc/ESP-01.jpg"/>
 
 ## Default GPIO pins
 
-TBD
+The UI supports changing IO pin used for turing on the relay. This is important for different devices have different pins for IO.
 
-## System Defaults
+### ```esp32```
 
-TDB
+channel one ```GPIO 21```
 
-### MQTT Settings
+channel two ```GPIO 19```
 
-TBD
+channel three ```GPIO 18```
+
+channel four ```GPIO 5```
+
+## ```esp8266```
+
+channel one ```GPIO 5```
+
+channel two ```GPIO 12```
+
+channel three ```GPIO 13```
+
+channel four ```GPIO 14```
+
+## ```sinilink device```
+
+channel two ```GPIO 12```
+
+## ```esp-01```
+
+channel one ```GPIO 0```
+
+
+## Low Memory devices
+The system will not fit in low memory devices so you need to disable certain features, please refer to [*rjwats*] (https://github.com/rjwats/esp8266-react) for details.
+
+In the ```platform.ini``` turn off
+
+ ; Uncomment PROGMEM_WWW to enable the storage of the WWW data in PROGMEM <br/>
+ ```;-D PROGMEM_WWW```
+
+Only ESP32 with at least 4MB will support all the four scheduler channels including PROGMEM_WWW support.
+
+All others devices will less memory you can only support one channel and have to disable PROGMEM_WWW
