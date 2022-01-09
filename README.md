@@ -200,6 +200,8 @@ With homeassistant integration the URL is created for you and you just need to c
 
 This will allow you to do all the device configuration of the remote device from the device with more memory with the remote device doing the authentication if enabled.
 
+When configuring a remote device, its ip address will show on the top that way you know you are configuring a remote device and not the local device.
+
 ### Automation information
 ```
 This simple app allows user to control a switch through a simple schedule. It comes with default
@@ -406,7 +408,6 @@ channel two ```GPIO 12```
 
 channel one ```GPIO 0```
 
-
 ## Low Memory devices
 The system will not fit in low memory devices so you need to disable certain features, please refer to [*rjwats*] (https://github.com/rjwats/esp8266-react) for details.
 
@@ -418,3 +419,11 @@ In the ```platform.ini``` turn off
 Only ESP32 with at least 4MB will support all the four scheduler channels including PROGMEM_WWW support.
 
 All others devices will less memory you can only support one channel and have to disable PROGMEM_WWW
+
+Additional device documentation can be found below if yo want to try different devices.
+
+https://docs.platformio.org/en/latest/boards/index.html#espressif-32
+
+https://docs.platformio.org/en/latest/boards/index.html#espressif-8266
+
+https://docs.platformio.org/en/latest/boards/index.html#boards
