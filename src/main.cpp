@@ -157,7 +157,9 @@ ESP8266React esp8266React(&server);
 #if defined(TOGGLE_READ_PIN)
   boolean bToggleSwitch = true;
 #else
-  #define TOGGLE_READ_PIN 0;
+  #ifndef TOGGLE_READ_PIN
+    #define TOGGLE_READ_PIN 0
+  #endif
   boolean bToggleSwitch = false;
 #endif
 
