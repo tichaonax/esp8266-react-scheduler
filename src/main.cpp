@@ -154,6 +154,13 @@ ESP8266React esp8266React(&server);
 #endif
 /* #endregion */
 
+#if defined(TOGGLE_READ_PIN)
+  boolean bToggleSwitch = true;
+#else
+  #define TOGGLE_READ_PIN 0;
+  boolean bToggleSwitch = false;
+#endif
+
 Automation automation = Automation();
 Schedules schedules = Schedules(&automation);
 
@@ -169,21 +176,37 @@ void setup() {
   #if defined(CHANNEL_ONE)
     ScheduleTask scheduleOneTask;
     scheduleOneTask.channelTaskScheduler = &channelOneTaskScheduler;
+    scheduleOneTask.bToggleSwitch = bToggleSwitch;
+    scheduleOneTask.toggleReadPin = TOGGLE_READ_PIN;
+    scheduleOneTask.blinkLed = LED;
+    scheduleOneTask.ledOn = LED_ON;
     schedules.addSchedule(scheduleOneTask);
   #endif  
   #if defined(CHANNEL_TWO)
     ScheduleTask scheduleTwoTask;
     scheduleTwoTask.channelTaskScheduler = &channelTwoTaskScheduler;
+    scheduleTwoTask.bToggleSwitch = bToggleSwitch;
+    scheduleTwoTask.toggleReadPin = TOGGLE_READ_PIN;
+    scheduleTwoTask.blinkLed = LED;
+    scheduleTwoTask.ledOn = LED_ON;
     schedules.addSchedule(scheduleTwoTask);
   #endif  
   #if defined(CHANNEL_THREE)
     ScheduleTask scheduleThreeTask;
     scheduleThreeTask.channelTaskScheduler = &channelThreeTaskScheduler;
+    scheduleThreeTask.bToggleSwitch = bToggleSwitch;
+    scheduleThreeTask.toggleReadPin = TOGGLE_READ_PIN;
+    scheduleThreeTask.blinkLed = LED;
+    scheduleThreeTask.ledOn = LED_ON;
     schedules.addSchedule(scheduleThreeTask);
   #endif  
   #if defined(CHANNEL_FOUR)
     ScheduleTask scheduleFourTask;
     scheduleFourTask.channelTaskScheduler = &channelFourTaskScheduler;
+    scheduleFourTask.bToggleSwitch = bToggleSwitch;
+    scheduleFourTask.toggleReadPin = TOGGLE_READ_PIN;
+    scheduleFourTask.blinkLed = LED;
+    scheduleFourTask.ledOn = LED_ON;
     schedules.addSchedule(scheduleFourTask);
   #endif
   /* #endregion */

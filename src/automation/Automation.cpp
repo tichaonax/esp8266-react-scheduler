@@ -2,8 +2,8 @@
 
 Automation::Automation()
         {           
-            _validNTP = false;
-            pinMode(LED, OUTPUT);
+          _validNTP = false;
+          pinMode(LED, OUTPUT);
         };
 
 SystemRestart Automation::getSystemRestart(time_t t_now){
@@ -71,12 +71,17 @@ void Automation::setSchedules(std::list<ScheduleTask>* scheduleTaskList){
         int year = dateText.substring(dateText.lastIndexOf(" ")+1).toInt();
         if(year > 1970){
           _validNTP = true;
-          _blinkerHeartBeat.detach();//.once(1.0, +[](){}); // disable fast blinker
-          _blinkerHeartBeat.attach(2.0, &Automation::staticTickerCallbackTurnLedOn, this);  // and replace with normal    
+          _blinkerHeartBeat.detach();
+          _blinkerHeartBeat.attach(2.0, &Automation::staticTickerCallbackTurnLedOn, this);    
           for(std::list<ScheduleTask>::iterator i = scheduleTaskList->begin(); i != scheduleTaskList->end();)
             {
-                i->channelTaskScheduler->setSchedule();
-                i++;
+              i->channelTaskScheduler->setSchedule();
+              i->channelTaskScheduler->setToggleSwitch(
+                i->bToggleSwitch,
+                i->toggleReadPin,
+                i->blinkLed,
+                i->ledOn);
+              i++;
             }
           SystemRestart restart = getSystemRestart(t_now);
 

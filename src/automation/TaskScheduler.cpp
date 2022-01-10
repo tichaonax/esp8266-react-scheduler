@@ -235,6 +235,31 @@ void TaskScheduler::reScheduleTasks(){
   }, this);
 }
 
+void TaskScheduler::scheduleButtonRead(boolean bToggleSwitch, int toggleReadPin, int blinkLed, int ledOn){
+  ToggleButtonState = HIGH;
+  LED = blinkLed;
+  LED_ON =ledOn;
+  BToggleSwitch = bToggleSwitch;
+
+  ScheduleButtonTicker.attach(0.125, +[](TaskScheduler* task) {
+     bool bControlOnState = task->_channelStateService.getChannel().controlOn;
+     if(bControlOnState){
+       digitalWrite(task->LED, task->LED_ON);
+     }
+     if(task->BToggleSwitch){
+      task->ScheduleButtonDebounceTicker.once(0.050, +[](TaskScheduler* once){
+        once->ToggleReadPinValue = digitalRead(once->_toggleReadPin);
+        if (once->ToggleReadPinValue != once->ToggleButtonState) {
+            once->ToggleButtonState = once->ToggleReadPinValue;
+            if (once->ToggleButtonState == LOW) {
+              once->toggleSwitch();
+            }
+          }
+        }, task);
+     }
+  }, this);
+}
+
 void TaskScheduler::setSchedule(bool isReschedule){
   debugln(F(""));
   debug(F("Current Time: "));
@@ -431,6 +456,26 @@ void TaskScheduler::controlOff(){
   }
 }
 
+void TaskScheduler::setToggleSwitch(boolean bToggleSwitch, int toggleReadPin, int blinkLed, int ledOn){
+  _toggleReadPin = toggleReadPin;
+
+  if(bToggleSwitch){
+    pinMode(toggleReadPin, INPUT_PULLUP);
+  }
+  scheduleButtonRead(bToggleSwitch, toggleReadPin, blinkLed, ledOn);
+}
+
+void TaskScheduler::toggleSwitch(){
+  _isOverrideActive = false;
+  bool bSwitchState = _channelStateService.getChannel().controlOn;
+  if(bSwitchState){
+    controlOff();
+  }else{
+    controlOn();
+  }
+   setOverrideTime();
+}
+
 void TaskScheduler::digitalClockDisplay() {
   time_t tnow = time(nullptr);
   debug(ctime(&tnow));
@@ -536,11 +581,11 @@ void TaskScheduler::setOverrideTime(){
 }
 
 uint8_t TaskScheduler::getChannelControlPin(){
-  return _channel.controlPin;
+  return _channelStateService.getChannel().controlPin;
 }
 
 uint8_t TaskScheduler::getChannelHomeAssistantTopicType(){
-  return _channel.homeAssistantTopicType;
+  return _channelStateService.getChannel().homeAssistantTopicType;
 }
 
 void TaskScheduler::tickerDetachAll(){
@@ -555,17 +600,3 @@ void TaskScheduler::tickerDetachAll(){
   ControlOffTicker.detach();
   ReScheduleTasksTicker.detach();
 }
-
-/* void TaskScheduler::tickerDetachAll(){
-  HotHourTaskTicker.once(0.010, +[](){});
-  RunEveryTicker.once(0.010, +[](){});
-  SpanRepeatTicker.once(0.010, +[](){});
-  //OffHotHourTicker.once(0.010, +[&](){});
-  ScheduleTicker.once(0.010, +[](){});
-  ScheduleHotTicker.once(0.010, +[](){});
-  SpanTicker.once(0.010, +[](){});
-  //RunEveryTicker.once(0.010, +[](){});
-  ControlOnTicker.once(0.010, +[](){});
-  ControlOffTicker.once(0.010, +[](){});
-  ReScheduleTasksTicker.once(0.010, +[](){});
-} */

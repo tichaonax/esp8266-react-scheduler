@@ -53,6 +53,8 @@ class TaskScheduler {
     void controlOff();
     void scheduleRunEveryTask();
     void scheduleHotTask();
+    void toggleSwitch();
+    void setToggleSwitch(boolean bToggleSwitch, int toggleReadPin, int blinkLed, int ledOn);
 
 #ifdef ESP32
     Utilities utils;
@@ -94,15 +96,25 @@ class TaskScheduler {
     int ScheduleOverrideTaskTime;
     Ticker ScheduleOverrideTicker;
 
+    int ToggleReadPinValue;
+    int ToggleButtonState;
+    int LED;
+    int LED_ON;
+    bool BToggleSwitch; 
+    Ticker ScheduleButtonDebounceTicker;
+    Ticker ScheduleButtonTicker;
+
     TaskScheduler();
     void setSchedule(bool isReschedule=false);
     void setScheduleTimes();
     void reScheduleTasks();
+    void scheduleButtonRead(boolean bToggleSwitch, int toggleReadPin, int blinkLed, int ledOn);
 
     uint8_t getChannelControlPin();
     uint8_t getChannelHomeAssistantTopicType();
 
     private:
+    int _toggleReadPin;
     bool _isHotScheduleActive;
     bool _isOverrideActive;
     bool _isReschedule;

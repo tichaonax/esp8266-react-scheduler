@@ -14,7 +14,8 @@
   #define LED 25
 #else
   #ifdef SONOFF
-   #define LED 13 
+   #define LED 13
+   #define TOGGLE_READ_PIN 0 
   #else
    #define LED 2 
   #endif
@@ -35,6 +36,10 @@
 
 struct ScheduleTask {
     TaskScheduler* channelTaskScheduler;
+    boolean bToggleSwitch;
+    int toggleReadPin;
+    int blinkLed;
+    int ledOn;
 }; 
 
 struct SystemRestart {
@@ -50,7 +55,6 @@ class Automation {
     void ntpSearch();
 
     private:
-
     Ticker _blinkerHeartBeat;
     Ticker _blinkerHeartBeatOff;
     Ticker _restartTicker;
