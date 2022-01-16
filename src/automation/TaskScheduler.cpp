@@ -241,7 +241,7 @@ void TaskScheduler::scheduleButtonRead(boolean bToggleSwitch, int toggleReadPin,
   LED_ON =ledOn;
   BToggleSwitch = bToggleSwitch;
 
-  ScheduleButtonTicker.attach(0.125, +[](TaskScheduler* task) {
+  ScheduleButtonTicker.attach(0.250, +[](TaskScheduler* task) {
      bool bControlOnState = task->_channelStateService.getChannel().controlOn;
      if(bControlOnState){
        digitalWrite(task->LED, task->LED_ON);
