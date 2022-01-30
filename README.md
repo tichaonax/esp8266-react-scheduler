@@ -23,7 +23,7 @@ I had a unique problem in my rural community and needed to find a sound solution
 
 [GPIO pins](#default-gpio-pins) - Default GPIO pins
 
-[GPIO pins](#interfacing-to-relays) - Interfacing to relays
+[Realy Interfacing](#interfacing-to-relays) - Interfacing to relays
 
 [Low Memory devices](#low-memory-devices)
 
