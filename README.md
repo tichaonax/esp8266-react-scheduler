@@ -23,6 +23,8 @@ I had a unique problem in my rural community and needed to find a sound solution
 
 [GPIO pins](#default-gpio-pins) - Default GPIO pins
 
+[GPIO pins](#interfacing-to-relays) - Interfacing to relays
+
 [Low Memory devices](#low-memory-devices)
 
 ## Let's Automate This Home
@@ -265,7 +267,7 @@ schedule ends the following day.
 ```
 #### Hot Time
 ```
-The duration that the switch is on before randomize feature takes over.
+The duration that the switch is on before randomize feature takes over. This is useful when you want the light to remain on for say 3 hours after the schedule begins then after that 3 hour configurable duration it enters into random mode where randomly the light turns on and off throughout the night to simulate a person waking up in the middle of the night to operate the lights. An unwanted guest might conclude people are still awake and skip his plans for the day.
 ```
 #### End Time
 ```
@@ -379,6 +381,16 @@ and do not upload the react image, this device can only support one scheduler ch
 ## Default GPIO pins
 
 The UI supports changing IO pin used for turing on the relay. This is important for different devices have different pins for IO.
+
+## Interfacing to relays
+
+In order to control power to lights or whatever you intend to use the esp device to control, you will need to connect a relay to the control GPIO pin of the esp device and the relay connected to the AC power supply to then connect to the device under control.
+
+The output of the esp module at the control pin is under 5 volts. You can connect directly to buffered relay modules but my preferred method is to use Solid State Relays (SSR). These are reliable and offer good decoupling from the esp device and protect it. These are now cheap and some most take control input voltage from 3V to 32VDC. The biggest advantage of SSR over conventional relays is their low price and maximum load they can control as well as the bigger voltage they can control. They also do not suffer from contact damage over time which happens with conventional relays as they switch on/off.
+
+```SSR-40DA```
+
+<img alt="SSR-40DA" src="doc/3-32VDC-to-24-380VAC-SSR-40DA.jpg"/>
 
 ### ```esp32```
 
