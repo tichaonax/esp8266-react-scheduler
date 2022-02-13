@@ -13,9 +13,13 @@
 #ifdef LILYGO
   #define LED 25
 #else
- #define LED 2 
+  #ifdef SONOFF
+   #define LED 13
+   #define TOGGLE_READ_PIN 0 
+  #else
+   #define LED 2 
+  #endif
 #endif
-
 
 #ifdef ESP32
   #ifdef LILYGO
@@ -32,6 +36,10 @@
 
 struct ScheduleTask {
     TaskScheduler* channelTaskScheduler;
+    boolean bToggleSwitch;
+    int toggleReadPin;
+    int blinkLed;
+    int ledOn;
 }; 
 
 struct SystemRestart {
@@ -47,7 +55,6 @@ class Automation {
     void ntpSearch();
 
     private:
-
     Ticker _blinkerHeartBeat;
     Ticker _blinkerHeartBeatOff;
     Ticker _restartTicker;
