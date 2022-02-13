@@ -45,6 +45,7 @@ class ChannelStateService : public StatefulService<ChannelState> {
   void mqttRepublish();
   void mqttRepublish(uint8_t controlPin, uint8_t homeAssistantTopicType);
   void mqttUnregisterConfig(uint8_t controlPin, uint8_t homeAssistantTopicType);
+  void mqttRepublishReattach();
 
  private:
   HttpEndpoint<ChannelState> _httpEndpoint;
