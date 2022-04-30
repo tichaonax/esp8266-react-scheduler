@@ -34,7 +34,7 @@
 
 #define CHANNEL_ONE_REST_ENDPOINT_PATH "/rest/channelOneState"  //restChannelEndPoint
 #define CHANNEL_ONE_SOCKET_PATH "/ws/channelOneState"  // webSocketChannelEndPoint
-#define CHANNEL_ONE_DEFAULT_NAME "Water Pump X" //  defaultChannelName
+#define CHANNEL_ONE_DEFAULT_NAME "Water Pump" //  defaultChannelName
 #define CHANNEL_ONE_CONFIG_JSON_PATH "/config/channelOneState.json"  // channelJsonConfigPath
 #define CHANNEL_ONE_HOME_ASSISTANT_ENTITY "ch1"
 #define CHANNEL_ONE_DEFAULT_CONTROL_RUN_EVERY 15.0f
