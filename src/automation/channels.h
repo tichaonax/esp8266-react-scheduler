@@ -34,12 +34,12 @@
 
 #define CHANNEL_ONE_REST_ENDPOINT_PATH "/rest/channelOneState"  //restChannelEndPoint
 #define CHANNEL_ONE_SOCKET_PATH "/ws/channelOneState"  // webSocketChannelEndPoint
-#define CHANNEL_ONE_DEFAULT_NAME "Onboard Power + Relay" //  defaultChannelName
+#define CHANNEL_ONE_DEFAULT_NAME "Main Geyser Pump" //  defaultChannelName
 #define CHANNEL_ONE_CONFIG_JSON_PATH "/config/channelOneState.json"  // channelJsonConfigPath
 #define CHANNEL_ONE_HOME_ASSISTANT_ENTITY "ch1"
-#define CHANNEL_ONE_DEFAULT_CONTROL_RUN_EVERY 15.0f
-#define CHANNEL_ONE_DEFAULT_CONTROL_OFF_AFTER 3.0f // minimum runtime
-#define CHANNEL_ONE_DEFAULT_CONTROL_START_TIME_HOUR 8
+#define CHANNEL_ONE_DEFAULT_CONTROL_RUN_EVERY 60.0f
+#define CHANNEL_ONE_DEFAULT_CONTROL_OFF_AFTER 4.0f // minimum runtime
+#define CHANNEL_ONE_DEFAULT_CONTROL_START_TIME_HOUR 9
 #define CHANNEL_ONE_DEFAULT_CONTROL_START_TIME_MINUTE 0
 #define CHANNEL_ONE_DEFAULT_CONTROL_END_TIME_HOUR 16
 #define CHANNEL_ONE_DEFAULT_CONTROL_END_TIME_MINUTE 0
