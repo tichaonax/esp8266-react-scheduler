@@ -62,7 +62,7 @@
   #ifdef ESP32
     #define CHANNEL_TWO_CONTROL_PIN 19
   #else
-    #define CHANNEL_TWO_CONTROL_PIN 12
+    #define CHANNEL_TWO_CONTROL_PIN 5
   #endif
 #endif
 
