@@ -130,13 +130,13 @@
   #ifdef ESP32
     #define CHANNEL_FOUR_CONTROL_PIN 5
   #else
-    #define CHANNEL_FOUR_CONTROL_PIN 14
+    #define CHANNEL_FOUR_CONTROL_PIN 5
   #endif
 #endif
 
 #define CHANNEL_FOUR_REST_ENDPOINT_PATH "/rest/channelFourState"  //restChannelEndPoint
 #define CHANNEL_FOUR_SOCKET_PATH "/ws/channelFourState"  // webSocketChannelEndPoint
-#define CHANNEL_FOUR_DEFAULT_NAME "Outside Lights" //  defaultChannelName
+#define CHANNEL_FOUR_DEFAULT_NAME "Main Outside Lights" //  defaultChannelName
 #define CHANNEL_FOUR_CONFIG_JSON_PATH "/config/channelFourState.json"  // channelJsonConfigPath
 #define CHANNEL_FOUR_HOME_ASSISTANT_ENTITY "ch4"    // homeAssistantEntity
 #define CHANNEL_FOUR_DEFAULT_CONTROL_RUN_EVERY 30.0f
