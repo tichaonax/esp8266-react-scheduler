@@ -327,7 +327,7 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
               value={data.schedule.overrideTime}
               onChange={handleChannelScheduleValueChange('overrideTime')}
             >
-            <MenuItem value={0.0}>0 seconds</MenuItem>
+            <MenuItem value={960}>none</MenuItem>
             <MenuItem value={0.033}>02 seconds</MenuItem>
             <MenuItem value={0.05}>03 seconds</MenuItem>
             <MenuItem value={0.067}>04 seconds</MenuItem>
