@@ -267,7 +267,9 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
             }
             label={(<ScheduleEnabled/>)}
         />
-         <BlockFormControlLabel
+        {data.enabled && (
+          <div>
+            <BlockFormControlLabel
               control={
                 <Select
                   style={{ marginLeft: 10, height: 30 }}
@@ -287,7 +289,8 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
                 </Select>
               }
               label={(<ControlPin/>)}
-         />
+            />
+
           <BlockFormControlLabel
             control={
             <Checkbox
@@ -309,6 +312,7 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
             }
             label={(<RandomizeSwitch/>)}
           />
+
         {!data.enableTimeSpan && data.randomize && (
          <BlockFormControlLabel
             control={
@@ -534,6 +538,8 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
             renderInput={(params) => <TextField {...params} />}
           />
          </LocalizationProvider>
+          </div>
+        )}
         <BlockFormControlLabel
             control={
             <Checkbox
