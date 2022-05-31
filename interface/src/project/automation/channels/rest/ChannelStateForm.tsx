@@ -267,7 +267,9 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
             }
             label={(<ScheduleEnabled/>)}
         />
-         <BlockFormControlLabel
+        {data.enabled && (
+          <div>
+            <BlockFormControlLabel
               control={
                 <Select
                   style={{ marginLeft: 10, height: 30 }}
@@ -287,7 +289,8 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
                 </Select>
               }
               label={(<ControlPin/>)}
-         />
+            />
+
           <BlockFormControlLabel
             control={
             <Checkbox
@@ -309,6 +312,7 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
             }
             label={(<RandomizeSwitch/>)}
           />
+
         {!data.enableTimeSpan && data.randomize && (
          <BlockFormControlLabel
             control={
@@ -330,10 +334,10 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
             <MenuItem value={960}>none</MenuItem>
             <MenuItem value={0.033}>02 seconds</MenuItem>
             <MenuItem value={0.05}>03 seconds</MenuItem>
-            <MenuItem value={0.067}>04 seconds</MenuItem>
+            <MenuItem value={0.066}>04 seconds</MenuItem>
             <MenuItem value={0.083}>05 seconds</MenuItem>
             <MenuItem value={0.1}>06 seconds</MenuItem>
-            <MenuItem value={0.167}>10 seconds</MenuItem>
+            <MenuItem value={0.166}>10 seconds</MenuItem>
             <MenuItem value={0.2}>12 seconds</MenuItem>
             <MenuItem value={0.25}>15 seconds</MenuItem>
             <MenuItem value={0.333}>20 seconds</MenuItem>
@@ -415,10 +419,10 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
                 >
                 <MenuItem value={0.033}>02 seconds</MenuItem>
                 <MenuItem value={0.05}>03 seconds</MenuItem>
-                <MenuItem value={0.067}>04 seconds</MenuItem>
+                <MenuItem value={0.066}>04 seconds</MenuItem>
                 <MenuItem value={0.083}>05 seconds</MenuItem>
                 <MenuItem value={0.1}>06 seconds</MenuItem>
-                <MenuItem value={0.167}>10 seconds</MenuItem>
+                <MenuItem value={0.166}>10 seconds</MenuItem>
                 <MenuItem value={0.2}>12 seconds</MenuItem>
                 <MenuItem value={0.25}>15 seconds</MenuItem>
                 <MenuItem value={0.333}>20 seconds</MenuItem>
@@ -455,13 +459,13 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
                   value={data.schedule.offAfter}
                   onChange={handleChannelScheduleValueChange('offAfter')}
                 >
-                <MenuItem value={0.017}>01 seconds</MenuItem>
+                <MenuItem value={0.016}>01 seconds</MenuItem>
                 <MenuItem value={0.033}>02 seconds</MenuItem>
                 <MenuItem value={0.05}>03 seconds</MenuItem>
-                <MenuItem value={0.067}>04 seconds</MenuItem>
+                <MenuItem value={0.066}>04 seconds</MenuItem>
                 <MenuItem value={0.083}>05 seconds</MenuItem>
                 <MenuItem value={0.1}>06 seconds</MenuItem>
-                <MenuItem value={0.167}>10 seconds</MenuItem>
+                <MenuItem value={0.166}>10 seconds</MenuItem>
                 <MenuItem value={0.2}>12 seconds</MenuItem>
                 <MenuItem value={0.25}>15 seconds</MenuItem>
                 <MenuItem value={0.333}>20 seconds</MenuItem>
@@ -534,6 +538,8 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
             renderInput={(params) => <TextField {...params} />}
           />
          </LocalizationProvider>
+          </div>
+        )}
         <BlockFormControlLabel
             control={
             <Checkbox
