@@ -6,9 +6,11 @@ import { deviceProxySelector } from '../redux/selectors/proxy';
 
 export class RemoteUtils {
   static DEVICE = "device";
+  static CHANNEL ="channel";
 
   static getProxy() {
       let isProxy = false;
+      const currentChannelName = this.getRemoteDeviceChannelName();
       const localhost = this.parseUrl(this.getUrlAddress());
       let device = this.getRemoteDeviceUrl();
       let remote = device;
@@ -32,6 +34,7 @@ export class RemoteUtils {
         channelThree : this.isChannelEnabled('channelThree'),
         channelFour : this.isChannelEnabled('channelFour'),
         remote,
+        currentChannelName,
       });
     }
 
@@ -66,6 +69,10 @@ export class RemoteUtils {
 
     static getRemoteDeviceUrl(){
         return this.getParameterByName(this.DEVICE);
+    }
+
+    static getRemoteDeviceChannelName(){
+      return this.getParameterByName(this.CHANNEL);
     }
 
     static isRemoteDevice(){
