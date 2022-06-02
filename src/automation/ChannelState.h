@@ -119,14 +119,14 @@ public:
 
     JsonObject schedule = jsonObject.createNestedObject("schedule");
       
-    schedule["runEvery"] = round(float(float(channel.schedule.runEvery)/float(60)) * 1000)/ 1000;
-    schedule["offAfter"] = round(float(float(channel.schedule.offAfter)/float(60)) * 1000)/ 1000;
-    schedule["startTimeHour"] = round(float(float(channel.schedule.startTimeHour)/float(3600)) * 1000)/ 1000;
-    schedule["startTimeMinute"] = round(float(float(channel.schedule.startTimeMinute)/float(60)) * 1000)/ 1000;
-    schedule["hotTimeHour"] = round(float(float(channel.schedule.hotTimeHour)/float(3600)) * 1000)/ 1000;
-    schedule["overrideTime"] = round(float(float(channel.schedule.overrideTime)/float(60)) * 1000)/ 1000;
-    schedule["endTimeHour"] = round(float(float(channel.schedule.endTimeHour)/float(3600)) * 1000)/ 1000;
-    schedule["endTimeMinute"] = round(float(float(channel.schedule.endTimeMinute)/float(60)) * 1000)/ 1000;
+    schedule["runEvery"] = floor(float(float(channel.schedule.runEvery)/float(60)) * 1000) * 0.001;
+    schedule["offAfter"] = floor(float(float(channel.schedule.offAfter)/float(60)) * 1000) * 0.001;
+    schedule["startTimeHour"] = round(float(float(channel.schedule.startTimeHour)/float(3600)) * 1000) / 1000;
+    schedule["startTimeMinute"] = round(float(float(channel.schedule.startTimeMinute)/float(60)) * 1000) / 1000;
+    schedule["hotTimeHour"] = round(float(float(channel.schedule.hotTimeHour)/float(3600)) * 1000) /1000;
+    schedule["overrideTime"] = floor(float(float(channel.schedule.overrideTime)/float(60)) * 1000) * 0.001;
+    schedule["endTimeHour"] = round(float(float(channel.schedule.endTimeHour)/float(3600)) * 1000) / 1000;
+    schedule["endTimeMinute"] = round(float(float(channel.schedule.endTimeMinute)/float(60)) * 1000) / 1000;
     schedule["isOverride"] = channel.schedule.isOverride;
   
     JsonObject scheduled = jsonObject.createNestedObject("scheduledTime");

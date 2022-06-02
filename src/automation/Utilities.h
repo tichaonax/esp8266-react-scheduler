@@ -225,7 +225,7 @@ public:
     if(!channel.enableRemoteConfiguration){
       return "http://" + channel.IP;
     }else{
-      return "http://" + channel.masterIPAddress + relativePath + "#?device=" + channel.IP;
+      return "http://" + channel.masterIPAddress + relativePath + "#?device=" + channel.IP + "&channel=" + channel.name;
     }
   }
 
