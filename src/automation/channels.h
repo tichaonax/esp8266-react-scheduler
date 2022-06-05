@@ -102,7 +102,7 @@
 
 #define CHANNEL_THREE_REST_ENDPOINT_PATH "/rest/channelThreeState"  //restChannelEndPoint
 #define CHANNEL_THREE_SOCKET_PATH "/ws/channelThreeState"  // webSocketChannelEndPoint
-#define CHANNEL_THREE_DEFAULT_NAME "East Gate Light" //  defaultChannelName
+#define CHANNEL_THREE_DEFAULT_NAME "West Gate Light" //  defaultChannelName
 #define CHANNEL_THREE_CONFIG_JSON_PATH "/config/channelThreeState.json"  // channelJsonConfigPath
 #define CHANNEL_THREE_HOME_ASSISTANT_ENTITY "ch3"    // homeAssistantEntity
 #define CHANNEL_THREE_DEFAULT_CONTROL_RUN_EVERY 30.0f
