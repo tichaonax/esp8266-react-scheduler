@@ -44,6 +44,8 @@ struct ScheduledTime {
   bool isHotScheduleAdjust;
   bool isOverrideActive;
   bool isEnableMinimumRunTime;
+  String activeStartDateRange;
+  String activeEndDateRange;
 }; 
 struct Schedule {
     int  runEvery;         // run every 30 mins
@@ -82,6 +84,10 @@ struct Channel {
     String masterIPAddress;
     String restChannelEndPoint;
     String restChannelRestartEndPoint;
+    bool enableDateRange;
+    bool activeOutsideDateRange;
+    String  activeStartDateRange;
+    String  activeEndDateRange;
 };
 class Utilities {
 public:
@@ -141,7 +147,8 @@ public:
 
   ScheduledTime getScheduleTimes(int startTime, int endTime,
     int hotTimeHour, bool enableTimeSpan, bool isHotScheduleActive,
-    String channelName, bool randomize, bool isOverrideActive, bool enableMinimumRunTime){
+    String channelName, bool randomize, bool isOverrideActive, bool enableMinimumRunTime,
+    String activeStartDateRange, String activeEndDateRange){
     ScheduledTime schedule;
     schedule.isRandomize = randomize;
     schedule.channelName = channelName;
@@ -152,6 +159,8 @@ public:
     schedule.endTime = endTime;
     schedule.isOverrideActive = isOverrideActive;
     schedule.isEnableMinimumRunTime = enableMinimumRunTime;
+    schedule.activeStartDateRange = activeStartDateRange;
+    schedule.activeEndDateRange = activeEndDateRange;
 
     struct tm *lt = localtime(&schedule.currentTime);
     lt->tm_hour = 0;

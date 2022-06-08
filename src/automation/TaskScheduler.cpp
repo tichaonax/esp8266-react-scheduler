@@ -29,7 +29,11 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                               String homeAssistantIcon,
                               bool enableRemoteConfiguration,
                               String masterIPAddress,
-                              String restChannelRestartEndPoint) :
+                              String restChannelRestartEndPoint,
+                              bool enableDateRange,
+                              bool activeOutsideDateRange,
+                              String  activeStartDateRange,
+                              String  activeEndDateRange) :
     _channelStateService(server,
                         securityManager,
                         mqttClient,
@@ -56,7 +60,11 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                         homeAssistantIcon,
                         enableRemoteConfiguration,
                         masterIPAddress,
-                        restChannelRestartEndPoint)
+                        restChannelRestartEndPoint,
+                        enableDateRange,
+                        activeOutsideDateRange,
+                        activeStartDateRange,
+                        activeEndDateRange)
                                        {
                                          _isHotScheduleActive = false;
                                          _isOverrideActive = false;
@@ -208,7 +216,8 @@ ScheduledTime TaskScheduler::getNextRunTime(){
     ScheduledTime schedule = utils.getScheduleTimes(_channel.startTime,
     _channel.endTime, _channel.schedule.hotTimeHour, _channel.enableTimeSpan,
     _channel.isHotScheduleActive, _channel.name, _channel.randomize,
-    _isOverrideActive, _channel.enableMinimumRunTime);
+    _isOverrideActive, _channel.enableMinimumRunTime,
+    _channel.activeStartDateRange, _channel.activeEndDateRange);
     return schedule;
 }
 
@@ -396,6 +405,10 @@ void TaskScheduler::printSchedule(ScheduledTime schedule){
   debug(F("overrideTime:            "));
   debug(_channel.schedule.overrideTime);
   debugln(F("s"));
+  debug(F("activeStartDateRange:       "));
+  debugln(schedule.activeStartDateRange);
+  debug(F("activeEndDateRange:         "));
+  debugln(schedule.activeEndDateRange);
 }
 
 void TaskScheduler::runTask(){

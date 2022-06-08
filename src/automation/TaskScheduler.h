@@ -34,7 +34,11 @@ class TaskScheduler {
                     String homeAssistantIcon,
                     bool enableRemoteConfiguration,
                     String masterIPAddress,
-                    String restChannelRestartEndPoint);
+                    String restChannelRestartEndPoint,
+                    bool enableDateRange,
+                    bool activeOutsideDateRange,
+                    String  activeStartDateRange,
+                    String  activeEndDateRange);
     void begin();
     void resetOverrideTime();
     void setOverrideTime();

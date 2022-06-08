@@ -1,10 +1,10 @@
 /* eslint-disable max-len */
-import { FC, Dispatch, useEffect, useState, useCallback } from 'react';
+import { FC, Dispatch, useEffect, useState, Fragment, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { useSnackbar } from "notistack";
 import { ValidateFieldsError } from "async-validator";
 import Icon from '@mdi/react';
-import { Button, Checkbox } from '@mui/material';
+import { Box, Button, Checkbox } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import { TextField, Typography } from '@mui/material';
 import Slider from '@mui/material/Slider';
@@ -61,6 +61,9 @@ import '../svg-styles.css';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { RemoteUtils } from '../../utils/remoteUtils';
+import DateRangePicker, { DateRange } from '@mui/lab/DateRangePicker';
+import { DateRangeEnabled } from '../tooltips/DateRangeEnabled';
+import { ActiveOutsideDateRange } from '../tooltips/ActiveOutsideDateRange';
 
 const theme = createTheme({
   components: {
@@ -84,6 +87,7 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
   const [fieldErrors, setFieldErrors] = useState<ValidateFieldsError>();
   const [oldControlPin, setOldControlPin] = useState<number>(-1);
   const [oldHomeAssistantTopicType, setOldHomeAssistantTopicType] = useState<number>(-1);
+  const [activeDateRange, setDateRange] = useState<DateRange<Date>>([null, null]);
 
   const read = useCallback(
     () => Api.createReadChannelApi(channelId)
@@ -112,6 +116,12 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
       setOldHomeAssistantTopicType(data.homeAssistantTopicType);
     }
   }, [data, oldHomeAssistantTopicType]);
+
+  useEffect(() => {
+    if(data && data?.activeDateRange){
+     setDateRange([new Date(data?.activeDateRange[0]),new Date(data?.activeDateRange[1])]);
+    }
+  }, [data]);
 
   const content = () => {
     if (!data) {
@@ -168,8 +178,12 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
       }
     };
 
+    const handleDateRange = (dateRange: string) => {
+      setData({ ...data, 'activeDateRange' : JSON.parse(dateRange) });
+    };
+
     const handleChannelStateValueChange = (name: keyof ChannelState) => (event: any) => {
-      setData({ ...data, [name]: extractEventValue(event) });
+        setData({ ...data, [name]: extractEventValue(event) });
     };
 
     const marks = [
@@ -267,6 +281,54 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
             }
             label={(<ScheduleEnabled/>)}
         />
+
+        <BlockFormControlLabel
+                    control={
+                    <Checkbox
+                        checked={data.enableDateRange}
+                        style={{height:45}}
+                        onChange={handleChannelStateValueChange('enableDateRange')}
+                        color="primary"
+                    />
+                    }
+                    label={(<DateRangeEnabled/>)}
+        />
+        {data.enableDateRange && (
+          <div>
+            <BlockFormControlLabel
+                    control={
+                    <Checkbox
+                        checked={data.activeOutsideDateRange}
+                        style={{height:45}}
+                        onChange={handleChannelStateValueChange('activeOutsideDateRange')}
+                        color="primary"
+                    />
+                    }
+                    label={(<ActiveOutsideDateRange/>)}
+            />
+
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <DateRangePicker
+                    startText="Start-Date"
+                    endText="End-Date"
+                    value={activeDateRange}
+                      onChange={(newValue) => {
+                        handleDateRange(JSON.stringify(newValue));
+                        setDateRange(newValue);
+                      }}
+                    renderInput={(startProps, endProps) => (
+                      <Fragment>
+                        <TextField {...startProps} />
+                        <Box sx={{ mx: 2 }}> to </Box>
+                        <TextField {...endProps} />
+                      </Fragment>
+                    )}
+                  />
+            </LocalizationProvider>
+          </div>
+
+      )}
+
         {data.enabled && (
           <div>
             <BlockFormControlLabel

@@ -115,7 +115,12 @@ public:
     jsonObject["masterIPAddress"] = channel.masterIPAddress;
     jsonObject["restChannelEndPoint"] = channel.restChannelEndPoint;
     jsonObject["restChannelRestartEndPoint"] = channel.restChannelRestartEndPoint;
+    jsonObject["enableDateRange"] = channel.enableDateRange;
+    jsonObject["activeOutsideDateRange"] = channel.activeOutsideDateRange;
 
+    JsonArray activeDateRange = jsonObject.createNestedArray("activeDateRange");
+    activeDateRange.add(channel.activeStartDateRange);
+    activeDateRange.add(channel.activeEndDateRange);
 
     JsonObject schedule = jsonObject.createNestedObject("schedule");
       
@@ -139,7 +144,9 @@ public:
       channel.name,
       channel.randomize,
       channel.schedule.isOverrideActive,
-      channel.enableMinimumRunTime);
+      channel.enableMinimumRunTime, 
+      channel.activeStartDateRange, 
+      channel.activeEndDateRange);
 
     scheduled["channelName"] = scheduledTime.channelName;
     scheduled["scheduleTime"] = (int)scheduledTime.scheduleTime;
@@ -176,7 +183,21 @@ static void updateChannel(JsonObject& json, Channel& channel) {
     channel.enableMinimumRunTime = json["enableMinimumRunTime"] | channel.enableMinimumRunTime;
     channel.enableRemoteConfiguration = json["enableRemoteConfiguration"] | channel.enableRemoteConfiguration;
     channel.masterIPAddress = json["masterIPAddress"] | channel.masterIPAddress;
+    channel.enableDateRange = json["enableDateRange"] | channel.enableDateRange;
+    channel.activeOutsideDateRange = json["activeOutsideDateRange"] | channel.activeOutsideDateRange;
+    
+    JsonArray activeDateRange = json["activeDateRange"];
 
+    String activeStartDateRange = activeDateRange[0].as<String>();
+    if(activeStartDateRange.length() == 24){
+      channel.activeStartDateRange = activeStartDateRange;
+    }
+    
+    String activeEndDateRange = activeDateRange[1].as<String>();
+    if(activeEndDateRange.length() == 24){
+      channel.activeEndDateRange = activeEndDateRange;
+    }
+    
     JsonObject schedule = json["schedule"];
     channel.schedule.runEvery = schedule["runEvery"] ? (int)(round(60 * float(schedule["runEvery"]))) : channel.schedule.runEvery;
     channel.schedule.offAfter = schedule["offAfter"] ? (int)(round(60 * float(schedule["offAfter"]))) : channel.schedule.offAfter;
