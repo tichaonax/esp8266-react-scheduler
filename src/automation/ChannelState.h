@@ -144,9 +144,7 @@ public:
       channel.name,
       channel.randomize,
       channel.schedule.isOverrideActive,
-      channel.enableMinimumRunTime, 
-      channel.activeStartDateRange, 
-      channel.activeEndDateRange);
+      channel.enableMinimumRunTime);
 
     scheduled["channelName"] = scheduledTime.channelName;
     scheduled["scheduleTime"] = (int)scheduledTime.scheduleTime;

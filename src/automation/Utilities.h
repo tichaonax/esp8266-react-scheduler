@@ -44,8 +44,6 @@ struct ScheduledTime {
   bool isHotScheduleAdjust;
   bool isOverrideActive;
   bool isEnableMinimumRunTime;
-  String activeStartDateRange;
-  String activeEndDateRange;
 }; 
 struct Schedule {
     int  runEvery;         // run every 30 mins
@@ -56,36 +54,36 @@ struct Schedule {
     int  endTimeMinute;    // 30
     bool isOverride;       // when true ignore schedule run
     int  hotTimeHour;      // default 0 hours [0-16]
-    bool    isOverrideActive;
+    bool isOverrideActive;
     int  overrideTime;     // time to override schedule
 };
 struct Channel {
     bool  controlOn;
     uint8_t controlPin;
     uint8_t homeAssistantTopicType;
-    String homeAssistantIcon;
-    int  startTime;
-    int  endTime;
-    bool    enabled;
+    String  homeAssistantIcon;
+    int startTime;
+    int endTime;
+    bool  enabled;
     String  name;            // control name e.g, Pump
-    Schedule schedule;
-    bool    enableTimeSpan;  // when enable control is on between startTime and endTime
+    Schedule  schedule;
+    bool  enableTimeSpan;  // when enable control is on between startTime and endTime
     String  lastStartedChangeTime;  //last time the switch was toggled
     String  nextRunTime;
-    bool    randomize;      // when enabled randomize the on/off
-    String localDateTime;
-    String IP;
-    bool isHotScheduleActive;
-    String offHotHourDateTime;
-    String controlOffDateTime;
-    String uniqueId;
-    bool enableMinimumRunTime; // when enabled in randomize time runs at least this minimum time
-    bool enableRemoteConfiguration; // when enabled
-    String masterIPAddress;
-    String restChannelEndPoint;
-    String restChannelRestartEndPoint;
-    bool enableDateRange;
-    bool activeOutsideDateRange;
+    bool  randomize;      // when enabled randomize the on/off
+    String  localDateTime;
+    String  IP;
+    bool  isHotScheduleActive;
+    String  offHotHourDateTime;
+    String  controlOffDateTime;
+    String  uniqueId;
+    bool  enableMinimumRunTime; // when enabled in randomize time runs at least this minimum time
+    bool  enableRemoteConfiguration; // when enabled
+    String  masterIPAddress;
+    String  restChannelEndPoint;
+    String  restChannelRestartEndPoint;
+    bool  enableDateRange;
+    bool  activeOutsideDateRange;
     String  activeStartDateRange;
     String  activeEndDateRange;
 };
@@ -147,8 +145,7 @@ public:
 
   ScheduledTime getScheduleTimes(int startTime, int endTime,
     int hotTimeHour, bool enableTimeSpan, bool isHotScheduleActive,
-    String channelName, bool randomize, bool isOverrideActive, bool enableMinimumRunTime,
-    String activeStartDateRange, String activeEndDateRange){
+    String channelName, bool randomize, bool isOverrideActive, bool enableMinimumRunTime){
     ScheduledTime schedule;
     schedule.isRandomize = randomize;
     schedule.channelName = channelName;
@@ -159,8 +156,6 @@ public:
     schedule.endTime = endTime;
     schedule.isOverrideActive = isOverrideActive;
     schedule.isEnableMinimumRunTime = enableMinimumRunTime;
-    schedule.activeStartDateRange = activeStartDateRange;
-    schedule.activeEndDateRange = activeEndDateRange;
 
     struct tm *lt = localtime(&schedule.currentTime);
     lt->tm_hour = 0;

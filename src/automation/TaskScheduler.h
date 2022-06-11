@@ -59,6 +59,7 @@ class TaskScheduler {
     void scheduleHotTask();
     void toggleSwitch();
     void setToggleSwitch(boolean bToggleSwitch, int toggleReadPin, int blinkLed, int ledOn);
+    bool isScheduleWithInDateRange(String activeStartDateRange, String activeEndDateRange, bool enableDateRange, bool activeOutsideDateRange, time_t currentTime);
 
 #ifdef ESP32
     Utilities utils;
