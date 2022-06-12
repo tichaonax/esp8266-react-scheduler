@@ -61,9 +61,15 @@ import '../svg-styles.css';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { RemoteUtils } from '../../utils/remoteUtils';
-import DateRangePicker, { DateRange } from '@mui/lab/DateRangePicker';
+import { DateRange } from '@mui/lab/DateRangePicker';
 import { DateRangeEnabled } from '../tooltips/DateRangeEnabled';
 import { ActiveOutsideDateRange } from '../tooltips/ActiveOutsideDateRange';
+import { BrowserView, MobileView } from 'react-device-detect';
+
+import {
+  MobileDateRangePicker,
+  DesktopDateRangePicker
+} from "@mui/lab";
 
 const theme = createTheme({
   components: {
@@ -296,35 +302,54 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
         {data.enableDateRange && (
           <div>
             <BlockFormControlLabel
-                    control={
-                    <Checkbox
-                        checked={data.activeOutsideDateRange}
-                        style={{height:45}}
-                        onChange={handleChannelStateValueChange('activeOutsideDateRange')}
-                        color="primary"
-                    />
-                    }
-                    label={(<ActiveOutsideDateRange/>)}
+              control={<Checkbox
+                checked={data.activeOutsideDateRange}
+                style={{ height: 45 }}
+                onChange={handleChannelStateValueChange('activeOutsideDateRange')}
+                color="primary" />}
+              label={(<ActiveOutsideDateRange />)}
             />
 
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <DateRangePicker
-                    startText="Start-Date"
-                    endText="End-Date"
-                    value={activeDateRange}
-                      onChange={(newValue) => {
-                        handleDateRange(JSON.stringify(newValue));
-                        setDateRange(newValue);
-                      }}
-                    renderInput={(startProps, endProps) => (
-                      <Fragment>
-                        <TextField {...startProps} />
-                        <Box sx={{ mx: 2 }}> to </Box>
-                        <TextField {...endProps} />
-                      </Fragment>
-                    )}
-                  />
-            </LocalizationProvider>
+            <BrowserView>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DesktopDateRangePicker
+                  startText="Start-Date"
+                  endText="End-Date"
+                  value={activeDateRange}
+                  onChange={(newValue) => {
+                    handleDateRange(JSON.stringify(newValue));
+                    setDateRange(newValue);
+                  }}
+                  renderInput={(startProps, endProps) => (
+                    <Fragment>
+                      <TextField {...startProps} />
+                      <Box sx={{ mx: 2 }}> to </Box>
+                      <TextField {...endProps} />
+                    </Fragment>
+                  )}
+                />
+              </LocalizationProvider>
+            </BrowserView>
+            <MobileView>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <MobileDateRangePicker
+                  startText="Start-Date"
+                  endText="End-Date"
+                  value={activeDateRange}
+                  onChange={(newValue) => {
+                    handleDateRange(JSON.stringify(newValue));
+                    setDateRange(newValue);
+                  }}
+                  renderInput={(startProps, endProps) => (
+                    <Fragment>
+                      <TextField {...startProps} />
+                      <Box sx={{ mx: 2 }}> to </Box>
+                      <TextField {...endProps} />
+                    </Fragment>
+                  )}
+                />
+              </LocalizationProvider>
+            </MobileView>
           </div>
 
       )}
