@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { useSnackbar } from "notistack";
 import { ValidateFieldsError } from "async-validator";
 import Icon from '@mdi/react';
-import { Box, Button, Checkbox } from '@mui/material';
+import { Button, Checkbox } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import { TextField, Typography } from '@mui/material';
 import Slider from '@mui/material/Slider';
@@ -61,15 +61,12 @@ import '../svg-styles.css';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { RemoteUtils } from '../../utils/remoteUtils';
-import { DateRange } from '@mui/lab/DateRangePicker';
 import { DateRangeEnabled } from '../tooltips/DateRangeEnabled';
 import { ActiveOutsideDateRange } from '../tooltips/ActiveOutsideDateRange';
-import { BrowserView, MobileView } from 'react-device-detect';
 
-import {
-  MobileDateRangePicker,
-  DesktopDateRangePicker
-} from "@mui/lab";
+import { DateRangePicker } from 'rsuite';
+import 'rsuite/dist/rsuite.min.css';
+import { DateRange } from "rsuite/DateRangePicker";
 
 const theme = createTheme({
   components: {
@@ -93,7 +90,7 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
   const [fieldErrors, setFieldErrors] = useState<ValidateFieldsError>();
   const [oldControlPin, setOldControlPin] = useState<number>(-1);
   const [oldHomeAssistantTopicType, setOldHomeAssistantTopicType] = useState<number>(-1);
-  const [activeDateRange, setDateRange] = useState<DateRange<Date>>([null, null]);
+  const [activeDateRange, setDateRange] = useState<DateRange>([new Date(), new Date()]);
 
   const read = useCallback(
     () => Api.createReadChannelApi(channelId)
@@ -129,7 +126,10 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
     }
   }, [data]);
 
+  const { allowedMaxDays } = DateRangePicker;
+
   const content = () => {
+
     if (!data) {
       return (<FormLoader onRetry={loadData} errorMessage={errorMessage} />);
     }
@@ -263,6 +263,8 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
       }
     };
 
+    const styles = { width: 260, display: 'block', marginBottom: 10 };
+
     return (
       <>
         <ValidatedTextField
@@ -302,58 +304,34 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
         {data.enableDateRange && (
           <div>
             <BlockFormControlLabel
-              control={<Checkbox
-                checked={data.activeOutsideDateRange}
-                style={{ height: 45 }}
-                onChange={handleChannelStateValueChange('activeOutsideDateRange')}
-                color="primary" />}
+              control={
+                <Checkbox
+                  checked={data.activeOutsideDateRange}
+                  style={{ height: 45 }}
+                  onChange={handleChannelStateValueChange('activeOutsideDateRange')}
+                  color="primary"
+                />
+              }
               label={(<ActiveOutsideDateRange />)}
             />
-
-            <BrowserView>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DesktopDateRangePicker
-                  startText="Start-Date"
-                  endText="End-Date"
+                <DateRangePicker
+                  size="lg"
+                  appearance="default"
+                  style={styles}
                   value={activeDateRange}
                   onChange={(newValue) => {
-                    handleDateRange(JSON.stringify(newValue));
-                    setDateRange(newValue);
-                  }}
-                  renderInput={(startProps, endProps) => (
-                    <Fragment>
-                      <TextField {...startProps} />
-                      <Box sx={{ mx: 2 }}> to </Box>
-                      <TextField {...endProps} />
-                    </Fragment>
-                  )}
+                    if(newValue){
+                      handleDateRange(JSON.stringify(newValue));
+                      const dateRange = JSON.parse(JSON.stringify(newValue));
+                      setDateRange([new Date(dateRange[0]),new Date(dateRange[1])]);
+                    }
+                   }}
+                  disabledDate={allowedMaxDays?.(365)}
                 />
               </LocalizationProvider>
-            </BrowserView>
-            <MobileView>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <MobileDateRangePicker
-                  startText="Start-Date"
-                  endText="End-Date"
-                  value={activeDateRange}
-                  onChange={(newValue) => {
-                    handleDateRange(JSON.stringify(newValue));
-                    setDateRange(newValue);
-                  }}
-                  renderInput={(startProps, endProps) => (
-                    <Fragment>
-                      <TextField {...startProps} />
-                      <Box sx={{ mx: 2 }}> to </Box>
-                      <TextField {...endProps} />
-                    </Fragment>
-                  )}
-                />
-              </LocalizationProvider>
-            </MobileView>
           </div>
-
       )}
-
         {data.enabled && (
           <div>
             <BlockFormControlLabel
