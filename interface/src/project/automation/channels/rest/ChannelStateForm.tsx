@@ -121,8 +121,8 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
   }, [data, oldHomeAssistantTopicType]);
 
   useEffect(() => {
-    if(data && data?.activeDateRange){
-     setDateRange([new Date(data?.activeDateRange[0]),new Date(data?.activeDateRange[1])]);
+    if(data && data.activeDateRange){
+     setDateRange([new Date(data.activeDateRange[0]),new Date(data.activeDateRange[1])]);
     }
   }, [data]);
 
