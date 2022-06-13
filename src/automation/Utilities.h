@@ -44,6 +44,7 @@ struct ScheduledTime {
   bool isHotScheduleAdjust;
   bool isOverrideActive;
   bool isEnableMinimumRunTime;
+  bool isWithInDateRange;
 }; 
 struct Schedule {
     int  runEvery;         // run every 30 mins
