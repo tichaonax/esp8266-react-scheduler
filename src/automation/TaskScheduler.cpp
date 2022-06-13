@@ -263,7 +263,6 @@ bool TaskScheduler::isScheduleWithInDateRange(String activeStartDateRange,
 
       return (activeOutsideDateRange && !inBetween);
      }
-
     return true;
 }
 
@@ -273,11 +272,9 @@ ScheduledTime TaskScheduler::getNextRunTime(){
   _channel.isHotScheduleActive, _channel.name, _channel.randomize,
   _isOverrideActive, _channel.enableMinimumRunTime);
 
-  bool isWithInDateRange = isScheduleWithInDateRange(
+  schedule.isWithInDateRange = isScheduleWithInDateRange(
     _channel.activeStartDateRange, _channel.activeEndDateRange,
     _channel.enableDateRange, _channel.activeOutsideDateRange, schedule.currentTime);
-
-  schedule.isRunTaskNow = schedule.isRunTaskNow && isWithInDateRange;
 
   return schedule;
 }
@@ -463,15 +460,18 @@ void TaskScheduler::printSchedule(ScheduledTime schedule){
   debugln(_channel.schedule.isOverride);
   debug(F("isOverrideActive:            "));
   debugln(schedule.isOverrideActive);
-  debug(F("overrideTime:            "));
+  debug(F("overrideTime:                "));
   debug(_channel.schedule.overrideTime);
   debugln(F("s"));
+  debug(F("isWithInDateRange:           "));
+  debugln(schedule.isWithInDateRange);
 }
 
 void TaskScheduler::runTask(){
   ScheduledTime schedule = getNextRunTime();
   // printSchedule(schedule);
-  if(schedule.isRunTaskNow){
+
+  if(schedule.isRunTaskNow && schedule.isWithInDateRange){
     if(!_channel.randomize){
       controlOn();
     }
