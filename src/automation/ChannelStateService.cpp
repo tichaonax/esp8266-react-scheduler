@@ -27,7 +27,11 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
                                       String homeAssistantIcon,
                                       bool enableRemoteConfiguration,
                                       String masterIPAddress,
-                                      String restChannelRestartEndPoint) :
+                                      String restChannelRestartEndPoint,
+                                      bool enableDateRange,
+                                      bool activeOutsideDateRange,
+                                      String  activeStartDateRange,
+                                      String  activeEndDateRange) :
     _httpEndpoint(ChannelState::read,
                   ChannelState::update,
                   this,
@@ -76,6 +80,10 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
   _masterIPAddress = masterIPAddress;
   _restChannelEndPoint = restChannelEndPoint;
   _restChannelRestartEndPoint = restChannelRestartEndPoint;
+  _enableDateRange = enableDateRange;
+  _activeOutsideDateRange = activeOutsideDateRange;
+  _activeStartDateRange = activeStartDateRange;
+  _activeEndDateRange = activeEndDateRange;
 
   // configure controls to be output
   pinMode(_channelControlPin, OUTPUT);
@@ -94,9 +102,9 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
   #ifdef ESP32
   WiFi.onEvent(
       std::bind(&ChannelStateService::onStationModeDisconnected, this, std::placeholders::_1, std::placeholders::_2),
-      WiFiEvent_t::SYSTEM_EVENT_STA_DISCONNECTED);
+      WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
   WiFi.onEvent(std::bind(&ChannelStateService::onStationModeGotIP, this, std::placeholders::_1, std::placeholders::_2),
-               WiFiEvent_t::SYSTEM_EVENT_STA_GOT_IP);
+               WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_GOT_IP);
 #elif defined(ESP8266)
   _onStationModeDisconnectedHandler = WiFi.onStationModeDisconnected(
       std::bind(&ChannelStateService::onStationModeDisconnected, this, std::placeholders::_1));
@@ -235,6 +243,10 @@ void ChannelStateService::begin() {
     _state.channel.masterIPAddress = _masterIPAddress;
     _state.channel.restChannelEndPoint = _restChannelEndPoint;
     _state.channel.restChannelRestartEndPoint = _restChannelRestartEndPoint;
+    _state.channel.enableDateRange = _enableDateRange;
+    _state.channel.activeOutsideDateRange = _activeOutsideDateRange;
+    _state.channel.activeStartDateRange = _activeStartDateRange;
+    _state.channel.activeEndDateRange = _activeEndDateRange;
 
     _state.channel.schedule.runEvery =  _runEvery;
     _state.channel.schedule.offAfter =  _offAfter;
@@ -245,6 +257,7 @@ void ChannelStateService::begin() {
     _state.channel.schedule.hotTimeHour = _hotTimeHour;
     _state.channel.schedule.overrideTime = _overrideTime;
     _state.channel.schedule.isOverrideActive = _isOverrideActive;
+  
     _fsPersistence.readFromFS();
 
     _state.channel.controlOn = DEFAULT_CONTROL_STATE; // must be off on start up
