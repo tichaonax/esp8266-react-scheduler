@@ -331,8 +331,6 @@ void TaskScheduler::setSchedule(bool isReschedule){
   debugln(F(""));
   debug(F("Current Time: "));
   digitalClockDisplay();
-  debug(_channel.name);
-  debug(": " );
   _isReschedule = isReschedule;
   if(_channel.enabled){
     reScheduleTasks();
@@ -469,8 +467,9 @@ void TaskScheduler::printSchedule(ScheduledTime schedule){
 
 void TaskScheduler::runTask(){
   ScheduledTime schedule = getNextRunTime();
-  // printSchedule(schedule);
-
+  if(!_channel.enabled){
+    return;
+  }
   if(schedule.isRunTaskNow && schedule.isWithInDateRange){
     if(!_channel.randomize){
       controlOn();
