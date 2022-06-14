@@ -121,8 +121,8 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
   }, [data, oldHomeAssistantTopicType]);
 
   useEffect(() => {
-    if(data && data?.activeDateRange){
-     setDateRange([new Date(data?.activeDateRange[0]),new Date(data?.activeDateRange[1])]);
+    if(data && data.activeDateRange){
+     setDateRange([new Date(data.activeDateRange[0]),new Date(data.activeDateRange[1])]);
     }
   }, [data]);
 
@@ -332,9 +332,7 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
               </LocalizationProvider>
           </div>
       )}
-        {data.enabled && (
-          <div>
-            <BlockFormControlLabel
+        <BlockFormControlLabel
               control={
                 <Select
                   style={{ marginLeft: 10, height: 30 }}
@@ -354,8 +352,10 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
                 </Select>
               }
               label={(<ControlPin/>)}
-            />
+        />
 
+        {data.enabled && (
+          <div>
           <BlockFormControlLabel
             control={
             <Checkbox
