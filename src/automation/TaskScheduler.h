@@ -34,7 +34,11 @@ class TaskScheduler {
                     String homeAssistantIcon,
                     bool enableRemoteConfiguration,
                     String masterIPAddress,
-                    String restChannelRestartEndPoint);
+                    String restChannelRestartEndPoint,
+                    bool enableDateRange,
+                    bool activeOutsideDateRange,
+                    String  activeStartDateRange,
+                    String  activeEndDateRange);
     void begin();
     void resetOverrideTime();
     void setOverrideTime();
@@ -55,6 +59,7 @@ class TaskScheduler {
     void scheduleHotTask();
     void toggleSwitch();
     void setToggleSwitch(boolean bToggleSwitch, int toggleReadPin, int blinkLed, int ledOn);
+    bool isScheduleWithInDateRange(String activeStartDateRange, String activeEndDateRange, bool enableDateRange, bool activeOutsideDateRange, time_t currentTime);
 
 #ifdef ESP32
     Utilities utils;
