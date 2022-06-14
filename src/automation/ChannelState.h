@@ -115,18 +115,23 @@ public:
     jsonObject["masterIPAddress"] = channel.masterIPAddress;
     jsonObject["restChannelEndPoint"] = channel.restChannelEndPoint;
     jsonObject["restChannelRestartEndPoint"] = channel.restChannelRestartEndPoint;
+    jsonObject["enableDateRange"] = channel.enableDateRange;
+    jsonObject["activeOutsideDateRange"] = channel.activeOutsideDateRange;
 
+    JsonArray activeDateRange = jsonObject.createNestedArray("activeDateRange");
+    activeDateRange.add(channel.activeStartDateRange);
+    activeDateRange.add(channel.activeEndDateRange);
 
     JsonObject schedule = jsonObject.createNestedObject("schedule");
       
-    schedule["runEvery"] = round(float(float(channel.schedule.runEvery)/float(60)) * 1000)/ 1000;
-    schedule["offAfter"] = round(float(float(channel.schedule.offAfter)/float(60)) * 1000)/ 1000;
-    schedule["startTimeHour"] = round(float(float(channel.schedule.startTimeHour)/float(3600)) * 1000)/ 1000;
-    schedule["startTimeMinute"] = round(float(float(channel.schedule.startTimeMinute)/float(60)) * 1000)/ 1000;
-    schedule["hotTimeHour"] = round(float(float(channel.schedule.hotTimeHour)/float(3600)) * 1000)/ 1000;
-    schedule["overrideTime"] = round(float(float(channel.schedule.overrideTime)/float(60)) * 1000)/ 1000;
-    schedule["endTimeHour"] = round(float(float(channel.schedule.endTimeHour)/float(3600)) * 1000)/ 1000;
-    schedule["endTimeMinute"] = round(float(float(channel.schedule.endTimeMinute)/float(60)) * 1000)/ 1000;
+    schedule["runEvery"] = floor(float(float(channel.schedule.runEvery)/float(60)) * 1000) * 0.001;
+    schedule["offAfter"] = floor(float(float(channel.schedule.offAfter)/float(60)) * 1000) * 0.001;
+    schedule["startTimeHour"] = round(float(float(channel.schedule.startTimeHour)/float(3600)) * 1000) / 1000;
+    schedule["startTimeMinute"] = round(float(float(channel.schedule.startTimeMinute)/float(60)) * 1000) / 1000;
+    schedule["hotTimeHour"] = round(float(float(channel.schedule.hotTimeHour)/float(3600)) * 1000) /1000;
+    schedule["overrideTime"] = floor(float(float(channel.schedule.overrideTime)/float(60)) * 1000) * 0.001;
+    schedule["endTimeHour"] = round(float(float(channel.schedule.endTimeHour)/float(3600)) * 1000) / 1000;
+    schedule["endTimeMinute"] = round(float(float(channel.schedule.endTimeMinute)/float(60)) * 1000) / 1000;
     schedule["isOverride"] = channel.schedule.isOverride;
   
     JsonObject scheduled = jsonObject.createNestedObject("scheduledTime");
@@ -176,7 +181,21 @@ static void updateChannel(JsonObject& json, Channel& channel) {
     channel.enableMinimumRunTime = json["enableMinimumRunTime"] | channel.enableMinimumRunTime;
     channel.enableRemoteConfiguration = json["enableRemoteConfiguration"] | channel.enableRemoteConfiguration;
     channel.masterIPAddress = json["masterIPAddress"] | channel.masterIPAddress;
+    channel.enableDateRange = json["enableDateRange"] | channel.enableDateRange;
+    channel.activeOutsideDateRange = json["activeOutsideDateRange"] | channel.activeOutsideDateRange;
+    
+    JsonArray activeDateRange = json["activeDateRange"];
 
+    String activeStartDateRange = activeDateRange[0].as<String>();
+    if(activeStartDateRange.length() == 24){
+      channel.activeStartDateRange = activeStartDateRange;
+    }
+    
+    String activeEndDateRange = activeDateRange[1].as<String>();
+    if(activeEndDateRange.length() == 24){
+      channel.activeEndDateRange = activeEndDateRange;
+    }
+    
     JsonObject schedule = json["schedule"];
     channel.schedule.runEvery = schedule["runEvery"] ? (int)(round(60 * float(schedule["runEvery"]))) : channel.schedule.runEvery;
     channel.schedule.offAfter = schedule["offAfter"] ? (int)(round(60 * float(schedule["offAfter"]))) : channel.schedule.offAfter;

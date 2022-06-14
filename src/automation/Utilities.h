@@ -44,6 +44,7 @@ struct ScheduledTime {
   bool isHotScheduleAdjust;
   bool isOverrideActive;
   bool isEnableMinimumRunTime;
+  bool isWithInDateRange;
 }; 
 struct Schedule {
     int  runEvery;         // run every 30 mins
@@ -54,34 +55,38 @@ struct Schedule {
     int  endTimeMinute;    // 30
     bool isOverride;       // when true ignore schedule run
     int  hotTimeHour;      // default 0 hours [0-16]
-    bool    isOverrideActive;
+    bool isOverrideActive;
     int  overrideTime;     // time to override schedule
 };
 struct Channel {
     bool  controlOn;
     uint8_t controlPin;
     uint8_t homeAssistantTopicType;
-    String homeAssistantIcon;
-    int  startTime;
-    int  endTime;
-    bool    enabled;
+    String  homeAssistantIcon;
+    int startTime;
+    int endTime;
+    bool  enabled;
     String  name;            // control name e.g, Pump
-    Schedule schedule;
-    bool    enableTimeSpan;  // when enable control is on between startTime and endTime
+    Schedule  schedule;
+    bool  enableTimeSpan;  // when enable control is on between startTime and endTime
     String  lastStartedChangeTime;  //last time the switch was toggled
     String  nextRunTime;
-    bool    randomize;      // when enabled randomize the on/off
-    String localDateTime;
-    String IP;
-    bool isHotScheduleActive;
-    String offHotHourDateTime;
-    String controlOffDateTime;
-    String uniqueId;
-    bool enableMinimumRunTime; // when enabled in randomize time runs at least this minimum time
-    bool enableRemoteConfiguration; // when enabled
-    String masterIPAddress;
-    String restChannelEndPoint;
-    String restChannelRestartEndPoint;
+    bool  randomize;      // when enabled randomize the on/off
+    String  localDateTime;
+    String  IP;
+    bool  isHotScheduleActive;
+    String  offHotHourDateTime;
+    String  controlOffDateTime;
+    String  uniqueId;
+    bool  enableMinimumRunTime; // when enabled in randomize time runs at least this minimum time
+    bool  enableRemoteConfiguration; // when enabled
+    String  masterIPAddress;
+    String  restChannelEndPoint;
+    String  restChannelRestartEndPoint;
+    bool  enableDateRange;
+    bool  activeOutsideDateRange;
+    String  activeStartDateRange;
+    String  activeEndDateRange;
 };
 class Utilities {
 public:
