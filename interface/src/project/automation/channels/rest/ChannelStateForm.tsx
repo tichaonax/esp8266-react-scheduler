@@ -332,9 +332,7 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
               </LocalizationProvider>
           </div>
       )}
-        {data.enabled && (
-          <div>
-            <BlockFormControlLabel
+        <BlockFormControlLabel
               control={
                 <Select
                   style={{ marginLeft: 10, height: 30 }}
@@ -354,8 +352,10 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
                 </Select>
               }
               label={(<ControlPin/>)}
-            />
+        />
 
+        {data.enabled && (
+          <div>
           <BlockFormControlLabel
             control={
             <Checkbox
