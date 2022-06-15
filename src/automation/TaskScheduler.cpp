@@ -332,8 +332,8 @@ void TaskScheduler::setSchedule(bool isReschedule){
   debug(F("Current Time: "));
   digitalClockDisplay();
   _isReschedule = isReschedule;
+  reScheduleTasks();
   if(_channel.enabled){
-    reScheduleTasks();
     ScheduledTime schedule = getNextRunTime();
     printSchedule(schedule);
     if (schedule.scheduleTime <= 0) { schedule.scheduleTime = 1; } 
