@@ -264,7 +264,16 @@ public:
     payload = payload + ",\"MAC\":\"" + SettingValue::format("#{unique_id}")  + "\"";
 
     payload = payload + ",\"IP\":\"" + channel.IP  + "\"";
-    
+
+    if(channel.enableDateRange){
+      payload = payload + ",\"StartDate\":\"" + channel.activeStartDateRange  + "\"";
+      payload = payload + ",\"EndDate\":\"" + channel.activeEndDateRange  + "\"";
+
+      if(channel.activeOutsideDateRange){
+        payload = payload + ",\"ActiveOutsideDateRange\":\"true\"";
+      }
+    }
+
     if(!channel.enabled){
       return(payload + ",\"scheduleDisabled\":\"true\"}");
     }
