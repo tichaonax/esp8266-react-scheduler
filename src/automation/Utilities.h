@@ -264,15 +264,15 @@ public:
     payload = payload + ",\"MAC\":\"" + SettingValue::format("#{unique_id}")  + "\"";
 
     payload = payload + ",\"IP\":\"" + channel.IP  + "\"";
-    
-    if(!channel.enabled){
-      return(payload + ",\"scheduleDisabled\":\"true\"}");
-    }
 
     if(channel.enableDateRange){
       payload = payload + ",\"StartDate\":\"" + channel.activeStartDateRange  + "\"";
       payload = payload + ",\"EndDate\":\"" + channel.activeEndDateRange  + "\"";
       payload = payload + ",\"ActiveOutsideDateRange\":\"" + channel.activeOutsideDateRange  + "\"";
+    }
+
+    if(!channel.enabled){
+      return(payload + ",\"scheduleDisabled\":\"true\"}");
     }
 
     String startTime = formatTime(channel.schedule.startTimeHour, channel.schedule.startTimeMinute);
