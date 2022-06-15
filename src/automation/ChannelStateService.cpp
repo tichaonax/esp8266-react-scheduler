@@ -143,7 +143,7 @@ void ChannelStateService::registerPinConfig(uint8_t controlPin, uint8_t homeAssi
   String subTopic;
   String pubTopic;
 
-  DynamicJsonDocument doc(DEFAULT_BUFFER_SIZE);
+  DynamicJsonDocument doc(DEFAULT_JSON_DOCUMENT_SIZE);
   _channelMqttSettingsService->read([&](ChannelMqttSettings& settings) {
     String mqttPath = utils.getMqttUniqueIdOrPath(controlPin, homeAssistantTopicType, false, settings.homeAssistantEntity);
 
