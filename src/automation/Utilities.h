@@ -269,6 +269,12 @@ public:
       return(payload + ",\"scheduleDisabled\":\"true\"}");
     }
 
+    if(channel.enableDateRange){
+      payload = payload + ",\"StartDate\":\"" + channel.activeStartDateRange  + "\"";
+      payload = payload + ",\"EndDate\":\"" + channel.activeEndDateRange  + "\"";
+      payload = payload + ",\"ActiveOutsideDateRange\":\"" + channel.activeOutsideDateRange  + "\"";
+    }
+
     String startTime = formatTime(channel.schedule.startTimeHour, channel.schedule.startTimeMinute);
     String endTime = formatTime(channel.schedule.endTimeHour, channel.schedule.endTimeMinute);
     
