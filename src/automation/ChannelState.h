@@ -52,7 +52,10 @@ public:
     if(settings.channel.enableDateRange){
       root["StartDate"] = settings.channel.activeStartDateRange;
       root["EndDate"] = settings.channel.activeEndDateRange;
-      root["ActiveOutsideDateRange"] = settings.channel.activeOutsideDateRange;
+      
+      if(settings.channel.activeOutsideDateRange){
+        root["ActiveOutsideDateRange"] = "true";
+      }
     }
 
     if(settings.channel.enabled){

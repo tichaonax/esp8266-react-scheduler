@@ -268,7 +268,10 @@ public:
     if(channel.enableDateRange){
       payload = payload + ",\"StartDate\":\"" + channel.activeStartDateRange  + "\"";
       payload = payload + ",\"EndDate\":\"" + channel.activeEndDateRange  + "\"";
-      payload = payload + ",\"ActiveOutsideDateRange\":\"" + channel.activeOutsideDateRange  + "\"";
+
+      if(channel.activeOutsideDateRange){
+        payload = payload + ",\"ActiveOutsideDateRange\":\"true\"";
+      }
     }
 
     if(!channel.enabled){
