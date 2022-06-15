@@ -29,7 +29,11 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                               String homeAssistantIcon,
                               bool enableRemoteConfiguration,
                               String masterIPAddress,
-                              String restChannelRestartEndPoint) :
+                              String restChannelRestartEndPoint,
+                              bool enableDateRange,
+                              bool activeOutsideDateRange,
+                              String  activeStartDateRange,
+                              String  activeEndDateRange) :
     _channelStateService(server,
                         securityManager,
                         mqttClient,
@@ -56,7 +60,11 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                         homeAssistantIcon,
                         enableRemoteConfiguration,
                         masterIPAddress,
-                        restChannelRestartEndPoint)
+                        restChannelRestartEndPoint,
+                        enableDateRange,
+                        activeOutsideDateRange,
+                        activeStartDateRange,
+                        activeEndDateRange)
                                        {
                                          _isHotScheduleActive = false;
                                          _isOverrideActive = false;
@@ -203,13 +211,38 @@ void TaskScheduler::scheduleTaskTicker(ScheduledTime schedule){
     }
   }, this);
 }
+bool TaskScheduler::isScheduleWithInDateRange(String activeStartDateRange,
+  String activeEndDateRange, bool enableDateRange, bool activeOutsideDateRange, time_t currentTime){
+
+  if (!enableDateRange){
+    return true;
+  }
+
+  DateRange dateRange = utils.getActiveDateRange(activeStartDateRange, activeEndDateRange, currentTime);
+  if(!dateRange.valid){
+    return true;
+  }
+
+  bool inBetween = (dateRange.startDate <= currentTime) && (dateRange.endDate >= currentTime);
+  
+  if(!activeOutsideDateRange){
+    return inBetween;
+  }
+
+  return (activeOutsideDateRange && !inBetween);
+}
 
 ScheduledTime TaskScheduler::getNextRunTime(){
-    ScheduledTime schedule = utils.getScheduleTimes(_channel.startTime,
-    _channel.endTime, _channel.schedule.hotTimeHour, _channel.enableTimeSpan,
-    _channel.isHotScheduleActive, _channel.name, _channel.randomize,
-    _isOverrideActive, _channel.enableMinimumRunTime);
-    return schedule;
+  ScheduledTime schedule = utils.getScheduleTimes(_channel.startTime,
+  _channel.endTime, _channel.schedule.hotTimeHour, _channel.enableTimeSpan,
+  _channel.isHotScheduleActive, _channel.name, _channel.randomize,
+  _isOverrideActive, _channel.enableMinimumRunTime);
+
+  schedule.isWithInDateRange = isScheduleWithInDateRange(
+    _channel.activeStartDateRange, _channel.activeEndDateRange,
+    _channel.enableDateRange, _channel.activeOutsideDateRange, schedule.currentTime);
+
+  return schedule;
 }
 
 void TaskScheduler::setScheduleTimes(){
@@ -264,11 +297,9 @@ void TaskScheduler::setSchedule(bool isReschedule){
   debugln(F(""));
   debug(F("Current Time: "));
   digitalClockDisplay();
-  debug(_channel.name);
-  debug(": " );
   _isReschedule = isReschedule;
+  reScheduleTasks();
   if(_channel.enabled){
-    reScheduleTasks();
     ScheduledTime schedule = getNextRunTime();
     printSchedule(schedule);
     if (schedule.scheduleTime <= 0) { schedule.scheduleTime = 1; } 
@@ -393,15 +424,19 @@ void TaskScheduler::printSchedule(ScheduledTime schedule){
   debugln(_channel.schedule.isOverride);
   debug(F("isOverrideActive:            "));
   debugln(schedule.isOverrideActive);
-  debug(F("overrideTime:            "));
+  debug(F("overrideTime:                "));
   debug(_channel.schedule.overrideTime);
   debugln(F("s"));
+  debug(F("isWithInDateRange:           "));
+  debugln(schedule.isWithInDateRange);
 }
 
 void TaskScheduler::runTask(){
   ScheduledTime schedule = getNextRunTime();
-  // printSchedule(schedule);
-  if(schedule.isRunTaskNow){
+  if(!_channel.enabled){
+    return;
+  }
+  if(schedule.isRunTaskNow && schedule.isWithInDateRange){
     if(!_channel.randomize){
       controlOn();
     }
