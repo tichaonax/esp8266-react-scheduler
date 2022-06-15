@@ -49,6 +49,12 @@ public:
     root["MAC"] = SettingValue::format("#{unique_id}");
     root["IP"] = settings.channel.IP;
 
+    if(settings.channel.enableDateRange){
+      root["StartDate"] = settings.channel.activeStartDateRange;
+      root["EndDate"] = settings.channel.activeEndDateRange;
+      root["ActiveOutsideDateRange"] = settings.channel.activeOutsideDateRange;
+    }
+
     if(settings.channel.enabled){
       root["startTime"] = utils.formatTime(settings.channel.schedule.startTimeHour, settings.channel.schedule.startTimeMinute);
       root["endTime"] = utils.formatTime(settings.channel.schedule.endTimeHour, settings.channel.schedule.endTimeMinute);
