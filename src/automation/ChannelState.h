@@ -50,11 +50,20 @@ public:
     root["IP"] = settings.channel.IP;
 
     if(settings.channel.enableDateRange){
-      root["StartDate"] = settings.channel.activeStartDateRange;
-      root["EndDate"] = settings.channel.activeEndDateRange;
-      
-      if(settings.channel.activeOutsideDateRange){
-        root["ActiveOutsideDateRange"] = "true";
+      time_t currentTime = time(nullptr);
+      DateRange dateRange = utils.getActiveDateRange(settings.channel.activeStartDateRange,
+      settings.channel.activeEndDateRange, currentTime);
+      if(dateRange.valid){
+        String startDate = utils.eraseLineFeed(ctime(&dateRange.startDate));
+        startDate.remove(10,9);
+        String endDate = utils.eraseLineFeed(ctime(&dateRange.endDate));
+        endDate.remove(10,9);
+        root["StartDate"] = startDate;
+        root["EndDate"] = endDate;
+        
+        if(settings.channel.activeOutsideDateRange){
+          root["ActiveOutsideDateRange"] = "true";
+        }
       }
     }
 
@@ -72,11 +81,11 @@ public:
 
         if(settings.channel.randomize){
           if(settings.channel.schedule.hotTimeHour > 0){
-            root["hotTimeHour"] = utils.formatTimePeriod(settings.channel.schedule.hotTimeHour);
+            root["HotTime"] = utils.formatTimePeriod(settings.channel.schedule.hotTimeHour);
           }
 
           if(settings.channel.enableMinimumRunTime){
-            root["enableMinimumRunTime"] = "true";
+            root["MinimumRunTime"] = "true";
           }
         }
       }
