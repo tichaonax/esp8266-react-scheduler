@@ -214,56 +214,22 @@ void TaskScheduler::scheduleTaskTicker(ScheduledTime schedule){
 bool TaskScheduler::isScheduleWithInDateRange(String activeStartDateRange,
   String activeEndDateRange, bool enableDateRange, bool activeOutsideDateRange, time_t currentTime){
 
-    if (!enableDateRange){
-      return true;
-    }
-
-    const char *timeStringStart = activeStartDateRange.c_str();
-    const char *timeStringEnd = activeEndDateRange.c_str();
-    
-    if (timeStringStart[10] == 'T' && timeStringStart[23] == 'Z' && timeStringEnd[10] == 'T' && timeStringEnd[23] == 'Z') {
-      
-      struct tm *lt = localtime(&currentTime);
-      struct tm *dateStart = localtime(&currentTime);
-      struct tm *dateEnd = localtime(&currentTime);
-
-      #define NUM_START(off, mult) ((timeStringStart[(off)] - '0') * (mult))
-      #define NUM_END(off, mult) ((timeStringEnd[(off)] - '0') * (mult)) 
-
-      int startYear =  NUM_START(0, 1000) + NUM_START(1, 100) + NUM_START(2, 10) + NUM_START(3, 1) - 1900;
-      int endYear = NUM_END(0, 1000) + NUM_END(1, 100) + NUM_END(2, 10) + NUM_END(3, 1) -  1900;
-
-      dateStart->tm_year = lt->tm_year;
-      dateStart->tm_mon = NUM_START(5, 10) + NUM_START(6, 1) - 1;
-      dateStart->tm_mday = NUM_START(8, 10) + NUM_START(9, 1);
-      dateStart->tm_hour = NUM_START(11, 10) + NUM_START(12, 1);
-      dateStart->tm_min = NUM_START(14, 10) + NUM_START(15, 1);
-      dateStart->tm_sec = NUM_START(17, 10) + NUM_START(18, 1);
-
-      time_t startDate = mktime(dateStart);
-     
-      dateEnd->tm_year = lt->tm_year + endYear - startYear;;
-      dateEnd->tm_mon = NUM_END(5, 10) + NUM_END(6, 1) - 1;
-      dateEnd->tm_mday = NUM_END(8, 10) + NUM_END(9, 1);
-      dateEnd->tm_hour = NUM_END(11, 10) + NUM_END(12, 1);
-      dateEnd->tm_min = NUM_END(14, 10) + NUM_END(15, 1);
-      dateEnd->tm_sec = NUM_END(17, 10) + NUM_END(18, 1);
-      
-      time_t endDate = mktime(dateEnd);
-
-      if(dateStart->tm_year > dateEnd->tm_year){
-        return true;
-      }
-
-      bool inBetween = (startDate <= currentTime) && (endDate >= currentTime);
-      
-      if(!activeOutsideDateRange){
-        return inBetween;
-      }
-
-      return (activeOutsideDateRange && !inBetween);
-     }
+  if (!enableDateRange){
     return true;
+  }
+
+  DateRange dateRange = utils.getActiveDateRange(activeStartDateRange, activeEndDateRange, currentTime);
+  if(!dateRange.valid){
+    return true;
+  }
+
+  bool inBetween = (dateRange.startDate <= currentTime) && (dateRange.endDate >= currentTime);
+  
+  if(!activeOutsideDateRange){
+    return inBetween;
+  }
+
+  return (activeOutsideDateRange && !inBetween);
 }
 
 ScheduledTime TaskScheduler::getNextRunTime(){
@@ -331,11 +297,9 @@ void TaskScheduler::setSchedule(bool isReschedule){
   debugln(F(""));
   debug(F("Current Time: "));
   digitalClockDisplay();
-  debug(_channel.name);
-  debug(": " );
   _isReschedule = isReschedule;
+  reScheduleTasks();
   if(_channel.enabled){
-    reScheduleTasks();
     ScheduledTime schedule = getNextRunTime();
     printSchedule(schedule);
     if (schedule.scheduleTime <= 0) { schedule.scheduleTime = 1; } 
@@ -469,8 +433,9 @@ void TaskScheduler::printSchedule(ScheduledTime schedule){
 
 void TaskScheduler::runTask(){
   ScheduledTime schedule = getNextRunTime();
-  // printSchedule(schedule);
-
+  if(!_channel.enabled){
+    return;
+  }
   if(schedule.isRunTaskNow && schedule.isWithInDateRange){
     if(!_channel.randomize){
       controlOn();
