@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { FC, Dispatch, useEffect, useState, useCallback } from 'react';
+import { FC, Dispatch, useEffect, useState, Fragment, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { useSnackbar } from "notistack";
 import { ValidateFieldsError } from "async-validator";
@@ -61,6 +61,12 @@ import '../svg-styles.css';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { RemoteUtils } from '../../utils/remoteUtils';
+import { DateRangeEnabled } from '../tooltips/DateRangeEnabled';
+import { ActiveOutsideDateRange } from '../tooltips/ActiveOutsideDateRange';
+
+import { DateRangePicker } from 'rsuite';
+import 'rsuite/dist/rsuite.min.css';
+import { DateRange } from "rsuite/DateRangePicker";
 
 const theme = createTheme({
   components: {
@@ -84,6 +90,7 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
   const [fieldErrors, setFieldErrors] = useState<ValidateFieldsError>();
   const [oldControlPin, setOldControlPin] = useState<number>(-1);
   const [oldHomeAssistantTopicType, setOldHomeAssistantTopicType] = useState<number>(-1);
+  const [activeDateRange, setDateRange] = useState<DateRange>([new Date(), new Date()]);
 
   const read = useCallback(
     () => Api.createReadChannelApi(channelId)
@@ -113,7 +120,16 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
     }
   }, [data, oldHomeAssistantTopicType]);
 
+  useEffect(() => {
+    if(data && data.activeDateRange){
+     setDateRange([new Date(data.activeDateRange[0]),new Date(data.activeDateRange[1])]);
+    }
+  }, [data]);
+
+  const { allowedMaxDays } = DateRangePicker;
+
   const content = () => {
+
     if (!data) {
       return (<FormLoader onRetry={loadData} errorMessage={errorMessage} />);
     }
@@ -168,8 +184,12 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
       }
     };
 
+    const handleDateRange = (dateRange: string) => {
+      setData({ ...data, 'activeDateRange' : JSON.parse(dateRange) });
+    };
+
     const handleChannelStateValueChange = (name: keyof ChannelState) => (event: any) => {
-      setData({ ...data, [name]: extractEventValue(event) });
+        setData({ ...data, [name]: extractEventValue(event) });
     };
 
     const marks = [
@@ -243,6 +263,8 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
       }
     };
 
+    const styles = { width: 260, display: 'block', marginBottom: 10 };
+
     return (
       <>
         <ValidatedTextField
@@ -267,7 +289,50 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
             }
             label={(<ScheduleEnabled/>)}
         />
-         <BlockFormControlLabel
+
+        <BlockFormControlLabel
+                    control={
+                    <Checkbox
+                        checked={data.enableDateRange}
+                        style={{height:45}}
+                        onChange={handleChannelStateValueChange('enableDateRange')}
+                        color="primary"
+                    />
+                    }
+                    label={(<DateRangeEnabled/>)}
+        />
+        {data.enableDateRange && (
+          <div>
+            <BlockFormControlLabel
+              control={
+                <Checkbox
+                  checked={data.activeOutsideDateRange}
+                  style={{ height: 45 }}
+                  onChange={handleChannelStateValueChange('activeOutsideDateRange')}
+                  color="primary"
+                />
+              }
+              label={(<ActiveOutsideDateRange />)}
+            />
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DateRangePicker
+                  size="lg"
+                  appearance="default"
+                  style={styles}
+                  value={activeDateRange}
+                  onChange={(newValue) => {
+                    if(newValue){
+                      handleDateRange(JSON.stringify(newValue));
+                      const dateRange = JSON.parse(JSON.stringify(newValue));
+                      setDateRange([new Date(dateRange[0]),new Date(dateRange[1])]);
+                    }
+                   }}
+                  disabledDate={allowedMaxDays?.(365)}
+                />
+              </LocalizationProvider>
+          </div>
+      )}
+        <BlockFormControlLabel
               control={
                 <Select
                   style={{ marginLeft: 10, height: 30 }}
@@ -287,7 +352,10 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
                 </Select>
               }
               label={(<ControlPin/>)}
-         />
+        />
+
+        {data.enabled && (
+          <div>
           <BlockFormControlLabel
             control={
             <Checkbox
@@ -309,6 +377,7 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
             }
             label={(<RandomizeSwitch/>)}
           />
+
         {!data.enableTimeSpan && data.randomize && (
          <BlockFormControlLabel
             control={
@@ -327,13 +396,13 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
               value={data.schedule.overrideTime}
               onChange={handleChannelScheduleValueChange('overrideTime')}
             >
-            <MenuItem value={0.0}>0 seconds</MenuItem>
+            <MenuItem value={960}>none</MenuItem>
             <MenuItem value={0.033}>02 seconds</MenuItem>
             <MenuItem value={0.05}>03 seconds</MenuItem>
-            <MenuItem value={0.067}>04 seconds</MenuItem>
+            <MenuItem value={0.066}>04 seconds</MenuItem>
             <MenuItem value={0.083}>05 seconds</MenuItem>
             <MenuItem value={0.1}>06 seconds</MenuItem>
-            <MenuItem value={0.167}>10 seconds</MenuItem>
+            <MenuItem value={0.166}>10 seconds</MenuItem>
             <MenuItem value={0.2}>12 seconds</MenuItem>
             <MenuItem value={0.25}>15 seconds</MenuItem>
             <MenuItem value={0.333}>20 seconds</MenuItem>
@@ -415,10 +484,10 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
                 >
                 <MenuItem value={0.033}>02 seconds</MenuItem>
                 <MenuItem value={0.05}>03 seconds</MenuItem>
-                <MenuItem value={0.067}>04 seconds</MenuItem>
+                <MenuItem value={0.066}>04 seconds</MenuItem>
                 <MenuItem value={0.083}>05 seconds</MenuItem>
                 <MenuItem value={0.1}>06 seconds</MenuItem>
-                <MenuItem value={0.167}>10 seconds</MenuItem>
+                <MenuItem value={0.166}>10 seconds</MenuItem>
                 <MenuItem value={0.2}>12 seconds</MenuItem>
                 <MenuItem value={0.25}>15 seconds</MenuItem>
                 <MenuItem value={0.333}>20 seconds</MenuItem>
@@ -455,13 +524,13 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
                   value={data.schedule.offAfter}
                   onChange={handleChannelScheduleValueChange('offAfter')}
                 >
-                <MenuItem value={0.017}>01 seconds</MenuItem>
+                <MenuItem value={0.016}>01 seconds</MenuItem>
                 <MenuItem value={0.033}>02 seconds</MenuItem>
                 <MenuItem value={0.05}>03 seconds</MenuItem>
-                <MenuItem value={0.067}>04 seconds</MenuItem>
+                <MenuItem value={0.066}>04 seconds</MenuItem>
                 <MenuItem value={0.083}>05 seconds</MenuItem>
                 <MenuItem value={0.1}>06 seconds</MenuItem>
-                <MenuItem value={0.167}>10 seconds</MenuItem>
+                <MenuItem value={0.166}>10 seconds</MenuItem>
                 <MenuItem value={0.2}>12 seconds</MenuItem>
                 <MenuItem value={0.25}>15 seconds</MenuItem>
                 <MenuItem value={0.333}>20 seconds</MenuItem>
@@ -534,6 +603,8 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
             renderInput={(params) => <TextField {...params} />}
           />
          </LocalizationProvider>
+          </div>
+        )}
         <BlockFormControlLabel
             control={
             <Checkbox
