@@ -3,19 +3,18 @@ import Typography from '@mui/material/Typography';
 import { Button } from '@mui/material';
 import { HtmlTooltip } from './HtmlTooltip';
 
-export const ScheduleEnabled = ({buildVersion}) => {
+export const DateRangeEnabled = () => {
     return (
         <HtmlTooltip
           title={
             <React.Fragment>
-              <Typography align="center" style={{color:"#00ff00"}}>Schedule Enabled</Typography>
-              <em>{"Schedule"}</em> <b>{'active'}</b> {' '}
+              <Typography align="center" style={{color:"#00ff00"}}>Date Range Enabled</Typography>
+              <em>{"Date Range Enabled"}</em> <b>{'enabled'}</b> {' '}
               {"when checked"}
             </React.Fragment>
           }
         >
-            <Button style={{textTransform: 'none'}}>Enable Schedule (build:{buildVersion ? buildVersion : '-.-.-'})</Button>
+            <Button style={{textTransform: 'none'}}>Enable Date Range</Button>
         </HtmlTooltip>
     );
   };
-

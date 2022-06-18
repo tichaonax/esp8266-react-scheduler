@@ -43,11 +43,30 @@ public:
 
   static void haRead(ChannelState& settings, JsonObject& root) {
     root["state"] = settings.channel.controlOn ? ON_STATE : OFF_STATE;
+    root["buildVersion"] = settings.channel.buildVersion;
     root["iotAdminUrl"] = utils.getDeviceChannelUrl(settings.channel);
     root["controlPin"] = settings.channel.controlPin;
     root["channelName"] = settings.channel.name;
     root["MAC"] = SettingValue::format("#{unique_id}");
     root["IP"] = settings.channel.IP;
+
+    if(settings.channel.enableDateRange){
+      time_t currentTime = time(nullptr);
+      DateRange dateRange = utils.getActiveDateRange(settings.channel.activeStartDateRange,
+      settings.channel.activeEndDateRange, currentTime);
+      if(dateRange.valid){
+        String startDate = utils.eraseLineFeed(ctime(&dateRange.startDate));
+        startDate.remove(10,9);
+        String endDate = utils.eraseLineFeed(ctime(&dateRange.endDate));
+        endDate.remove(10,9);
+        root["StartDate"] = startDate;
+        root["EndDate"] = endDate;
+        
+        if(settings.channel.activeOutsideDateRange){
+          root["ActiveOutsideDateRange"] = "true";
+        }
+      }
+    }
 
     if(settings.channel.enabled){
       root["startTime"] = utils.formatTime(settings.channel.schedule.startTimeHour, settings.channel.schedule.startTimeMinute);
@@ -63,11 +82,11 @@ public:
 
         if(settings.channel.randomize){
           if(settings.channel.schedule.hotTimeHour > 0){
-            root["hotTimeHour"] = utils.formatTimePeriod(settings.channel.schedule.hotTimeHour);
+            root["HotTime"] = utils.formatTimePeriod(settings.channel.schedule.hotTimeHour);
           }
 
           if(settings.channel.enableMinimumRunTime){
-            root["enableMinimumRunTime"] = "true";
+            root["MinimumRunTime"] = "true";
           }
         }
       }
@@ -115,7 +134,13 @@ public:
     jsonObject["masterIPAddress"] = channel.masterIPAddress;
     jsonObject["restChannelEndPoint"] = channel.restChannelEndPoint;
     jsonObject["restChannelRestartEndPoint"] = channel.restChannelRestartEndPoint;
+    jsonObject["enableDateRange"] = channel.enableDateRange;
+    jsonObject["activeOutsideDateRange"] = channel.activeOutsideDateRange;
+    jsonObject["buildVersion"] = channel.buildVersion;
 
+    JsonArray activeDateRange = jsonObject.createNestedArray("activeDateRange");
+    activeDateRange.add(channel.activeStartDateRange);
+    activeDateRange.add(channel.activeEndDateRange);
 
     JsonObject schedule = jsonObject.createNestedObject("schedule");
       
@@ -176,7 +201,21 @@ static void updateChannel(JsonObject& json, Channel& channel) {
     channel.enableMinimumRunTime = json["enableMinimumRunTime"] | channel.enableMinimumRunTime;
     channel.enableRemoteConfiguration = json["enableRemoteConfiguration"] | channel.enableRemoteConfiguration;
     channel.masterIPAddress = json["masterIPAddress"] | channel.masterIPAddress;
+    channel.enableDateRange = json["enableDateRange"] | channel.enableDateRange;
+    channel.activeOutsideDateRange = json["activeOutsideDateRange"] | channel.activeOutsideDateRange;
+    
+    JsonArray activeDateRange = json["activeDateRange"];
 
+    String activeStartDateRange = activeDateRange[0].as<String>();
+    if(activeStartDateRange.length() == 24){
+      channel.activeStartDateRange = activeStartDateRange;
+    }
+    
+    String activeEndDateRange = activeDateRange[1].as<String>();
+    if(activeEndDateRange.length() == 24){
+      channel.activeEndDateRange = activeEndDateRange;
+    }
+    
     JsonObject schedule = json["schedule"];
     channel.schedule.runEvery = schedule["runEvery"] ? (int)(round(60 * float(schedule["runEvery"]))) : channel.schedule.runEvery;
     channel.schedule.offAfter = schedule["offAfter"] ? (int)(round(60 * float(schedule["offAfter"]))) : channel.schedule.offAfter;

@@ -51,6 +51,10 @@ export interface ChannelState {
   masterIPAddress: string;
   restChannelEndPoint: string;
   restChannelRestartEndPoint: string;
+  enableDateRange: boolean;
+  activeOutsideDateRange: boolean;
+  activeDateRange: Array<string>;
+  buildVersion: string;
 }
 
 export interface ChannelStateFuncs {

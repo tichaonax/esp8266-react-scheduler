@@ -41,7 +41,12 @@ ESP8266React esp8266React(&server);
                                                         CHANNEL_ONE_HOMEASSISTANT_ICON,
                                                         REMOTE_CONFIG_ENABLED,
                                                         MASTER_DEVICE,
-                                                        CHANNEL_ONE_SCHEDULE_RESTART_SERVICE_PATH);
+                                                        CHANNEL_ONE_SCHEDULE_RESTART_SERVICE_PATH,
+                                                        CHANNEL_ONE_ENABLE_DATE_RANGE,
+                                                        CHANNEL_ONE_ACTIVE_OUTSIDE_DATE_RANGE,
+                                                        CHANNEL_ONE_ACTIVE_START_DATE_RANGE,
+                                                        CHANNEL_ONE_ACTIVE_END_DATE_RANGE,
+                                                        BUILD_VERSION);
   ChannelScheduleRestartService channelOneScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelOneTaskScheduler, CHANNEL_ONE_SCHEDULE_RESTART_SERVICE_PATH);
 #endif
 #if defined(CHANNEL_TWO)
@@ -77,7 +82,12 @@ ESP8266React esp8266React(&server);
                                                         CHANNEL_TWO_HOMEASSISTANT_ICON,
                                                         REMOTE_CONFIG_ENABLED,
                                                         MASTER_DEVICE,
-                                                        CHANNEL_TWO_SCHEDULE_RESTART_SERVICE_PATH);  
+                                                        CHANNEL_TWO_SCHEDULE_RESTART_SERVICE_PATH,
+                                                        CHANNEL_TWO_ENABLE_DATE_RANGE,
+                                                        CHANNEL_TWO_ACTIVE_OUTSIDE_DATE_RANGE,
+                                                        CHANNEL_TWO_ACTIVE_START_DATE_RANGE,
+                                                        CHANNEL_TWO_ACTIVE_END_DATE_RANGE,
+                                                        BUILD_VERSION);  
   ChannelScheduleRestartService channelTwoScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelTwoTaskScheduler, CHANNEL_TWO_SCHEDULE_RESTART_SERVICE_PATH);
 #endif
 #if defined(CHANNEL_THREE)
@@ -113,7 +123,12 @@ ESP8266React esp8266React(&server);
                                                         CHANNEL_THREE_HOMEASSISTANT_ICON,
                                                         REMOTE_CONFIG_ENABLED,
                                                         MASTER_DEVICE,
-                                                        CHANNEL_THREE_SCHEDULE_RESTART_SERVICE_PATH);
+                                                        CHANNEL_THREE_SCHEDULE_RESTART_SERVICE_PATH,
+                                                        CHANNEL_THREE_ENABLE_DATE_RANGE,
+                                                        CHANNEL_THREE_ACTIVE_OUTSIDE_DATE_RANGE,
+                                                        CHANNEL_THREE_ACTIVE_START_DATE_RANGE,
+                                                        CHANNEL_THREE_ACTIVE_END_DATE_RANGE,
+                                                        BUILD_VERSION);
   ChannelScheduleRestartService channelThreeScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelThreeTaskScheduler, CHANNEL_THREE_SCHEDULE_RESTART_SERVICE_PATH);
 #endif  
 #if defined(CHANNEL_FOUR)
@@ -149,7 +164,12 @@ ESP8266React esp8266React(&server);
                                                         CHANNEL_FOUR_HOMEASSISTANT_ICON,
                                                         REMOTE_CONFIG_ENABLED,
                                                         MASTER_DEVICE,
-                                                        CHANNEL_FOUR_SCHEDULE_RESTART_SERVICE_PATH);
+                                                        CHANNEL_FOUR_SCHEDULE_RESTART_SERVICE_PATH,
+                                                        CHANNEL_FOUR_ENABLE_DATE_RANGE,
+                                                        CHANNEL_FOUR_ACTIVE_OUTSIDE_DATE_RANGE,
+                                                        CHANNEL_FOUR_ACTIVE_START_DATE_RANGE,
+                                                        CHANNEL_FOUR_ACTIVE_END_DATE_RANGE,
+                                                        BUILD_VERSION);
   ChannelScheduleRestartService channelFourScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelFourTaskScheduler, CHANNEL_FOUR_SCHEDULE_RESTART_SERVICE_PATH);
 #endif
 /* #endregion */

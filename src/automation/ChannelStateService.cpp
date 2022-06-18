@@ -27,7 +27,12 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
                                       String homeAssistantIcon,
                                       bool enableRemoteConfiguration,
                                       String masterIPAddress,
-                                      String restChannelRestartEndPoint) :
+                                      String restChannelRestartEndPoint,
+                                      bool enableDateRange,
+                                      bool activeOutsideDateRange,
+                                      String  activeStartDateRange,
+                                      String  activeEndDateRange,
+                                      String buildVersion) :
     _httpEndpoint(ChannelState::read,
                   ChannelState::update,
                   this,
@@ -76,6 +81,11 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
   _masterIPAddress = masterIPAddress;
   _restChannelEndPoint = restChannelEndPoint;
   _restChannelRestartEndPoint = restChannelRestartEndPoint;
+  _enableDateRange = enableDateRange;
+  _activeOutsideDateRange = activeOutsideDateRange;
+  _activeStartDateRange = activeStartDateRange;
+  _activeEndDateRange = activeEndDateRange;
+  _buildVersion = buildVersion;
 
   // configure controls to be output
   pinMode(_channelControlPin, OUTPUT);
@@ -135,7 +145,7 @@ void ChannelStateService::registerPinConfig(uint8_t controlPin, uint8_t homeAssi
   String subTopic;
   String pubTopic;
 
-  DynamicJsonDocument doc(DEFAULT_BUFFER_SIZE);
+  DynamicJsonDocument doc(DEFAULT_JSON_DOCUMENT_SIZE);
   _channelMqttSettingsService->read([&](ChannelMqttSettings& settings) {
     String mqttPath = utils.getMqttUniqueIdOrPath(controlPin, homeAssistantTopicType, false, settings.homeAssistantEntity);
 
@@ -235,6 +245,10 @@ void ChannelStateService::begin() {
     _state.channel.masterIPAddress = _masterIPAddress;
     _state.channel.restChannelEndPoint = _restChannelEndPoint;
     _state.channel.restChannelRestartEndPoint = _restChannelRestartEndPoint;
+    _state.channel.enableDateRange = _enableDateRange;
+    _state.channel.activeOutsideDateRange = _activeOutsideDateRange;
+    _state.channel.activeStartDateRange = _activeStartDateRange;
+    _state.channel.activeEndDateRange = _activeEndDateRange;
 
     _state.channel.schedule.runEvery =  _runEvery;
     _state.channel.schedule.offAfter =  _offAfter;
@@ -245,6 +259,8 @@ void ChannelStateService::begin() {
     _state.channel.schedule.hotTimeHour = _hotTimeHour;
     _state.channel.schedule.overrideTime = _overrideTime;
     _state.channel.schedule.isOverrideActive = _isOverrideActive;
+    _state.channel.buildVersion = _buildVersion;
+  
     _fsPersistence.readFromFS();
 
     _state.channel.controlOn = DEFAULT_CONTROL_STATE; // must be off on start up

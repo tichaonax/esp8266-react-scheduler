@@ -37,7 +37,12 @@ class ChannelStateService : public StatefulService<ChannelState> {
                     String homeAssistantIcon,
                     bool enableRemoteConfiguration,
                     String masterIPAddress,
-                    String restChannelRestartEndPoint);
+                    String restChannelRestartEndPoint,
+                    bool enableDateRange,
+                    bool activeOutsideDateRange,
+                    String  activeStartDateRange,
+                    String  activeEndDateRange,
+                    String buildVersion);
 
   void begin();
   Channel getChannel();
@@ -82,6 +87,11 @@ class ChannelStateService : public StatefulService<ChannelState> {
   String _masterIPAddress;
   String _restChannelEndPoint;
   String _restChannelRestartEndPoint;
+  bool _enableDateRange;
+  bool _activeOutsideDateRange;
+  String _activeStartDateRange;
+  String _activeEndDateRange;
+  String _buildVersion;
 
 #ifdef ESP32
   void onStationModeGotIP(WiFiEvent_t event, WiFiEventInfo_t info);
