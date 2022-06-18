@@ -19,4 +19,5 @@ export interface Proxy {
     channelThree?: boolean;
     channelFour?: boolean;
     remote: any;
+    currentChannelName: any;
   }

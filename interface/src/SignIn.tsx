@@ -13,6 +13,9 @@ import { SIGN_IN_REQUEST_VALIDATOR, validate } from './validators';
 import { extractErrorMessage, onEnterCallback, updateValue } from './utils';
 import { AuthenticationContext } from './contexts/authentication';
 
+
+import { RemoteUtils } from './project/automation/utils/remoteUtils';
+
 const SignIn: FC = () => {
   const authenticationContext = useContext(AuthenticationContext);
   const { enqueueSnackbar } = useSnackbar();
@@ -75,7 +78,7 @@ const SignIn: FC = () => {
           width: "100%"
         })}
       >
-        <Typography variant="h4">{PROJECT_NAME}</Typography>
+        <Typography variant="h4">{RemoteUtils.getDeviceHost().currentChannelName || PROJECT_NAME}</Typography>
         <ValidatedTextField
           fieldErrors={fieldErrors}
           disabled={processing}
