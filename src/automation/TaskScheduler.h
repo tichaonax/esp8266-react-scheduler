@@ -38,7 +38,8 @@ class TaskScheduler {
                     bool enableDateRange,
                     bool activeOutsideDateRange,
                     String  activeStartDateRange,
-                    String  activeEndDateRange);
+                    String  activeEndDateRange,
+                    String buildVersion);
     void begin();
     void resetOverrideTime();
     void setOverrideTime();
