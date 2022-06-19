@@ -43,6 +43,7 @@ public:
 
   static void haRead(ChannelState& settings, JsonObject& root) {
     root["state"] = settings.channel.controlOn ? ON_STATE : OFF_STATE;
+    root["buildVersion"] = settings.channel.buildVersion;
     root["iotAdminUrl"] = utils.getDeviceChannelUrl(settings.channel);
     root["controlPin"] = settings.channel.controlPin;
     root["channelName"] = settings.channel.name;
@@ -135,6 +136,7 @@ public:
     jsonObject["restChannelRestartEndPoint"] = channel.restChannelRestartEndPoint;
     jsonObject["enableDateRange"] = channel.enableDateRange;
     jsonObject["activeOutsideDateRange"] = channel.activeOutsideDateRange;
+    jsonObject["buildVersion"] = channel.buildVersion;
 
     JsonArray activeDateRange = jsonObject.createNestedArray("activeDateRange");
     activeDateRange.add(channel.activeStartDateRange);

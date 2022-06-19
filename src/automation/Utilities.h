@@ -87,6 +87,7 @@ struct Channel {
     bool  activeOutsideDateRange;
     String  activeStartDateRange;
     String  activeEndDateRange;
+    String buildVersion;
 };
 
 struct DateRange {
@@ -305,7 +306,11 @@ public:
     
     String iotAdminUrl = getDeviceChannelUrl(channel);
     
-    String payload = "{\"state\":\"" + status +"\",\"iotAdminUrl\":\"" + iotAdminUrl + "\"";
+    String payload = "{\"state\":\"" + status +"\"";
+    
+    payload = payload + ",\"buildVersion\":\"" + channel.buildVersion + "\"";
+
+    payload = payload + ",\"iotAdminUrl\":" + iotAdminUrl;
 
     payload = payload + ",\"controlPin\":" + controlPin;
 
