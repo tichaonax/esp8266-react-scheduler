@@ -310,9 +310,9 @@ public:
     
     payload = payload + ",\"buildVersion\":\"" + channel.buildVersion + "\"";
 
-    payload = payload + ",\"iotAdminUrl\":" + iotAdminUrl;
+    payload = payload + ",\"iotAdminUrl\":\"" + iotAdminUrl + "\"";
 
-    payload = payload + ",\"controlPin\":" + controlPin;
+    payload = payload + ",\"controlPin\":\"" + controlPin + "\"";
 
     payload = payload + ",\"channelName\":\"" + channel.name  + "\"";
     
