@@ -3,7 +3,7 @@ import Typography from '@mui/material/Typography';
 import { Button } from '@mui/material';
 import { HtmlTooltip } from './HtmlTooltip';
 
-export const ScheduleEnabled = () => {
+export const ScheduleEnabled = ({buildVersion}) => {
     return (
         <HtmlTooltip
           title={
@@ -14,7 +14,7 @@ export const ScheduleEnabled = () => {
             </React.Fragment>
           }
         >
-            <Button style={{textTransform: 'none'}}>Enable Schedule</Button>
+            <Button style={{textTransform: 'none'}}>Enable Schedule (build:{buildVersion ? buildVersion : '-.-.-'})</Button>
         </HtmlTooltip>
     );
   };

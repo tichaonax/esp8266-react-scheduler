@@ -287,7 +287,7 @@ const ChannelStateRestForm: FC<ChannelStateRestFormProps> = ({
                 color="primary"
             />
             }
-            label={(<ScheduleEnabled/>)}
+            label={(<ScheduleEnabled buildVersion={data.buildVersion}/>)}
         />
 
         <BlockFormControlLabel
