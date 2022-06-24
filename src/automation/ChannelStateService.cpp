@@ -31,7 +31,8 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
                                       bool enableDateRange,
                                       bool activeOutsideDateRange,
                                       String  activeStartDateRange,
-                                      String  activeEndDateRange) :
+                                      String  activeEndDateRange,
+                                      String buildVersion) :
     _httpEndpoint(ChannelState::read,
                   ChannelState::update,
                   this,
@@ -84,6 +85,7 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
   _activeOutsideDateRange = activeOutsideDateRange;
   _activeStartDateRange = activeStartDateRange;
   _activeEndDateRange = activeEndDateRange;
+  _buildVersion = buildVersion;
 
   // configure controls to be output
   pinMode(_channelControlPin, OUTPUT);
@@ -257,6 +259,7 @@ void ChannelStateService::begin() {
     _state.channel.schedule.hotTimeHour = _hotTimeHour;
     _state.channel.schedule.overrideTime = _overrideTime;
     _state.channel.schedule.isOverrideActive = _isOverrideActive;
+    _state.channel.buildVersion = _buildVersion;
   
     _fsPersistence.readFromFS();
 

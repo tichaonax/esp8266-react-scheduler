@@ -117,10 +117,10 @@ export class RemoteUtils {
       let webProtocol;
       if(host.isProxy){
         webProtocol = host.proxy.protocol === "https:" ? "wss:" : "ws:";
-        return `${webProtocol}//${host.proxy.hostname}${WS_BASE_URL}`;
+        return `${webProtocol}//${host.proxy.hostname}:${host.proxy.port}${WS_BASE_URL}`;
       }else{
         webProtocol = host.localhost.protocol === "https:" ? "wss:" : "ws:";
-        return `${webProtocol}//${host.localhost.hostname}${WS_BASE_URL}`;
+        return `${webProtocol}//${host.localhost.hostname}:${host.proxy.port}${WS_BASE_URL}`;
       }
     }
 
