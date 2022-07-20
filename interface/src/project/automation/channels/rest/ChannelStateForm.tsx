@@ -24,7 +24,6 @@ import { DateRange } from "rsuite/DateRangePicker";
 import { channelStateContent } from './channelStateContent';
 
 import * as Api from '../../api/channelApi';
-
 import 'rsuite/dist/rsuite.min.css';
 import '../svg-styles.css';
 import { theme } from './channelStateForm/theme';
