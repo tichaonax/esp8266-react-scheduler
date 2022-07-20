@@ -183,7 +183,7 @@ const NTPStatusForm: FC = () => {
             </ButtonRow>
           </Box>
           {
-            me.admin && data && !isNtpActive(data) && (
+            me.admin /*&& data && !isNtpActive(data)*/ && (
               <Box flexWrap="nowrap" whiteSpace="nowrap">
                 <ButtonRow mt={1}>
                   <Button onClick={openSetTime} variant="contained" color="primary" startIcon={<AccessTimeIcon />}>
