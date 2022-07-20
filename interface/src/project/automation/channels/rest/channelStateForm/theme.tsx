@@ -1,33 +1,33 @@
-import { grey, indigo, blueGrey, orange, red, green } from '@mui/material/colors';
+import { blueGrey, green, indigo, orange, red, yellow } from '@mui/material/colors';
 import { createTheme } from '@mui/material/styles';
 
-export const MuiThemeOverride = createTheme({
+export const theme = createTheme({
   components: {
-    MuiTabPanel: {
+    // Name of the component
+    MuiPaper: {
       styleOverrides: {
         // Name of the slot
         root: {
           // Some CSS
-          margin: '1px',
-          padding: '1px'
+          padding: '5px',
+          margin: '5px'
         },
       },
-    },
-  },
-  palette: {
+    }
+  },  palette: {
     mode: "dark",
     text: {
       primary: '#fff',
-      secondary: grey[500],
+      secondary: yellow[500],
     },
     primary: {
-      main: indigo[500]
+      main: '#346beb'//indigo[A400]
     },
     secondary: {
       main: blueGrey[800]
     },
     info: {
-      main: indigo[800]
+      main: indigo[500]
     },
     warning: {
       main: orange[800]
