@@ -11,6 +11,7 @@ import ChannelTwo from './channels/ChannelTwo';
 import ChannelThree from './channels/ChannelThree';
 import ChannelFour from './channels/ChannelFour';
 import { RemoteUtils } from './utils/remoteUtils';
+import CustomTheme from '../../CustomTheme';
 
 const Schedule: FC = () => {
   const { routerTab } = useRouterTab();
@@ -30,7 +31,7 @@ const Schedule: FC = () => {
   useLayoutTitle("Schedule");
 
   return (
-    <>
+    <CustomTheme>
       <RouterTabs value={routerTab}>
         { isChannelOne  && <Tab value="channelOne" label="Channel One" /> }
         { isChannelTwo && <Tab value="channelTwo" label="Channel Two" /> }
@@ -44,7 +45,7 @@ const Schedule: FC = () => {
         <Route path="channelFour" element={<ChannelFour />} />
         <Route path="/*" element={<Navigate replace to={defaultChannel} />} />
       </Routes>
-    </>
+    </CustomTheme>
   );
 };
 
