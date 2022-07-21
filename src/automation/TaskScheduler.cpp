@@ -33,7 +33,8 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                               bool enableDateRange,
                               bool activeOutsideDateRange,
                               String  activeStartDateRange,
-                              String  activeEndDateRange) :
+                              String  activeEndDateRange,
+                              String buildVersion) :
     _channelStateService(server,
                         securityManager,
                         mqttClient,
@@ -64,7 +65,8 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                         enableDateRange,
                         activeOutsideDateRange,
                         activeStartDateRange,
-                        activeEndDateRange)
+                        activeEndDateRange,
+                        buildVersion)
                                        {
                                          _isHotScheduleActive = false;
                                          _isOverrideActive = false;
@@ -437,7 +439,7 @@ void TaskScheduler::runTask(){
     return;
   }
   if(schedule.isRunTaskNow && schedule.isWithInDateRange){
-    if(!_channel.randomize){
+    if(!_channel.randomize || (_channel.randomize && _channel.enableTimeSpan)){
       controlOn();
     }
     else{
