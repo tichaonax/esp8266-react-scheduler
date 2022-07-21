@@ -439,7 +439,7 @@ void TaskScheduler::runTask(){
     return;
   }
   if(schedule.isRunTaskNow && schedule.isWithInDateRange){
-    if(!_channel.randomize){
+    if(!_channel.randomize || (_channel.randomize && _channel.enableTimeSpan)){
       controlOn();
     }
     else{

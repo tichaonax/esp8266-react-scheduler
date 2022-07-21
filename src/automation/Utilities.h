@@ -306,11 +306,7 @@ public:
     
     String iotAdminUrl = getDeviceChannelUrl(channel);
     
-    String payload = "{\"state\":\"" + status +"\"";
-    
-    payload = payload + ",\"buildVersion\":\"" + channel.buildVersion + "\"";
-
-    payload = payload + ",\"iotAdminUrl\":" + iotAdminUrl;
+    String payload = "{\"state\":\"" + status +"\",\"buildVersion\":\"" + channel.buildVersion +"\",\"iotAdminUrl\":\"" + iotAdminUrl + "\"";
 
     payload = payload + ",\"controlPin\":" + controlPin;
 
