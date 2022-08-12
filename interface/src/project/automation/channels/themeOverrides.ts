@@ -1,3 +1,4 @@
+import { grey, indigo, blueGrey, orange, red, green } from '@mui/material/colors';
 import { createTheme } from '@mui/material/styles';
 
 export const MuiThemeOverride = createTheme({
@@ -13,4 +14,29 @@ export const MuiThemeOverride = createTheme({
       },
     },
   },
+  palette: {
+    mode: "dark",
+    text: {
+      primary: '#fff',
+      secondary: grey[500],
+    },
+    primary: {
+      main: indigo[500]
+    },
+    secondary: {
+      main: blueGrey[800]
+    },
+    info: {
+      main: indigo[800]
+    },
+    warning: {
+      main: orange[800]
+    },
+    error: {
+      main: red[800]
+    },
+    success: {
+      main: green[800]
+    }
+  }
 });
