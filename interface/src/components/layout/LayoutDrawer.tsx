@@ -50,6 +50,7 @@ const LayoutDrawer: FC<LayoutDrawerProps> = ({ mobileOpen, onClose }) => {
         variant="temporary"
         open={mobileOpen}
         onClose={onClose}
+        onClick={onClose} // close drawer after click
         ModalProps={{
           keepMounted: true, // Better open performance on mobile.
         }}
