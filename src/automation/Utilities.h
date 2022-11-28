@@ -57,6 +57,7 @@ struct Schedule {
     int  hotTimeHour;      // default 0 hours [0-16]
     bool isOverrideActive;
     int  overrideTime;     // time to override schedule
+    int  weekDays[7];      // active week days
 };
 struct Channel {
     bool  controlOn;
@@ -195,6 +196,22 @@ public:
     return totalTime;
   }
 
+  bool canTaskRunToday(Channel channel, ScheduledTime scheduleTime){
+     struct tm *lt = localtime(&scheduleTime.currentTime);
+    int today = lt->tm_wday;
+
+    bool canTaskRunToday = false;
+
+    for (int day = 0; day < 7; day++){  
+      if(channel.schedule.weekDays[day] == today){
+        canTaskRunToday = true;
+        break;
+      }
+    }
+    
+    return (canTaskRunToday && scheduleTime.isWithInDateRange);
+  }
+  
   ScheduledTime getScheduleTimes(int startTime, int endTime,
     int hotTimeHour, bool enableTimeSpan, bool isHotScheduleActive,
     String channelName, bool randomize, bool isOverrideActive, bool enableMinimumRunTime){
