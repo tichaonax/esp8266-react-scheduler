@@ -42,7 +42,8 @@ class ChannelStateService : public StatefulService<ChannelState> {
                     bool activeOutsideDateRange,
                     String  activeStartDateRange,
                     String  activeEndDateRange,
-                    String buildVersion);
+                    String buildVersion,
+                    String weekDays);
 
   void begin();
   Channel getChannel();
@@ -92,6 +93,7 @@ class ChannelStateService : public StatefulService<ChannelState> {
   String _activeStartDateRange;
   String _activeEndDateRange;
   String _buildVersion;
+  String _weekDays;
 
 #ifdef ESP32
   void onStationModeGotIP(WiFiEvent_t event, WiFiEventInfo_t info);
