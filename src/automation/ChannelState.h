@@ -153,7 +153,13 @@ public:
     schedule["endTimeHour"] = round(float(float(channel.schedule.endTimeHour)/float(3600)) * 1000) / 1000;
     schedule["endTimeMinute"] = round(float(float(channel.schedule.endTimeMinute)/float(60)) * 1000) / 1000;
     schedule["isOverride"] = channel.schedule.isOverride;
-  
+
+    JsonArray weekDays = schedule.createNestedArray("weekDays");
+    for (int day = 0; day < 7; day++){  
+      int value = channel.schedule.weekDays[day]; 
+      if(value > -1){weekDays.add(value);}
+    }
+    
     JsonObject scheduled = jsonObject.createNestedObject("scheduledTime");
     ScheduledTime scheduledTime = utils.getScheduleTimes(
       (channel.schedule.startTimeHour + channel.schedule.startTimeMinute),
@@ -234,6 +240,17 @@ static void updateChannel(JsonObject& json, Channel& channel) {
     if ((channel.schedule.hotTimeHour > 57600) | (channel.schedule.hotTimeHour < 0)) { channel.schedule.hotTimeHour  = 0; }
   
     if ((channel.schedule.overrideTime > 57600) | (channel.schedule.overrideTime < 0)) { channel.schedule.overrideTime  = 0; }
+
+    if (schedule["weekDays"]){
+      for (int i = 0; i< 7; i++){
+       channel.schedule.weekDays[i] = -1;
+      }
+      JsonArray weekDays = schedule["weekDays"];
+      for(JsonVariant v : weekDays) {
+        int day = v.as<int>();
+        channel.schedule.weekDays[day] = day;
+      }
+    }
   }
 
   static boolean dataIsValid(JsonObject& json, ChannelState& channelState){

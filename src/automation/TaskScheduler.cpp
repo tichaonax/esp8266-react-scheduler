@@ -34,7 +34,8 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                               bool activeOutsideDateRange,
                               String  activeStartDateRange,
                               String  activeEndDateRange,
-                              String buildVersion) :
+                              String buildVersion,
+                              String weekDays) :
     _channelStateService(server,
                         securityManager,
                         mqttClient,
@@ -66,7 +67,8 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                         activeOutsideDateRange,
                         activeStartDateRange,
                         activeEndDateRange,
-                        buildVersion)
+                        buildVersion,
+                        weekDays)
                                        {
                                          _isHotScheduleActive = false;
                                          _isOverrideActive = false;
@@ -213,6 +215,7 @@ void TaskScheduler::scheduleTaskTicker(ScheduledTime schedule){
     }
   }, this);
 }
+
 bool TaskScheduler::isScheduleWithInDateRange(String activeStartDateRange,
   String activeEndDateRange, bool enableDateRange, bool activeOutsideDateRange, time_t currentTime){
 
@@ -226,7 +229,7 @@ bool TaskScheduler::isScheduleWithInDateRange(String activeStartDateRange,
   }
 
   bool inBetween = (dateRange.startDate <= currentTime) && (dateRange.endDate >= currentTime);
-  
+
   if(!activeOutsideDateRange){
     return inBetween;
   }
@@ -270,7 +273,7 @@ void TaskScheduler::reScheduleTasks(){
   }, this);
 }
 
-void TaskScheduler::scheduleButtonRead(boolean bToggleSwitch, int toggleReadPin, int blinkLed, int ledOn){
+void TaskScheduler::scheduleButtonRead(bool bToggleSwitch, int toggleReadPin, int blinkLed, int ledOn){
   ToggleButtonState = HIGH;
   LED = blinkLed;
   LED_ON =ledOn;
@@ -342,11 +345,12 @@ void TaskScheduler::scheduleHotTask(){
 }
 
 void TaskScheduler::runHotTask(){
-  if(_channel.enabled){
+  ScheduledTime scheduleTime = getNextRunTime();
+  bool canTaskRunToday = utils.canTaskRunToday(_channel, scheduleTime);
+  if(_channel.enabled && canTaskRunToday){
     _isHotScheduleActive = true;
-    ScheduledTime schedule = getNextRunTime();
-    OffHotHourTime = schedule.scheduleHotTimeEndDateTime - schedule.currentTime;
-    if(schedule.isHotScheduleAdjust){
+    OffHotHourTime = scheduleTime.scheduleHotTimeEndDateTime - scheduleTime.currentTime;
+    if(scheduleTime.isHotScheduleAdjust){
       OffHotHourTime = OffHotHourTime - TWENTY_FOUR_HOUR_DURATION;
     }
     if(OffHotHourTime < 1) { OffHotHourTime = 1; _isHotScheduleActive = false;}
@@ -434,11 +438,14 @@ void TaskScheduler::printSchedule(ScheduledTime schedule){
 }
 
 void TaskScheduler::runTask(){
-  ScheduledTime schedule = getNextRunTime();
+  ScheduledTime scheduleTime = getNextRunTime();
   if(!_channel.enabled){
     return;
   }
-  if(schedule.isRunTaskNow && schedule.isWithInDateRange){
+
+  bool canTaskRunToday = utils.canTaskRunToday(_channel, scheduleTime);
+
+  if(scheduleTime.isRunTaskNow && canTaskRunToday){
     if(!_channel.randomize || (_channel.randomize && _channel.enableTimeSpan)){
       controlOn();
     }
@@ -449,7 +456,7 @@ void TaskScheduler::runTask(){
       controlOnTicker();
     }
   }else{
-    updateStatus(schedule.scheduleTime);
+    updateStatus(scheduleTime.scheduleTime);
   }
 }
 
@@ -493,7 +500,7 @@ void TaskScheduler::controlOff(){
   }
 }
 
-void TaskScheduler::setToggleSwitch(boolean bToggleSwitch, int toggleReadPin, int blinkLed, int ledOn){
+void TaskScheduler::setToggleSwitch(bool bToggleSwitch, int toggleReadPin, int blinkLed, int ledOn){
   _toggleReadPin = toggleReadPin;
 
   if(bToggleSwitch){
