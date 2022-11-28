@@ -57,15 +57,15 @@ const StyledToggle = withStyles({
     color: yellow[500],
     "&$selected": {
       color: "white",
-      background: "#346beb"
+      background: "#eb8934"
     },
     "&:hover": {
       borderColor: "#346beb",
-      background: "#346beb"
+      background: "#eb34cc"
     },
     "&:hover$selected": {
       borderColor: "#346beb",
-      background: "#346beb"
+      background: "#eb8934"
     },
     minWidth: 32,
     maxWidth: 32,
@@ -82,7 +82,7 @@ export function selectWeekDays(
     {
   return (
     <>
-    <p>Days of the week</p>
+    <p>Active week days orange</p>
       <StyledToggleButtonGroup
         size="small"
         arial-label="Days of the week"
