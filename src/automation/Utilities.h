@@ -21,6 +21,7 @@
 #define CONTROL_OFF 0x0
 #define MID_NIGHT_SECONDS 86399
 #define TWENTY_FOUR_HOUR_DURATION MID_NIGHT_SECONDS + 1
+#define ONE_HOUR_DURATION 3600
 
 struct TotalScheduledTime {
   bool isHotScheduleAdjust;
