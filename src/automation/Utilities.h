@@ -21,6 +21,7 @@
 #define CONTROL_OFF 0x0
 #define MID_NIGHT_SECONDS 86399
 #define TWENTY_FOUR_HOUR_DURATION MID_NIGHT_SECONDS + 1
+#define ONE_HOUR_DURATION 3600
 
 struct TotalScheduledTime {
   bool isHotScheduleAdjust;
@@ -57,6 +58,7 @@ struct Schedule {
     int  hotTimeHour;      // default 0 hours [0-16]
     bool isOverrideActive;
     int  overrideTime;     // time to override schedule
+    int  weekDays[7];      // active week days
 };
 struct Channel {
     bool  controlOn;
@@ -195,6 +197,22 @@ public:
     return totalTime;
   }
 
+  bool canTaskRunToday(Channel channel, ScheduledTime scheduleTime){
+     struct tm *lt = localtime(&scheduleTime.currentTime);
+    int today = lt->tm_wday;
+
+    bool canTaskRunToday = false;
+
+    for (int day = 0; day < 7; day++){  
+      if(channel.schedule.weekDays[day] == today){
+        canTaskRunToday = true;
+        break;
+      }
+    }
+    
+    return (canTaskRunToday && scheduleTime.isWithInDateRange);
+  }
+  
   ScheduledTime getScheduleTimes(int startTime, int endTime,
     int hotTimeHour, bool enableTimeSpan, bool isHotScheduleActive,
     String channelName, bool randomize, bool isOverrideActive, bool enableMinimumRunTime){
@@ -301,19 +319,27 @@ public:
     return (hours + strMins);
   }
 
+  static String getActiveWeekDays(int weekDays[7]){
+    String days[7] = {"SU", "MO", "TU", "WE", "TH", "FR", "SA"};
+    String activeWeekDays = "[";
+    bool isFirstGoodDay = true;
+    for (int day = 0; day < 7; day++){  
+      if(weekDays[day] > -1){
+        activeWeekDays = activeWeekDays + (isFirstGoodDay ? "" : ",") + days[day];
+        isFirstGoodDay = false;
+      }
+    }
+     activeWeekDays = activeWeekDays + "]";
+     return activeWeekDays;
+  }
+
   static String makeConfigPayload(boolean payloadStatus, Channel channel, uint8_t controlPin){
     String status = payloadStatus ? "ON" : "OFF";
-    
     String iotAdminUrl = getDeviceChannelUrl(channel);
-    
-    String payload = "{\"state\":\"" + status +"\",\"buildVersion\":\"" + channel.buildVersion +"\",\"iotAdminUrl\":\"" + iotAdminUrl + "\"";
-
+    String payload = "{\"state\":\"" + status +"\",\"activeDays\":\"" + getActiveWeekDays(channel.schedule.weekDays) +"\",\"buildVersion\":\"" + channel.buildVersion +"\",\"iotAdminUrl\":\"" + iotAdminUrl + "\"";
     payload = payload + ",\"controlPin\":" + controlPin;
-
     payload = payload + ",\"channelName\":\"" + channel.name  + "\"";
-    
     payload = payload + ",\"MAC\":\"" + SettingValue::format("#{unique_id}")  + "\"";
-
     payload = payload + ",\"IP\":\"" + channel.IP  + "\"";
 
     if(channel.enableDateRange){
