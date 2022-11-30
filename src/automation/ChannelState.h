@@ -43,6 +43,7 @@ public:
 
   static void haRead(ChannelState& settings, JsonObject& root) {
     root["state"] = settings.channel.controlOn ? ON_STATE : OFF_STATE;
+    root["activeDays"] = utils.getActiveWeekDays(settings.channel.schedule.weekDays);
     root["buildVersion"] = settings.channel.buildVersion;
     root["iotAdminUrl"] = utils.getDeviceChannelUrl(settings.channel);
     root["controlPin"] = settings.channel.controlPin;
