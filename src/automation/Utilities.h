@@ -332,63 +332,7 @@ public:
      activeWeekDays = activeWeekDays + "]";
      return activeWeekDays;
   }
-
-  static String makeConfigPayload(boolean payloadStatus, Channel channel, uint8_t controlPin){
-    String status = payloadStatus ? "ON" : "OFF";
-    String iotAdminUrl = getDeviceChannelUrl(channel);
-    String payload = "{\"state\":\"" + status +"\",\"activeDays\":\"" + getActiveWeekDays(channel.schedule.weekDays) +"\",\"buildVersion\":\"" + channel.buildVersion +"\",\"iotAdminUrl\":\"" + iotAdminUrl + "\"";
-    payload = payload + ",\"controlPin\":" + controlPin;
-    payload = payload + ",\"channelName\":\"" + channel.name  + "\"";
-    payload = payload + ",\"MAC\":\"" + SettingValue::format("#{unique_id}")  + "\"";
-    payload = payload + ",\"IP\":\"" + channel.IP  + "\"";
-
-    if(channel.enableDateRange){
-      time_t currentTime = time(nullptr);
-      DateRange dateRange = getActiveDateRange(channel.activeStartDateRange, channel.activeEndDateRange, currentTime);
-      
-      if(dateRange.valid){
-        payload = payload + ",\"StartDate\":\"" + eraseLineFeed(ctime(&dateRange.startDate))  + "\"";
-        payload = payload + ",\"EndDate\":\"" + eraseLineFeed(ctime(&dateRange.endDate))  + "\"";
-
-        if(channel.activeOutsideDateRange){
-          payload = payload + ",\"ActiveOutsideDateRange\":\"true\"";
-        }
-      }
-    }
-
-    if(!channel.enabled){
-      return(payload + ",\"scheduleDisabled\":\"true\"}");
-    }
-
-    String startTime = formatTime(channel.schedule.startTimeHour, channel.schedule.startTimeMinute);
-    String endTime = formatTime(channel.schedule.endTimeHour, channel.schedule.endTimeMinute);
-    
-    payload = payload + ",\"startTime\":\"" + startTime + "\",\"endTime\":\"" + endTime  + "\"";
-
-    if(channel.schedule.overrideTime > 0){
-      payload = payload + ",\"overrideTime\":\"" + formatTimePeriod(channel.schedule.overrideTime) + "\"";
-    }
-
-    if(channel.enableTimeSpan){
-      return(payload + "}");
-    }
-
-    payload = payload + ",\"runEvery\":\"" + formatTimePeriod(channel.schedule.runEvery) + "\",\"offAfter\":\"" + formatTimePeriod(channel.schedule.offAfter) + "\"";
-
-    if(!channel.randomize){
-      return(payload + "}");
-    }
-
-    if(channel.schedule.hotTimeHour > 0){
-      payload = payload + ",\"HotTime\":\"" + formatTimePeriod(channel.schedule.hotTimeHour) + "\"";
-    }
-
-    if(!channel.enableMinimumRunTime){
-      return(payload + "}");
-    }
-    return(payload + ",\"MinimumRunTime\":\"true\"}");
-  }
-
+  
   static String formatTimePeriod(int timePeriod){
     byte hours = timePeriod/3600;
     byte minutes = (timePeriod-hours*3600)/60;
