@@ -52,27 +52,23 @@ public:
 
     if(settings.channel.enabled){
       root["activeDays"] = utils.getActiveWeekDays(settings.channel.schedule.weekDays);
-    }
-
-    if(settings.channel.enableDateRange && settings.channel.enabled){
-      time_t currentTime = time(nullptr);
-      DateRange dateRange = utils.getActiveDateRange(settings.channel.activeStartDateRange,
-      settings.channel.activeEndDateRange, currentTime);
-      if(dateRange.valid){
-        String startDate = utils.eraseLineFeed(ctime(&dateRange.startDate));
-        startDate.remove(10,9);
-        String endDate = utils.eraseLineFeed(ctime(&dateRange.endDate));
-        endDate.remove(10,9);
-        root["StartDate"] = startDate;
-        root["EndDate"] = endDate;
-        
-        if(settings.channel.activeOutsideDateRange){
-          root["ActiveOutsideDateRange"] = "";
+      if(settings.channel.enableDateRange){
+        time_t currentTime = time(nullptr);
+        DateRange dateRange = utils.getActiveDateRange(settings.channel.activeStartDateRange,
+        settings.channel.activeEndDateRange, currentTime);
+        if(dateRange.valid){
+          String startDate = utils.eraseLineFeed(ctime(&dateRange.startDate));
+          startDate.remove(10,9);
+          String endDate = utils.eraseLineFeed(ctime(&dateRange.endDate));
+          endDate.remove(10,9);
+          root["StartDate"] = startDate;
+          root["EndDate"] = endDate;
+          
+          if(settings.channel.activeOutsideDateRange){
+            root["ActiveOutsideDateRange"] = "";
+          }
         }
       }
-    }
-
-    if(settings.channel.enabled){
       root["startTime"] = utils.formatTime(settings.channel.schedule.startTimeHour, settings.channel.schedule.startTimeMinute);
       root["endTime"] = utils.formatTime(settings.channel.schedule.endTimeHour, settings.channel.schedule.endTimeMinute);
 
