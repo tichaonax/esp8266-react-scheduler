@@ -50,7 +50,11 @@ public:
     root["MAC"] = SettingValue::format("#{unique_id}");
     root["IP"] = settings.channel.IP;
 
-    if(settings.channel.enableDateRange){
+    if(settings.channel.enabled){
+      root["activeDays"] = utils.getActiveWeekDays(settings.channel.schedule.weekDays);
+    }
+
+    if(settings.channel.enableDateRange && settings.channel.enabled){
       time_t currentTime = time(nullptr);
       DateRange dateRange = utils.getActiveDateRange(settings.channel.activeStartDateRange,
       settings.channel.activeEndDateRange, currentTime);
@@ -63,7 +67,7 @@ public:
         root["EndDate"] = endDate;
         
         if(settings.channel.activeOutsideDateRange){
-          root["ActiveOutsideDateRange"] = "true";
+          root["ActiveOutsideDateRange"] = "";
         }
       }
     }
@@ -86,12 +90,12 @@ public:
           }
 
           if(settings.channel.enableMinimumRunTime){
-            root["MinimumRunTime"] = "true";
+            root["MinimumRunTime"] = "";
           }
         }
       }
     }else{
-      root["scheduleDisabled"] = "true";
+      root["scheduleDisabled"] = "";
     }
   }
 
