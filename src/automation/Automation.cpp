@@ -11,11 +11,12 @@ SystemRestart Automation::getSystemRestart(time_t t_now){
   lt->tm_hour = 0;
   lt->tm_min = 0;
   lt->tm_sec = 0;
+
   time_t midNightToday = mktime(lt);
   SystemRestart restart;
-  restart.restartTime = TWENTY_FOUR_HOUR_DURATION + midNightToday - t_now;
-  tm *ltm = localtime(&t_now);
-  restart.day = ltm->tm_mday;
+  //restartTime set to one hour after midnight
+  restart.restartTime = TWENTY_FOUR_HOUR_DURATION + midNightToday - t_now + ONE_HOUR_DURATION;
+  restart.wekDay = lt->tm_wday;
   return(restart);
 }
 
@@ -84,10 +85,9 @@ void Automation::setSchedules(std::list<ScheduleTask>* scheduleTaskList){
               i++;
             }
           SystemRestart restart = getSystemRestart(t_now);
-
-          if(restart.day == 1 && restart.restartTime > 0) {
-            // reset the system midnight first of every month.
-            _restartTicker.once(restart.restartTime, &Automation::staticTickerCallbackRestartSystemNow, this);
+          if(restart.wekDay == 0 && restart.restartTime > 0) {
+            //schedule reset the system one hour after midnight every sunday
+            _restartTicker.once(restart.restartTime , &Automation::staticTickerCallbackRestartSystemNow, this);
           }
         }
     }
