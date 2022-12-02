@@ -6,8 +6,6 @@
 
 #define DEFAULT_LED_STATE false
 #define DEFAULT_CONTROL_STATE false
-#define OFF_STATE "OFF"
-#define ON_STATE "ON"
 
 #define DEFAULT_JSON_DOCUMENT_SIZE 2048
 
