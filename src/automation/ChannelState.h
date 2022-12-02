@@ -210,14 +210,19 @@ static void updateChannel(JsonObject& json, Channel& channel) {
     
     JsonArray activeDateRange = json["activeDateRange"];
 
-    String activeStartDateRange = activeDateRange[0].as<String>();
-    if(activeStartDateRange.length() == 24){
-      channel.activeStartDateRange = activeStartDateRange;
-    }
+    DateRange dateRange = utils.getActiveDateRange(activeDateRange[0].as<String>(), activeDateRange[1].as<String>(),time(nullptr));
     
-    String activeEndDateRange = activeDateRange[1].as<String>();
-    if(activeEndDateRange.length() == 24){
+    if(dateRange.valid){
+      struct tm *startDate = localtime(&dateRange.startDate);
+      char activeStartDateRange[32];
+      strftime(activeStartDateRange, sizeof(activeStartDateRange), UTC_DATE_FORMAT, startDate);
+      channel.activeStartDateRange = activeStartDateRange;
+
+      struct tm *endDate = localtime(&dateRange.endDate);
+      char activeEndDateRange[32];
+      strftime(activeStartDateRange, sizeof(activeEndDateRange), UTC_DATE_FORMAT, endDate);
       channel.activeEndDateRange = activeEndDateRange;
+
     }
     
     JsonObject schedule = json["schedule"];

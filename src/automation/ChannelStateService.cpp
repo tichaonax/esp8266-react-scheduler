@@ -169,6 +169,7 @@ void ChannelStateService::registerPinConfig(uint8_t controlPin, uint8_t homeAssi
     doc["json_attributes_topic"] = "~/state";
     doc["cmd_t"] = "~/set";
     doc["stat_t"] = "~/state";
+    doc["assumed_state"] = false;
 
     switch (_state.channel.homeAssistantTopicType)
     {

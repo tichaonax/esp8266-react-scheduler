@@ -25,6 +25,7 @@
 
 #define OFF_STATE "OFF"
 #define ON_STATE "ON"
+#define UTC_DATE_FORMAT "%Y-%m-%dT%H:%M:%SZ"
 
 struct TotalScheduledTime {
   bool isHotScheduleAdjust;
@@ -152,12 +153,12 @@ public:
   }
 
   String strLocalTime(){
-    time_t now = time(0);
+    time_t now = time(nullptr);
     return eraseLineFeed(ctime(&now));
   }
 
   String strDeltaLocalTime(short delta){
-    time_t now = time(0) + delta;
+    time_t now = time(nullptr) + delta;
     return eraseLineFeed(ctime(&now)); 
   }
 
