@@ -6,8 +6,6 @@
 
 #define DEFAULT_LED_STATE false
 #define DEFAULT_CONTROL_STATE false
-#define OFF_STATE "OFF"
-#define ON_STATE "ON"
 
 #define DEFAULT_JSON_DOCUMENT_SIZE 2048
 
@@ -50,25 +48,25 @@ public:
     root["MAC"] = SettingValue::format("#{unique_id}");
     root["IP"] = settings.channel.IP;
 
-    if(settings.channel.enableDateRange){
-      time_t currentTime = time(nullptr);
-      DateRange dateRange = utils.getActiveDateRange(settings.channel.activeStartDateRange,
-      settings.channel.activeEndDateRange, currentTime);
-      if(dateRange.valid){
-        String startDate = utils.eraseLineFeed(ctime(&dateRange.startDate));
-        startDate.remove(10,9);
-        String endDate = utils.eraseLineFeed(ctime(&dateRange.endDate));
-        endDate.remove(10,9);
-        root["StartDate"] = startDate;
-        root["EndDate"] = endDate;
-        
-        if(settings.channel.activeOutsideDateRange){
-          root["ActiveOutsideDateRange"] = "true";
+    if(settings.channel.enabled){
+      root["activeDays"] = utils.getActiveWeekDays(settings.channel.schedule.weekDays);
+      if(settings.channel.enableDateRange){
+        time_t currentTime = time(nullptr);
+        DateRange dateRange = utils.getActiveDateRange(settings.channel.activeStartDateRange,
+        settings.channel.activeEndDateRange, currentTime);
+        if(dateRange.valid){
+          String startDate = utils.eraseLineFeed(ctime(&dateRange.startDate));
+          startDate.remove(10,9);
+          String endDate = utils.eraseLineFeed(ctime(&dateRange.endDate));
+          endDate.remove(10,9);
+          root["StartDate"] = startDate;
+          root["EndDate"] = endDate;
+          
+          if(settings.channel.activeOutsideDateRange){
+            root["ActiveOutsideDateRange"] = "";
+          }
         }
       }
-    }
-
-    if(settings.channel.enabled){
       root["startTime"] = utils.formatTime(settings.channel.schedule.startTimeHour, settings.channel.schedule.startTimeMinute);
       root["endTime"] = utils.formatTime(settings.channel.schedule.endTimeHour, settings.channel.schedule.endTimeMinute);
 
@@ -86,12 +84,12 @@ public:
           }
 
           if(settings.channel.enableMinimumRunTime){
-            root["MinimumRunTime"] = "true";
+            root["MinimumRunTime"] = "";
           }
         }
       }
     }else{
-      root["scheduleDisabled"] = "true";
+      root["scheduleDisabled"] = "";
     }
   }
 

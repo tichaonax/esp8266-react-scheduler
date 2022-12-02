@@ -23,6 +23,9 @@
 #define TWENTY_FOUR_HOUR_DURATION MID_NIGHT_SECONDS + 1
 #define ONE_HOUR_DURATION 3600
 
+#define OFF_STATE "OFF"
+#define ON_STATE "ON"
+
 struct TotalScheduledTime {
   bool isHotScheduleAdjust;
   int timeToStartSeconds;
@@ -319,66 +322,81 @@ public:
     return (hours + strMins);
   }
 
-  static String makeConfigPayload(boolean payloadStatus, Channel channel, uint8_t controlPin){
-    String status = payloadStatus ? "ON" : "OFF";
-    
-    String iotAdminUrl = getDeviceChannelUrl(channel);
-    
-    String payload = "{\"state\":\"" + status +"\",\"buildVersion\":\"" + channel.buildVersion +"\",\"iotAdminUrl\":\"" + iotAdminUrl + "\"";
-
-    payload = payload + ",\"controlPin\":" + controlPin;
-
-    payload = payload + ",\"channelName\":\"" + channel.name  + "\"";
-    
-    payload = payload + ",\"MAC\":\"" + SettingValue::format("#{unique_id}")  + "\"";
-
-    payload = payload + ",\"IP\":\"" + channel.IP  + "\"";
-
-    if(channel.enableDateRange){
-      time_t currentTime = time(nullptr);
-      DateRange dateRange = getActiveDateRange(channel.activeStartDateRange, channel.activeEndDateRange, currentTime);
-      
-      if(dateRange.valid){
-        payload = payload + ",\"StartDate\":\"" + eraseLineFeed(ctime(&dateRange.startDate))  + "\"";
-        payload = payload + ",\"EndDate\":\"" + eraseLineFeed(ctime(&dateRange.endDate))  + "\"";
-
-        if(channel.activeOutsideDateRange){
-          payload = payload + ",\"ActiveOutsideDateRange\":\"true\"";
-        }
+  static String getActiveWeekDays(int weekDays[7]){
+    String days[7] = {"SU", "MO", "TU", "WE", "TH", "FR", "SA"};
+    String activeWeekDays = "[";
+    bool isFirstGoodDay = true;
+    for (int day = 0; day < 7; day++){  
+      if(weekDays[day] > -1){
+        activeWeekDays = activeWeekDays + (isFirstGoodDay ? "" : ",") + days[day];
+        isFirstGoodDay = false;
       }
     }
+     activeWeekDays = activeWeekDays + "]";
+     return activeWeekDays;
+  }
+  
+  
+  static String makeConfigPayload(boolean payloadStatus, Channel channel, uint8_t controlPin){
+    String status = payloadStatus ? "ON" : "OFF";
+    String iotAdminUrl = getDeviceChannelUrl(channel);
+    String payload = "{\"state\":\"" + status   + "\"";
+    payload = payload +  ",\"buildVersion\":\"" + channel.buildVersion   + "\"";
+    payload = payload +  ",\"iotAdminUrl\":\"" + iotAdminUrl + "\"";
+    payload = payload + ",\"controlPin\":" + controlPin;
+    payload = payload + ",\"channelName\":\"" + channel.name  + "\"";
+    payload = payload + ",\"MAC\":\"" + SettingValue::format("#{unique_id}")  + "\"";
+    payload = payload + ",\"IP\":\"" + channel.IP  + "\"";
 
-    if(!channel.enabled){
-      return(payload + ",\"scheduleDisabled\":\"true\"}");
+    if(channel.enabled){
+       payload = payload + ",\"activeDays\":\"" + getActiveWeekDays(channel.schedule.weekDays)  + "\"";
+      if(channel.enableDateRange){
+        time_t currentTime = time(nullptr);
+        DateRange dateRange = getActiveDateRange(channel.activeStartDateRange, channel.activeEndDateRange, currentTime);
+        
+        if(dateRange.valid){
+          payload = payload + ",\"StartDate\":\"" + eraseLineFeed(ctime(&dateRange.startDate))  + "\"";
+          payload = payload + ",\"EndDate\":\"" + eraseLineFeed(ctime(&dateRange.endDate))  + "\"";
+
+          if(channel.activeOutsideDateRange){
+            payload = payload + ",\"ActiveOutsideDateRange\":\"\"";
+          }
+        }
+      }
+      
+      String startTime = formatTime(channel.schedule.startTimeHour, channel.schedule.startTimeMinute);
+      String endTime = formatTime(channel.schedule.endTimeHour, channel.schedule.endTimeMinute);
+      payload = payload + ",\"startTime\":\"" + startTime  + "\"";
+      payload = payload + ",\"endTime\":\"" + endTime  + "\"";
+
+      if(channel.schedule.overrideTime > 0){
+        payload = payload + ",\"overrideTime\":\"" + formatTimePeriod(channel.schedule.overrideTime) + "\"";
+      }
+
+      if(channel.enableTimeSpan){
+        return(payload + "}");
+      }
+
+      payload = payload + ",\"runEvery\":\"" + formatTimePeriod(channel.schedule.runEvery) + "\"";
+      payload = payload + ",\"offAfter\":\"" + formatTimePeriod(channel.schedule.offAfter) + "\"";
+      
+      if(!channel.randomize){
+        return(payload + "}");
+      }
+
+      if(channel.schedule.hotTimeHour > 0){
+        payload = payload + ",\"HotTime\":\"" + formatTimePeriod(channel.schedule.hotTimeHour) + "\"";
+      }
+
+      if(!channel.enableMinimumRunTime){
+        return(payload + "}");
+      }
+
+      return(payload + ",\"MinimumRunTime\":\"\"}");
+
+     }else{
+      return(payload + ",\"scheduleDisabled\":\"\"}");
     }
-
-    String startTime = formatTime(channel.schedule.startTimeHour, channel.schedule.startTimeMinute);
-    String endTime = formatTime(channel.schedule.endTimeHour, channel.schedule.endTimeMinute);
-    
-    payload = payload + ",\"startTime\":\"" + startTime + "\",\"endTime\":\"" + endTime  + "\"";
-
-    if(channel.schedule.overrideTime > 0){
-      payload = payload + ",\"overrideTime\":\"" + formatTimePeriod(channel.schedule.overrideTime) + "\"";
-    }
-
-    if(channel.enableTimeSpan){
-      return(payload + "}");
-    }
-
-    payload = payload + ",\"runEvery\":\"" + formatTimePeriod(channel.schedule.runEvery) + "\",\"offAfter\":\"" + formatTimePeriod(channel.schedule.offAfter) + "\"";
-
-    if(!channel.randomize){
-      return(payload + "}");
-    }
-
-    if(channel.schedule.hotTimeHour > 0){
-      payload = payload + ",\"HotTime\":\"" + formatTimePeriod(channel.schedule.hotTimeHour) + "\"";
-    }
-
-    if(!channel.enableMinimumRunTime){
-      return(payload + "}");
-    }
-    return(payload + ",\"MinimumRunTime\":\"true\"}");
   }
 
   static String formatTimePeriod(int timePeriod){
