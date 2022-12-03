@@ -25,6 +25,7 @@
 
 #define OFF_STATE "OFF"
 #define ON_STATE "ON"
+#define UTC_DATE_FORMAT "%Y-%m-%dT%H:%M:%SZ"
 
 struct TotalScheduledTime {
   bool isHotScheduleAdjust;
@@ -105,12 +106,9 @@ public:
 
   static DateRange getActiveDateRange(String activeStartDateRange, String activeEndDateRange, time_t currentTime){
     DateRange dateRange = {currentTime, currentTime, false};
-
     const char *timeStringStart = activeStartDateRange.c_str();
     const char *timeStringEnd = activeEndDateRange.c_str();
-    
-    if (timeStringStart[10] == 'T' && timeStringStart[23] == 'Z' && timeStringEnd[10] == 'T' && timeStringEnd[23] == 'Z') {
-   
+    if (timeStringStart[strlen(timeStringStart)-1] == 'Z'  && timeStringEnd[strlen(timeStringEnd)-1] == 'Z') {
       struct tm *lt = localtime(&currentTime);
       struct tm *dateStart = localtime(&currentTime);
       struct tm *dateEnd = localtime(&currentTime);
@@ -152,12 +150,12 @@ public:
   }
 
   String strLocalTime(){
-    time_t now = time(0);
+    time_t now = time(nullptr);
     return eraseLineFeed(ctime(&now));
   }
 
   String strDeltaLocalTime(short delta){
-    time_t now = time(0) + delta;
+    time_t now = time(nullptr) + delta;
     return eraseLineFeed(ctime(&now)); 
   }
 
@@ -353,10 +351,11 @@ public:
       if(channel.enableDateRange){
         time_t currentTime = time(nullptr);
         DateRange dateRange = getActiveDateRange(channel.activeStartDateRange, channel.activeEndDateRange, currentTime);
-        
+        String startDate = eraseLineFeed(ctime(&dateRange.startDate));
+        String endDate = eraseLineFeed(ctime(&dateRange.endDate));
         if(dateRange.valid){
-          payload = payload + ",\"StartDate\":\"" + eraseLineFeed(ctime(&dateRange.startDate))  + "\"";
-          payload = payload + ",\"EndDate\":\"" + eraseLineFeed(ctime(&dateRange.endDate))  + "\"";
+          payload = payload + ",\"StartDate\":\"" + startDate  + "\"";
+          payload = payload + ",\"EndDate\":\"" + endDate  + "\"";
 
           if(channel.activeOutsideDateRange){
             payload = payload + ",\"ActiveOutsideDateRange\":\"\"";
