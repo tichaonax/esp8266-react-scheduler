@@ -6,8 +6,6 @@
 
 #define DEFAULT_LED_STATE false
 #define DEFAULT_CONTROL_STATE false
-#define OFF_STATE "OFF"
-#define ON_STATE "ON"
 
 #define DEFAULT_JSON_DOCUMENT_SIZE 2048
 
@@ -50,25 +48,25 @@ public:
     root["MAC"] = SettingValue::format("#{unique_id}");
     root["IP"] = settings.channel.IP;
 
-    if(settings.channel.enableDateRange){
-      time_t currentTime = time(nullptr);
-      DateRange dateRange = utils.getActiveDateRange(settings.channel.activeStartDateRange,
-      settings.channel.activeEndDateRange, currentTime);
-      if(dateRange.valid){
-        String startDate = utils.eraseLineFeed(ctime(&dateRange.startDate));
-        startDate.remove(10,9);
-        String endDate = utils.eraseLineFeed(ctime(&dateRange.endDate));
-        endDate.remove(10,9);
-        root["StartDate"] = startDate;
-        root["EndDate"] = endDate;
-        
-        if(settings.channel.activeOutsideDateRange){
-          root["ActiveOutsideDateRange"] = "true";
+    if(settings.channel.enabled){
+      root["activeDays"] = utils.getActiveWeekDays(settings.channel.schedule.weekDays);
+      if(settings.channel.enableDateRange){
+        time_t currentTime = time(nullptr);
+        DateRange dateRange = utils.getActiveDateRange(settings.channel.activeStartDateRange,
+        settings.channel.activeEndDateRange, currentTime);
+        if(dateRange.valid){
+          String startDate = utils.eraseLineFeed(ctime(&dateRange.startDate));
+          startDate.remove(10,9);
+          String endDate = utils.eraseLineFeed(ctime(&dateRange.endDate));
+          endDate.remove(10,9);
+          root["StartDate"] = startDate;
+          root["EndDate"] = endDate;
+          
+          if(settings.channel.activeOutsideDateRange){
+            root["ActiveOutsideDateRange"] = "";
+          }
         }
       }
-    }
-
-    if(settings.channel.enabled){
       root["startTime"] = utils.formatTime(settings.channel.schedule.startTimeHour, settings.channel.schedule.startTimeMinute);
       root["endTime"] = utils.formatTime(settings.channel.schedule.endTimeHour, settings.channel.schedule.endTimeMinute);
 
@@ -86,12 +84,12 @@ public:
           }
 
           if(settings.channel.enableMinimumRunTime){
-            root["MinimumRunTime"] = "true";
+            root["MinimumRunTime"] = "";
           }
         }
       }
     }else{
-      root["scheduleDisabled"] = "true";
+      root["scheduleDisabled"] = "";
     }
   }
 
@@ -137,6 +135,7 @@ public:
     jsonObject["enableDateRange"] = channel.enableDateRange;
     jsonObject["activeOutsideDateRange"] = channel.activeOutsideDateRange;
     jsonObject["buildVersion"] = channel.buildVersion;
+
 
     JsonArray activeDateRange = jsonObject.createNestedArray("activeDateRange");
     activeDateRange.add(channel.activeStartDateRange);
@@ -210,18 +209,23 @@ static void updateChannel(JsonObject& json, Channel& channel) {
     channel.enableDateRange = json["enableDateRange"] | channel.enableDateRange;
     channel.activeOutsideDateRange = json["activeOutsideDateRange"] | channel.activeOutsideDateRange;
     
+
     JsonArray activeDateRange = json["activeDateRange"];
 
-    String activeStartDateRange = activeDateRange[0].as<String>();
-    if(activeStartDateRange.length() == 24){
-      channel.activeStartDateRange = activeStartDateRange;
-    }
+    DateRange dateRange = utils.getActiveDateRange(activeDateRange[0].as<String>(), activeDateRange[1].as<String>(),time(nullptr));
     
-    String activeEndDateRange = activeDateRange[1].as<String>();
-    if(activeEndDateRange.length() == 24){
+    if(dateRange.valid){
+      struct tm *startDate = localtime(&dateRange.startDate);
+      char activeStartDateRange[32];
+      strftime(activeStartDateRange, sizeof(activeStartDateRange), UTC_DATE_FORMAT, startDate);
+      channel.activeStartDateRange = activeStartDateRange;
+
+      struct tm *endDate = localtime(&dateRange.endDate);
+      char activeEndDateRange[32];
+      strftime(activeEndDateRange, sizeof(activeEndDateRange), UTC_DATE_FORMAT, endDate);
       channel.activeEndDateRange = activeEndDateRange;
     }
-    
+   
     JsonObject schedule = json["schedule"];
     channel.schedule.runEvery = schedule["runEvery"] ? (int)(round(60 * float(schedule["runEvery"]))) : channel.schedule.runEvery;
     channel.schedule.offAfter = schedule["offAfter"] ? (int)(round(60 * float(schedule["offAfter"]))) : channel.schedule.offAfter;
