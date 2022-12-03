@@ -9,6 +9,8 @@
 #define OLD_HA_TOPIC_TYPE "oldHomeAssistantTopicType"
 #define NEW_HA_TOPIC_TYPE "homeAssistantTopicType"
 
+#define ENABLE_DATE_RANGE "enableDateRange"
+
 
 #ifdef SINILINK
   #ifdef CHANNEL_ONE
