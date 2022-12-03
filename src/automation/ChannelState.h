@@ -136,6 +136,7 @@ public:
     jsonObject["activeOutsideDateRange"] = channel.activeOutsideDateRange;
     jsonObject["buildVersion"] = channel.buildVersion;
 
+
     JsonArray activeDateRange = jsonObject.createNestedArray("activeDateRange");
     activeDateRange.add(channel.activeStartDateRange);
     activeDateRange.add(channel.activeEndDateRange);
@@ -208,18 +209,23 @@ static void updateChannel(JsonObject& json, Channel& channel) {
     channel.enableDateRange = json["enableDateRange"] | channel.enableDateRange;
     channel.activeOutsideDateRange = json["activeOutsideDateRange"] | channel.activeOutsideDateRange;
     
+
     JsonArray activeDateRange = json["activeDateRange"];
 
-    String activeStartDateRange = activeDateRange[0].as<String>();
-    if(activeStartDateRange.length() == 24){
-      channel.activeStartDateRange = activeStartDateRange;
-    }
+    DateRange dateRange = utils.getActiveDateRange(activeDateRange[0].as<String>(), activeDateRange[1].as<String>(),time(nullptr));
     
-    String activeEndDateRange = activeDateRange[1].as<String>();
-    if(activeEndDateRange.length() == 24){
+    if(dateRange.valid){
+      struct tm *startDate = localtime(&dateRange.startDate);
+      char activeStartDateRange[32];
+      strftime(activeStartDateRange, sizeof(activeStartDateRange), UTC_DATE_FORMAT, startDate);
+      channel.activeStartDateRange = activeStartDateRange;
+
+      struct tm *endDate = localtime(&dateRange.endDate);
+      char activeEndDateRange[32];
+      strftime(activeEndDateRange, sizeof(activeEndDateRange), UTC_DATE_FORMAT, endDate);
       channel.activeEndDateRange = activeEndDateRange;
     }
-    
+   
     JsonObject schedule = json["schedule"];
     channel.schedule.runEvery = schedule["runEvery"] ? (int)(round(60 * float(schedule["runEvery"]))) : channel.schedule.runEvery;
     channel.schedule.offAfter = schedule["offAfter"] ? (int)(round(60 * float(schedule["offAfter"]))) : channel.schedule.offAfter;

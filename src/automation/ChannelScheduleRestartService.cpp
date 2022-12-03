@@ -27,13 +27,18 @@ void ChannelScheduleRestartService::scheduleRestart(AsyncWebServerRequest* reque
     AsyncWebParameter* homeAssistantTopicTypeParamater = request->getParam(NEW_HA_TOPIC_TYPE);
     String homeAssistantTopicType = homeAssistantTopicTypeParamater->value();
 
+    AsyncWebParameter* enableDateRangeParamater = request->getParam(ENABLE_DATE_RANGE);
+    String enableDateRange = enableDateRangeParamater->value();
+
+
   _channel->scheduleRestart(
     true,
     true,
     oldControlPin.toInt(),
     controlPin.toInt(),
     oldHomeAssistantTopicType.toInt(),
-    homeAssistantTopicType.toInt()
+    homeAssistantTopicType.toInt(),
+    (enableDateRange == String("true"))
   );
   request->send(200);
   }

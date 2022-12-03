@@ -267,7 +267,8 @@ void TaskScheduler::reScheduleTasks(){
         task->getChannelControlPin(),
         task->getChannelControlPin(),
         task->getChannelHomeAssistantTopicType(),
-        task->getChannelHomeAssistantTopicType()
+        task->getChannelHomeAssistantTopicType(),
+        task->getChannelEnableDateRange()
       );
     }
   }, this);
@@ -324,6 +325,7 @@ void TaskScheduler::setSchedule(bool isReschedule){
     _channelStateService.update([&](ChannelState& channelState) {
       channelState.channel.lastStartedChangeTime = utils.strLocalTime();
       channelState.channel.nextRunTime = utils.strDeltaLocalTime(schedule.scheduleTime);
+      channelState.channel.enableDateRange = _channel.enableDateRange;
       debug(F("Task set to start at : "));
       debugln(channelState.channel.nextRunTime);
       return StateUpdateResult::CHANGED;
@@ -554,7 +556,8 @@ void TaskScheduler::scheduleRestart(
   uint8_t oldControlPin,
   uint8_t controlPin,
   uint8_t oldHomeAssistantTopicType,
-  uint8_t homeAssistantTopicType
+  uint8_t homeAssistantTopicType,
+  bool enableDateRange
   ){
   if(isTurnOffSwitch && isResetOverride){
     if((oldControlPin != controlPin) || (oldHomeAssistantTopicType != homeAssistantTopicType)){
@@ -617,7 +620,8 @@ void TaskScheduler::setOverrideTime(){
             once->getChannelControlPin(),
             once->getChannelControlPin(),
             once->getChannelHomeAssistantTopicType(),
-            once->getChannelHomeAssistantTopicType()
+            once->getChannelHomeAssistantTopicType(),
+            once->getChannelEnableDateRange()
           );
         }, task);
     }
@@ -630,6 +634,10 @@ uint8_t TaskScheduler::getChannelControlPin(){
 
 uint8_t TaskScheduler::getChannelHomeAssistantTopicType(){
   return _channelStateService.getChannel().homeAssistantTopicType;
+}
+
+bool TaskScheduler::getChannelEnableDateRange(){
+  return _channelStateService.getChannel().enableDateRange;
 }
 
 void TaskScheduler::tickerDetachAll(){
