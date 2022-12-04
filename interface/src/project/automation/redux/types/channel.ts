@@ -21,6 +21,7 @@ export interface ChannelSettings {
     IPAddress: string;
     oldControlPin: number;
     oldHomeAssistantTopicType: number;
+    enableDateRange: boolean;
 }
 
 export interface Channels {

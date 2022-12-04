@@ -33,6 +33,7 @@ import { selectControlPin } from "./channelStateForm/selectControlPin";
 import { selectMarks } from "./channelStateForm/selectMarks";
 import { setHotTimeHour } from "./channelStateForm/setHotTimeHour";
 import { setStartTimeHour } from "./channelStateForm/setStartTimeHour";
+import { selectWeekDays } from "./channelStateForm/selectWeekDays";
 
 export function channelStateContent(data: ChannelState | undefined,
   loadData: () => Promise<void>, errorMessage: string | undefined,
@@ -95,6 +96,10 @@ export function channelStateContent(data: ChannelState | undefined,
       setData({ ...data, [name]: extractEventValue(event) });
     };
 
+    const handleChannelSelectWeekDaysValueChange = (value: number[]) => {
+      setData({ ...data, schedule: { ...data.schedule, 'weekDays': value } });
+    };
+
     const marks = selectMarks();
 
     const formatHotTimeHour = hotTimeHourFormat();
@@ -138,6 +143,7 @@ export function channelStateContent(data: ChannelState | undefined,
                    />}
           label={(<ScheduleEnabled buildVersion={data.buildVersion} />)}
         />
+        {data.enabled && selectWeekDays(data, handleChannelSelectWeekDaysValueChange)}
 
         <BlockFormControlLabel
           control={<Checkbox
