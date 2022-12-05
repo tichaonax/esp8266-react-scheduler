@@ -14,14 +14,15 @@ export const dispatcherMiddleware = (state) => (next) => (action) => {
                 restChannelRestartEndPoint,
                 oldControlPin, controlPin,
                 oldHomeAssistantTopicType,
-                homeAssistantTopicType
+                homeAssistantTopicType,
+                enableDateRange,
             } = action.payload;
 
             const restartScheduleEndPoint = restChannelRestartEndPoint.split('/').pop();
 
             setTimeout(() => {
                 next(reStartChannelSchedule(
-                    `${restartScheduleEndPoint}?oldControlPin=${oldControlPin}&controlPin=${controlPin}&oldHomeAssistantTopicType=${oldHomeAssistantTopicType}&homeAssistantTopicType=${homeAssistantTopicType}`
+                    `${restartScheduleEndPoint}?oldControlPin=${oldControlPin}&controlPin=${controlPin}&oldHomeAssistantTopicType=${oldHomeAssistantTopicType}&homeAssistantTopicType=${homeAssistantTopicType}&enableDateRange=${enableDateRange}`
                     )); }, 5000);
             break;
 
