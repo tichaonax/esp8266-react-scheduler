@@ -14,7 +14,7 @@ export function selectOffAfter(data: ChannelState,
       value={data.schedule.offAfter}
       onChange={handleChannelScheduleValueChange('offAfter')}
              >
-      <MenuItem value={0.016}>01 seconds</MenuItem>
+      <MenuItem value={0.016}>01 second</MenuItem>
       <MenuItem value={0.033}>02 seconds</MenuItem>
       <MenuItem value={0.05}>03 seconds</MenuItem>
       <MenuItem value={0.066}>04 seconds</MenuItem>
