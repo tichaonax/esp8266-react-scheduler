@@ -322,15 +322,15 @@ public:
 
   static String getActiveWeekDays(int weekDays[7]){
     String days[7] = {"SU", "MO", "TU", "WE", "TH", "FR", "SA"};
-    String activeWeekDays = "[";
+    String activeWeekDays = "[ ";
     bool isFirstGoodDay = true;
     for (int day = 0; day < 7; day++){  
       if(weekDays[day] > -1){
-        activeWeekDays = activeWeekDays + (isFirstGoodDay ? "" : ",") + days[day];
+        activeWeekDays = activeWeekDays + (isFirstGoodDay ? "" : ", ") + days[day];
         isFirstGoodDay = false;
       }
     }
-     activeWeekDays = activeWeekDays + "]";
+     activeWeekDays = activeWeekDays + " ]";
      return activeWeekDays;
   }
   
@@ -404,20 +404,20 @@ public:
     byte seconds = timePeriod%60;
     String period;
     if(hours > 0){
-      period = String(hours) + "h";
+      period = String(hours) + ((hours > 1) ? " hours": " hour");
       if(minutes > 0){
-      period = period + "-" + String(minutes) +"m";
+      period = period + "-" + String(minutes) + ((minutes > 1) ? " minutes": " minute");
       }
       if(seconds > 0){
-        period = period + "-" + String(seconds) + "s";
+        period = period + "-" + String(seconds) + ((seconds > 1) ? " seconds": " second");
       }
     }else if(minutes > 0){
-      period = period + String(minutes) +"m";
+      period = period + String(minutes) + ((minutes > 1) ? " minutes": " minute");;
       if(seconds > 0){
-        period = period + "-" + String(seconds) + "s";
+        period = period + "-" + String(seconds) + ((seconds > 1) ? " seconds": " second");
       }
     }else if(seconds > 0){
-      period = String(seconds) + "s";
+      period = String(seconds) +  ((seconds > 1) ? " seconds": " second");
     }
     return period;
   }
