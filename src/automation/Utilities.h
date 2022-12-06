@@ -21,6 +21,11 @@
 #define CONTROL_OFF 0x0
 #define MID_NIGHT_SECONDS 86399
 #define TWENTY_FOUR_HOUR_DURATION MID_NIGHT_SECONDS + 1
+#define ONE_HOUR_DURATION 3600
+
+#define OFF_STATE "OFF"
+#define ON_STATE "ON"
+#define UTC_DATE_FORMAT "%Y-%m-%dT%H:%M:%SZ"
 
 struct TotalScheduledTime {
   bool isHotScheduleAdjust;
@@ -44,6 +49,7 @@ struct ScheduledTime {
   bool isHotScheduleAdjust;
   bool isOverrideActive;
   bool isEnableMinimumRunTime;
+  bool isWithInDateRange;
 }; 
 struct Schedule {
     int  runEvery;         // run every 30 mins
@@ -54,49 +60,102 @@ struct Schedule {
     int  endTimeMinute;    // 30
     bool isOverride;       // when true ignore schedule run
     int  hotTimeHour;      // default 0 hours [0-16]
-    bool    isOverrideActive;
+    bool isOverrideActive;
     int  overrideTime;     // time to override schedule
+    int  weekDays[7];      // active week days
 };
 struct Channel {
     bool  controlOn;
     uint8_t controlPin;
     uint8_t homeAssistantTopicType;
-    String homeAssistantIcon;
-    int  startTime;
-    int  endTime;
-    bool    enabled;
+    String  homeAssistantIcon;
+    int startTime;
+    int endTime;
+    bool  enabled;
     String  name;            // control name e.g, Pump
-    Schedule schedule;
-    bool    enableTimeSpan;  // when enable control is on between startTime and endTime
+    Schedule  schedule;
+    bool  enableTimeSpan;  // when enable control is on between startTime and endTime
     String  lastStartedChangeTime;  //last time the switch was toggled
     String  nextRunTime;
-    bool    randomize;      // when enabled randomize the on/off
-    String localDateTime;
-    String IP;
-    bool isHotScheduleActive;
-    String offHotHourDateTime;
-    String controlOffDateTime;
-    String uniqueId;
-    bool enableMinimumRunTime; // when enabled in randomize time runs at least this minimum time
-    bool enableRemoteConfiguration; // when enabled
-    String masterIPAddress;
-    String restChannelEndPoint;
-    String restChannelRestartEndPoint;
+    bool  randomize;      // when enabled randomize the on/off
+    String  localDateTime;
+    String  IP;
+    bool  isHotScheduleActive;
+    String  offHotHourDateTime;
+    String  controlOffDateTime;
+    String  uniqueId;
+    bool  enableMinimumRunTime; // when enabled in randomize time runs at least this minimum time
+    bool  enableRemoteConfiguration; // when enabled
+    String  masterIPAddress;
+    String  restChannelEndPoint;
+    String  restChannelRestartEndPoint;
+    bool  enableDateRange;
+    bool  activeOutsideDateRange;
+    String  activeStartDateRange;
+    String  activeEndDateRange;
+    String buildVersion;
+};
+
+struct DateRange {
+  time_t startDate;
+  time_t endDate;
+  bool valid;
 };
 class Utilities {
 public:
-  String eraseLineFeed(std::string str){
+
+  static DateRange getActiveDateRange(String activeStartDateRange, String activeEndDateRange, time_t currentTime){
+    DateRange dateRange = {currentTime, currentTime, false};
+    const char *timeStringStart = activeStartDateRange.c_str();
+    const char *timeStringEnd = activeEndDateRange.c_str();
+    if (timeStringStart[strlen(timeStringStart)-1] == 'Z'  && timeStringEnd[strlen(timeStringEnd)-1] == 'Z') {
+      struct tm *lt = localtime(&currentTime);
+      struct tm *dateStart = localtime(&currentTime);
+      struct tm *dateEnd = localtime(&currentTime);
+
+      #define NUM_START(off, mult) ((timeStringStart[(off)] - '0') * (mult))
+      #define NUM_END(off, mult) ((timeStringEnd[(off)] - '0') * (mult)) 
+
+      int startYear =  NUM_START(0, 1000) + NUM_START(1, 100) + NUM_START(2, 10) + NUM_START(3, 1) - 1900;
+      int endYear = NUM_END(0, 1000) + NUM_END(1, 100) + NUM_END(2, 10) + NUM_END(3, 1) -  1900;
+
+      dateStart->tm_year = lt->tm_year;
+      dateStart->tm_mon = NUM_START(5, 10) + NUM_START(6, 1) - 1;
+      dateStart->tm_mday = NUM_START(8, 10) + NUM_START(9, 1);
+      dateStart->tm_hour = NUM_START(11, 10) + NUM_START(12, 1);
+      dateStart->tm_min = NUM_START(14, 10) + NUM_START(15, 1);
+      dateStart->tm_sec = NUM_START(17, 10) + NUM_START(18, 1);
+
+      dateRange.startDate = mktime(dateStart);
+     
+      dateEnd->tm_year = lt->tm_year + endYear - startYear;;
+      dateEnd->tm_mon = NUM_END(5, 10) + NUM_END(6, 1) - 1;
+      dateEnd->tm_mday = NUM_END(8, 10) + NUM_END(9, 1);
+      dateEnd->tm_hour = NUM_END(11, 10) + NUM_END(12, 1);
+      dateEnd->tm_min = NUM_END(14, 10) + NUM_END(15, 1);
+      dateEnd->tm_sec = NUM_END(17, 10) + NUM_END(18, 1);
+      
+      dateRange.endDate = mktime(dateEnd);
+      if(dateRange.endDate > dateRange.startDate){
+        dateRange.valid = true;
+      }
+    }
+
+    return dateRange;
+  }
+
+  static String eraseLineFeed(std::string str){
     str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
     return str.c_str();
   }
 
   String strLocalTime(){
-    time_t now = time(0);
+    time_t now = time(nullptr);
     return eraseLineFeed(ctime(&now));
   }
 
   String strDeltaLocalTime(short delta){
-    time_t now = time(0) + delta;
+    time_t now = time(nullptr) + delta;
     return eraseLineFeed(ctime(&now)); 
   }
 
@@ -139,6 +198,22 @@ public:
     return totalTime;
   }
 
+  bool canTaskRunToday(Channel channel, ScheduledTime scheduleTime){
+     struct tm *lt = localtime(&scheduleTime.currentTime);
+    int today = lt->tm_wday;
+
+    bool canTaskRunToday = false;
+
+    for (int day = 0; day < 7; day++){  
+      if(channel.schedule.weekDays[day] == today){
+        canTaskRunToday = true;
+        break;
+      }
+    }
+    
+    return (canTaskRunToday && scheduleTime.isWithInDateRange);
+  }
+  
   ScheduledTime getScheduleTimes(int startTime, int endTime,
     int hotTimeHour, bool enableTimeSpan, bool isHotScheduleActive,
     String channelName, bool randomize, bool isOverrideActive, bool enableMinimumRunTime){
@@ -245,52 +320,82 @@ public:
     return (hours + strMins);
   }
 
+  static String getActiveWeekDays(int weekDays[7]){
+    String days[7] = {"SU", "MO", "TU", "WE", "TH", "FR", "SA"};
+    String activeWeekDays = "[";
+    bool isFirstGoodDay = true;
+    for (int day = 0; day < 7; day++){  
+      if(weekDays[day] > -1){
+        activeWeekDays = activeWeekDays + (isFirstGoodDay ? "" : ",") + days[day];
+        isFirstGoodDay = false;
+      }
+    }
+     activeWeekDays = activeWeekDays + "]";
+     return activeWeekDays;
+  }
+  
+  
   static String makeConfigPayload(boolean payloadStatus, Channel channel, uint8_t controlPin){
     String status = payloadStatus ? "ON" : "OFF";
-    
     String iotAdminUrl = getDeviceChannelUrl(channel);
-    
-    String payload = "{\"state\":\"" + status +"\",\"iotAdminUrl\":\"" + iotAdminUrl + "\"";
-
+    String payload = "{\"state\":\"" + status   + "\"";
+    payload = payload +  ",\"buildVersion\":\"" + channel.buildVersion   + "\"";
+    payload = payload +  ",\"iotAdminUrl\":\"" + iotAdminUrl + "\"";
     payload = payload + ",\"controlPin\":" + controlPin;
-
     payload = payload + ",\"channelName\":\"" + channel.name  + "\"";
-    
     payload = payload + ",\"MAC\":\"" + SettingValue::format("#{unique_id}")  + "\"";
-
     payload = payload + ",\"IP\":\"" + channel.IP  + "\"";
-    
-    if(!channel.enabled){
-      return(payload + ",\"scheduleDisabled\":\"true\"}");
+
+    if(channel.enabled){
+       payload = payload + ",\"activeDays\":\"" + getActiveWeekDays(channel.schedule.weekDays)  + "\"";
+      if(channel.enableDateRange){
+        time_t currentTime = time(nullptr);
+        DateRange dateRange = getActiveDateRange(channel.activeStartDateRange, channel.activeEndDateRange, currentTime);
+        String startDate = eraseLineFeed(ctime(&dateRange.startDate));
+        String endDate = eraseLineFeed(ctime(&dateRange.endDate));
+        if(dateRange.valid){
+          payload = payload + ",\"StartDate\":\"" + startDate  + "\"";
+          payload = payload + ",\"EndDate\":\"" + endDate  + "\"";
+
+          if(channel.activeOutsideDateRange){
+            payload = payload + ",\"ActiveOutsideDateRange\":\"\"";
+          }
+        }
+      }
+      
+      String startTime = formatTime(channel.schedule.startTimeHour, channel.schedule.startTimeMinute);
+      String endTime = formatTime(channel.schedule.endTimeHour, channel.schedule.endTimeMinute);
+      payload = payload + ",\"startTime\":\"" + startTime  + "\"";
+      payload = payload + ",\"endTime\":\"" + endTime  + "\"";
+
+      if(channel.schedule.overrideTime > 0){
+        payload = payload + ",\"overrideTime\":\"" + formatTimePeriod(channel.schedule.overrideTime) + "\"";
+      }
+
+      if(channel.enableTimeSpan){
+        return(payload + "}");
+      }
+
+      payload = payload + ",\"runEvery\":\"" + formatTimePeriod(channel.schedule.runEvery) + "\"";
+      payload = payload + ",\"offAfter\":\"" + formatTimePeriod(channel.schedule.offAfter) + "\"";
+      
+      if(!channel.randomize){
+        return(payload + "}");
+      }
+
+      if(channel.schedule.hotTimeHour > 0){
+        payload = payload + ",\"HotTime\":\"" + formatTimePeriod(channel.schedule.hotTimeHour) + "\"";
+      }
+
+      if(!channel.enableMinimumRunTime){
+        return(payload + "}");
+      }
+
+      return(payload + ",\"MinimumRunTime\":\"\"}");
+
+     }else{
+      return(payload + ",\"scheduleDisabled\":\"\"}");
     }
-
-    String startTime = formatTime(channel.schedule.startTimeHour, channel.schedule.startTimeMinute);
-    String endTime = formatTime(channel.schedule.endTimeHour, channel.schedule.endTimeMinute);
-    
-    payload = payload + ",\"startTime\":\"" + startTime + "\",\"endTime\":\"" + endTime  + "\"";
-
-    if(channel.schedule.overrideTime > 0){
-      payload = payload + ",\"overrideTime\":\"" + formatTimePeriod(channel.schedule.overrideTime) + "\"";
-    }
-
-    if(channel.enableTimeSpan){
-      return(payload + "}");
-    }
-
-    payload = payload + ",\"runEvery\":\"" + formatTimePeriod(channel.schedule.runEvery) + "\",\"offAfter\":\"" + formatTimePeriod(channel.schedule.offAfter) + "\"";
-
-    if(!channel.randomize){
-      return(payload + "}");
-    }
-
-    if(channel.schedule.hotTimeHour > 0){
-      payload = payload + ",\"hotTimeHour\":\"" + formatTimePeriod(channel.schedule.hotTimeHour) + "\"";
-    }
-
-    if(!channel.enableMinimumRunTime){
-      return(payload + "}");
-    }
-    return(payload + ",\"enableMinimumRunTime\":\"true\"}");
   }
 
   static String formatTimePeriod(int timePeriod){
@@ -316,7 +421,6 @@ public:
     }
     return period;
   }
-
 };
 
 extern Utilities utils;  // make an instance for the user

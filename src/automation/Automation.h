@@ -43,7 +43,7 @@ struct ScheduleTask {
 }; 
 
 struct SystemRestart {
-    int day;
+    int wekDay;
     int restartTime;
 };
 
