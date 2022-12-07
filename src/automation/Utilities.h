@@ -137,7 +137,7 @@ public:
       
       dateRange.endDate = mktime(dateEnd);
       if(dateRange.endDate > dateRange.startDate){
-        dateRange.valid = true;
+        dateRange.valid = startYear > 70 ? true : false;
       }
     }
 
@@ -322,102 +322,103 @@ public:
 
   static String getActiveWeekDays(int weekDays[7]){
     String days[7] = {"SU", "MO", "TU", "WE", "TH", "FR", "SA"};
-    String activeWeekDays = "[";
+    String activeWeekDays = "";
     bool isFirstGoodDay = true;
     for (int day = 0; day < 7; day++){  
       if(weekDays[day] > -1){
-        activeWeekDays = activeWeekDays + (isFirstGoodDay ? "" : ",") + days[day];
+        activeWeekDays = activeWeekDays + (isFirstGoodDay ? "" : ", ") + days[day];
         isFirstGoodDay = false;
       }
     }
-     activeWeekDays = activeWeekDays + "]";
+     activeWeekDays = activeWeekDays;
      return activeWeekDays;
   }
   
-  
-  static String makeConfigPayload(boolean payloadStatus, Channel channel, uint8_t controlPin){
+ static String makeConfigPayload(boolean payloadStatus, Channel channel, uint8_t controlPin){
     String status = payloadStatus ? "ON" : "OFF";
     String iotAdminUrl = getDeviceChannelUrl(channel);
-    String payload = "{\"state\":\"" + status   + "\"";
-    payload = payload +  ",\"buildVersion\":\"" + channel.buildVersion   + "\"";
-    payload = payload +  ",\"iotAdminUrl\":\"" + iotAdminUrl + "\"";
-    payload = payload + ",\"controlPin\":" + controlPin;
-    payload = payload + ",\"channelName\":\"" + channel.name  + "\"";
-    payload = payload + ",\"MAC\":\"" + SettingValue::format("#{unique_id}")  + "\"";
-    payload = payload + ",\"IP\":\"" + channel.IP  + "\"";
+    String payload = "{\"state\":\"" + status  + "\"";
+    payload = payload +  ",\"Version\":\"" + channel.buildVersion   + "\"";
+    payload = payload +  ",\"Device_Admin_Url\":\"" + iotAdminUrl + "\"";
+    payload = payload + ",\"Control_Pin\":" + controlPin;
+    payload = payload + ",\"Channel_Name\":\"" + channel.name  + "\"";
+    payload = payload + ",\"MAC_Address\":\"" + SettingValue::format("#{unique_id}")  + "\"";
+    payload = payload + ",\"Device_IP\":\"" + channel.IP  + "\"";
 
     if(channel.enabled){
-       payload = payload + ",\"activeDays\":\"" + getActiveWeekDays(channel.schedule.weekDays)  + "\"";
+       payload = payload + ",\"Active_Days\":\"" + getActiveWeekDays(channel.schedule.weekDays)  + "\"";
       if(channel.enableDateRange){
         time_t currentTime = time(nullptr);
         DateRange dateRange = getActiveDateRange(channel.activeStartDateRange, channel.activeEndDateRange, currentTime);
         String startDate = eraseLineFeed(ctime(&dateRange.startDate));
+        startDate.remove(10,9);
         String endDate = eraseLineFeed(ctime(&dateRange.endDate));
+        endDate.remove(10,9);
         if(dateRange.valid){
-          payload = payload + ",\"StartDate\":\"" + startDate  + "\"";
-          payload = payload + ",\"EndDate\":\"" + endDate  + "\"";
+          payload = payload + ",\"Start_Date\":\"" + startDate + "\"";
+          payload = payload + ",\"End_Date\":\"" + endDate + "\"";
 
           if(channel.activeOutsideDateRange){
-            payload = payload + ",\"ActiveOutsideDateRange\":\"\"";
+            payload = payload + ",\"Active_Outside_Date_Range\":\"Enabled\"";
           }
         }
       }
       
       String startTime = formatTime(channel.schedule.startTimeHour, channel.schedule.startTimeMinute);
       String endTime = formatTime(channel.schedule.endTimeHour, channel.schedule.endTimeMinute);
-      payload = payload + ",\"startTime\":\"" + startTime  + "\"";
-      payload = payload + ",\"endTime\":\"" + endTime  + "\"";
+      payload = payload + ",\"Start_Time\":\"" + startTime  + " H\"";
+      payload = payload + ",\"End_Time\":\"" + endTime  + " H\"";
 
       if(channel.schedule.overrideTime > 0){
-        payload = payload + ",\"overrideTime\":\"" + formatTimePeriod(channel.schedule.overrideTime) + "\"";
+        payload = payload + ",\"Override_Time\":\"" + formatTimePeriod(channel.schedule.overrideTime) + "\"";
       }
 
       if(channel.enableTimeSpan){
         return(payload + "}");
       }
 
-      payload = payload + ",\"runEvery\":\"" + formatTimePeriod(channel.schedule.runEvery) + "\"";
-      payload = payload + ",\"offAfter\":\"" + formatTimePeriod(channel.schedule.offAfter) + "\"";
+      payload = payload + ",\"Run_Every\":\"" + formatTimePeriod(channel.schedule.runEvery) + "\"";
+      payload = payload + ",\"Off_After\":\"" + formatTimePeriod(channel.schedule.offAfter) + "\"";
       
       if(!channel.randomize){
         return(payload + "}");
       }
 
       if(channel.schedule.hotTimeHour > 0){
-        payload = payload + ",\"HotTime\":\"" + formatTimePeriod(channel.schedule.hotTimeHour) + "\"";
+        payload = payload + ",\"Hot_Time\":\"" + formatTimePeriod(channel.schedule.hotTimeHour) + "\"";
       }
 
       if(!channel.enableMinimumRunTime){
         return(payload + "}");
       }
 
-      return(payload + ",\"MinimumRunTime\":\"\"}");
+      return(payload + ",\"Minimum_Run_Time\":\"Enabled\"}");
 
      }else{
-      return(payload + ",\"scheduleDisabled\":\"\"}");
+      return(payload + ",\"Schedule\":\"Disabled\"}");
     }
   }
-
+  
   static String formatTimePeriod(int timePeriod){
     byte hours = timePeriod/3600;
     byte minutes = (timePeriod-hours*3600)/60;
     byte seconds = timePeriod%60;
     String period;
     if(hours > 0){
-      period = String(hours) + "h";
+      period = String(hours) + ((hours > 1) ? " hours" : " hour");
       if(minutes > 0){
-      period = period + "-" + String(minutes) +"m";
+      period = period + " " + String(minutes) + ((minutes > 1) ? " minutes" : " minute");
       }
       if(seconds > 0){
-        period = period + "-" + String(seconds) + "s";
+        period = period + " " + String(seconds) + ((seconds > 1) ? " seconds" : " second");
       }
     }else if(minutes > 0){
-      period = period + String(minutes) +"m";
+      period = period + String(minutes) + ((minutes > 1) ? " minutes" : " minute");;
       if(seconds > 0){
-        period = period + "-" + String(seconds) + "s";
+        period = period + " " + String(seconds) + ((seconds > 1) ? " seconds" : " second");
       }
     }else if(seconds > 0){
-      period = String(seconds) + "s";
+      period = String(seconds) +  ((seconds > 1) ? " seconds" : " second");
     }
     return period;
   }
