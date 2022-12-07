@@ -39,13 +39,13 @@ public:
     return StateUpdateResult::UNCHANGED;
   }
 
-  static void haRead(ChannelState& settings, JsonObject& root) {
+static void haRead(ChannelState& settings, JsonObject& root) {
     root["state"] = settings.channel.controlOn ? ON_STATE : OFF_STATE;
     root["Version"] = settings.channel.buildVersion;
     root["Device_Admin_Url"] = utils.getDeviceChannelUrl(settings.channel);
     root["Control_Pin"] = settings.channel.controlPin;
     root["Channel_Name"] = settings.channel.name;
-    root["MAC"] = SettingValue::format("#{unique_id}");
+    root["MAC_Address"] = SettingValue::format("#{unique_id}");
     root["Device_IP"] = settings.channel.IP;
 
     if(settings.channel.enabled){
