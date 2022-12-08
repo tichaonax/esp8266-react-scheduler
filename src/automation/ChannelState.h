@@ -95,7 +95,7 @@ static void haRead(ChannelState& settings, JsonObject& root) {
 
   static StateUpdateResult haUpdate(JsonObject& root, ChannelState& settings) {
     String state = root["state"];
-    settings.channel.controlOn = strcmp(ON_STATE, state.c_str()) ? false : true;
+    settings.channel.controlOn = strcmp(OFF_STATE, state.c_str()) ? false : true;
     settings.channel.schedule.isOverride = true;
     boolean newState = false;
     if (state.equals(ON_STATE)) {
