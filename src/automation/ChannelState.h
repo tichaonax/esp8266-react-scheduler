@@ -6,8 +6,6 @@
 
 #define DEFAULT_LED_STATE false
 #define DEFAULT_CONTROL_STATE false
-#define OFF_STATE "OFF"
-#define ON_STATE "ON"
 
 #define DEFAULT_JSON_DOCUMENT_SIZE 2048
 
@@ -41,17 +39,17 @@ public:
     return StateUpdateResult::UNCHANGED;
   }
 
-  static void haRead(ChannelState& settings, JsonObject& root) {
+static void haRead(ChannelState& settings, JsonObject& root) {
     root["state"] = settings.channel.controlOn ? ON_STATE : OFF_STATE;
-    root["buildVersion"] = settings.channel.buildVersion;
-    root["iotAdminUrl"] = utils.getDeviceChannelUrl(settings.channel);
-    root["controlPin"] = settings.channel.controlPin;
-    root["channelName"] = settings.channel.name;
-    root["MAC"] = SettingValue::format("#{unique_id}");
-    root["IP"] = settings.channel.IP;
+    root["Version"] = settings.channel.buildVersion;
+    root["Device_Admin_Url"] = utils.getDeviceChannelUrl(settings.channel);
+    root["Control_Pin"] = settings.channel.controlPin;
+    root["Channel_Name"] = settings.channel.name;
+    root["MAC_Address"] = SettingValue::format("#{unique_id}");
+    root["Device_IP"] = settings.channel.IP;
 
     if(settings.channel.enabled){
-      root["activeDays"] = utils.getActiveWeekDays(settings.channel.schedule.weekDays);
+      root["Active_Days"] = utils.getActiveWeekDays(settings.channel.schedule.weekDays);
       if(settings.channel.enableDateRange){
         time_t currentTime = time(nullptr);
         DateRange dateRange = utils.getActiveDateRange(settings.channel.activeStartDateRange,
@@ -61,43 +59,43 @@ public:
           startDate.remove(10,9);
           String endDate = utils.eraseLineFeed(ctime(&dateRange.endDate));
           endDate.remove(10,9);
-          root["StartDate"] = startDate;
-          root["EndDate"] = endDate;
+          root["Start_Date"] = startDate;
+          root["End_Date"] = endDate;
           
           if(settings.channel.activeOutsideDateRange){
-            root["ActiveOutsideDateRange"] = "";
+            root["Active_Outside_Date_Range"] = "Enabled";
           }
         }
       }
-      root["startTime"] = utils.formatTime(settings.channel.schedule.startTimeHour, settings.channel.schedule.startTimeMinute);
-      root["endTime"] = utils.formatTime(settings.channel.schedule.endTimeHour, settings.channel.schedule.endTimeMinute);
+      root["Start_Time"] = utils.formatTime(settings.channel.schedule.startTimeHour, settings.channel.schedule.startTimeMinute) + " H";
+      root["End_Time"] = utils.formatTime(settings.channel.schedule.endTimeHour, settings.channel.schedule.endTimeMinute) + " H";
 
       if(settings.channel.schedule.overrideTime > 0){
-        root["overrideTime"] = utils.formatTimePeriod(settings.channel.schedule.overrideTime);
+        root["Override_Time"] = utils.formatTimePeriod(settings.channel.schedule.overrideTime);
       }
 
       if(!settings.channel.enableTimeSpan){
-        root["runEvery"] = utils.formatTimePeriod(settings.channel.schedule.runEvery);
-        root["offAfter"] = utils.formatTimePeriod(settings.channel.schedule.offAfter);
+        root["Run_Every"] = utils.formatTimePeriod(settings.channel.schedule.runEvery);
+        root["Off_After"] = utils.formatTimePeriod(settings.channel.schedule.offAfter);
 
         if(settings.channel.randomize){
           if(settings.channel.schedule.hotTimeHour > 0){
-            root["HotTime"] = utils.formatTimePeriod(settings.channel.schedule.hotTimeHour);
+            root["Hot_Time"] = utils.formatTimePeriod(settings.channel.schedule.hotTimeHour);
           }
 
           if(settings.channel.enableMinimumRunTime){
-            root["MinimumRunTime"] = "";
+            root["Minimum_Run_Time"] = "Enabled";
           }
         }
       }
     }else{
-      root["scheduleDisabled"] = "";
+      root["Schedule"] = "Disabled";
     }
   }
 
   static StateUpdateResult haUpdate(JsonObject& root, ChannelState& settings) {
     String state = root["state"];
-    settings.channel.controlOn = strcmp(ON_STATE, state.c_str()) ? false : true;
+    settings.channel.controlOn = strcmp(OFF_STATE, state.c_str()) ? false : true;
     settings.channel.schedule.isOverride = true;
     boolean newState = false;
     if (state.equals(ON_STATE)) {
@@ -137,6 +135,7 @@ public:
     jsonObject["enableDateRange"] = channel.enableDateRange;
     jsonObject["activeOutsideDateRange"] = channel.activeOutsideDateRange;
     jsonObject["buildVersion"] = channel.buildVersion;
+
 
     JsonArray activeDateRange = jsonObject.createNestedArray("activeDateRange");
     activeDateRange.add(channel.activeStartDateRange);
@@ -210,18 +209,23 @@ static void updateChannel(JsonObject& json, Channel& channel) {
     channel.enableDateRange = json["enableDateRange"] | channel.enableDateRange;
     channel.activeOutsideDateRange = json["activeOutsideDateRange"] | channel.activeOutsideDateRange;
     
+
     JsonArray activeDateRange = json["activeDateRange"];
 
-    String activeStartDateRange = activeDateRange[0].as<String>();
-    if(activeStartDateRange.length() == 24){
-      channel.activeStartDateRange = activeStartDateRange;
-    }
+    DateRange dateRange = utils.getActiveDateRange(activeDateRange[0].as<String>(), activeDateRange[1].as<String>(),time(nullptr));
     
-    String activeEndDateRange = activeDateRange[1].as<String>();
-    if(activeEndDateRange.length() == 24){
+    if(dateRange.valid){
+      struct tm *startDate = localtime(&dateRange.startDate);
+      char activeStartDateRange[32];
+      strftime(activeStartDateRange, sizeof(activeStartDateRange), UTC_DATE_FORMAT, startDate);
+      channel.activeStartDateRange = activeStartDateRange;
+
+      struct tm *endDate = localtime(&dateRange.endDate);
+      char activeEndDateRange[32];
+      strftime(activeEndDateRange, sizeof(activeEndDateRange), UTC_DATE_FORMAT, endDate);
       channel.activeEndDateRange = activeEndDateRange;
     }
-    
+   
     JsonObject schedule = json["schedule"];
     channel.schedule.runEvery = schedule["runEvery"] ? (int)(round(60 * float(schedule["runEvery"]))) : channel.schedule.runEvery;
     channel.schedule.offAfter = schedule["offAfter"] ? (int)(round(60 * float(schedule["offAfter"]))) : channel.schedule.offAfter;

@@ -174,8 +174,8 @@ void ChannelStateService::registerPinConfig(uint8_t controlPin, uint8_t homeAssi
     {
       case HOMEASSISTANT_TOPIC_TYPE_SWITCH:
         doc["icon"] = _state.channel.homeAssistantIcon; //"mdi:water-pump";
-        doc["payload_on"] = "{\"state\":\"ON\"}";
-        doc["payload_off"] = "{\"state\":\"OFF\"}";
+        doc["payload_on"] = utils.makeConfigPayload(true, _state.channel, controlPin);
+        doc["payload_off"] = utils.makeConfigPayload(false, _state.channel, controlPin);
         break;
       default:
         doc["schema"] = "json";
@@ -227,8 +227,8 @@ void ChannelStateService::mqttRepublishReattach(){
   _deviceTime.detach();
   _mqttRepublish.detach();
   
-  _deviceTime.attach(10, updateStateTimeTicker, this);
-  _mqttRepublish.attach(15, mqttRepublishTicker, this);
+  _deviceTime.attach(15, updateStateTimeTicker, this);
+  _mqttRepublish.attach(5, mqttRepublishTicker, this);
 }
 
 void ChannelStateService::begin() {
@@ -285,12 +285,11 @@ void ChannelStateService::begin() {
     }
 
     _fsPersistence.readFromFS();
-
     _state.channel.controlOn = DEFAULT_CONTROL_STATE; // must be off on start up
     onConfigUpdated();
-    _deviceTime.attach(10, updateStateTimeTicker, this);
-    _mqttRepublish.attach(15, mqttRepublishTicker, this);
     _channelMqttSettingsService->begin();
+    _deviceTime.attach(15, updateStateTimeTicker, this);
+    _mqttRepublish.attach(5, mqttRepublishTicker, this);
 }
 
 Channel ChannelStateService::getChannel(){
