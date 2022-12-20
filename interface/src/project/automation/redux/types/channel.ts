@@ -21,6 +21,7 @@ export interface ChannelSettings {
     IPAddress: string;
     oldControlPin: number;
     oldHomeAssistantTopicType: number;
+    enableDateRange: boolean;
 }
 
 export interface Channels {
@@ -53,7 +54,8 @@ export interface ChannelState {
   restChannelRestartEndPoint: string;
   enableDateRange: boolean;
   activeOutsideDateRange: boolean;
-  activeDateRange: Array<string>
+  activeDateRange: Array<string>;
+  buildVersion: string;
 }
 
 export interface ChannelStateFuncs {

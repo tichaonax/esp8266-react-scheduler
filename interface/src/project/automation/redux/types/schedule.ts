@@ -7,4 +7,5 @@ export interface Schedule{
     endTimeMinute: number;
     hotTimeHour: number;
     overrideTime: number;
+    weekDays: Array<number>;
   }
