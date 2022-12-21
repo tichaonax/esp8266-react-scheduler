@@ -32,7 +32,8 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
                                       bool activeOutsideDateRange,
                                       String  activeStartDateRange,
                                       String  activeEndDateRange,
-                                      String buildVersion) :
+                                      String buildVersion,
+                                      String weekDays) :
     _httpEndpoint(ChannelState::read,
                   ChannelState::update,
                   this,
@@ -86,6 +87,7 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
   _activeStartDateRange = activeStartDateRange;
   _activeEndDateRange = activeEndDateRange;
   _buildVersion = buildVersion;
+  _weekDays = weekDays;
 
   // configure controls to be output
   pinMode(_channelControlPin, OUTPUT);
@@ -225,8 +227,8 @@ void ChannelStateService::mqttRepublishReattach(){
   _deviceTime.detach();
   _mqttRepublish.detach();
   
-  _deviceTime.attach(10, updateStateTimeTicker, this);
-  _mqttRepublish.attach(20, mqttRepublishTicker, this);
+  _deviceTime.attach(15, updateStateTimeTicker, this);
+  _mqttRepublish.attach(5, mqttRepublishTicker, this);
 }
 
 void ChannelStateService::begin() {
@@ -260,14 +262,34 @@ void ChannelStateService::begin() {
     _state.channel.schedule.overrideTime = _overrideTime;
     _state.channel.schedule.isOverrideActive = _isOverrideActive;
     _state.channel.buildVersion = _buildVersion;
-  
-    _fsPersistence.readFromFS();
 
+    for (int i = 0; i< 7; i++){
+      _state.channel.schedule.weekDays[i] = -1;
+    }
+
+    while (_weekDays.length() > 0)
+    {
+      int index = _weekDays.indexOf(',');
+      if (index == -1)
+      {
+          int day = _weekDays.toInt();
+          _state.channel.schedule.weekDays[day] = day;
+          break;
+      }
+      else
+      {
+          int day =  _weekDays.substring(0, index).toInt();
+          _weekDays = _weekDays.substring(index+1);
+          _state.channel.schedule.weekDays[day] = day;
+      }
+    }
+
+    _fsPersistence.readFromFS();
     _state.channel.controlOn = DEFAULT_CONTROL_STATE; // must be off on start up
     onConfigUpdated();
-    _deviceTime.attach(10, updateStateTimeTicker, this);
-    _mqttRepublish.attach(20, mqttRepublishTicker, this);
     _channelMqttSettingsService->begin();
+    _deviceTime.attach(15, updateStateTimeTicker, this);
+    _mqttRepublish.attach(5, mqttRepublishTicker, this);
 }
 
 Channel ChannelStateService::getChannel(){
