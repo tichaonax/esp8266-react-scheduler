@@ -15,7 +15,7 @@ export const useLayoutTitle = (myTitle: string) => {
   let massagedTitle: string = myTitle;
   const { isProxy, remote } = RemoteUtils.getDeviceHost();
   if(isProxy){
-    massagedTitle = `${massagedTitle} ${remote}`;
+    massagedTitle = `${massagedTitle} [Host: ${remote}]`;
   }
   const { title, setTitle } = useContext(LayoutContext);
 
