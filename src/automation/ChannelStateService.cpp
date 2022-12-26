@@ -228,7 +228,7 @@ void ChannelStateService::mqttRepublishReattach(){
   _mqttRepublish.detach();
   
   _deviceTime.attach(15, updateStateTimeTicker, this);
-  _mqttRepublish.attach(5, mqttRepublishTicker, this);
+  _mqttRepublish.attach(20, mqttRepublishTicker, this);
 }
 
 void ChannelStateService::begin() {
@@ -289,7 +289,7 @@ void ChannelStateService::begin() {
     onConfigUpdated();
     _channelMqttSettingsService->begin();
     _deviceTime.attach(15, updateStateTimeTicker, this);
-    _mqttRepublish.attach(5, mqttRepublishTicker, this);
+    _mqttRepublish.attach(20, mqttRepublishTicker, this);
 }
 
 Channel ChannelStateService::getChannel(){
