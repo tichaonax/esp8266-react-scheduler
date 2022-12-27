@@ -169,7 +169,6 @@ void ChannelStateService::registerPinConfig(uint8_t controlPin, uint8_t homeAssi
     doc["json_attributes_topic"] = "~/state";
     doc["cmd_t"] = "~/set";
     doc["stat_t"] = "~/state";
-    doc["assumed_state"] = false;
 
     switch (_state.channel.homeAssistantTopicType)
     {
@@ -221,7 +220,7 @@ void updateStateTimeTicker(ChannelStateService* channelStateService){
 
 void mqttRepublishTicker(ChannelStateService* channelStateService){
   channelStateService->mqttRepublishReattach();
-  channelStateService->mqttRepublish();
+  //channelStateService->mqttRepublish();
 }
 
 void ChannelStateService::mqttRepublishReattach(){
@@ -229,7 +228,7 @@ void ChannelStateService::mqttRepublishReattach(){
   _mqttRepublish.detach();
   
   _deviceTime.attach(10, updateStateTimeTicker, this);
-  _mqttRepublish.attach(15, mqttRepublishTicker, this);
+  _mqttRepublish.attach(1800, mqttRepublishTicker, this);
 }
 
 void ChannelStateService::begin() {
@@ -290,7 +289,7 @@ void ChannelStateService::begin() {
     onConfigUpdated();
     _channelMqttSettingsService->begin();
     _deviceTime.attach(10, updateStateTimeTicker, this);
-    _mqttRepublish.attach(15, mqttRepublishTicker, this);
+    _mqttRepublish.attach(1800, mqttRepublishTicker, this);
 }
 
 Channel ChannelStateService::getChannel(){
