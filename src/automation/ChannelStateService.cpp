@@ -215,20 +215,8 @@ void ChannelStateService::mqttUnregisterConfig(uint8_t controlPin, uint8_t homeA
 }
 
 void updateStateTimeTicker(ChannelStateService* channelStateService){
-  channelStateService->updateStateTime();
-}
-
-void mqttRepublishTicker(ChannelStateService* channelStateService){
-  channelStateService->mqttRepublishReattach();
   channelStateService->mqttRepublish();
-}
-
-void ChannelStateService::mqttRepublishReattach(){
-  _deviceTime.detach();
-  _mqttRepublish.detach();
-  
-  _deviceTime.attach(15, updateStateTimeTicker, this);
-  _mqttRepublish.attach(20, mqttRepublishTicker, this);
+  channelStateService->updateStateTime();
 }
 
 void ChannelStateService::begin() {
@@ -288,8 +276,7 @@ void ChannelStateService::begin() {
     _state.channel.controlOn = DEFAULT_CONTROL_STATE; // must be off on start up
     onConfigUpdated();
     _channelMqttSettingsService->begin();
-    _deviceTime.attach(15, updateStateTimeTicker, this);
-    _mqttRepublish.attach(20, mqttRepublishTicker, this);
+    _deviceTime.attach(10, updateStateTimeTicker, this);
 }
 
 Channel ChannelStateService::getChannel(){
