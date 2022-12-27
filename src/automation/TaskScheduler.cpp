@@ -571,7 +571,7 @@ void TaskScheduler::scheduleRestart(
       overrideControlOff();
     }
   }
-  _channelStateService.mqttRepublish();
+  _channelStateService.mqttRepublish(controlPin, homeAssistantTopicType);
   tickerDetachAll();
   setScheduleTimes();
 
