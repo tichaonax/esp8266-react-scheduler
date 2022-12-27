@@ -33,7 +33,9 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                               bool enableDateRange,
                               bool activeOutsideDateRange,
                               String  activeStartDateRange,
-                              String  activeEndDateRange) :
+                              String  activeEndDateRange,
+                              String buildVersion,
+                              String weekDays) :
     _channelStateService(server,
                         securityManager,
                         mqttClient,
@@ -64,7 +66,9 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                         enableDateRange,
                         activeOutsideDateRange,
                         activeStartDateRange,
-                        activeEndDateRange)
+                        activeEndDateRange,
+                        buildVersion,
+                        weekDays)
                                        {
                                          _isHotScheduleActive = false;
                                          _isOverrideActive = false;
@@ -211,6 +215,7 @@ void TaskScheduler::scheduleTaskTicker(ScheduledTime schedule){
     }
   }, this);
 }
+
 bool TaskScheduler::isScheduleWithInDateRange(String activeStartDateRange,
   String activeEndDateRange, bool enableDateRange, bool activeOutsideDateRange, time_t currentTime){
 
@@ -224,7 +229,7 @@ bool TaskScheduler::isScheduleWithInDateRange(String activeStartDateRange,
   }
 
   bool inBetween = (dateRange.startDate <= currentTime) && (dateRange.endDate >= currentTime);
-  
+
   if(!activeOutsideDateRange){
     return inBetween;
   }
@@ -262,13 +267,14 @@ void TaskScheduler::reScheduleTasks(){
         task->getChannelControlPin(),
         task->getChannelControlPin(),
         task->getChannelHomeAssistantTopicType(),
-        task->getChannelHomeAssistantTopicType()
+        task->getChannelHomeAssistantTopicType(),
+        task->getChannelEnableDateRange()
       );
     }
   }, this);
 }
 
-void TaskScheduler::scheduleButtonRead(boolean bToggleSwitch, int toggleReadPin, int blinkLed, int ledOn){
+void TaskScheduler::scheduleButtonRead(bool bToggleSwitch, int toggleReadPin, int blinkLed, int ledOn){
   ToggleButtonState = HIGH;
   LED = blinkLed;
   LED_ON =ledOn;
@@ -319,6 +325,7 @@ void TaskScheduler::setSchedule(bool isReschedule){
     _channelStateService.update([&](ChannelState& channelState) {
       channelState.channel.lastStartedChangeTime = utils.strLocalTime();
       channelState.channel.nextRunTime = utils.strDeltaLocalTime(schedule.scheduleTime);
+      channelState.channel.enableDateRange = _channel.enableDateRange;
       debug(F("Task set to start at : "));
       debugln(channelState.channel.nextRunTime);
       return StateUpdateResult::CHANGED;
@@ -340,11 +347,12 @@ void TaskScheduler::scheduleHotTask(){
 }
 
 void TaskScheduler::runHotTask(){
-  if(_channel.enabled){
+  ScheduledTime scheduleTime = getNextRunTime();
+  bool canTaskRunToday = utils.canTaskRunToday(_channel, scheduleTime);
+  if(_channel.enabled && canTaskRunToday){
     _isHotScheduleActive = true;
-    ScheduledTime schedule = getNextRunTime();
-    OffHotHourTime = schedule.scheduleHotTimeEndDateTime - schedule.currentTime;
-    if(schedule.isHotScheduleAdjust){
+    OffHotHourTime = scheduleTime.scheduleHotTimeEndDateTime - scheduleTime.currentTime;
+    if(scheduleTime.isHotScheduleAdjust){
       OffHotHourTime = OffHotHourTime - TWENTY_FOUR_HOUR_DURATION;
     }
     if(OffHotHourTime < 1) { OffHotHourTime = 1; _isHotScheduleActive = false;}
@@ -432,12 +440,15 @@ void TaskScheduler::printSchedule(ScheduledTime schedule){
 }
 
 void TaskScheduler::runTask(){
-  ScheduledTime schedule = getNextRunTime();
+  ScheduledTime scheduleTime = getNextRunTime();
   if(!_channel.enabled){
     return;
   }
-  if(schedule.isRunTaskNow && schedule.isWithInDateRange){
-    if(!_channel.randomize){
+
+  bool canTaskRunToday = utils.canTaskRunToday(_channel, scheduleTime);
+
+  if(scheduleTime.isRunTaskNow && canTaskRunToday){
+    if(!_channel.randomize || (_channel.randomize && _channel.enableTimeSpan)){
       controlOn();
     }
     else{
@@ -447,7 +458,7 @@ void TaskScheduler::runTask(){
       controlOnTicker();
     }
   }else{
-    updateStatus(schedule.scheduleTime);
+    updateStatus(scheduleTime.scheduleTime);
   }
 }
 
@@ -491,7 +502,7 @@ void TaskScheduler::controlOff(){
   }
 }
 
-void TaskScheduler::setToggleSwitch(boolean bToggleSwitch, int toggleReadPin, int blinkLed, int ledOn){
+void TaskScheduler::setToggleSwitch(bool bToggleSwitch, int toggleReadPin, int blinkLed, int ledOn){
   _toggleReadPin = toggleReadPin;
 
   if(bToggleSwitch){
@@ -545,7 +556,8 @@ void TaskScheduler::scheduleRestart(
   uint8_t oldControlPin,
   uint8_t controlPin,
   uint8_t oldHomeAssistantTopicType,
-  uint8_t homeAssistantTopicType
+  uint8_t homeAssistantTopicType,
+  bool enableDateRange
   ){
   if(isTurnOffSwitch && isResetOverride){
     if((oldControlPin != controlPin) || (oldHomeAssistantTopicType != homeAssistantTopicType)){
@@ -559,7 +571,7 @@ void TaskScheduler::scheduleRestart(
       overrideControlOff();
     }
   }
-  _channelStateService.mqttRepublish();
+  _channelStateService.mqttRepublish(controlPin, homeAssistantTopicType);
   tickerDetachAll();
   setScheduleTimes();
 
@@ -608,7 +620,8 @@ void TaskScheduler::setOverrideTime(){
             once->getChannelControlPin(),
             once->getChannelControlPin(),
             once->getChannelHomeAssistantTopicType(),
-            once->getChannelHomeAssistantTopicType()
+            once->getChannelHomeAssistantTopicType(),
+            once->getChannelEnableDateRange()
           );
         }, task);
     }
@@ -621,6 +634,10 @@ uint8_t TaskScheduler::getChannelControlPin(){
 
 uint8_t TaskScheduler::getChannelHomeAssistantTopicType(){
   return _channelStateService.getChannel().homeAssistantTopicType;
+}
+
+bool TaskScheduler::getChannelEnableDateRange(){
+  return _channelStateService.getChannel().enableDateRange;
 }
 
 void TaskScheduler::tickerDetachAll(){

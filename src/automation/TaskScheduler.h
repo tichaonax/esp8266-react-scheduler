@@ -38,7 +38,9 @@ class TaskScheduler {
                     bool enableDateRange,
                     bool activeOutsideDateRange,
                     String  activeStartDateRange,
-                    String  activeEndDateRange);
+                    String  activeEndDateRange,
+                    String buildVersion,
+                    String weekDays);
     void begin();
     void resetOverrideTime();
     void setOverrideTime();
@@ -48,7 +50,8 @@ class TaskScheduler {
         uint8_t oldControlPin,
         uint8_t controlPin,
         uint8_t oldHomeAssistantTopicType,
-        uint8_t homeAssistantTopicType
+        uint8_t homeAssistantTopicType,
+        bool enableDateRange
         );
     void scheduleTimeSpanTask();
     void runTask();
@@ -117,6 +120,7 @@ class TaskScheduler {
 
     uint8_t getChannelControlPin();
     uint8_t getChannelHomeAssistantTopicType();
+    bool getChannelEnableDateRange();
 
     private:
     int _toggleReadPin;
@@ -126,7 +130,7 @@ class TaskScheduler {
     CurrentTime getCurrentTime(){
         CurrentTime current;
         time_t curr_time;
-	    curr_time = time(NULL);
+	    curr_time = time(nullptr);
 	    tm *tm_local = localtime(&curr_time);
         current.minutesInSec = 60 * tm_local->tm_min;
         current.totalCurrentTimeInSec = 3600 * tm_local->tm_hour + current.minutesInSec + tm_local->tm_sec;
