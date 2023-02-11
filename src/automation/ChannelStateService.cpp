@@ -84,8 +84,10 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
   _restChannelRestartEndPoint = restChannelRestartEndPoint;
   _enableDateRange = enableDateRange;
   _activeOutsideDateRange = activeOutsideDateRange;
-  _activeStartDateRange = activeStartDateRange;
-  _activeEndDateRange = activeEndDateRange;
+
+  DateRange dateRange = utils.getActiveDateRange (activeStartDateRange, activeEndDateRange, time(nullptr));
+  _activeStartDateRange = dateRange.startDate;
+  _activeEndDateRange = dateRange.endDate;
   _buildVersion = buildVersion;
   _weekDays = weekDays;
 
