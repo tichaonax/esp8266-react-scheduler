@@ -1,6 +1,6 @@
 import { withStyles } from "@material-ui/core/styles";
-import ToggleButton from "@mui/lab/ToggleButton";
-import ToggleButtonGroup from "@mui/lab/ToggleButtonGroup";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { blueGrey, yellow } from '@mui/material/colors';
 import { ChannelState } from "../../../redux/types/channel";
 
