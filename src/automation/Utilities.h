@@ -100,6 +100,8 @@ struct DateRange {
   time_t startDate;
   time_t endDate;
   bool valid;
+  String startDateUTC;
+  String endDateUTC;
 };
 class Utilities {
 public:
@@ -150,6 +152,8 @@ public:
       }
     }
 
+    dateRange.startDateUTC = formatDateToUTC(dateRange.startDate);
+    dateRange.endDateUTC = formatDateToUTC(dateRange.endDate);
     return dateRange;
   }
 
@@ -407,7 +411,14 @@ public:
       return(payload + ",\"Schedule\":\"Disabled\"}");
     }
   }
-  
+
+  static String formatDateToUTC(time_t time){
+    struct tm *date = localtime(&time);
+      char utcTime[32];
+      strftime(utcTime, sizeof(utcTime), UTC_DATE_FORMAT, date);
+      return utcTime;
+  }
+
   static String formatTimePeriod(int timePeriod){
     byte hours = timePeriod/3600;
     byte minutes = (timePeriod-hours*3600)/60;
