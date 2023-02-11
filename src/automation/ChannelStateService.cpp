@@ -84,10 +84,8 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
   _restChannelRestartEndPoint = restChannelRestartEndPoint;
   _enableDateRange = enableDateRange;
   _activeOutsideDateRange = activeOutsideDateRange;
-
-  DateRange dateRange = utils.getActiveDateRange (activeStartDateRange, activeEndDateRange, time(nullptr));
-  _activeStartDateRange = dateRange.startDate;
-  _activeEndDateRange = dateRange.endDate;
+  _activeStartDateRange = activeStartDateRange;
+  _activeEndDateRange = activeEndDateRange;
   _buildVersion = buildVersion;
   _weekDays = weekDays;
 
@@ -99,6 +97,7 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
 
   // configure update handler for when the control settings change
   _channelMqttSettingsService->addUpdateHandler([&](const String& originId) {
+      mqttUnregisterConfig(_state.channel.controlPin, _state.channel.homeAssistantTopicType);
       registerPinConfig(_state.channel.controlPin, _state.channel.homeAssistantTopicType);
     }, false);
 
@@ -145,6 +144,7 @@ void ChannelStateService::registerPinConfig(uint8_t controlPin, uint8_t homeAssi
   if (!_mqttClient->connected()) {
     return;
   }
+
   String configTopic;
   String subTopic;
   String pubTopic;
