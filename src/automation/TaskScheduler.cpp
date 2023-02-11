@@ -219,7 +219,7 @@ void TaskScheduler::scheduleTaskTicker(ScheduledTime schedule){
 bool TaskScheduler::isScheduleWithInDateRange(String activeStartDateRange,
   String activeEndDateRange, bool enableDateRange, bool activeOutsideDateRange, time_t currentTime){
 
-  if (!enableDateRange){
+  if (!enableDateRange || _isOverrideActive){
     return true;
   }
 
@@ -571,7 +571,7 @@ void TaskScheduler::scheduleRestart(
       overrideControlOff();
     }
   }
-  _channelStateService.mqttRepublish();
+  _channelStateService.mqttRepublish(controlPin, homeAssistantTopicType);
   tickerDetachAll();
   setScheduleTimes();
 
