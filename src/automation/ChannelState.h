@@ -63,7 +63,7 @@ static void haRead(ChannelState& settings, JsonObject& root) {
           root["To"] = endDate;
           
           if(settings.channel.activeOutsideDateRange){
-            root["Active_Outside_Date_Range"] = "Yes";
+            root["Active_Outside_Dates"] = "Yes";
           }
         }
       }

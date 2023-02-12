@@ -372,7 +372,7 @@ public:
           payload = payload + ",\"To\":\"" + endDate + "\"";
 
           if(channel.activeOutsideDateRange){
-            payload = payload + ",\"Active_Outside_Date_Range\":\"Yes\"";
+            payload = payload + ",\"Active_Outside_Dates\":\"Yes\"";
           }
         }
       }
