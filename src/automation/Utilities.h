@@ -100,6 +100,8 @@ struct DateRange {
   time_t startDate;
   time_t endDate;
   bool valid;
+  String startDateUTC;
+  String endDateUTC;
 };
 class Utilities {
 public:
@@ -110,8 +112,8 @@ public:
     const char *timeStringEnd = activeEndDateRange.c_str();
     if (timeStringStart[strlen(timeStringStart)-1] == 'Z'  && timeStringEnd[strlen(timeStringEnd)-1] == 'Z') {
       struct tm *lt = localtime(&currentTime);
-      struct tm *dateStart = localtime(&currentTime);
-      struct tm *dateEnd = localtime(&currentTime);
+      struct tm dateStart;
+      struct tm dateEnd;
 
       #define NUM_START(off, mult) ((timeStringStart[(off)] - '0') * (mult))
       #define NUM_END(off, mult) ((timeStringEnd[(off)] - '0') * (mult)) 
@@ -119,28 +121,39 @@ public:
       int startYear =  NUM_START(0, 1000) + NUM_START(1, 100) + NUM_START(2, 10) + NUM_START(3, 1) - 1900;
       int endYear = NUM_END(0, 1000) + NUM_END(1, 100) + NUM_END(2, 10) + NUM_END(3, 1) -  1900;
 
-      dateStart->tm_year = lt->tm_year;
-      dateStart->tm_mon = NUM_START(5, 10) + NUM_START(6, 1) - 1;
-      dateStart->tm_mday = NUM_START(8, 10) + NUM_START(9, 1);
-      dateStart->tm_hour = NUM_START(11, 10) + NUM_START(12, 1);
-      dateStart->tm_min = NUM_START(14, 10) + NUM_START(15, 1);
-      dateStart->tm_sec = NUM_START(17, 10) + NUM_START(18, 1);
+      int dateEndMonth = NUM_END(5, 10) + NUM_END(6, 1) - 1;
+      int dateEndDay = NUM_END(8, 10) + NUM_END(9, 1);
 
-      dateRange.startDate = mktime(dateStart);
+      if(dateEndMonth >= lt->tm_mon && dateEndDay >= lt->tm_mday && (endYear != startYear)){
+          dateStart.tm_year = lt->tm_year -1;
+          dateEnd.tm_year = dateStart.tm_year + endYear - startYear;
+      }else{
+          dateStart.tm_year = lt->tm_year;
+          dateEnd.tm_year = lt->tm_year + endYear - startYear;
+      }
+
+      dateStart.tm_mon = NUM_START(5, 10) + NUM_START(6, 1) - 1;
+      dateStart.tm_mday = NUM_START(8, 10) + NUM_START(9, 1);
+      dateStart.tm_hour = NUM_START(11, 10) + NUM_START(12, 1);
+      dateStart.tm_min = NUM_START(14, 10) + NUM_START(15, 1);
+      dateStart.tm_sec = NUM_START(17, 10) + NUM_START(18, 1);
      
-      dateEnd->tm_year = lt->tm_year + endYear - startYear;;
-      dateEnd->tm_mon = NUM_END(5, 10) + NUM_END(6, 1) - 1;
-      dateEnd->tm_mday = NUM_END(8, 10) + NUM_END(9, 1);
-      dateEnd->tm_hour = NUM_END(11, 10) + NUM_END(12, 1);
-      dateEnd->tm_min = NUM_END(14, 10) + NUM_END(15, 1);
-      dateEnd->tm_sec = NUM_END(17, 10) + NUM_END(18, 1);
+      dateEnd.tm_mon = dateEndMonth;
+      dateEnd.tm_mday = dateEndDay;
+      dateEnd.tm_hour = NUM_END(11, 10) + NUM_END(12, 1);
+      dateEnd.tm_min = NUM_END(14, 10) + NUM_END(15, 1);
+      dateEnd.tm_sec = NUM_END(17, 10) + NUM_END(18, 1);
       
-      dateRange.endDate = mktime(dateEnd);
+      dateRange.startDate = mktime(&dateStart);
+      dateRange.endDate = mktime(&dateEnd);
+
       if(dateRange.endDate > dateRange.startDate){
         dateRange.valid = startYear > 70 ? true : false;
       }
     }
 
+    dateRange.startDateUTC = formatDateToUTC(dateRange.startDate);
+    dateRange.endDateUTC = formatDateToUTC(dateRange.endDate);
     return dateRange;
   }
 
@@ -339,11 +352,11 @@ public:
     String iotAdminUrl = getDeviceChannelUrl(channel);
     String payload = "{\"state\":\"" + status  + "\"";
     payload = payload +  ",\"Version\":\"" + channel.buildVersion   + "\"";
-    payload = payload +  ",\"Device_Admin_Url\":\"" + iotAdminUrl + "\"";
+    payload = payload +  ",\"Admin_Url\":\"" + iotAdminUrl + "\"";
     payload = payload + ",\"Control_Pin\":" + controlPin;
-    payload = payload + ",\"Channel_Name\":\"" + channel.name  + "\"";
-    payload = payload + ",\"MAC_Address\":\"" + SettingValue::format("#{unique_id}")  + "\"";
-    payload = payload + ",\"Device_IP\":\"" + channel.IP  + "\"";
+    //payload = payload + ",\"Channel_Name\":\"" + channel.name  + "\"";
+    payload = payload + ",\"MAC\":\"" + SettingValue::format("#{unique_id}")  + "\"";
+    payload = payload + ",\"IP\":\"" + channel.IP  + "\"";
 
     if(channel.enabled){
        payload = payload + ",\"Active_Days\":\"" + getActiveWeekDays(channel.schedule.weekDays)  + "\"";
@@ -398,7 +411,14 @@ public:
       return(payload + ",\"Schedule\":\"Disabled\"}");
     }
   }
-  
+
+  static String formatDateToUTC(time_t time){
+    struct tm *date = localtime(&time);
+      char utcTime[32];
+      strftime(utcTime, sizeof(utcTime), UTC_DATE_FORMAT, date);
+      return utcTime;
+  }
+
   static String formatTimePeriod(int timePeriod){
     byte hours = timePeriod/3600;
     byte minutes = (timePeriod-hours*3600)/60;
