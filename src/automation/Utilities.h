@@ -368,11 +368,11 @@ public:
         String endDate = eraseLineFeed(ctime(&dateRange.endDate));
         endDate.remove(10,9);
         if(dateRange.valid){
-          payload = payload + ",\"Start_Date\":\"" + startDate + "\"";
-          payload = payload + ",\"End_Date\":\"" + endDate + "\"";
+          payload = payload + ",\"From\":\"" + startDate + "\"";
+          payload = payload + ",\"To\":\"" + endDate + "\"";
 
           if(channel.activeOutsideDateRange){
-            payload = payload + ",\"Active_Outside_Date_Range\":\"Enabled\"";
+            payload = payload + ",\"Active_Outside_Dates\":\"Yes\"";
           }
         }
       }
@@ -405,7 +405,7 @@ public:
         return(payload + "}");
       }
 
-      return(payload + ",\"Minimum_Run_Time\":\"Enabled\"}");
+      return(payload + ",\"Minimum_Run_Time\":\"Yes\"}");
 
      }else{
       return(payload + ",\"Schedule\":\"Disabled\"}");
