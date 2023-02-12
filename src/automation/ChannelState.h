@@ -42,11 +42,11 @@ public:
 static void haRead(ChannelState& settings, JsonObject& root) {
     root["state"] = settings.channel.controlOn ? ON_STATE : OFF_STATE;
     root["Version"] = settings.channel.buildVersion;
-    root["Device_Admin_Url"] = utils.getDeviceChannelUrl(settings.channel);
+    root["Admin_Url"] = utils.getDeviceChannelUrl(settings.channel);
     root["Control_Pin"] = settings.channel.controlPin;
-    root["Channel_Name"] = settings.channel.name;
-    root["MAC_Address"] = SettingValue::format("#{unique_id}");
-    root["Device_IP"] = settings.channel.IP;
+    //root["Channel_Name"] = settings.channel.name;
+    root["MAC"] = SettingValue::format("#{unique_id}");
+    root["IP"] = settings.channel.IP;
 
     if(settings.channel.enabled){
       root["Active_Days"] = utils.getActiveWeekDays(settings.channel.schedule.weekDays);
@@ -59,11 +59,11 @@ static void haRead(ChannelState& settings, JsonObject& root) {
           startDate.remove(10,9);
           String endDate = utils.eraseLineFeed(ctime(&dateRange.endDate));
           endDate.remove(10,9);
-          root["Start_Date"] = startDate;
-          root["End_Date"] = endDate;
+          root["From"] = startDate;
+          root["To"] = endDate;
           
           if(settings.channel.activeOutsideDateRange){
-            root["Active_Outside_Date_Range"] = "Enabled";
+            root["Active_Outside_Dates"] = "Yes";
           }
         }
       }
@@ -84,7 +84,7 @@ static void haRead(ChannelState& settings, JsonObject& root) {
           }
 
           if(settings.channel.enableMinimumRunTime){
-            root["Minimum_Run_Time"] = "Enabled";
+            root["Minimum_Run_Time"] = "Yes";
           }
         }
       }
@@ -215,15 +215,8 @@ static void updateChannel(JsonObject& json, Channel& channel) {
     DateRange dateRange = utils.getActiveDateRange(activeDateRange[0].as<String>(), activeDateRange[1].as<String>(),time(nullptr));
     
     if(dateRange.valid){
-      struct tm *startDate = localtime(&dateRange.startDate);
-      char activeStartDateRange[32];
-      strftime(activeStartDateRange, sizeof(activeStartDateRange), UTC_DATE_FORMAT, startDate);
-      channel.activeStartDateRange = activeStartDateRange;
-
-      struct tm *endDate = localtime(&dateRange.endDate);
-      char activeEndDateRange[32];
-      strftime(activeEndDateRange, sizeof(activeEndDateRange), UTC_DATE_FORMAT, endDate);
-      channel.activeEndDateRange = activeEndDateRange;
+      channel.activeStartDateRange = utils.formatDateToUTC(dateRange.startDate);
+      channel.activeEndDateRange = utils.formatDateToUTC(dateRange.endDate);
     }
    
     JsonObject schedule = json["schedule"];
