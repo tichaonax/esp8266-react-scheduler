@@ -352,11 +352,11 @@ public:
     String iotAdminUrl = getDeviceChannelUrl(channel);
     String payload = "{\"state\":\"" + status  + "\"";
     payload = payload +  ",\"Version\":\"" + channel.buildVersion   + "\"";
-    payload = payload +  ",\"Device_Admin_Url\":\"" + iotAdminUrl + "\"";
+    payload = payload +  ",\"Admin_Url\":\"" + iotAdminUrl + "\"";
     payload = payload + ",\"Control_Pin\":" + controlPin;
-    payload = payload + ",\"Channel_Name\":\"" + channel.name  + "\"";
-    payload = payload + ",\"MAC_Address\":\"" + SettingValue::format("#{unique_id}")  + "\"";
-    payload = payload + ",\"Device_IP\":\"" + channel.IP  + "\"";
+    //payload = payload + ",\"Channel_Name\":\"" + channel.name  + "\"";
+    payload = payload + ",\"MAC\":\"" + SettingValue::format("#{unique_id}")  + "\"";
+    payload = payload + ",\"IP\":\"" + channel.IP  + "\"";
 
     if(channel.enabled){
        payload = payload + ",\"Active_Days\":\"" + getActiveWeekDays(channel.schedule.weekDays)  + "\"";
