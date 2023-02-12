@@ -97,7 +97,6 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
 
   // configure update handler for when the control settings change
   _channelMqttSettingsService->addUpdateHandler([&](const String& originId) {
-      mqttUnregisterConfig(_state.channel.controlPin, _state.channel.homeAssistantTopicType);
       registerPinConfig(_state.channel.controlPin, _state.channel.homeAssistantTopicType);
     }, false);
 
@@ -144,7 +143,6 @@ void ChannelStateService::registerPinConfig(uint8_t controlPin, uint8_t homeAssi
   if (!_mqttClient->connected()) {
     return;
   }
-
   String configTopic;
   String subTopic;
   String pubTopic;
@@ -217,8 +215,20 @@ void ChannelStateService::mqttUnregisterConfig(uint8_t controlPin, uint8_t homeA
 }
 
 void updateStateTimeTicker(ChannelStateService* channelStateService){
-  channelStateService->mqttRepublish();
   channelStateService->updateStateTime();
+}
+
+void mqttRepublishTicker(ChannelStateService* channelStateService){
+  channelStateService->mqttRepublishReattach();
+  channelStateService->mqttRepublish();
+}
+
+void ChannelStateService::mqttRepublishReattach(){
+  _deviceTime.detach();
+  _mqttRepublish.detach();
+  
+  _deviceTime.attach(15, updateStateTimeTicker, this);
+  _mqttRepublish.attach(5, mqttRepublishTicker, this);
 }
 
 void ChannelStateService::begin() {
@@ -278,7 +288,8 @@ void ChannelStateService::begin() {
     _state.channel.controlOn = DEFAULT_CONTROL_STATE; // must be off on start up
     onConfigUpdated();
     _channelMqttSettingsService->begin();
-    _deviceTime.attach(10, updateStateTimeTicker, this);
+    _deviceTime.attach(15, updateStateTimeTicker, this);
+    _mqttRepublish.attach(5, mqttRepublishTicker, this);
 }
 
 Channel ChannelStateService::getChannel(){
