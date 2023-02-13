@@ -303,17 +303,24 @@ public:
       SettingValue::format(topicHeader + homeAssistantEntity + "-pin-" + String(controlPin) + "/#{unique_id}");
   }
 
-  static String getDeviceChannelUrl(Channel channel){
-    String relativePath = channel.restChannelEndPoint;
-    String substitute = "/project/auto";
- 
-    relativePath.replace("/rest",substitute);
-    relativePath.replace("State","");
-    
+  static String makePathEndPoint(const char* restChannelEndPoint){
+    #define ONE "1";
+    #define TWO "2";
+    #define THREE "3";
+    #define FOUR "4";
+
+    if (strcmp(restChannelEndPoint, CHANNEL_ONE_REST_ENDPOINT_PATH) == 0) return ONE;
+    if (strcmp(restChannelEndPoint, CHANNEL_TWO_REST_ENDPOINT_PATH) == 0) return TWO;
+    if (strcmp(restChannelEndPoint, CHANNEL_THREE_REST_ENDPOINT_PATH) == 0) return THREE;
+    if (strcmp(restChannelEndPoint, CHANNEL_FOUR_REST_ENDPOINT_PATH) == 0) return FOUR;
+    return ONE;
+  }
+
+  static String getDeviceChannelUrl(Channel channel){    
     if(!channel.enableRemoteConfiguration){
       return "http://" + channel.IP;
     }else{
-      return "http://" + channel.masterIPAddress + relativePath + "#?device=" + channel.IP + "&channel=" + channel.name;
+      return "http://" + channel.masterIPAddress + "/p/a/" + makePathEndPoint(channel.restChannelEndPoint.c_str()) + "#?d=" + channel.IP + "&c=" + channel.name;
     }
   }
 
@@ -352,7 +359,7 @@ public:
     String iotAdminUrl = getDeviceChannelUrl(channel);
     String payload = "{\"state\":\"" + status  + "\"";
     payload = payload +  ",\"Version\":\"" + channel.buildVersion   + "\"";
-    payload = payload +  ",\"Admin_Url\":\"" + iotAdminUrl + "\"";
+    payload = payload +  ",\"Device_Admin\":\"" + iotAdminUrl + "\"";
     payload = payload + ",\"Control_Pin\":" + controlPin;
     //payload = payload + ",\"Channel_Name\":\"" + channel.name  + "\"";
     payload = payload + ",\"MAC\":\"" + SettingValue::format("#{unique_id}")  + "\"";
@@ -368,11 +375,11 @@ public:
         String endDate = eraseLineFeed(ctime(&dateRange.endDate));
         endDate.remove(10,9);
         if(dateRange.valid){
-          payload = payload + ",\"From\":\"" + startDate + "\"";
-          payload = payload + ",\"To\":\"" + endDate + "\"";
+          payload = payload + ",\"Start_Date\":\"" + startDate + "\"";
+          payload = payload + ",\"End_Date\":\"" + endDate + "\"";
 
           if(channel.activeOutsideDateRange){
-            payload = payload + ",\"Active_Outside_Dates\":\"Yes\"";
+            payload = payload + ",\"Active_Outside_Date_Range\":\"Enabled\"";
           }
         }
       }
@@ -405,7 +412,7 @@ public:
         return(payload + "}");
       }
 
-      return(payload + ",\"Minimum_Run_Time\":\"Yes\"}");
+      return(payload + ",\"Minimum_Run_Time\":\"Enabled\"}");
 
      }else{
       return(payload + ",\"Schedule\":\"Disabled\"}");
