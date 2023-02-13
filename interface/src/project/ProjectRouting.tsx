@@ -16,7 +16,7 @@ const ProjectRouting: FC = () => {
         // Add your project page routes below.
       }
 {/*       <Route path="demo/*" element={<DemoProject />} /> */}
-      <Route path="auto/*" element={<Schedule />} />
+      <Route path="a/*" element={<Schedule />} />
       <Route path="status/*" element={<Status />} />
     </Routes>
   );
