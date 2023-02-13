@@ -59,11 +59,11 @@ static void haRead(ChannelState& settings, JsonObject& root) {
           startDate.remove(10,9);
           String endDate = utils.eraseLineFeed(ctime(&dateRange.endDate));
           endDate.remove(10,9);
-          root["From"] = startDate;
-          root["To"] = endDate;
+          root["Start_Date"] = startDate;
+          root["End_Date"] = endDate;
           
           if(settings.channel.activeOutsideDateRange){
-            root["Active_Outside_Date_Range"] = "Yes";
+            root["Active_Outside_Date_Range"] = "Enabled";
           }
         }
       }
@@ -84,7 +84,7 @@ static void haRead(ChannelState& settings, JsonObject& root) {
           }
 
           if(settings.channel.enableMinimumRunTime){
-            root["Minimum_Run_Time"] = "Yes";
+            root["Minimum_Run_Time"] = "Enabled";
           }
         }
       }
