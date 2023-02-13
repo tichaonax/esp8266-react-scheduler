@@ -12,7 +12,7 @@ import LayoutMenuItem from '../components/layout/LayoutMenuItem';
 const ProjectMenu: FC = () => (
   <List>
 {/*     <LayoutMenuItem icon={SettingsRemoteIcon} label="Demo Project" to={`/${PROJECT_PATH}/demo`} /> */}
-    <LayoutMenuItem icon={AccessAlarmIcon} label="Automation" to={`/${PROJECT_PATH}/auto`} />
+    <LayoutMenuItem icon={AccessAlarmIcon} label="Automation" to={`/${PROJECT_PATH}/a`} />
     <LayoutMenuItem icon={BlurCircularIcon} label="Status" to={`/${PROJECT_PATH}/status`} />
   </List>
 );

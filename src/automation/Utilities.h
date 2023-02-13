@@ -303,17 +303,24 @@ public:
       SettingValue::format(topicHeader + homeAssistantEntity + "-pin-" + String(controlPin) + "/#{unique_id}");
   }
 
-  static String getDeviceChannelUrl(Channel channel){
-    String relativePath = channel.restChannelEndPoint;
-    String substitute = "/project/auto";
- 
-    relativePath.replace("/rest",substitute);
-    relativePath.replace("State","");
-    
+  static String makePathEndPoint(const char* restChannelEndPoint){
+
+    #define ONE "1";
+    #define TWO "2";
+    #define THREE "3";
+    #define FOUR "4";
+
+    if (strcmp(restChannelEndPoint, CHANNEL_ONE_REST_ENDPOINT_PATH) == 0) return ONE;
+    if (strcmp(restChannelEndPoint, CHANNEL_TWO_REST_ENDPOINT_PATH) == 0) return TWO;
+    if (strcmp(restChannelEndPoint, CHANNEL_THREE_REST_ENDPOINT_PATH) == 0) return THREE;
+    if (strcmp(restChannelEndPoint, CHANNEL_FOUR_REST_ENDPOINT_PATH) == 0) return FOUR;
+  }
+
+  static String getDeviceChannelUrl(Channel channel){    
     if(!channel.enableRemoteConfiguration){
       return "http://" + channel.IP;
     }else{
-      return "http://" + channel.masterIPAddress + relativePath + "#?device=" + channel.IP + "&channel=" + channel.name;
+      return "http://" + channel.masterIPAddress + "/p/a/" + makePathEndPoint(channel.restChannelEndPoint.c_str()) + "#?d=" + channel.IP + "&c=" + channel.name;
     }
   }
 
@@ -352,11 +359,11 @@ public:
     String iotAdminUrl = getDeviceChannelUrl(channel);
     String payload = "{\"state\":\"" + status  + "\"";
     payload = payload +  ",\"Version\":\"" + channel.buildVersion   + "\"";
-    payload = payload +  ",\"Device_Admin_Url\":\"" + iotAdminUrl + "\"";
+    payload = payload +  ",\"Admin_Url\":\"" + iotAdminUrl + "\"";
     payload = payload + ",\"Control_Pin\":" + controlPin;
-    payload = payload + ",\"Channel_Name\":\"" + channel.name  + "\"";
-    payload = payload + ",\"MAC_Address\":\"" + SettingValue::format("#{unique_id}")  + "\"";
-    payload = payload + ",\"Device_IP\":\"" + channel.IP  + "\"";
+    //payload = payload + ",\"Channel_Name\":\"" + channel.name  + "\"";
+    payload = payload + ",\"MAC\":\"" + SettingValue::format("#{unique_id}")  + "\"";
+    payload = payload + ",\"IP\":\"" + channel.IP  + "\"";
 
     if(channel.enabled){
        payload = payload + ",\"Active_Days\":\"" + getActiveWeekDays(channel.schedule.weekDays)  + "\"";
