@@ -1,12 +1,28 @@
+import { PROJECT_PATH } from '../../../../src/api/env';
 import { WS_BASE_URL, API_BASE_URL, ACCESS_TOKEN } from '../../../api/endpoints';
 import { isValidIpAddress } from '../../../validators/shared';
 
 import { store } from '../redux/store';
 import { deviceProxySelector } from '../redux/selectors/proxy';
 
+import {
+  ONE,
+  TWO,
+  THREE,
+  FOUR,
+  CHANNEL_ONE,
+  CHANNEL_TWO,
+  CHANNEL_THREE,
+  CHANNEL_FOUR,
+  CHANNEL_ONE_STATE,
+  CHANNEL_TWO_STATE,
+  CHANNEL_THREE_STATE,
+  CHANNEL_FOUR_STATE,
+  DEVICE,
+  CHANNEL,
+} from '../constants';
+
 export class RemoteUtils {
-  static DEVICE = "device";
-  static CHANNEL ="channel";
 
   static getProxy() {
       let isProxy = false;
@@ -29,10 +45,10 @@ export class RemoteUtils {
         isProxy,
         localhost,
         proxy,
-        channelOne : this.isChannelEnabled('channelOne'),
-        channelTwo : this.isChannelEnabled('channelTwo'),
-        channelThree : this.isChannelEnabled('channelThree'),
-        channelFour : this.isChannelEnabled('channelFour'),
+        channelOne : this.isChannelEnabled(CHANNEL_ONE),
+        channelTwo : this.isChannelEnabled(CHANNEL_TWO),
+        channelThree : this.isChannelEnabled(CHANNEL_THREE),
+        channelFour : this.isChannelEnabled(CHANNEL_FOUR),
         remote,
         currentChannelName,
       });
@@ -68,11 +84,11 @@ export class RemoteUtils {
     }
 
     static getRemoteDeviceUrl(){
-        return this.getParameterByName(this.DEVICE);
+        return this.getParameterByName(DEVICE);
     }
 
     static getRemoteDeviceChannelName(){
-      return this.getParameterByName(this.CHANNEL);
+      return this.getParameterByName(CHANNEL);
     }
 
     static isRemoteDevice(){
@@ -98,9 +114,25 @@ export class RemoteUtils {
 
     static getNavigationLink(route, endPoint){
       const path = endPoint.split('/').pop();
-      let navToUrl = `/project/${route}/${path}`;
-      const state = "State";
-      return(navToUrl.substring(0, navToUrl.length - state.length));
+      let navToUrl = `/${PROJECT_PATH}/${route}/`;
+      switch(path) {
+        case CHANNEL_ONE_STATE:
+          navToUrl = navToUrl + ONE;
+        break;
+        case CHANNEL_TWO_STATE:
+          navToUrl = navToUrl + TWO;
+        break;
+        case CHANNEL_THREE_STATE:
+          navToUrl = navToUrl + THREE;
+        break;
+        case CHANNEL_FOUR_STATE:
+          navToUrl = navToUrl + FOUR;
+        break;
+        default:
+          navToUrl = navToUrl + ONE;
+        break;
+      }
+      return(navToUrl);
     }
 
     static getApiBaseAddress() {
