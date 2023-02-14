@@ -13,9 +13,9 @@ export const LayoutContext = React.createContext(
 
 export const useLayoutTitle = (myTitle: string) => {
   let massagedTitle: string = myTitle;
-  const { isProxy, remote } = RemoteUtils.getDeviceHost();
+  const { isProxy, remote, currentChannelName } = RemoteUtils.getDeviceHost();
   if(isProxy){
-    massagedTitle = `${massagedTitle} [Host: ${remote}]`;
+    massagedTitle = `${currentChannelName}, [Host: ${remote}]`;
   }
   const { title, setTitle } = useContext(LayoutContext);
 
