@@ -12,6 +12,16 @@ import ChannelThree from './channels/ChannelThree';
 import ChannelFour from './channels/ChannelFour';
 import { RemoteUtils } from './utils/remoteUtils';
 import CustomTheme from '../../CustomTheme';
+import {
+  ONE,
+  TWO,
+  THREE,
+  FOUR,
+  CHANNEL_ONE_LABEL,
+  CHANNEL_TWO_LABEL,
+  CHANNEL_THREE_LABEL,
+  CHANNEL_FOUR_LABEL,
+ } from './constants';
 
 const Schedule: FC = () => {
   const { routerTab } = useRouterTab();
@@ -23,26 +33,27 @@ const Schedule: FC = () => {
   } = RemoteUtils.getDeviceHost();
 
   let defaultChannel: string = "";
-  if(isChannelOne){defaultChannel = "channelOne";}
-  else if(isChannelTwo){defaultChannel="channelTwo";}
-  else if(isChannelThree){defaultChannel="channelThree";}
-  else if(isChannelFour){defaultChannel="channelFour";}
+
+  if(isChannelOne){defaultChannel = ONE;}
+  else if(isChannelTwo){defaultChannel = TWO;}
+  else if(isChannelThree){defaultChannel= THREE;}
+  else if(isChannelFour){defaultChannel = FOUR;}
 
   useLayoutTitle("Schedule");
 
   return (
     <CustomTheme>
       <RouterTabs value={routerTab}>
-        { isChannelOne  && <Tab value="channelOne" label="Channel One" /> }
-        { isChannelTwo && <Tab value="channelTwo" label="Channel Two" /> }
-        { isChannelThree && <Tab value="channelThree" label="Channel Three" /> }
-        { isChannelFour && <Tab value="channelFour" label="Channel Four" /> }
+        { isChannelOne  && <Tab value={`${ONE}`} label={`${CHANNEL_ONE_LABEL}`} /> }
+        { isChannelTwo && <Tab value={`${TWO}`} label={`${CHANNEL_TWO_LABEL}`} /> }
+        { isChannelThree && <Tab value={`${THREE}`} label={`${CHANNEL_THREE_LABEL}`} /> }
+        { isChannelFour && <Tab value={`${FOUR}`} label={`${CHANNEL_FOUR_LABEL}`} /> }
       </RouterTabs>
       <Routes>
-    <   Route path="channelOne" element={<ChannelOne />} />
-        <Route path="channelTwo" element={<ChannelTwo />} />
-        <Route path="channelThree" element={<ChannelThree />} />
-        <Route path="channelFour" element={<ChannelFour />} />
+    <   Route path={`${ONE}`} element={<ChannelOne />} />
+        <Route path={`${TWO}`} element={<ChannelTwo />} />
+        <Route path={`${THREE}`} element={<ChannelThree />} />
+        <Route path={`${FOUR}`} element={<ChannelFour />} />
         <Route path="/*" element={<Navigate replace to={defaultChannel} />} />
       </Routes>
     </CustomTheme>
