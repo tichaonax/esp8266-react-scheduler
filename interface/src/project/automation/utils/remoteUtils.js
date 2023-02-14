@@ -33,7 +33,7 @@ export class RemoteUtils {
           device = `http://${device}`;
         }
         proxy = this.parseUrl(device);
-        if (proxy.hostname !== localhost.hostname){
+        if (remote !== null){
           isProxy = true;
         }
       }
