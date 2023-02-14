@@ -304,7 +304,6 @@ public:
   }
 
   static String makePathEndPoint(const char* restChannelEndPoint){
-
     #define ONE "1";
     #define TWO "2";
     #define THREE "3";
@@ -314,6 +313,7 @@ public:
     if (strcmp(restChannelEndPoint, CHANNEL_TWO_REST_ENDPOINT_PATH) == 0) return TWO;
     if (strcmp(restChannelEndPoint, CHANNEL_THREE_REST_ENDPOINT_PATH) == 0) return THREE;
     if (strcmp(restChannelEndPoint, CHANNEL_FOUR_REST_ENDPOINT_PATH) == 0) return FOUR;
+    return ONE;
   }
 
   static String getDeviceChannelUrl(Channel channel){    
@@ -359,7 +359,7 @@ public:
     String iotAdminUrl = getDeviceChannelUrl(channel);
     String payload = "{\"state\":\"" + status  + "\"";
     payload = payload +  ",\"Version\":\"" + channel.buildVersion   + "\"";
-    payload = payload +  ",\"Admin_Url\":\"" + iotAdminUrl + "\"";
+    payload = payload +  ",\"Device_Admin\":\"" + iotAdminUrl + "\"";
     payload = payload + ",\"Control_Pin\":" + controlPin;
     //payload = payload + ",\"Channel_Name\":\"" + channel.name  + "\"";
     payload = payload + ",\"MAC\":\"" + SettingValue::format("#{unique_id}")  + "\"";

@@ -42,7 +42,7 @@ public:
 static void haRead(ChannelState& settings, JsonObject& root) {
     root["state"] = settings.channel.controlOn ? ON_STATE : OFF_STATE;
     root["Version"] = settings.channel.buildVersion;
-    root["Admin_Url"] = utils.getDeviceChannelUrl(settings.channel);
+    root["Device_Admin"] = utils.getDeviceChannelUrl(settings.channel);
     root["Control_Pin"] = settings.channel.controlPin;
     //root["Channel_Name"] = settings.channel.name;
     root["MAC"] = SettingValue::format("#{unique_id}");
