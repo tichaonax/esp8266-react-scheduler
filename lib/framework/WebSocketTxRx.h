@@ -6,6 +6,7 @@
 #include <SecurityManager.h>
 
 #define WEB_SOCKET_CLIENT_ID_MSG_SIZE 128
+#define DEFAULT_WEBSOCKET_BUFFER_SIZE 2048
 
 #define WEB_SOCKET_ORIGIN "websocket"
 #define WEB_SOCKET_ORIGIN_CLIENT_ID_PREFIX "websocket:"
@@ -80,7 +81,7 @@ class WebSocketTx : virtual public WebSocketConnector<T> {
               const char* webSocketPath,
               SecurityManager* securityManager,
               AuthenticationPredicate authenticationPredicate = AuthenticationPredicates::IS_ADMIN,
-              size_t bufferSize = DEFAULT_BUFFER_SIZE) :
+              size_t bufferSize = DEFAULT_WEBSOCKET_BUFFER_SIZE) :
       WebSocketConnector<T>(statefulService,
                             server,
                             webSocketPath,
@@ -96,7 +97,7 @@ class WebSocketTx : virtual public WebSocketConnector<T> {
               StatefulService<T>* statefulService,
               AsyncWebServer* server,
               const char* webSocketPath,
-              size_t bufferSize = DEFAULT_BUFFER_SIZE) :
+              size_t bufferSize = DEFAULT_WEBSOCKET_BUFFER_SIZE) :
       WebSocketConnector<T>(statefulService, server, webSocketPath, bufferSize), _stateReader(stateReader) {
     WebSocketConnector<T>::_statefulService->addUpdateHandler(
         [&](const String& originId) { transmitData(nullptr, originId); }, false);
@@ -169,7 +170,7 @@ class WebSocketRx : virtual public WebSocketConnector<T> {
               const char* webSocketPath,
               SecurityManager* securityManager,
               AuthenticationPredicate authenticationPredicate = AuthenticationPredicates::IS_ADMIN,
-              size_t bufferSize = DEFAULT_BUFFER_SIZE) :
+              size_t bufferSize = DEFAULT_WEBSOCKET_BUFFER_SIZE) :
       WebSocketConnector<T>(statefulService,
                             server,
                             webSocketPath,
@@ -183,11 +184,27 @@ class WebSocketRx : virtual public WebSocketConnector<T> {
               StatefulService<T>* statefulService,
               AsyncWebServer* server,
               const char* webSocketPath,
-              size_t bufferSize = DEFAULT_BUFFER_SIZE) :
+              size_t bufferSize = DEFAULT_WEBSOCKET_BUFFER_SIZE) :
       WebSocketConnector<T>(statefulService, server, webSocketPath, bufferSize), _stateUpdater(stateUpdater) {
   }
 
  protected:
+  String _webSocketMessage;
+  bool _webSocketMessageReady;
+
+  void assembleWebSocketMessage(AwsFrameInfo *info, uint8_t *data, size_t len) {
+    data[len] = 0;
+    if(info->index == 0) {
+      _webSocketMessageReady = false;
+      _webSocketMessage = (char*)data;
+    }else{
+      _webSocketMessage = _webSocketMessage + (char*)data;
+      if(_webSocketMessage.length() == info->len){
+        _webSocketMessageReady = true;
+      }
+    }
+  }
+
   virtual void onWSEvent(AsyncWebSocket* server,
                          AsyncWebSocketClient* client,
                          AwsEventType type,
@@ -196,10 +213,11 @@ class WebSocketRx : virtual public WebSocketConnector<T> {
                          size_t len) {
     if (type == WS_EVT_DATA) {
       AwsFrameInfo* info = (AwsFrameInfo*)arg;
-      if (info->final && info->index == 0 && info->len == len) {
+      assembleWebSocketMessage(info, data, len);
+      if (_webSocketMessageReady) {
         if (info->opcode == WS_TEXT) {
           DynamicJsonDocument jsonDocument = DynamicJsonDocument(WebSocketConnector<T>::_bufferSize);
-          DeserializationError error = deserializeJson(jsonDocument, (char*)data);
+          DeserializationError error = deserializeJson(jsonDocument, _webSocketMessage);
           if (!error && jsonDocument.is<JsonObject>()) {
             JsonObject jsonObject = jsonDocument.as<JsonObject>();
             WebSocketConnector<T>::_statefulService->update(
@@ -224,7 +242,7 @@ class WebSocketTxRx : public WebSocketTx<T>, public WebSocketRx<T> {
                 const char* webSocketPath,
                 SecurityManager* securityManager,
                 AuthenticationPredicate authenticationPredicate = AuthenticationPredicates::IS_ADMIN,
-                size_t bufferSize = DEFAULT_BUFFER_SIZE) :
+                size_t bufferSize = DEFAULT_WEBSOCKET_BUFFER_SIZE) :
       WebSocketConnector<T>(statefulService,
                             server,
                             webSocketPath,
@@ -252,7 +270,7 @@ class WebSocketTxRx : public WebSocketTx<T>, public WebSocketRx<T> {
                 StatefulService<T>* statefulService,
                 AsyncWebServer* server,
                 const char* webSocketPath,
-                size_t bufferSize = DEFAULT_BUFFER_SIZE) :
+                size_t bufferSize = DEFAULT_WEBSOCKET_BUFFER_SIZE) :
       WebSocketConnector<T>(statefulService, server, webSocketPath, bufferSize),
       WebSocketTx<T>(stateReader, statefulService, server, webSocketPath, bufferSize),
       WebSocketRx<T>(stateUpdater, statefulService, server, webSocketPath, bufferSize) {
