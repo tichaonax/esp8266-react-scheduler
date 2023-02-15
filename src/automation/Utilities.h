@@ -317,10 +317,11 @@ public:
   }
 
   static String getDeviceChannelUrl(Channel channel){    
+    String route = "/p/a/" + makePathEndPoint(channel.restChannelEndPoint.c_str());
     if(!channel.enableRemoteConfiguration){
-      return "http://" + channel.IP;
+      return "http://" + channel.IP + route + "#?h";
     }else{
-      return "http://" + channel.masterIPAddress + "/p/a/" + makePathEndPoint(channel.restChannelEndPoint.c_str()) + "#?d=" + channel.IP + "&c=" + channel.name;
+      return "http://" + channel.masterIPAddress + route + "#?d=" + channel.IP + "&c=" + channel.name;
     }
   }
 
