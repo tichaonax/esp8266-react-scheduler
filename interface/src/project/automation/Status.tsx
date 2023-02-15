@@ -31,40 +31,40 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 const Status: FC = () => {
   const classes = useStyles();
   const {
-    channelOne: isChannelOne,
-    channelTwo: isChannelTwo,
-    channelThree: isChannelThree,
-    channelFour: isChannelFour,
+    channelOne,
+    channelTwo,
+    channelThree,
+    channelFour,
   } = RemoteUtils.getDeviceHost();
 
   useLayoutTitle("Status");
   return (
     <>
       <div className={classes.flexContainer}>
-        { isChannelOne  &&
-        <div className={classes.flexChild}>
-          <div>
-            <div className={classes.muiListItemGutters}><ChannelOneStateWebSocketForm/> </div>
-          </div>
-        </div>}
-        { isChannelTwo  &&
-        <div className={classes.flexChild}>
-          <div>
-            <div className={classes.muiListItemGutters}><ChannelTwoStateWebSocketForm/></div>
-          </div>
-        </div>}
-        { isChannelThree  &&
-        <div className={classes.flexChild}>
-          <div>
-            <div className={classes.muiListItemGutters}><ChannelThreeStateWebSocketForm/></div>
-          </div>
-        </div>}
-        { isChannelFour  &&
-        <div className={classes.flexChild}>
-          <div>
-            <div className={classes.muiListItemGutters}><ChannelFourStateWebSocketForm/></div>
-          </div>
-        </div>}
+        { channelOne ?
+          <div className={classes.flexChild}>
+            <div>
+              <div className={classes.muiListItemGutters}><ChannelOneStateWebSocketForm/> </div>
+            </div>
+          </div> : null}
+        { channelTwo ?
+          <div className={classes.flexChild}>
+            <div>
+              <div className={classes.muiListItemGutters}><ChannelTwoStateWebSocketForm/></div>
+            </div>
+          </div> : null}
+        { channelThree ?
+          <div className={classes.flexChild}>
+            <div>
+              <div className={classes.muiListItemGutters}><ChannelThreeStateWebSocketForm/></div>
+            </div>
+          </div> : null}
+        { channelFour ?
+          <div className={classes.flexChild}>
+            <div>
+              <div className={classes.muiListItemGutters}><ChannelFourStateWebSocketForm/></div>
+            </div>
+          </div> : null}
       </div>
     </>
   );
