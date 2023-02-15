@@ -16,7 +16,7 @@ const ChannelStateWebSocketForm: FC<ChannelStateWebSocketFormProps> = ({websocke
   const pathname = useLocation().pathname;
   const showLink = pathname.includes('/status');
   const navigate  = useNavigate ();
-  const onClick = () => navigate(RemoteUtils.getNavigationLink('auto', data?.restChannelEndPoint));
+  const onClick = () => navigate(RemoteUtils.getNavigationLink('a', data?.restChannelEndPoint));
 
   const content = () => {
     if (!connected || !data) {
