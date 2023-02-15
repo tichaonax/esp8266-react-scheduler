@@ -30,13 +30,15 @@ const Schedule: FC = () => {
     channelTwo,
     channelThree,
     channelFour,
+    activeChannel,
+    HaCall,
   } = RemoteUtils.getDeviceHost();
 
   let defaultChannel: string = "";
 
   if(channelOne){defaultChannel = ONE;}
   else if(channelTwo){defaultChannel = TWO;}
-  else if(channelThree){defaultChannel= THREE;}
+  else if(channelThree){defaultChannel = THREE;}
   else if(channelFour){defaultChannel = FOUR;}
 
   useLayoutTitle("Schedule");
@@ -44,10 +46,10 @@ const Schedule: FC = () => {
   return (
     <CustomTheme>
       <RouterTabs value={routerTab}>
-        { channelOne ? <Tab value={`${ONE}`} label={`${CHANNEL_ONE_LABEL}`} /> : null}
-        { channelTwo ? <Tab value={`${TWO}`} label={`${CHANNEL_TWO_LABEL}`} /> : null }
-        { channelThree ? <Tab value={`${THREE}`} label={`${CHANNEL_THREE_LABEL}`} /> : null }
-        { channelFour ? <Tab value={`${FOUR}`} label={`${CHANNEL_FOUR_LABEL}`} /> : null }
+        { channelOne && ((HaCall && activeChannel === ONE) || !HaCall) ? <Tab value={`${ONE}`} label={`${CHANNEL_ONE_LABEL}`} /> : null}
+        { channelTwo && ((HaCall && activeChannel === TWO) || !HaCall) ? <Tab value={`${TWO}`} label={`${CHANNEL_TWO_LABEL}`} /> : null }
+        { channelThree && ((HaCall && activeChannel === THREE) || !HaCall) ? <Tab value={`${THREE}`} label={`${CHANNEL_THREE_LABEL}`} /> : null }
+        { channelFour && ((HaCall && activeChannel === FOUR) || !HaCall) ? <Tab value={`${FOUR}`} label={`${CHANNEL_FOUR_LABEL}`} /> : null }
       </RouterTabs>
       <Routes>
     <   Route path={`${ONE}`} element={<ChannelOne />} />

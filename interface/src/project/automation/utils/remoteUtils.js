@@ -37,6 +37,7 @@ export class RemoteUtils {
           isProxy = true;
         }
       }
+
       if(remote === null || remote.length < 2) { remote = "";}
       return({
         isProxy,
@@ -49,6 +50,7 @@ export class RemoteUtils {
         remote,
         currentChannelName,
         activeChannel,
+        HaCall: this.getParameterByName('h') !== null,
       });
     }
 
