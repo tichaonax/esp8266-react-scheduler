@@ -2,34 +2,39 @@ import { FC } from 'react';
 
 import { CssBaseline } from '@mui/material';
 import { createTheme, responsiveFontSizes, ThemeProvider } from '@mui/material/styles';
-import { indigo, blueGrey, orange, red, green } from '@mui/material/colors';
+import { indigo, blueGrey, orange, red, green, grey } from '@mui/material/colors';
 
-const theme = responsiveFontSizes(
+const darkTheme = responsiveFontSizes(
   createTheme({
     palette: {
-      background: {
-        default: "#fafafa"
+      mode: "dark",
+      text: {
+        primary: '#fff',
+        secondary: grey[500],
       },
-      primary: indigo,
-      secondary: blueGrey,
-      info: {
+      primary: {
         main: indigo[500]
       },
+      secondary: {
+        main: blueGrey[800]
+      },
+      info: {
+        main: indigo[800]
+      },
       warning: {
-        main: orange[500]
+        main: orange[800]
       },
       error: {
-        main: red[500]
+        main: red[800]
       },
       success: {
-        main: green[500]
+        main: green[800]
       }
     }
   })
 );
-
 const CustomTheme: FC = ({ children }) => (
-  <ThemeProvider theme={theme}>
+  <ThemeProvider theme={darkTheme}>
     <CssBaseline />
     {children}
   </ThemeProvider>
