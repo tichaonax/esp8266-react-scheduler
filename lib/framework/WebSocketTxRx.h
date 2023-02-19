@@ -190,19 +190,15 @@ class WebSocketRx : virtual public WebSocketConnector<T> {
 
  protected:
   String _webSocketMessage;
-  bool _webSocketMessageReady;
 
-  void assembleWebSocketMessage(AwsFrameInfo *info, uint8_t *data, size_t len) {
+  bool messageReady(AwsFrameInfo *info, uint8_t *data, size_t len) {
     data[len] = 0;
     if(info->index == 0) {
-      _webSocketMessageReady = false;
       _webSocketMessage = (char*)data;
     }else{
       _webSocketMessage = _webSocketMessage + (char*)data;
-      if(_webSocketMessage.length() == info->len){
-        _webSocketMessageReady = true;
       }
-    }
+    return (_webSocketMessage.length() == info->len) ? true : false;
   }
 
   virtual void onWSEvent(AsyncWebSocket* server,
@@ -213,8 +209,7 @@ class WebSocketRx : virtual public WebSocketConnector<T> {
                          size_t len) {
     if (type == WS_EVT_DATA) {
       AwsFrameInfo* info = (AwsFrameInfo*)arg;
-      assembleWebSocketMessage(info, data, len);
-      if (_webSocketMessageReady) {
+      if(messageReady(info, data, len)) {
         if (info->opcode == WS_TEXT) {
           DynamicJsonDocument jsonDocument = DynamicJsonDocument(WebSocketConnector<T>::_bufferSize);
           DeserializationError error = deserializeJson(jsonDocument, _webSocketMessage);
