@@ -194,9 +194,9 @@ td, th {
   </tr>
 </table>
 
-You will notice that as you add new features to the project you quickly run out of memory. To get around that the complete UI is deployed to a device that has more memory like the ```ESP32```. This is then configured as the master device on the target device. The other device will only deploy the backend code which implements the apis but not the UI. This saves memory and cpu cycles on the smaller device. To remotely configure the chip you need to point to the master device, i.e the device that has the whole UI. The following URL will configure device on ip ```192.168.0.172``` from the UI on device ip ```192.168.0.190```. Adding the remote device ip makes it possible to directly manage the device from [homeassistant](#homeassistant-integration)
+You will notice that as you add new features to the project you quickly run out of memory. To get around that the complete UI is deployed to a device that has more memory like the ```ESP32```. This is then configured as the master device on the target device. The other device will only deploy the backend code which implements the apis but not the UI. This saves memory and cpu cycles on the smaller device. To remotely configure the chip you need to point to the master device, i.e the device that has the whole UI. The following URL will configure device on ip ```192.168.0.104``` from the UI on device ip ```192.168.0.172```. Adding the remote device ip makes it possible to directly manage the device from [homeassistant](#homeassistant-integration)
 
-http://192.168.0.190/project/auto/channelOne#?device=192.168.0.172
+http://192.168.0.172/p/a/1#?d=192.168.0.104&c=Esp-01%20Express%20B
 
 With homeassistant integration the URL is created for you and you just need to click from the homeassistant screens under [attributes](#mobile-attributes).
 
