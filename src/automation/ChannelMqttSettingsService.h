@@ -12,7 +12,7 @@
 #define CHANNEL_TWO_BROKER_SETTINGS_FILE "/config/C2BrokerSettings.json"
 #define CHANNEL_TWO_BROKER_SETTINGS_PATH "/rest/ChannelTwoBrokerSettings"
 #define CHANNEL_THREE_BROKER_SETTINGS_FILE "/config/C3BrokerSettings.json"
-#define CHANNEL_THREE_BROKER_SETTINGS_PATH "/rest/ThreeBrokerSettings"
+#define CHANNEL_THREE_BROKER_SETTINGS_PATH "/rest/ChannelThreeBrokerSettings"
 #define CHANNEL_FOUR_BROKER_SETTINGS_FILE "/config/C4BrokerSettings.json"
 #define CHANNEL_FOUR_BROKER_SETTINGS_PATH "/rest/ChannelFourBrokerSettings"
 
