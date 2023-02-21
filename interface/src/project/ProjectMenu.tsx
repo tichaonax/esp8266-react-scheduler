@@ -13,14 +13,15 @@ const ProjectMenu: FC = () =>{
   const {
     isProxy,
     activeChannel,
+    HaCall,
   } = RemoteUtils.getDeviceHost();
 
-  const channel = isProxy ? `/${activeChannel}` : '';
+  const channel = isProxy | HaCall ? `/${activeChannel}` : '';
 
   return(
     <List>
       <LayoutMenuItem icon={AccessAlarmIcon} label="Automation" to={`/${PROJECT_PATH}/a${channel}`} />
-      {isProxy ? null: <LayoutMenuItem icon={BlurCircularIcon} label="Status" to={`/${PROJECT_PATH}/status`} />}
+      {isProxy | HaCall ? null: <LayoutMenuItem icon={BlurCircularIcon} label="Status" to={`/${PROJECT_PATH}/status`} />}
     </List>
   );
 };
