@@ -366,7 +366,8 @@ public:
     //payload = payload + ",\"Channel_Name\":\"" + channel.name  + "\"";
     payload = payload + ",\"MAC\":\"" + SettingValue::format("#{unique_id}")  + "\"";
     payload = payload + ",\"IP\":\"" + channel.IP  + "\"";
-    payload = payload + ",\"Reboot_Sundays\":\"" + (channel.autoRebootSystem) ? "Enabled\"" : "Disabled\"";
+    String autoRebootStatus = channel.autoRebootSystem ? "Enabled" : "Disabled";
+    payload = payload + ",\"Reboot_Sundays\":\"" + autoRebootStatus + "\"";
 
     if(channel.enabled){
        payload = payload + ",\"Active_Days\":\"" + getActiveWeekDays(channel.schedule.weekDays)  + "\"";
