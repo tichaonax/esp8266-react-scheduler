@@ -40,6 +40,7 @@ struct ScheduleTask {
     int toggleReadPin;
     int blinkLed;
     int ledOn;
+    bool bAutoRebootSystem;
 }; 
 
 struct SystemRestart {
@@ -59,6 +60,8 @@ class Automation {
     Ticker _blinkerHeartBeatOff;
     Ticker _restartTicker;
 
+    bool _bRebootScheduled;
+    bool _bAutoRebootSystem;
     bool _validNTP;
 
     static void staticTickerCallbackChangeState(Automation *pThis);
@@ -70,6 +73,7 @@ class Automation {
     static void staticTickerCallbackTurnLedOff(Automation *pThis);
     void turnLedOff();
 
+    void resetSystem(time_t restartTime);
     static void staticTickerCallbackRestartSystemNow(Automation *pThis);
     void restartSystemNow();
 
