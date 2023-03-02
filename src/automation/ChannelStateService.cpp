@@ -33,7 +33,8 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
                                       String  activeStartDateRange,
                                       String  activeEndDateRange,
                                       String buildVersion,
-                                      String weekDays) :
+                                      String weekDays,
+                                      bool autoRebootSystem) :
     _httpEndpoint(ChannelState::read,
                   ChannelState::update,
                   this,
@@ -88,6 +89,7 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
   _activeEndDateRange = activeEndDateRange;
   _buildVersion = buildVersion;
   _weekDays = weekDays;
+  _autoRebootSystem = autoRebootSystem;
 
   // configure controls to be output
   pinMode(_channelControlPin, OUTPUT);
@@ -262,6 +264,8 @@ void ChannelStateService::begin() {
     _state.channel.schedule.overrideTime = _overrideTime;
     _state.channel.schedule.isOverrideActive = _isOverrideActive;
     _state.channel.buildVersion = _buildVersion;
+    _state.channel.autoRebootSystem = _autoRebootSystem;
+
 
     for (int i = 0; i< 7; i++){
       _state.channel.schedule.weekDays[i] = -1;
