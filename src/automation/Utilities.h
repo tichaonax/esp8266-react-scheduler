@@ -94,6 +94,7 @@ struct Channel {
     String  activeStartDateRange;
     String  activeEndDateRange;
     String buildVersion;
+    bool autoRebootSystem;
 };
 
 struct DateRange {
@@ -365,6 +366,8 @@ public:
     //payload = payload + ",\"Channel_Name\":\"" + channel.name  + "\"";
     payload = payload + ",\"MAC\":\"" + SettingValue::format("#{unique_id}")  + "\"";
     payload = payload + ",\"IP\":\"" + channel.IP  + "\"";
+    String autoRebootStatus = channel.autoRebootSystem ? "Enabled" : "Disabled";
+    payload = payload + ",\"Reboot_Sundays\":\"" + autoRebootStatus + "\"";
 
     if(channel.enabled){
        payload = payload + ",\"Active_Days\":\"" + getActiveWeekDays(channel.schedule.weekDays)  + "\"";

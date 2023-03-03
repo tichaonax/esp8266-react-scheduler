@@ -35,7 +35,8 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                               String  activeStartDateRange,
                               String  activeEndDateRange,
                               String buildVersion,
-                              String weekDays) :
+                              String weekDays,
+                              bool autoRebootSystem) :
     _channelStateService(server,
                         securityManager,
                         mqttClient,
@@ -68,7 +69,8 @@ TaskScheduler::TaskScheduler(AsyncWebServer* server,
                         activeStartDateRange,
                         activeEndDateRange,
                         buildVersion,
-                        weekDays)
+                        weekDays,
+                        autoRebootSystem)
                                        {
                                          _isHotScheduleActive = false;
                                          _isOverrideActive = false;
