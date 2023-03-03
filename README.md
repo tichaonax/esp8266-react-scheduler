@@ -316,11 +316,12 @@ Reboot Sundays when Enabled allows to automatically reboot the device every Sund
 
 # Tailscape VPN integration
 
-Homeassistant can be accessed remotely for free if you install Tailscape [*VPN*](http://tailscale.com/)
+Homeassistant can be accessed remotely for free if you install Tailscape [*VPN*](http://tailscale.com/) client and the [*Homeassistant Add-On*](https://github.com/hassio-addons/addon-tailscale)
+
 
 <img alt="Tailscape VPN" src="doc/tailscape-integration.jpg"/>
 
-You will need to signup for an account and install the addon feature to homeassistant. After installing the add-on and configuring with the key you will need to install the VPN client in your device and thats it.
+You will need to signup for an account and install the addon feature to homeassistant. After installing the add-on and configuring with the key you will need to install the VPN client on your device and that's it.
 ## What To Watch For
 
 	Like every project, it comes with challenges and lots of frustration. But they say no pain no gain,
