@@ -40,7 +40,8 @@ class TaskScheduler {
                     String  activeStartDateRange,
                     String  activeEndDateRange,
                     String buildVersion,
-                    String weekDays);
+                    String weekDays,
+                    bool autoRebootSystem);
     void begin();
     void resetOverrideTime();
     void setOverrideTime();
