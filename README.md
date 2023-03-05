@@ -146,12 +146,6 @@ I try to keep updating my master branch from rjwats to take advantage of any new
 <br /> 
 
 ### Scheduling Mobile
-
- <style>
-td, th {
-   border: none!important;
-}
-</style>
 <table>
   <tr>
     <td>Normal settings</td>
