@@ -146,12 +146,6 @@ I try to keep updating my master branch from rjwats to take advantage of any new
 <br /> 
 
 ### Scheduling Mobile
-
- <style>
-td, th {
-   border: none!important;
-}
-</style>
 <table>
   <tr>
     <td>Normal settings</td>
@@ -365,7 +359,7 @@ You will need to signup for an account and install the addon feature to homeassi
 
 ### esp32 board
 
-This board supports all the four channels. You can use this as the master device for to contain the UI to configure the devices with less resources.
+This board supports all the four channels. You can use this as the master device to contain the UI to configure the devices with less resources. It can also be simultaneously used for its own schedules or you can disable them and then it simply acts as a "broker" for the UI of other devices.
 
 ```esp32```
 <img alt="ESP-32 board" src="doc/esp32.jpeg"/>
