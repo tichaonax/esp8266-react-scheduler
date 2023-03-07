@@ -14,8 +14,7 @@ SystemRestart Automation::getSystemRestart(time_t t_now){
 
   time_t midNightToday = mktime(lt);
   SystemRestart restart;
-  //restartTime set to one hour after midnight
-  restart.restartTime = TWENTY_FOUR_HOUR_DURATION + midNightToday - t_now + ONE_HOUR_DURATION;
+  restart.restartTime = TWENTY_FOUR_HOUR_DURATION + midNightToday - t_now;
   restart.wekDay = lt->tm_wday;
   return(restart);
 }
@@ -54,9 +53,23 @@ void Automation::turnLedOff(){
   digitalWrite(LED, LED_OFF);
 }
 
+void Automation::resetSystem(time_t restartTime){
+  _bRebootScheduled = true;
+  _restartTicker.once(restartTime , &Automation::staticTickerCallbackRestartSystemNow, this);
+}
+
 void Automation::staticTickerCallbackTurnLedOn(Automation *pThis)
 {
-    pThis->turnLedOn();
+  pThis->turnLedOn();
+  if(pThis->_bAutoRebootSystem){
+    //check to see if we need a system reboot
+    time_t t_now = time(nullptr);
+    SystemRestart restart = pThis->getSystemRestart(t_now);
+    //schedule reset the system one hour after midnight every sunday
+    if(restart.wekDay == 0 && !pThis->_bRebootScheduled && restart.restartTime > 0 && restart.restartTime <= 10){
+      pThis->resetSystem(ONE_HOUR_DURATION + restart.restartTime);
+    }
+  }
 }
 
 void Automation::turnLedOn(){
@@ -67,28 +80,25 @@ void Automation::turnLedOn(){
 void Automation::setSchedules(std::list<ScheduleTask>* scheduleTaskList){
     // check to see if NTP updated the local time
     if(!_validNTP){
-        time_t t_now = time(nullptr);
-        String dateText = ctime(&t_now); 
-        int year = dateText.substring(dateText.lastIndexOf(" ")+1).toInt();
-        if(year > 1970){
-          _validNTP = true;
-          _blinkerHeartBeat.detach();
-          _blinkerHeartBeat.attach(2.0, &Automation::staticTickerCallbackTurnLedOn, this);    
-          for(std::list<ScheduleTask>::iterator i = scheduleTaskList->begin(); i != scheduleTaskList->end();)
-            {
-              i->channelTaskScheduler->setSchedule();
-              i->channelTaskScheduler->setToggleSwitch(
-                i->bToggleSwitch,
-                i->toggleReadPin,
-                i->blinkLed,
-                i->ledOn);
-              i++;
-            }
-          SystemRestart restart = getSystemRestart(t_now);
-          if(restart.wekDay == 0 && restart.restartTime > 0) {
-            //schedule reset the system one hour after midnight every sunday
-            _restartTicker.once(restart.restartTime , &Automation::staticTickerCallbackRestartSystemNow, this);
+      _bRebootScheduled = false;
+      time_t t_now = time(nullptr);
+      String dateText = ctime(&t_now); 
+      int year = dateText.substring(dateText.lastIndexOf(" ")+1).toInt();
+      if(year > 1970){
+        _validNTP = true;
+        _blinkerHeartBeat.detach();
+        _blinkerHeartBeat.attach(2.0, &Automation::staticTickerCallbackTurnLedOn, this);    
+        for(std::list<ScheduleTask>::iterator i = scheduleTaskList->begin(); i != scheduleTaskList->end();)
+          {
+            i->channelTaskScheduler->setSchedule();
+            i->channelTaskScheduler->setToggleSwitch(
+              i->bToggleSwitch,
+              i->toggleReadPin,
+              i->blinkLed,
+              i->ledOn);
+              _bAutoRebootSystem = i->bAutoRebootSystem;
+            i++;
           }
-        }
+      }
     }
 }
