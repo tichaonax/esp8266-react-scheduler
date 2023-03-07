@@ -214,10 +214,10 @@ schedule must be saved to take effect. The changes take effect after 5s from tim
 The schedule for the Channel is restarted with the new settings. The system also provides the device
 time as well as the IPAddress of the device if connected to WIFI.
 ```
-#### Channel control pin
+#### Channel Name
 ```
-This is the hardware pin on the micro-controller user may connect a relay in order to control a device.
-Solid State Relays (SSR) may be connected directly to the pin without the need for buffering transistors.
+User defined channel name that shows on the screen, if one is not provided system defaults to factory
+settings value.
 ```
 #### Schedule
 ```
@@ -226,8 +226,26 @@ controlled automatically.
 ```
 #### Enable schedule?
 ```
-When checked the schedule is active.
+When checked the schedule is active. Now the build version is available next to the checkbox text.
 ```
+
+#### Control GPIO pin
+```
+This is the hardware pin on the micro-controller user may connect a relay in order to control a device.
+Solid State Relays (SSR) may be connected directly to the pin without the need for buffering transistors.
+```
+#### Active week days orange
+<img alt="Automation Information" src="doc/active-days.png"/>
+```
+Select the weekdays the schedule runs. The defaults can be set in the channel defaults in the channels.h
+```
+
+#### Enable Date Range
+<img alt="Automation Information" src="doc/active-days-outside.png"/>
+```
+Select date range the schedule can run. When checked you can also select the active range to be outside the selected range.
+```
+
 #### Enable TimeSpan?
 ```
 When checked disabled 'Randomize', the switch is activated only during the time period from 'Start Time'
@@ -241,11 +259,6 @@ limits. Disabled when 'TimeSpan' is active.
 #### Minimum RunTime?
 ```
 When checked enables minimum runtime is at least 'Off After' value enabled when randomize is active
-```
-#### Channel Name
-```
-User defined channel name that shows on the screen, if one is not provided system defaults to factory
-settings value.
 ```
 #### Run Every
 ```
@@ -273,6 +286,11 @@ The duration that the switch is on before randomize feature takes over. This is 
 ```
 The end time when the schedule is active.
 ```
+
+#### Master IP
+```
+The IP address of the microcontroller that will serve the UI for low memory devices.
+```
 # Homeassistant integration
 
 Homeassistant integration comes for free, check out resource for Homeassistant [*here*](https://www.home-assistant.io/)
@@ -283,17 +301,27 @@ Homeassistant integration comes for free, check out resource for Homeassistant [
 
 ### Mobile
 	
-<img alt="HomeMobile" src="doc/homeassistant-mobile.jpeg" width="400"/>
+<img alt="HomeMobile" src="doc/homeassistant-mobile.jpeg"/>
 
-<img alt="HomeMobile" src="doc/homeassistant-mobile-a.jpeg" width="400"/>
+<img alt="HomeMobile" src="doc/homeassistant-mobile-a.jpeg"/>
 <br/>
 
 ### Mobile attributes
 
-<img alt="HomeMobile" src="doc/homeassistant-mobile-b.jpeg" width="400"/>
+<img alt="HomeMobile" src="doc/homeassistant-mobile-b.jpeg"/>
 
 When properly integrated homeassistant will show the schedule attributes from homeassistant which the device registers with the ```MQTT``` auto-discovery feature of homeassistant without any custom configuration on homeassistant. This out of the box integration feature with homeassistant makes it possible to just add new devices and managing them from homeassistant. The IP address of the devices is sent to homeassistant as part of config payload data.  
 
+Reboot Sundays when Enabled allows to automatically reboot the device every Sunday one how after midnight. This is controlled during compile time and must be set under channel defaults.
+
+# Tailscape VPN integration
+
+Homeassistant can be accessed remotely for free if you install Tailscape [*VPN*](http://tailscale.com/) client and the [*Homeassistant Add-On*](https://github.com/hassio-addons/addon-tailscale)
+
+
+<img alt="Tailscape VPN" src="doc/tailscape-integration.jpg"/>
+
+You will need to signup for an account and install the addon feature to homeassistant. After installing the add-on and configuring with the key you will need to install the VPN client on your device and that's it.
 ## What To Watch For
 
 	Like every project, it comes with challenges and lots of frustration. But they say no pain no gain,
@@ -323,21 +351,21 @@ When properly integrated homeassistant will show the schedule attributes from ho
 
 ##### platform.ini
 
-	You can choose which channels to install by uncommenting the corresponding CHANNEL in the platform.ini file.   
+	You can choose which channels to install by uncommenting the corresponding CHANNEL in the platform.ini file. This is particularly useful on low memory devices as they can only handle one schedule. You will need to disable 
 	
-<img alt="Choose which channels to load" src=doc/platform-ini-channels.jpeg width=768/>
+	;-D PROGMEM_WWW
+	
+	 in the platform.ini in order to fit the binary. 
+	
+<img alt="Choose which channels to load" src="doc/platform-ini-channels.jpeg"/>
 
 ##### .env
-
-	You also need to match the UI screens to load by setting the CHANNEL in the .ev file. When set to false the corresponding UI channel will be disabled but to save memory you also need to disable the matching channel on the backend.
 	
-<img alt="Choose which UI channels to load" src=doc/react-channel.jpeg width=768/>
-
 ## Boards tested with the project
 
 ### esp32 board
 
-This board supports all the four channels. You can use this as the master device for to contain the UI to configure the devices with less resources.
+This board supports all the four channels. You can use this as the master device to contain the UI to configure the devices with less resources. It can also be simultaneously used for its own schedules or you can disable them and then it simply acts as a "broker" for the UI of other devices.
 
 ```esp32```
 <img alt="ESP-32 board" src="doc/esp32.jpeg"/>

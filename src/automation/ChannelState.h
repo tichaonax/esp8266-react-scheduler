@@ -47,6 +47,7 @@ static void haRead(ChannelState& settings, JsonObject& root) {
     //root["Channel_Name"] = settings.channel.name;
     root["MAC"] = SettingValue::format("#{unique_id}");
     root["IP"] = settings.channel.IP;
+    root["Reboot_Sundays"] = settings.channel.autoRebootSystem ? "Enabled" : "Disabled";
 
     if(settings.channel.enabled){
       root["Active_Days"] = utils.getActiveWeekDays(settings.channel.schedule.weekDays);
