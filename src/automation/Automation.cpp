@@ -14,8 +14,7 @@ SystemRestart Automation::getSystemRestart(time_t t_now){
 
   time_t midNightToday = mktime(lt);
   SystemRestart restart;
-  //restartTime set to one hour after midnight
-  restart.restartTime = TWENTY_FOUR_HOUR_DURATION + midNightToday - t_now + ONE_HOUR_DURATION;
+  restart.restartTime = TWENTY_FOUR_HOUR_DURATION + midNightToday - t_now;
   restart.wekDay = lt->tm_wday;
   return(restart);
 }
@@ -67,8 +66,8 @@ void Automation::staticTickerCallbackTurnLedOn(Automation *pThis)
     time_t t_now = time(nullptr);
     SystemRestart restart = pThis->getSystemRestart(t_now);
     //schedule reset the system one hour after midnight every sunday
-    if(restart.wekDay == 0 && !pThis->_bRebootScheduled && restart.restartTime > 0 && restart.restartTime <= 5){
-      pThis->resetSystem(restart.restartTime);
+    if(restart.wekDay == 0 && !pThis->_bRebootScheduled && restart.restartTime > 0 && restart.restartTime <= 10){
+      pThis->resetSystem(ONE_HOUR_DURATION + restart.restartTime);
     }
   }
 }
