@@ -47,7 +47,8 @@ ESP8266React esp8266React(&server);
                                                         CHANNEL_ONE_ACTIVE_START_DATE_RANGE,
                                                         CHANNEL_ONE_ACTIVE_END_DATE_RANGE,
                                                         BUILD_VERSION,
-                                                        CHANNEL_ONE_ACTIVE_WEEK_DAYS);
+                                                        CHANNEL_ONE_ACTIVE_WEEK_DAYS,
+                                                        AUTO_SYSTEM_REBOOT_ENABLED);
   ChannelScheduleRestartService channelOneScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelOneTaskScheduler, CHANNEL_ONE_SCHEDULE_RESTART_SERVICE_PATH);
 #endif
 #if defined(CHANNEL_TWO)
@@ -89,7 +90,8 @@ ESP8266React esp8266React(&server);
                                                         CHANNEL_TWO_ACTIVE_START_DATE_RANGE,
                                                         CHANNEL_TWO_ACTIVE_END_DATE_RANGE,
                                                         BUILD_VERSION,
-                                                        CHANNEL_TWO_ACTIVE_WEEK_DAYS);  
+                                                        CHANNEL_TWO_ACTIVE_WEEK_DAYS,
+                                                        AUTO_SYSTEM_REBOOT_ENABLED);  
   ChannelScheduleRestartService channelTwoScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelTwoTaskScheduler, CHANNEL_TWO_SCHEDULE_RESTART_SERVICE_PATH);
 #endif
 #if defined(CHANNEL_THREE)
@@ -131,7 +133,8 @@ ESP8266React esp8266React(&server);
                                                         CHANNEL_THREE_ACTIVE_START_DATE_RANGE,
                                                         CHANNEL_THREE_ACTIVE_END_DATE_RANGE,
                                                         BUILD_VERSION,
-                                                        CHANNEL_THREE_ACTIVE_WEEK_DAYS);
+                                                        CHANNEL_THREE_ACTIVE_WEEK_DAYS,
+                                                        AUTO_SYSTEM_REBOOT_ENABLED);
   ChannelScheduleRestartService channelThreeScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelThreeTaskScheduler, CHANNEL_THREE_SCHEDULE_RESTART_SERVICE_PATH);
 #endif  
 #if defined(CHANNEL_FOUR)
@@ -173,7 +176,8 @@ ESP8266React esp8266React(&server);
                                                         CHANNEL_FOUR_ACTIVE_START_DATE_RANGE,
                                                         CHANNEL_FOUR_ACTIVE_END_DATE_RANGE,
                                                         BUILD_VERSION,
-                                                        CHANNEL_FOUR_ACTIVE_WEEK_DAYS);
+                                                        CHANNEL_FOUR_ACTIVE_WEEK_DAYS,
+                                                        AUTO_SYSTEM_REBOOT_ENABLED);
   ChannelScheduleRestartService channelFourScheduleRestartService = ChannelScheduleRestartService(&server, esp8266React.getSecurityManager(), &channelFourTaskScheduler, CHANNEL_FOUR_SCHEDULE_RESTART_SERVICE_PATH);
 #endif
 /* #endregion */
@@ -206,6 +210,7 @@ void setup() {
     scheduleOneTask.toggleReadPin = TOGGLE_READ_PIN;
     scheduleOneTask.blinkLed = LED;
     scheduleOneTask.ledOn = LED_ON;
+    scheduleOneTask.bAutoRebootSystem = AUTO_SYSTEM_REBOOT_ENABLED;
     schedules.addSchedule(scheduleOneTask);
   #endif  
   #if defined(CHANNEL_TWO)
@@ -215,6 +220,7 @@ void setup() {
     scheduleTwoTask.toggleReadPin = TOGGLE_READ_PIN;
     scheduleTwoTask.blinkLed = LED;
     scheduleTwoTask.ledOn = LED_ON;
+    scheduleTwoTask.bAutoRebootSystem = AUTO_SYSTEM_REBOOT_ENABLED;
     schedules.addSchedule(scheduleTwoTask);
   #endif  
   #if defined(CHANNEL_THREE)
@@ -224,6 +230,7 @@ void setup() {
     scheduleThreeTask.toggleReadPin = TOGGLE_READ_PIN;
     scheduleThreeTask.blinkLed = LED;
     scheduleThreeTask.ledOn = LED_ON;
+    scheduleThreeTask.bAutoRebootSystem = AUTO_SYSTEM_REBOOT_ENABLED;
     schedules.addSchedule(scheduleThreeTask);
   #endif  
   #if defined(CHANNEL_FOUR)
@@ -233,6 +240,7 @@ void setup() {
     scheduleFourTask.toggleReadPin = TOGGLE_READ_PIN;
     scheduleFourTask.blinkLed = LED;
     scheduleFourTask.ledOn = LED_ON;
+    scheduleFourTask.bAutoRebootSystem = AUTO_SYSTEM_REBOOT_ENABLED;
     schedules.addSchedule(scheduleFourTask);
   #endif
   /* #endregion */
