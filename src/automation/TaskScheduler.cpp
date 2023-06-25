@@ -392,10 +392,12 @@ void TaskScheduler::updateNextRunStatus(){
 }
 
 int TaskScheduler::getRandomOnTimeSpan(){
+  srand((unsigned int)time(NULL));
   return(rand() % (_channel.schedule.runEvery - _channel.schedule.offAfter -1) + 1);
 }
 
 int TaskScheduler::getRandomOffTimeSpan(){
+  srand((unsigned int)time(NULL));
   if(_channel.enableMinimumRunTime){
     return(rand() % (_channel.schedule.runEvery - _controlOnTime - _channel.schedule.offAfter) + _channel.schedule.offAfter);
   }
