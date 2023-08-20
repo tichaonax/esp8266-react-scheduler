@@ -32,7 +32,11 @@ export function selectOverrideTime(data: ChannelState,
       <MenuItem value={6}>6 minutes</MenuItem>
       <MenuItem value={8}>8 minutes</MenuItem>
       <MenuItem value={10}>10 minutes</MenuItem>
+      <MenuItem value={11}>11 minutes</MenuItem>
+      <MenuItem value={12}>12 minutes</MenuItem>
+      <MenuItem value={13}>13 minutes</MenuItem>
       <MenuItem value={15}>15 minutes</MenuItem>
+      <MenuItem value={17}>17 minutes</MenuItem>
       <MenuItem value={20}>20 minutes</MenuItem>
       <MenuItem value={30}>30 minutes</MenuItem>
       <MenuItem value={40}>40 minutes</MenuItem>
