@@ -306,7 +306,7 @@ Homeassistant integration comes for free, check out resource for Homeassistant [
 
 When properly integrated homeassistant will show the schedule attributes from homeassistant which the device registers with the ```MQTT``` auto-discovery feature of homeassistant without any custom configuration on homeassistant. This out of the box integration feature with homeassistant makes it possible to just add new devices and managing them from homeassistant. The IP address of the devices is sent to homeassistant as part of config payload data.  
 
-Reboot Sundays when Enabled allows to automatically reboot the device every Sunday one how after midnight. This is controlled during compile time and must be set under channel defaults.
+Reboot on the first of every month when Enabled allows to automatically reboot the device one hour after midnight. This is controlled during compile time and must be set in platform.ini.
 
 # Tailscape VPN integration
 
