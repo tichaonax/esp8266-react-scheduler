@@ -3,7 +3,6 @@
 
 #include <SettingValue.h>
 #include "Utilities.h"
-
 #define DEFAULT_LED_STATE false
 #define DEFAULT_CONTROL_STATE false
 
@@ -14,9 +13,10 @@ struct CurrentTime {
   int totalCurrentTimeInSec;
 };
 
+
 class ChannelState {
 public:
- Channel channel;
+Channel channel;
   static void read(ChannelState& settings, JsonObject& root) {
     readChannel(settings.channel, root);
   }

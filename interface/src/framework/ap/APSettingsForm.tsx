@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { ValidateFieldsError } from 'async-validator';
 import { range } from 'lodash';
 

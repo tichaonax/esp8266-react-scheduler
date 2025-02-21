@@ -34,7 +34,7 @@ export interface FileUploadConfig {
   onUploadProgress?: (progressEvent: ProgressEvent) => void;
 }
 
-export const uploadFile = (url: string, file: File, config?: FileUploadConfig): AxiosPromise<void> => {
+export const uploadFile = (url: string, file: File, onUploadProgress: any): AxiosPromise<void> => {
   const formData = new FormData();
   formData.append('file', file);
 
@@ -42,6 +42,6 @@ export const uploadFile = (url: string, file: File, config?: FileUploadConfig): 
     headers: {
       'Content-Type': 'multipart/form-data'
     },
-    ...(config || {})
+    onUploadProgress,
   });
 };

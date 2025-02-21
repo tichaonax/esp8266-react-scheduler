@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { Navigate, Routes, Route } from 'react-router-dom';
 
 //import DemoProject from './DemoProject';

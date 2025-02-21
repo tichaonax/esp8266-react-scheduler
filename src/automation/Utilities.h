@@ -107,61 +107,53 @@ struct DateRange {
 class Utilities {
 public:
 
-  static DateRange getActiveDateRange(String activeStartDateRange, String activeEndDateRange, time_t currentTime){
+  static DateRange getActiveDateRange(String activeStartDateRange, String activeEndDateRange, time_t currentTime) {
     DateRange dateRange = {currentTime, currentTime, false};
     const char *timeStringStart = activeStartDateRange.c_str();
     const char *timeStringEnd = activeEndDateRange.c_str();
-    if (timeStringStart[strlen(timeStringStart)-1] == 'Z'  && timeStringEnd[strlen(timeStringEnd)-1] == 'Z') {
-      struct tm *lt = localtime(&currentTime);
-      struct tm dateStart;
-      struct tm dateEnd;
 
-      #define NUM_START(off, mult) ((timeStringStart[(off)] - '0') * (mult))
-      #define NUM_END(off, mult) ((timeStringEnd[(off)] - '0') * (mult)) 
+    if (timeStringStart[strlen(timeStringStart) - 1] == 'Z' && timeStringEnd[strlen(timeStringEnd) - 1] == 'Z') {
+        struct tm *lt = localtime(&currentTime);
+        struct tm dateStart = {0};
+        struct tm dateEnd = {0};
 
-      int startYear =  NUM_START(0, 1000) + NUM_START(1, 100) + NUM_START(2, 10) + NUM_START(3, 1) - 1900;
-      int endYear = NUM_END(0, 1000) + NUM_END(1, 100) + NUM_END(2, 10) + NUM_END(3, 1) -  1900;
+        auto parseDate = [](const char *timeString, struct tm &date) {
+            date.tm_year = (timeString[0] - '0') * 1000 + (timeString[1] - '0') * 100 + (timeString[2] - '0') * 10 + (timeString[3] - '0') - 1900;
+            date.tm_mon = (timeString[5] - '0') * 10 + (timeString[6] - '0') - 1;
+            date.tm_mday = (timeString[8] - '0') * 10 + (timeString[9] - '0');
+            date.tm_hour = (timeString[11] - '0') * 10 + (timeString[12] - '0');
+            date.tm_min = (timeString[14] - '0') * 10 + (timeString[15] - '0');
+            date.tm_sec = (timeString[17] - '0') * 10 + (timeString[18] - '0');
+        };
 
-      int dateEndMonth = NUM_END(5, 10) + NUM_END(6, 1) - 1;
-      int dateEndDay = NUM_END(8, 10) + NUM_END(9, 1);
+        parseDate(timeStringStart, dateStart);
+        parseDate(timeStringEnd, dateEnd);
 
-      if(dateEndMonth >= lt->tm_mon && dateEndDay >= lt->tm_mday && (endYear != startYear)){
-          dateStart.tm_year = lt->tm_year -1;
-          dateEnd.tm_year = dateStart.tm_year + endYear - startYear;
-      }else{
-          dateStart.tm_year = lt->tm_year;
-          dateEnd.tm_year = lt->tm_year + endYear - startYear;
-      }
+        if (dateEnd.tm_mon >= lt->tm_mon && dateEnd.tm_mday >= lt->tm_mday && (dateEnd.tm_year != dateStart.tm_year)) {
+            dateStart.tm_year = lt->tm_year - 1;
+            dateEnd.tm_year = dateStart.tm_year + (dateEnd.tm_year - dateStart.tm_year);
+        } else {
+            dateStart.tm_year = lt->tm_year;
+            dateEnd.tm_year = lt->tm_year + (dateEnd.tm_year - dateStart.tm_year);
+        }
 
-      dateStart.tm_mon = NUM_START(5, 10) + NUM_START(6, 1) - 1;
-      dateStart.tm_mday = NUM_START(8, 10) + NUM_START(9, 1);
-      dateStart.tm_hour = NUM_START(11, 10) + NUM_START(12, 1);
-      dateStart.tm_min = NUM_START(14, 10) + NUM_START(15, 1);
-      dateStart.tm_sec = NUM_START(17, 10) + NUM_START(18, 1);
-     
-      dateEnd.tm_mon = dateEndMonth;
-      dateEnd.tm_mday = dateEndDay;
-      dateEnd.tm_hour = NUM_END(11, 10) + NUM_END(12, 1);
-      dateEnd.tm_min = NUM_END(14, 10) + NUM_END(15, 1);
-      dateEnd.tm_sec = NUM_END(17, 10) + NUM_END(18, 1);
-      
-      dateRange.startDate = mktime(&dateStart);
-      dateRange.endDate = mktime(&dateEnd);
+        dateRange.startDate = mktime(&dateStart);
+        dateRange.endDate = mktime(&dateEnd);
 
-      if(dateRange.endDate > dateRange.startDate){
-        dateRange.valid = startYear > 70 ? true : false;
-      }
+        if (dateRange.endDate > dateRange.startDate) {
+            dateRange.valid = dateStart.tm_year > 70;
+        }
     }
 
     dateRange.startDateUTC = formatDateToUTC(dateRange.startDate);
     dateRange.endDateUTC = formatDateToUTC(dateRange.endDate);
     return dateRange;
-  }
-
-  static String eraseLineFeed(std::string str){
-    str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
-    return str.c_str();
-  }
+}
+static String eraseLineFeed(const std::string& str) {
+  std::string result = str;
+  result.erase(std::remove(result.begin(), result.end(), '\n'), result.end());
+  return String(result.c_str());
+}
 
   String strLocalTime(){
     time_t now = time(nullptr);
@@ -212,150 +204,149 @@ public:
     return totalTime;
   }
 
-  bool canTaskRunToday(Channel channel, ScheduledTime scheduleTime){
-     struct tm *lt = localtime(&scheduleTime.currentTime);
+  bool canTaskRunToday(Channel channel, ScheduledTime scheduleTime) {
+    struct tm *lt = localtime(&scheduleTime.currentTime);
     int today = lt->tm_wday;
 
-    bool canTaskRunToday = false;
-
-    for (int day = 0; day < 7; day++){  
-      if(channel.schedule.weekDays[day] == today){
-        canTaskRunToday = true;
-        break;
-      }
+    for (int day = 0; day < 7; day++) {
+        if (channel.schedule.weekDays[day] == today) {
+            return scheduleTime.isWithInDateRange;
+        }
     }
-    
-    return (canTaskRunToday && scheduleTime.isWithInDateRange);
+
+    return false;
+}
+  
+ScheduledTime getScheduleTimes(int startTime, int endTime,
+  int hotTimeHour, bool enableTimeSpan, bool isHotScheduleActive,
+  String channelName, bool randomize, bool isOverrideActive, bool enableMinimumRunTime) {
+  
+  ScheduledTime schedule;
+  schedule.isRandomize = randomize;
+  schedule.channelName = channelName;
+  schedule.isHotScheduleActive = isHotScheduleActive;
+  schedule.isSpanSchedule = enableTimeSpan;
+  schedule.currentTime = time(nullptr);
+  schedule.startTime = startTime;
+  schedule.endTime = endTime;
+  schedule.isOverrideActive = isOverrideActive;
+  schedule.isEnableMinimumRunTime = enableMinimumRunTime;
+
+  struct tm *lt = localtime(&schedule.currentTime);
+  lt->tm_hour = 0;
+  lt->tm_min = 0;
+  lt->tm_sec = 0;
+
+  schedule.midNightToday = mktime(lt);
+  
+  schedule.scheduleStartDateTime = schedule.midNightToday + startTime;
+  schedule.scheduleHotTimeEndDateTime = schedule.scheduleStartDateTime + hotTimeHour;
+  schedule.scheduleEndDateTime = schedule.midNightToday + endTime;
+
+  if (startTime > endTime) {
+      schedule.scheduleEndDateTime += TWENTY_FOUR_HOUR_DURATION;
   }
   
-  ScheduledTime getScheduleTimes(int startTime, int endTime,
-    int hotTimeHour, bool enableTimeSpan, bool isHotScheduleActive,
-    String channelName, bool randomize, bool isOverrideActive, bool enableMinimumRunTime){
-    ScheduledTime schedule;
-    schedule.isRandomize = randomize;
-    schedule.channelName = channelName;
-    schedule.isHotScheduleActive = isHotScheduleActive;
-    schedule.isSpanSchedule = enableTimeSpan;
-    schedule.currentTime = time(nullptr);
-    schedule.startTime = startTime;
-    schedule.endTime = endTime;
-    schedule.isOverrideActive = isOverrideActive;
-    schedule.isEnableMinimumRunTime = enableMinimumRunTime;
-
-    struct tm *lt = localtime(&schedule.currentTime);
-    lt->tm_hour = 0;
-    lt->tm_min = 0;
-    lt->tm_sec = 0;
-
-    schedule.midNightToday = mktime(lt);
-    
-    schedule.scheduleStartDateTime = schedule.midNightToday + startTime;
-    schedule.scheduleHotTimeEndDateTime = schedule.scheduleStartDateTime + hotTimeHour;
-
-    schedule.scheduleEndDateTime = schedule.midNightToday + endTime;
-    if (startTime > endTime) { schedule.scheduleEndDateTime = schedule.scheduleEndDateTime + TWENTY_FOUR_HOUR_DURATION;}
-    
-    TotalScheduledTime totalTime = timeToStartSeconds(schedule.currentTime, startTime, endTime,
-    schedule.scheduleStartDateTime, schedule.scheduleEndDateTime);
-    schedule.scheduleTime = totalTime.timeToStartSeconds;
-    schedule.isHotScheduleAdjust = totalTime.isHotScheduleAdjust;
-    schedule.isHotSchedule = schedule.isRandomize && (hotTimeHour > 0) && !schedule.isSpanSchedule;
-   
-    if (!schedule.isHotSchedule){
+  TotalScheduledTime totalTime = timeToStartSeconds(schedule.currentTime, startTime, endTime,
+      schedule.scheduleStartDateTime, schedule.scheduleEndDateTime);
+  schedule.scheduleTime = totalTime.timeToStartSeconds;
+  schedule.isHotScheduleAdjust = totalTime.isHotScheduleAdjust;
+  schedule.isHotSchedule = schedule.isRandomize && (hotTimeHour > 0) && !schedule.isSpanSchedule;
+ 
+  if (!schedule.isHotSchedule) {
       schedule.isRunTaskNow = schedule.scheduleTime <= 1;
-    }else{
-      if(schedule.startTime < schedule.endTime){
-        schedule.isRunTaskNow = schedule.currentTime > schedule.scheduleHotTimeEndDateTime 
-        && schedule.currentTime < schedule.scheduleEndDateTime;
+  } else {
+      if (schedule.startTime < schedule.endTime) {
+          schedule.isRunTaskNow = schedule.currentTime > schedule.scheduleHotTimeEndDateTime 
+              && schedule.currentTime < schedule.scheduleEndDateTime;
+      } else {
+          if (!schedule.isHotScheduleAdjust) {
+              schedule.isRunTaskNow = schedule.currentTime > schedule.scheduleHotTimeEndDateTime 
+                  && schedule.currentTime < schedule.scheduleEndDateTime || schedule.scheduleTime <= 1;
+          } else {
+              schedule.isRunTaskNow = schedule.currentTime > (schedule.scheduleHotTimeEndDateTime - TWENTY_FOUR_HOUR_DURATION)
+                  && schedule.currentTime < (schedule.scheduleEndDateTime - TWENTY_FOUR_HOUR_DURATION);
+          }
       }
-      else{
-        if(!schedule.isHotScheduleAdjust){
-        schedule.isRunTaskNow = schedule.currentTime  > schedule.scheduleHotTimeEndDateTime 
-        && schedule.currentTime < schedule.scheduleEndDateTime | schedule.scheduleTime <= 1;
-        }else{
-          schedule.isRunTaskNow = schedule.currentTime  > (schedule.scheduleHotTimeEndDateTime - TWENTY_FOUR_HOUR_DURATION)
-          && schedule.currentTime < (schedule.scheduleEndDateTime - TWENTY_FOUR_HOUR_DURATION);
-        }
-      }
-    }
-    schedule.isRunTaskNow = schedule.isRunTaskNow && !schedule.isHotScheduleActive && !schedule.isOverrideActive;
-    return schedule;
   }
+  schedule.isRunTaskNow = schedule.isRunTaskNow && !schedule.isHotScheduleActive && !schedule.isOverrideActive;
+  return schedule;
+}
+static String getMqttUniqueIdOrPath(uint8_t controlPin, uint8_t homeAssistantTopicType, bool isUniqueIdOrPath, String homeAssistantEntity = "") {
+  String topicType;
+  String topicHeader;
 
-  static String getMqttUniqueIdOrPath(uint8_t controlPin, uint8_t homeAssistantTopicType, bool isUniqueIdOrPath, String homeAssistantEntity=""){
-      String topicType;
-      String topicHeader;
-      switch (homeAssistantTopicType)
-      {
-        case HOMEASSISTANT_TOPIC_TYPE_SWITCH:
+  switch (homeAssistantTopicType) {
+      case HOMEASSISTANT_TOPIC_TYPE_SWITCH:
           topicHeader = "homeassistant/switch/";
           topicType = "switch";
-        break;
-        case HOMEASSISTANT_TOPIC_TYPE_LIGHT:
+          break;
+      case HOMEASSISTANT_TOPIC_TYPE_LIGHT:
           topicHeader = "homeassistant/light/";
           topicType = "light";
-        break;
-        default:
-        break;
-      }
-
-      return isUniqueIdOrPath ? 
-      SettingValue::format(topicType + "-pin-" + String(controlPin) + "-#{unique_id}") :
-      SettingValue::format(topicHeader + homeAssistantEntity + "-pin-" + String(controlPin) + "/#{unique_id}");
+          break;
+      default:
+          return "";
   }
 
-  static String makePathEndPoint(const char* restChannelEndPoint){
-    #define ONE "1";
-    #define TWO "2";
-    #define THREE "3";
-    #define FOUR "4";
-
-    if (strcmp(restChannelEndPoint, CHANNEL_ONE_REST_ENDPOINT_PATH) == 0) return ONE;
-    if (strcmp(restChannelEndPoint, CHANNEL_TWO_REST_ENDPOINT_PATH) == 0) return TWO;
-    if (strcmp(restChannelEndPoint, CHANNEL_THREE_REST_ENDPOINT_PATH) == 0) return THREE;
-    if (strcmp(restChannelEndPoint, CHANNEL_FOUR_REST_ENDPOINT_PATH) == 0) return FOUR;
-    return ONE;
+  String formattedString = SettingValue::format(topicType + "-pin-" + String(controlPin) + "-#{unique_id}");
+  if (!isUniqueIdOrPath) {
+      formattedString = SettingValue::format(topicHeader + homeAssistantEntity + "-pin-" + String(controlPin) + "/#{unique_id}");
   }
 
-  static String getDeviceChannelUrl(Channel channel){    
-    String route = "/p/a/" + makePathEndPoint(channel.restChannelEndPoint.c_str());
-    if(!channel.enableRemoteConfiguration){
-      return "http://" + channel.IP + route + "?h";
-    }else{
-      return "http://" + channel.masterIPAddress + route + "?d=" + channel.IP + "&c=" + channel.name;
+  return formattedString;
+}
+
+static String makePathEndPoint(const char* restChannelEndPoint) {
+  if (strcmp(restChannelEndPoint, CHANNEL_ONE_REST_ENDPOINT_PATH) == 0) return "1";
+  if (strcmp(restChannelEndPoint, CHANNEL_TWO_REST_ENDPOINT_PATH) == 0) return "2";
+  if (strcmp(restChannelEndPoint, CHANNEL_THREE_REST_ENDPOINT_PATH) == 0) return "3";
+  if (strcmp(restChannelEndPoint, CHANNEL_FOUR_REST_ENDPOINT_PATH) == 0) return "4";
+  return "1";
+}
+
+static String getDeviceChannelUrl(Channel channel) {
+  String route = "/p/a/" + makePathEndPoint(channel.restChannelEndPoint.c_str());
+  String baseUrl = "http://" + (channel.enableRemoteConfiguration ? channel.masterIPAddress : channel.IP) + route;
+
+  if (channel.enableRemoteConfiguration) {
+      baseUrl += "?d=" + channel.IP + "&c=" + channel.name;
+  } else {
+      baseUrl += "?h";
+  }
+
+  return baseUrl;
+}
+
+  static String formatTime(int hour, int minute) {
+    int hours = hour / 3600;
+    int minutes = minute / 60;
+    String formattedTime = String(hours) + ":";
+
+    if (minutes < 10) {
+        formattedTime += "0";
     }
-  }
+    formattedTime += String(minutes);
 
-  static String formatTime(int hour, int minute){
-    String hours = String(hour/3600);
-    int intMinutes = minute/60;
-    String strMins = ":" + String(intMinutes);
-    
-    if(intMinutes < 10){
-      if(intMinutes < 1){
-        strMins = ":00";
-      }
-      else{
-        strMins = ":0"+String(intMinutes);
-      }
-    }
-    return (hours + strMins);
-  }
-
-  static String getActiveWeekDays(int weekDays[7]){
-    String days[7] = {"SU", "MO", "TU", "WE", "TH", "FR", "SA"};
-    String activeWeekDays = "";
-    bool isFirstGoodDay = true;
-    for (int day = 0; day < 7; day++){  
-      if(weekDays[day] > -1){
-        activeWeekDays = activeWeekDays + (isFirstGoodDay ? "" : ", ") + days[day];
-        isFirstGoodDay = false;
-      }
-    }
-     activeWeekDays = activeWeekDays;
-     return activeWeekDays;
-  }
+    return formattedTime;
+}
   
+  static String getActiveWeekDays(int weekDays[7]) {
+    const String days[7] = {"SU", "MO", "TU", "WE", "TH", "FR", "SA"};
+    String activeWeekDays = "";
+
+    for (int day = 0; day < 7; day++) {
+        if (weekDays[day] > -1) {
+            if (!activeWeekDays.isEmpty()) {
+                activeWeekDays += ", ";
+            }
+            activeWeekDays += days[day];
+        }
+    }
+
+    return activeWeekDays;
+}
+
  static String makeConfigPayload(boolean payloadStatus, Channel channel, uint8_t controlPin){
     String status = payloadStatus ? "ON" : "OFF";
     String iotAdminUrl = getDeviceChannelUrl(channel);
@@ -423,12 +414,12 @@ public:
     }
   }
 
-  static String formatDateToUTC(time_t time){
+  static String formatDateToUTC(time_t time) {
     struct tm *date = localtime(&time);
-      char utcTime[32];
-      strftime(utcTime, sizeof(utcTime), UTC_DATE_FORMAT, date);
-      return utcTime;
-  }
+    char utcTime[32];
+    strftime(utcTime, sizeof(utcTime), UTC_DATE_FORMAT, date);
+    return String(utcTime);
+}
 
   static String formatTimePeriod(int timePeriod){
     byte hours = timePeriod/3600;

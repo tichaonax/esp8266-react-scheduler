@@ -15,19 +15,19 @@ ChannelScheduleRestartService::ChannelScheduleRestartService(
 
 void ChannelScheduleRestartService::scheduleRestart(AsyncWebServerRequest* request) {
   if (request->hasParam(OLD_CHANNEL_CONTROL_PIN)) {
-    AsyncWebParameter* oldControlPinParamater = request->getParam(OLD_CHANNEL_CONTROL_PIN);
+    const AsyncWebParameter* oldControlPinParamater = request->getParam(OLD_CHANNEL_CONTROL_PIN);
     String oldControlPin = oldControlPinParamater->value();
 
-    AsyncWebParameter* controlPinParamater = request->getParam(NEW_CHANNEL_CONTROL_PIN);
+    const AsyncWebParameter* controlPinParamater = request->getParam(NEW_CHANNEL_CONTROL_PIN);
     String controlPin = controlPinParamater->value();
 
-    AsyncWebParameter* oldHomeAssistantTopicTypeParamater = request->getParam(OLD_HA_TOPIC_TYPE);
+    const AsyncWebParameter* oldHomeAssistantTopicTypeParamater = request->getParam(OLD_HA_TOPIC_TYPE);
     String oldHomeAssistantTopicType = oldHomeAssistantTopicTypeParamater->value();
 
-    AsyncWebParameter* homeAssistantTopicTypeParamater = request->getParam(NEW_HA_TOPIC_TYPE);
+    const AsyncWebParameter* homeAssistantTopicTypeParamater = request->getParam(NEW_HA_TOPIC_TYPE);
     String homeAssistantTopicType = homeAssistantTopicTypeParamater->value();
 
-    AsyncWebParameter* enableDateRangeParamater = request->getParam(ENABLE_DATE_RANGE);
+    const AsyncWebParameter* enableDateRangeParamater = request->getParam(ENABLE_DATE_RANGE);
     String enableDateRange = enableDateRangeParamater->value();
 
 

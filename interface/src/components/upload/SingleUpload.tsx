@@ -1,4 +1,4 @@
-import { FC, Fragment } from 'react';
+import React, { FC, Fragment } from 'react';
 import { useDropzone, DropzoneState } from 'react-dropzone';
 
 import { Box, Button, LinearProgress, Theme, Typography, useTheme } from '@mui/material';
