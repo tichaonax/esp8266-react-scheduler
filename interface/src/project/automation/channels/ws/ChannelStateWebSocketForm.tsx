@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { useNavigate  } from "react-router-dom";
 import { useLocation } from 'react-router';
 import { ListItem, ListItemText, Switch, Typography } from '@mui/material';

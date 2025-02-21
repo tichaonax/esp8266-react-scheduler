@@ -24,7 +24,7 @@
     "@types/react-material-ui-form-validator": "^2.1.1",
     "@types/react-redux": "^7.1.20",
     "async-validator": "^4.0.7",
-    "axios": "^0.24.0",
+    "axios": "^1.7.9",
     "compression-webpack-plugin": "^6.1.1",
     "date-fns": "^2.27.0",
     "http-proxy-middleware": "^2.0.1",
@@ -39,7 +39,7 @@
     "react-material-ui-form-validator": "^3.0.0",
     "react-redux": "^7.2.6",
     "react-router-dom": "^6.0.2",
-    "react-scripts": "4.0.3",
+    "react-scripts": "^3.0.1",
     "redux-actions": "^2.6.5",
     "redux-devtools-extension": "^2.13.9",
     "rsuite": "^5.16.0",
@@ -105,6 +105,6 @@
     ]
   },
   "devDependencies": {
-    "@types/redux-actions": "^2.6.2"
+    "@types/redux-actions": "^2.6.5"
   }
 }

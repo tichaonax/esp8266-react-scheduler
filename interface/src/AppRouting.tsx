@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect } from 'react';
+import React, { FC, useContext, useEffect } from 'react';
 import { Navigate, Routes, Route, useLocation } from 'react-router-dom';
 import { useSnackbar, VariantType } from 'notistack';
 

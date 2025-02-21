@@ -1,5 +1,5 @@
 
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { Tab } from '@mui/material';
@@ -26,28 +26,30 @@ import {
 const Schedule: FC = () => {
   const { routerTab } = useRouterTab();
   const {
-    channelOne: isChannelOne,
-    channelTwo: isChannelTwo,
-    channelThree: isChannelThree,
-    channelFour: isChannelFour,
+    channelOne,
+    channelTwo,
+    channelThree,
+    channelFour,
+    activeChannel,
+    HaCall,
   } = RemoteUtils.getDeviceHost();
 
   let defaultChannel: string = "";
 
-  if(isChannelOne){defaultChannel = ONE;}
-  else if(isChannelTwo){defaultChannel = TWO;}
-  else if(isChannelThree){defaultChannel= THREE;}
-  else if(isChannelFour){defaultChannel = FOUR;}
+  if(channelOne){defaultChannel = ONE;}
+  else if(channelTwo){defaultChannel = TWO;}
+  else if(channelThree){defaultChannel = THREE;}
+  else if(channelFour){defaultChannel = FOUR;}
 
   useLayoutTitle("Schedule");
 
   return (
     <CustomTheme>
       <RouterTabs value={routerTab}>
-        { isChannelOne  && <Tab value={`${ONE}`} label={`${CHANNEL_ONE_LABEL}`} /> }
-        { isChannelTwo && <Tab value={`${TWO}`} label={`${CHANNEL_TWO_LABEL}`} /> }
-        { isChannelThree && <Tab value={`${THREE}`} label={`${CHANNEL_THREE_LABEL}`} /> }
-        { isChannelFour && <Tab value={`${FOUR}`} label={`${CHANNEL_FOUR_LABEL}`} /> }
+        { channelOne && ((HaCall && activeChannel === ONE) || !HaCall) ? <Tab value={`${ONE}`} label={`${CHANNEL_ONE_LABEL}`} /> : null}
+        { channelTwo && ((HaCall && activeChannel === TWO) || !HaCall) ? <Tab value={`${TWO}`} label={`${CHANNEL_TWO_LABEL}`} /> : null }
+        { channelThree && ((HaCall && activeChannel === THREE) || !HaCall) ? <Tab value={`${THREE}`} label={`${CHANNEL_THREE_LABEL}`} /> : null }
+        { channelFour && ((HaCall && activeChannel === FOUR) || !HaCall) ? <Tab value={`${FOUR}`} label={`${CHANNEL_FOUR_LABEL}`} /> : null }
       </RouterTabs>
       <Routes>
     <   Route path={`${ONE}`} element={<ChannelOne />} />

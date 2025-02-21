@@ -1,3 +1,4 @@
+import React from 'react';
 import { Typography } from '@mui/material';
 import Slider from '@mui/material/Slider';
 import { ChannelState } from '../../../redux/types/channel';

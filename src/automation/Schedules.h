@@ -15,7 +15,6 @@ class Schedules {
     std::list<ScheduleTask> _scheduleTaskList;
     void setSchedules();
     Automation* _automation;
-
 };
 
 #endif // Schedules_h

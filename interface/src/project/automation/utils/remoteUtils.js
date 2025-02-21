@@ -10,10 +10,6 @@ import {
   TWO,
   THREE,
   FOUR,
-  CHANNEL_ONE,
-  CHANNEL_TWO,
-  CHANNEL_THREE,
-  CHANNEL_FOUR,
   CHANNEL_ONE_STATE,
   CHANNEL_TWO_STATE,
   CHANNEL_THREE_STATE,
@@ -27,6 +23,7 @@ export class RemoteUtils {
   static getProxy() {
       let isProxy = false;
       const currentChannelName = this.getRemoteDeviceChannelName();
+      const activeChannel = this.getRemoteDeviceActiveChannel().split('#')[0];
       const localhost = this.parseUrl(this.getUrlAddress());
       let device = this.getRemoteDeviceUrl();
       let remote = device;
@@ -36,21 +33,24 @@ export class RemoteUtils {
           device = `http://${device}`;
         }
         proxy = this.parseUrl(device);
-        if (proxy.hostname !== localhost.hostname){
+        if (remote !== null){
           isProxy = true;
         }
       }
+
       if(remote === null || remote.length < 2) { remote = "";}
       return({
         isProxy,
         localhost,
         proxy,
-        channelOne : this.isChannelEnabled(CHANNEL_ONE),
-        channelTwo : this.isChannelEnabled(CHANNEL_TWO),
-        channelThree : this.isChannelEnabled(CHANNEL_THREE),
-        channelFour : this.isChannelEnabled(CHANNEL_FOUR),
+        channelOne : this.isChannelEnabled(ONE),
+        channelTwo : this.isChannelEnabled(TWO),
+        channelThree : this.isChannelEnabled(THREE),
+        channelFour : this.isChannelEnabled(FOUR),
         remote,
         currentChannelName,
+        activeChannel,
+        HaCall: this.getParameterByName('h') !== null,
       });
     }
 
@@ -89,6 +89,10 @@ export class RemoteUtils {
 
     static getRemoteDeviceChannelName(){
       return this.getParameterByName(CHANNEL);
+    }
+
+    static getRemoteDeviceActiveChannel(){
+      return this.getLastPathItem(this.getUrlAddress());
     }
 
     static isRemoteDevice(){

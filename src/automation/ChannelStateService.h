@@ -16,9 +16,9 @@ class ChannelStateService : public StatefulService<ChannelState> {
                     AsyncMqttClient* mqttClient,
                     FS* fs,
                     uint8_t channelControlPin,  // 5
-                    char* channelJsonConfigPath,  //  "/config/channelOneState.json"
+                    const char* channelJsonConfigPath,  //  "/config/channelOneState.json"
                     String restChannelEndPoint, //  "/rest/channelOneState"
-                    char* webSocketChannelEndPoint, //  "/ws/channelOneState"
+                    const char* webSocketChannelEndPoint, //  "/ws/channelOneState"
                     float  runEvery,         // run every 30 mins
                     float  offAfter,         // stop after 5 mins
                     int  startTimeHour,    // 8
@@ -43,7 +43,8 @@ class ChannelStateService : public StatefulService<ChannelState> {
                     String  activeStartDateRange,
                     String  activeEndDateRange,
                     String buildVersion,
-                    String weekDays);
+                    String weekDays,
+                    bool autoRebootSystem);
 
   void begin();
   Channel getChannel();
@@ -94,6 +95,7 @@ class ChannelStateService : public StatefulService<ChannelState> {
   String _activeEndDateRange;
   String _buildVersion;
   String _weekDays;
+  bool _autoRebootSystem;
 
 #ifdef ESP32
   void onStationModeGotIP(WiFiEvent_t event, WiFiEventInfo_t info);

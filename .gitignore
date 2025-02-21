@@ -11,3 +11,4 @@
 *.orig
 /include
 /test
+.aider*

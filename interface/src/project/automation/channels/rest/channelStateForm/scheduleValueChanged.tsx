@@ -1,4 +1,4 @@
-import { Dispatch } from 'react';
+import React, { Dispatch } from 'react';
 import { ChannelState } from '../../../redux/types/channel';
 import { Schedule } from '../../../redux/types/schedule';
 import { extractEventValue } from '../../../../../utils';
