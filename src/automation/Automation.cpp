@@ -87,18 +87,18 @@ void Automation::setSchedules(std::list<ScheduleTask>* scheduleTaskList){
       if(year > 1970){
         _validNTP = true;
         _blinkerHeartBeat.detach();
-        _blinkerHeartBeat.attach(2.0, &Automation::staticTickerCallbackTurnLedOn, this);    
-        for(std::list<ScheduleTask>::iterator i = scheduleTaskList->begin(); i != scheduleTaskList->end();)
-          {
-            i->channelTaskScheduler->setSchedule();
-            i->channelTaskScheduler->setToggleSwitch(
-              i->bToggleSwitch,
-              i->toggleReadPin,
-              i->blinkLed,
-              i->ledOn);
-              _bAutoRebootSystem = i->bAutoRebootSystem;
-            i++;
-          }
-      }
+        _blinkerHeartBeat.attach(1.0, &Automation::staticTickerCallbackTurnLedOn, this);    
+      //   for(std::list<ScheduleTask>::iterator i = scheduleTaskList->begin(); i != scheduleTaskList->end();)
+      //     {
+      //       i->channelTaskScheduler->setSchedule();
+      //       i->channelTaskScheduler->setToggleSwitch(
+      //         i->bToggleSwitch,
+      //         i->toggleReadPin,
+      //         i->blinkLed,
+      //         i->ledOn);
+      //         _bAutoRebootSystem = i->bAutoRebootSystem;
+      //       i++;
+      //     }
+       }
     }
 }

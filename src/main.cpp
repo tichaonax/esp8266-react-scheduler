@@ -21,7 +21,7 @@ boolean bToggleSwitch = false;
 #endif
 
 Automation automation = Automation();
-//Schedules schedules = Schedules(&automation);
+Schedules schedules = Schedules(&automation);
 
 
 void setup()
@@ -44,5 +44,5 @@ void loop()
     esp8266React.loop();
 
     // run the automation schedules
-    //schedules.runSchedules();
+    schedules.runSchedules();
 }
