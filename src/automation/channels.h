@@ -75,7 +75,7 @@
 
 #define CHANNEL_TWO_REST_ENDPOINT_PATH "/rest/channelTwoState"  //restChannelEndPoint
 #define CHANNEL_TWO_SOCKET_PATH "/ws/channelTwoState"  // webSocketChannelEndPoint
-#define CHANNEL_TWO_DEFAULT_NAME "Living Room Fridge" //  defaultChannelName
+#define CHANNEL_TWO_DEFAULT_NAME "Tx/Esp8266 Chip UI Fridge" //  defaultChannelName
 #define CHANNEL_TWO_CONFIG_JSON_PATH "/config/channelTwoState.json"  // channelJsonConfigPath
 #define CHANNEL_TWO_HOME_ASSISTANT_ENTITY "ch2"
 #define CHANNEL_TWO_DEFAULT_CONTROL_RUN_EVERY 30.0f
@@ -114,7 +114,7 @@
 
 #define CHANNEL_THREE_REST_ENDPOINT_PATH "/rest/channelThreeState"  //restChannelEndPoint
 #define CHANNEL_THREE_SOCKET_PATH "/ws/channelThreeState"  // webSocketChannelEndPoint
-#define CHANNEL_THREE_DEFAULT_NAME "Tx/Esp8266 Chip" //  defaultChannelName
+#define CHANNEL_THREE_DEFAULT_NAME "Tx/Esp8266 Chip UI" //  defaultChannelName
 #define CHANNEL_THREE_CONFIG_JSON_PATH "/config/channelThreeState.json"  // channelJsonConfigPath
 #define CHANNEL_THREE_HOME_ASSISTANT_ENTITY "ch3"    // homeAssistantEntity
 #define CHANNEL_THREE_DEFAULT_CONTROL_RUN_EVERY 30.0f
