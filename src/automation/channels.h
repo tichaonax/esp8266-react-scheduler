@@ -36,7 +36,7 @@
 
 #define CHANNEL_ONE_REST_ENDPOINT_PATH "/rest/channelOneState"  //restChannelEndPoint
 #define CHANNEL_ONE_SOCKET_PATH "/ws/channelOneState"  // webSocketChannelEndPoint
-#define CHANNEL_ONE_DEFAULT_NAME "Water Pump X" //  defaultChannelName
+#define CHANNEL_ONE_DEFAULT_NAME "Tx/Esp8266 Chip UI Pump" //  defaultChannelName
 #define CHANNEL_ONE_CONFIG_JSON_PATH "/config/channelOneState.json"  // channelJsonConfigPath
 #define CHANNEL_ONE_HOME_ASSISTANT_ENTITY "ch1"
 #define CHANNEL_ONE_DEFAULT_CONTROL_RUN_EVERY 15.0f
@@ -114,7 +114,7 @@
 
 #define CHANNEL_THREE_REST_ENDPOINT_PATH "/rest/channelThreeState"  //restChannelEndPoint
 #define CHANNEL_THREE_SOCKET_PATH "/ws/channelThreeState"  // webSocketChannelEndPoint
-#define CHANNEL_THREE_DEFAULT_NAME "Tx/Esp8266 Chip UI" //  defaultChannelName
+#define CHANNEL_THREE_DEFAULT_NAME "Tx/Esp8266 Chip UI Light" //  defaultChannelName
 #define CHANNEL_THREE_CONFIG_JSON_PATH "/config/channelThreeState.json"  // channelJsonConfigPath
 #define CHANNEL_THREE_HOME_ASSISTANT_ENTITY "ch3"    // homeAssistantEntity
 #define CHANNEL_THREE_DEFAULT_CONTROL_RUN_EVERY 30.0f
@@ -153,7 +153,7 @@
 
 #define CHANNEL_FOUR_REST_ENDPOINT_PATH "/rest/channelFourState"  //restChannelEndPoint
 #define CHANNEL_FOUR_SOCKET_PATH "/ws/channelFourState"  // webSocketChannelEndPoint
-#define CHANNEL_FOUR_DEFAULT_NAME "Outside Lights" //  defaultChannelName
+#define CHANNEL_FOUR_DEFAULT_NAME "Tx/Esp8266 Chip UI Outside Lights" //  defaultChannelName
 #define CHANNEL_FOUR_CONFIG_JSON_PATH "/config/channelFourState.json"  // channelJsonConfigPath
 #define CHANNEL_FOUR_HOME_ASSISTANT_ENTITY "ch4"    // homeAssistantEntity
 #define CHANNEL_FOUR_DEFAULT_CONTROL_RUN_EVERY 30.0f
