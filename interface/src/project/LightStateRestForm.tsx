@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 
 import { Button, Checkbox } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';

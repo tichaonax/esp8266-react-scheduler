@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 
 import { Theme } from '@mui/material';
 import { makeStyles, createStyles } from "@mui/styles";

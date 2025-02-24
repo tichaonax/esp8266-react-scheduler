@@ -1,5 +1,5 @@
 
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { Tab } from '@mui/material';

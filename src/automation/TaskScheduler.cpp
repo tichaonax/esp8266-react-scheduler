@@ -4,83 +4,83 @@
 #include "TaskScheduler.h"
 
 TaskScheduler::TaskScheduler(AsyncWebServer* server,
-                              SecurityManager* securityManager,
-                              AsyncMqttClient* mqttClient,
-                              FS* fs,
-                              uint8_t channelControlPin,
-                              char* channelJsonConfigPath, 
-                              String restChannelEndPoint,
-                              char* webSocketChannelEndPoint,
-                              float  runEvery,
-                              float  offAfter,
-                              int  startTimeHour,
-                              int  startTimeMinute,
-                              int  endTimeHour,
-                              int  endTimeMinute,
-                              bool    enabled,
-                              String  channelName,
-                              bool  enableTimeSpan,
-                              ChannelMqttSettingsService* channelMqttSettingsService,
-                              bool randomize,
-                              float hotTimeHour,
-                              float overrideTime,
-                              bool enableMinimumRunTime,
-                              uint8_t homeAssistantTopicType,
-                              String homeAssistantIcon,
-                              bool enableRemoteConfiguration,
-                              String masterIPAddress,
-                              String restChannelRestartEndPoint,
-                              bool enableDateRange,
-                              bool activeOutsideDateRange,
-                              String  activeStartDateRange,
-                              String  activeEndDateRange,
-                              String buildVersion,
-                              String weekDays,
-                              bool autoRebootSystem) :
-    _channelStateService(server,
-                        securityManager,
-                        mqttClient,
-                        fs,
-                        channelControlPin,
-                        channelJsonConfigPath,
-                        restChannelEndPoint,
-                        webSocketChannelEndPoint,
-                        runEvery,
-                        offAfter,
-                        startTimeHour,
-                        startTimeMinute,
-                        endTimeHour,
-                        endTimeMinute,
-                        enabled,
-                        channelName,
-                        enableTimeSpan,
-                        channelMqttSettingsService,
-                        randomize,
-                        hotTimeHour,
-                        overrideTime,
-                        enableMinimumRunTime,
-                        homeAssistantTopicType,
-                        homeAssistantIcon,
-                        enableRemoteConfiguration,
-                        masterIPAddress,
-                        restChannelRestartEndPoint,
-                        enableDateRange,
-                        activeOutsideDateRange,
-                        activeStartDateRange,
-                        activeEndDateRange,
-                        buildVersion,
-                        weekDays,
-                        autoRebootSystem)
-                                       {
-                                         _isHotScheduleActive = false;
-                                         _isOverrideActive = false;
+                             SecurityManager* securityManager,
+                             AsyncMqttClient* mqttClient,
+                             FS* fs,
+                             uint8_t channelControlPin,
+                             const char* channelJsonConfigPath,
+                             String restChannelEndPoint,
+                             const char* webSocketChannelEndPoint,
+                             float runEvery,
+                             float offAfter,
+                             int startTimeHour,
+                             int startTimeMinute,
+                             int endTimeHour,
+                             int endTimeMinute,
+                             bool enabled,
+                             String channelName,
+                             bool enableTimeSpan,
+                             ChannelMqttSettingsService* channelMqttSettingsService,
+                             bool randomize,
+                             float hotTimeHour,
+                             float overrideTime,
+                             bool enableMinimumRunTime,
+                             uint8_t homeAssistantTopicType,
+                             String homeAssistantIcon,
+                             bool enableRemoteConfiguration,
+                             String masterIPAddress,
+                             String restChannelRestartEndPoint,
+                             bool enableDateRange,
+                             bool activeOutsideDateRange,
+                             String activeStartDateRange,
+                             String activeEndDateRange,
+                             String buildVersion,
+                             String weekDays,
+                             bool autoRebootSystem):
+                             _channelStateService(server,
+                                                 securityManager,
+                                                 mqttClient,
+                                                 fs,
+                                                 channelControlPin,
+                                                 channelJsonConfigPath,
+                                                 restChannelEndPoint,
+                                                 webSocketChannelEndPoint,
+                                                 runEvery,
+                                                 offAfter,
+                                                 startTimeHour,
+                                                 startTimeMinute,
+                                                 endTimeHour,
+                                                 endTimeMinute,
+                                                 enabled,
+                                                 channelName,
+                                                 enableTimeSpan,
+                                                 channelMqttSettingsService,
+                                                 randomize,
+                                                 hotTimeHour,
+                                                 overrideTime,
+                                                 enableMinimumRunTime,
+                                                 homeAssistantTopicType,
+                                                 homeAssistantIcon,
+                                                 enableRemoteConfiguration,
+                                                 masterIPAddress,
+                                                 restChannelRestartEndPoint,
+                                                 enableDateRange,
+                                                 activeOutsideDateRange,
+                                                 activeStartDateRange,
+                                                 activeEndDateRange,
+                                                 buildVersion,
+                                                 weekDays,
+                                                 autoRebootSystem) {
+
+                              _isHotScheduleActive = false;
+                              _isOverrideActive = false;
 
     _channelStateService.addUpdateHandler([&](const String& originId) {
-      if(_channelStateService.getChannel().schedule.isOverride){
-        this->setOverrideTime();
-      }  
+    if(_channelStateService.getChannel().schedule.isOverride){
+    this->setOverrideTime();
+    }  
     }, false);
-  };
+}
 
 void TaskScheduler::begin(){
     _channelStateService.begin();
@@ -193,7 +193,7 @@ void TaskScheduler::controlOnTicker(){
 
 void TaskScheduler::controlOffTicker(){
   _channelStateService.update([&](ChannelState& channelState) {
-    channelState.channel.controlOffDateTime = utils.strDeltaLocalTime(ControlOffTime);
+    channelState.channel.controlOffDateTime = _utilities.strDeltaLocalTime(ControlOffTime);
     return StateUpdateResult::CHANGED;
   }, _channel.name);
 
@@ -207,7 +207,7 @@ void TaskScheduler::controlOffTicker(){
 
 void TaskScheduler::scheduleTaskTicker(ScheduledTime schedule){
    if(ScheduleTime == 1 && !_isReschedule){
-    CurrentTime currentTime = getCurrentTime();
+   TimeManager::CurrentTime currentTime = _timeManager.getCurrentTime();
     ScheduleTime = _channel.schedule.runEvery - (currentTime.minutesInSec % _channel.schedule.runEvery);
   }
   ScheduleTicker.attach(1, +[](TaskScheduler* task) {
@@ -225,7 +225,7 @@ bool TaskScheduler::isScheduleWithInDateRange(String activeStartDateRange,
     return true;
   }
 
-  DateRange dateRange = utils.getActiveDateRange(activeStartDateRange, activeEndDateRange, currentTime);
+  DateRange dateRange = _utilities.getActiveDateRange(activeStartDateRange, activeEndDateRange, currentTime);
   if(!dateRange.valid){
     return true;
   }
@@ -240,7 +240,7 @@ bool TaskScheduler::isScheduleWithInDateRange(String activeStartDateRange,
 }
 
 ScheduledTime TaskScheduler::getNextRunTime(){
-  ScheduledTime schedule = utils.getScheduleTimes(_channel.startTime,
+  ScheduledTime schedule = _utilities.getScheduleTimes(_channel.startTime,
   _channel.endTime, _channel.schedule.hotTimeHour, _channel.enableTimeSpan,
   _channel.isHotScheduleActive, _channel.name, _channel.randomize,
   _isOverrideActive, _channel.enableMinimumRunTime);
@@ -325,8 +325,8 @@ void TaskScheduler::setSchedule(bool isReschedule){
     }
 
     _channelStateService.update([&](ChannelState& channelState) {
-      channelState.channel.lastStartedChangeTime = utils.strLocalTime();
-      channelState.channel.nextRunTime = utils.strDeltaLocalTime(schedule.scheduleTime);
+      channelState.channel.lastStartedChangeTime = _utilities.strLocalTime();
+      channelState.channel.nextRunTime = _utilities.strDeltaLocalTime(schedule.scheduleTime);
       channelState.channel.enableDateRange = _channel.enableDateRange;
       debug(F("Task set to start at : "));
       debugln(channelState.channel.nextRunTime);
@@ -350,7 +350,7 @@ void TaskScheduler::scheduleHotTask(){
 
 void TaskScheduler::runHotTask(){
   ScheduledTime scheduleTime = getNextRunTime();
-  bool canTaskRunToday = utils.canTaskRunToday(_channel, scheduleTime);
+  bool canTaskRunToday = _utilities.canTaskRunToday(_channel, scheduleTime);
   if(_channel.enabled && canTaskRunToday){
     _isHotScheduleActive = true;
     OffHotHourTime = scheduleTime.scheduleHotTimeEndDateTime - scheduleTime.currentTime;
@@ -363,8 +363,8 @@ void TaskScheduler::runHotTask(){
       _channelStateService.update([&](ChannelState& channelState) {
         channelState.channel.isHotScheduleActive = true;
         channelState.channel.controlOn = true;
-        channelState.channel.lastStartedChangeTime =  utils.strLocalTime();
-        channelState.channel.offHotHourDateTime = utils.strDeltaLocalTime(OffHotHourTime);
+        channelState.channel.lastStartedChangeTime =  _utilities.strLocalTime();
+        channelState.channel.offHotHourDateTime = _utilities.strDeltaLocalTime(OffHotHourTime);
         channelState.channel.controlOffDateTime = channelState.channel.offHotHourDateTime;
         return StateUpdateResult::CHANGED;
       }, _channel.name);
@@ -382,7 +382,7 @@ void TaskScheduler::scheduleTimeSpanTask(){
 
 void TaskScheduler::updateStatus(short delta){
   _channelStateService.update([&](ChannelState& channelState) {
-  channelState.channel.nextRunTime = utils.strDeltaLocalTime(delta);;  
+  channelState.channel.nextRunTime = _utilities.strDeltaLocalTime(delta);;  
   return StateUpdateResult::CHANGED;
   }, _channel.name);
 }
@@ -449,7 +449,7 @@ void TaskScheduler::runTask(){
     return;
   }
 
-  bool canTaskRunToday = utils.canTaskRunToday(_channel, scheduleTime);
+  bool canTaskRunToday = _utilities.canTaskRunToday(_channel, scheduleTime);
 
   if(scheduleTime.isRunTaskNow && canTaskRunToday){
     if(!_channel.randomize || (_channel.randomize && _channel.enableTimeSpan)){
@@ -470,7 +470,7 @@ void TaskScheduler::controlOn(){
   if(_channel.enabled && !_isOverrideActive){
     _channelStateService.update([&](ChannelState& channelState) {
       channelState.channel.controlOn = true;
-      channelState.channel.lastStartedChangeTime =  utils.strLocalTime();
+      channelState.channel.lastStartedChangeTime =  _utilities.strLocalTime();
       return StateUpdateResult::CHANGED;
     }, _channel.name);
 
@@ -493,7 +493,7 @@ void TaskScheduler::controlOn(){
 void TaskScheduler::overrideControlOff(){
   _channelStateService.update([&](ChannelState& channelState) {
       channelState.channel.controlOn = false;
-      channelState.channel.lastStartedChangeTime = utils.strLocalTime();
+      channelState.channel.lastStartedChangeTime = _utilities.strLocalTime();
       return StateUpdateResult::CHANGED;
     }, _channel.name);
 
@@ -537,7 +537,7 @@ void TaskScheduler::digitalClockDisplay(time_t tnow) {
 
 int TaskScheduler::getScheduleTimeSpanOff(){
   int next = 1;
-  CurrentTime current = getCurrentTime();
+ TimeManager::CurrentTime current = _timeManager.getCurrentTime();
   if(_channel.startTime < _channel.endTime){
     if(current.totalCurrentTimeInSec < _channel.endTime ){
       next = _channel.endTime - current.totalCurrentTimeInSec;

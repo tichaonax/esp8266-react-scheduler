@@ -1,5 +1,5 @@
 
-import { FC } from 'react';
+import React, { FC } from 'react';
 
 import { Box, Divider, Drawer, Toolbar, Typography, styled } from '@mui/material';
 

@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 
 import * as SystemApi from "../../api/system";
 import { MessageBox, SectionContent, SingleUpload, useFileUpload } from '../../components';

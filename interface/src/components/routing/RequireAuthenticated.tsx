@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect } from 'react';
+import React, { FC, useContext, useEffect } from 'react';
 import { Navigate, useLocation } from "react-router-dom";
 
 import { AuthenticatedContext, AuthenticatedContextValue, AuthenticationContext } from '../../contexts/authentication/context';

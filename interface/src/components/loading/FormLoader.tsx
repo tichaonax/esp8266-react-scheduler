@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 
 import { Box, Button, CircularProgress, Typography } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
