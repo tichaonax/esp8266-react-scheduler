@@ -7,6 +7,12 @@
 #include <AsyncMqttClient.h>
 #include <SettingValue.h>
 
+#ifdef ESP32
+#include <WiFi.h>
+#elif defined(ESP8266)
+#include <ESP8266WiFi.h>
+#endif
+
 #ifndef FACTORY_MQTT_ENABLED
 #define FACTORY_MQTT_ENABLED false
 #endif

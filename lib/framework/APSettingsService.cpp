@@ -45,6 +45,26 @@ void APSettingsService::manageAP() {
 
 void APSettingsService::startAP() {
   Serial.println(F("Starting software access point"));
+  
+#ifdef ESP32
+  // ESP32: Ensure proper mode transition to AP or AP_STA
+  WiFiMode_t currentMode = WiFi.getMode();
+  Serial.printf("Current WiFi mode before AP start: %d\n", currentMode);
+  
+  if (currentMode == WIFI_STA) {
+    // If in STA mode, transition to AP_STA to keep STA connection
+    WiFi.mode(WIFI_AP_STA);
+    delay(200);  // Allow mode transition
+    yield();
+  } else if (currentMode == WIFI_OFF) {
+    // If off, go to AP mode
+    WiFi.mode(WIFI_AP);
+    delay(200);
+    yield();
+  }
+  // If already in AP or AP_STA mode, no change needed
+#endif
+  
   WiFi.softAPConfig(_state.localIP, _state.gatewayIP, _state.subnetMask);
   WiFi.softAP(_state.ssid.c_str(), _state.password.c_str(), _state.channel, _state.ssidHidden, _state.maxClients);
   if (!_dnsServer) {
@@ -64,7 +84,31 @@ void APSettingsService::stopAP() {
     _dnsServer = nullptr;
   }
   Serial.println(F("Stopping software access point"));
+  
+#ifdef ESP32
+  // ESP32: Careful AP shutdown
+  WiFiMode_t currentMode = WiFi.getMode();
+  Serial.printf("Current WiFi mode before AP stop: %d\n", currentMode);
+  
   WiFi.softAPdisconnect(true);
+  
+  // Adjust mode after stopping AP
+  if (currentMode == WIFI_AP_STA) {
+    // If in AP_STA mode, transition to STA only
+    delay(100);
+    WiFi.mode(WIFI_STA);
+    delay(200);
+    yield();
+  } else if (currentMode == WIFI_AP) {
+    // If in AP only mode, go to OFF
+    delay(100);
+    WiFi.mode(WIFI_OFF);
+    delay(200);
+    yield();
+  }
+#else
+  WiFi.softAPdisconnect(true);
+#endif
 }
 
 void APSettingsService::handleDNS() {

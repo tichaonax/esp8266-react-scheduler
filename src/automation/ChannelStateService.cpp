@@ -121,7 +121,14 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
 
 #ifdef ESP32
 void ChannelStateService::onStationModeGotIP(WiFiEvent_t event, WiFiEventInfo_t info) {
-  updateStateIP(WiFi.localIP().toString());
+  // ESP32: Avoid immediate WebSocket updates during WiFi events to prevent heap corruption
+  // Store IP for later update in main loop instead of immediate WebSocket transmission
+  Serial.printf("[%lu] ESP32 got IP: %s, deferring state update\n", 
+                millis(), WiFi.localIP().toString().c_str());
+  
+  // Just update the state without triggering WebSocket updates immediately
+  _state.channel.IP = WiFi.localIP().toString();
+  // Note: WebSocket clients will get updated on next regular state transmission
 }
 
 void ChannelStateService::onStationModeDisconnected(WiFiEvent_t event, WiFiEventInfo_t info) {

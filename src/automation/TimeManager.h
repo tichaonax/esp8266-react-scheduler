@@ -25,7 +25,7 @@ public:
     }
 
     void digitalClockDisplay(time_t tnow) {
-        tm *tm_local = localtime(&tnow);
+        (void)tnow; // Suppress unused parameter warning
         // Display the time in a human-readable format
     }
 };

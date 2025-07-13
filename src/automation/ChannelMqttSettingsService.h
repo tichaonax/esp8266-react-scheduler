@@ -4,7 +4,7 @@
 #include <HttpEndpoint.h>
 #include <FSPersistence.h>
 #include <SettingValue.h>
-#include "channels.h"
+#include "Channels.h"
 #include "ChannelState.h"
 
 #define CHANNEL_ONE_BROKER_SETTINGS_FILE "/config/C1BrokerSettings.json"

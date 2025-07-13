@@ -261,8 +261,8 @@ ScheduledTime getScheduleTimes(int startTime, int endTime,
               && schedule.currentTime < schedule.scheduleEndDateTime;
       } else {
           if (!schedule.isHotScheduleAdjust) {
-              schedule.isRunTaskNow = schedule.currentTime > schedule.scheduleHotTimeEndDateTime 
-                  && schedule.currentTime < schedule.scheduleEndDateTime || schedule.scheduleTime <= 1;
+              schedule.isRunTaskNow = (schedule.currentTime > schedule.scheduleHotTimeEndDateTime 
+                  && schedule.currentTime < schedule.scheduleEndDateTime) || schedule.scheduleTime <= 1;
           } else {
               schedule.isRunTaskNow = schedule.currentTime > (schedule.scheduleHotTimeEndDateTime - TWENTY_FOUR_HOUR_DURATION)
                   && schedule.currentTime < (schedule.scheduleEndDateTime - TWENTY_FOUR_HOUR_DURATION);

@@ -149,14 +149,45 @@ class WebSocketTx : virtual public WebSocketConnector<T> {
     WebSocketConnector<T>::_statefulService->read(payload, _stateReader);
 
     size_t len = measureJson(jsonDocument);
+    
+#ifdef ESP32
+    // ESP32: Temporarily disable WebSocket transmissions to prevent heap corruption
+    // The AsyncWebSocket library has heap corruption issues on ESP32
+    Serial.printf("[%lu] WebSocket: ESP32 transmission disabled to prevent heap corruption\n", millis());
+    yield();
+    return;
+    
+    // Previous heap check (disabled for now)
+    /*
+    size_t freeHeap = ESP.getFreeHeap();
+    if (freeHeap < 8192) {  // Require at least 8KB free heap
+      Serial.printf("[%lu] WebSocket: Insufficient heap (%u bytes), skipping transmission\n", 
+                    millis(), freeHeap);
+      yield();
+      return;
+    }
+    */
+#endif
+    
     AsyncWebSocketMessageBuffer* buffer = WebSocketConnector<T>::_webSocket.makeBuffer(len);
     if (buffer) {
       serializeJson(jsonDocument, (char*)buffer->get(), len + 1);
+      
+#ifdef ESP32
+      // ESP32: Add yield before WebSocket transmission
+      yield();
+#endif
+      
       if (client) {
         client->text(buffer);
       } else {
         WebSocketConnector<T>::_webSocket.textAll(buffer);
       }
+      
+#ifdef ESP32
+      // ESP32: Add yield after WebSocket transmission
+      yield();
+#endif
     }
   }
 };

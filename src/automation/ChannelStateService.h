@@ -9,6 +9,12 @@
 #include "ChannelState.h"
 #include "ChannelMqttSettingsService.h"
 
+#ifdef ESP32
+#include <WiFi.h>
+#elif defined(ESP8266)
+#include <ESP8266WiFi.h>
+#endif
+
 class ChannelStateService : public StatefulService<ChannelState> {
  public:
   ChannelStateService(AsyncWebServer* server,

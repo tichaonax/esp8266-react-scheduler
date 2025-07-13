@@ -7,8 +7,10 @@
 #include <time.h>
 #ifdef ESP32
 #include <lwip/apps/sntp.h>
+#include <WiFi.h>
 #elif defined(ESP8266)
 #include <sntp.h>
+#include <ESP8266WiFi.h>
 #endif
 
 #ifndef FACTORY_NTP_ENABLED

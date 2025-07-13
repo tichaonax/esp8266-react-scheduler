@@ -17,6 +17,6 @@ export const MQTT_SETTINGS_VALIDATOR = new Schema({
   ],
   max_topic_length: [
     { required: true, message: "Max topic length is required" },
-    { type: "number", min: 16, max: 1024, message: "Max topic length must be between 16 and 1024" }
+    { type: "number", min: 16, max: 4096, message: "Max topic length must be between 16 and 4096" }
   ]
 });

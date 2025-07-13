@@ -7,6 +7,12 @@
 #include <HttpEndpoint.h>
 #include <JsonUtils.h>
 
+#ifdef ESP32
+#include <WiFi.h>
+#elif defined(ESP8266)
+#include <ESP8266WiFi.h>
+#endif
+
 #ifndef FACTORY_WIFI_SSID
 #define FACTORY_WIFI_SSID ""
 #endif
@@ -88,6 +94,7 @@ class WiFiSettingsService : public StatefulService<WiFiSettings> {
  public:
   WiFiSettingsService(AsyncWebServer* server, FS* fs, SecurityManager* securityManager);
 
+  void setup();
   void begin();
   void loop();
 
@@ -95,6 +102,14 @@ class WiFiSettingsService : public StatefulService<WiFiSettings> {
   HttpEndpoint<WiFiSettings> _httpEndpoint;
   FSPersistence<WiFiSettings> _fsPersistence;
   unsigned long _lastConnectionAttempt;
+
+#ifdef ESP32
+  // ESP32-specific connection reliability
+  int _connectionRetries;
+  static const int MAX_RETRIES = 3;
+  static const unsigned long CONNECTION_TIMEOUT = 10000; // 10 seconds
+  void handleConnectionFailure(wl_status_t status);
+#endif
 
 #ifdef ESP32
   bool _stopping;

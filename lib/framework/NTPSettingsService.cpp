@@ -1,4 +1,7 @@
 #include <NTPSettingsService.h>
+#ifdef ESP8266
+#include <ESP8266WiFi.h>
+#endif
 
 NTPSettingsService::NTPSettingsService(AsyncWebServer* server, FS* fs, SecurityManager* securityManager) :
     _httpEndpoint(NTPSettings::read, NTPSettings::update, this, server, NTP_SETTINGS_SERVICE_PATH, securityManager),
