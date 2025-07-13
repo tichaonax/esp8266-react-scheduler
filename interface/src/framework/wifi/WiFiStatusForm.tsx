@@ -11,6 +11,7 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import * as WiFiApi from "../../api/wifi";
 import { WiFiConnectionStatus, WiFiStatus } from "../../types";
 import { ButtonRow, FormLoader, SectionContent } from "../../components";
+import { AutoRefreshWrapper } from "../../components/AutoRefreshWrapper";
 import { useRest } from "../../utils";
 
 const isConnected = ({ status }: WiFiStatus) => status === WiFiConnectionStatus.WIFI_STATUS_CONNECTED;
@@ -149,9 +150,16 @@ const WiFiStatusForm: FC = () => {
   };
 
   return (
-    <SectionContent title='WiFi Status' titleGutter>
-      {content()}
-    </SectionContent>
+    <AutoRefreshWrapper
+      onRefresh={loadData}
+      defaultInterval={20000}
+      defaultEnabled={true}
+      title="WiFi Status Auto-refresh"
+    >
+      <SectionContent title='WiFi Status' titleGutter>
+        {content()}
+      </SectionContent>
+    </AutoRefreshWrapper>
   );
 
 };

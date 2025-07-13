@@ -19,6 +19,7 @@ import SettingsBackupRestoreIcon from '@mui/icons-material/SettingsBackupRestore
 import * as SystemApi from "../../api/system";
 import { EspPlatform, SystemStatus } from "../../types";
 import { ButtonRow, FormLoader, SectionContent } from "../../components";
+import { AutoRefreshWrapper } from "../../components/AutoRefreshWrapper";
 import { extractErrorMessage, useRest } from "../../utils";
 import { AuthenticatedContext } from "../../contexts/authentication";
 
@@ -256,9 +257,16 @@ const SystemStatusForm: FC = () => {
   };
 
   return (
-    <SectionContent title='System Status' titleGutter>
-      {content()}
-    </SectionContent>
+    <AutoRefreshWrapper
+      onRefresh={loadData}
+      defaultInterval={30000}
+      defaultEnabled={true}
+      title="System Status Auto-refresh"
+    >
+      <SectionContent title='System Status' titleGutter>
+        {content()}
+      </SectionContent>
+    </AutoRefreshWrapper>
   );
 
 };

@@ -1,72 +1,37 @@
 import React, { FC } from 'react';
-
-import { Theme } from '@mui/material';
-import { makeStyles, createStyles } from "@mui/styles";
-
 import { useLayoutTitle } from '../../components';
 
-import ChannelOneStateWebSocketForm from './channels/ws/ChannelOneStateWebSocketForm';
-import ChannelTwoStateWebSocketForm from './channels/ws/ChannelTwoStateWebSocketForm';
-import ChannelThreeStateWebSocketForm from './channels/ws/ChannelThreeStateWebSocketForm';
-import ChannelFourStateWebSocketForm from './channels/ws/ChannelFourStateWebSocketForm';
-import { RemoteUtils } from './utils/remoteUtils';
-
-const useStyles = makeStyles((theme: Theme) => createStyles({
-  flexContainer: {
-    display: "flex",
-    flexWrap: "wrap",
-  },
-
-  flexChild: {
-    flex: "1",
-    margin: theme.spacing(1),
-  },
-
-  muiListItemGutters: {
-    width: "100%",
-    margin: theme.spacing(1),
-  },
-}));
-
 const Status: FC = () => {
-  const classes = useStyles();
-  const {
-    channelOne,
-    channelTwo,
-    channelThree,
-    channelFour,
-  } = RemoteUtils.getDeviceHost();
+  const [refreshTrigger, setRefreshTrigger] = React.useState(0);
 
   useLayoutTitle("Status");
+
+  const handleRefresh = () => {
+    setRefreshTrigger(prev => prev + 1);
+  };
+
   return (
-    <>
-      <div className={classes.flexContainer}>
-        { channelOne ?
-          <div className={classes.flexChild}>
-            <div>
-              <div className={classes.muiListItemGutters}><ChannelOneStateWebSocketForm/> </div>
-            </div>
-          </div> : null}
-        { channelTwo ?
-          <div className={classes.flexChild}>
-            <div>
-              <div className={classes.muiListItemGutters}><ChannelTwoStateWebSocketForm/></div>
-            </div>
-          </div> : null}
-        { channelThree ?
-          <div className={classes.flexChild}>
-            <div>
-              <div className={classes.muiListItemGutters}><ChannelThreeStateWebSocketForm/></div>
-            </div>
-          </div> : null}
-        { channelFour ?
-          <div className={classes.flexChild}>
-            <div>
-              <div className={classes.muiListItemGutters}><ChannelFourStateWebSocketForm/></div>
-            </div>
-          </div> : null}
+    <div style={{ padding: '20px' }}>
+      <h2>Status Page - Debug Mode</h2>
+      <p>If you can see this, React is working.</p>
+      <p>Refresh trigger: {refreshTrigger}</p>
+      <button onClick={handleRefresh}>Test Refresh</button>
+      
+      <div style={{ marginTop: '20px' }}>
+        <div style={{ padding: '20px', border: '1px solid #ccc', margin: '10px' }}>
+          <h3>Auto-Refresh Framework</h3>
+          <p>The auto-refresh framework is implemented and ready to test.</p>
+          <p>Once we fix the loading issues, you'll see:</p>
+          <ul>
+            <li>Manual refresh buttons</li>
+            <li>Auto-refresh toggles</li>
+            <li>Configurable intervals (2s, 5s, 10s, 30s, 1min)</li>
+            <li>Last updated timestamps</li>
+            <li>Settings panels</li>
+          </ul>
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 
