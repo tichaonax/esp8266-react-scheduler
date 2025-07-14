@@ -14,9 +14,9 @@ import { MuiThemeOverride } from './themeOverrides';
 
 import { useLayoutTitle } from '../../../components';
 
-import ChannelOneStateRestForm from './rest/ChannelOneStateRestForm';
 import ChannelOneMqttSettingsForm from './mqtt/ChannelOneMqttSettingsForm';
-import ChannelOneStateWebSocketForm from './ws/ChannelOneStateWebSocketForm';
+import OptimizedChannelStatus from './status/OptimizedChannelStatus';
+import OptimizedScheduleForm from './schedule/OptimizedScheduleForm';
 
 const ChannelOne: FC = () => {
   useLayoutTitle("Automation");
@@ -38,8 +38,16 @@ const ChannelOne: FC = () => {
                 <Tab icon={<MessageIcon/>} label="Mqtt" value="3" disabled={false} />
               </TabList>
             </Box>
-            <TabPanel value="1"><ChannelOneStateRestForm/></TabPanel>
-            <TabPanel value="2"><ChannelOneStateWebSocketForm/></TabPanel>
+            <TabPanel value="1">
+              <OptimizedScheduleForm channelId="One" />
+            </TabPanel>
+            <TabPanel value="2">
+              <OptimizedChannelStatus 
+                channelId="One" 
+                defaultAutoRefresh={true}
+                defaultInterval={5000}
+              />
+            </TabPanel>
             <TabPanel value="3"><ChannelOneMqttSettingsForm/></TabPanel>
           </TabContext>
         </Box>

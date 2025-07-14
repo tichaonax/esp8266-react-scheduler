@@ -14,9 +14,9 @@ import { MuiThemeOverride } from './themeOverrides';
 
 import { useLayoutTitle } from '../../../components';
 
-import ChannelFourStateRestForm from './rest/ChannelFourStateRestForm';
 import ChannelFourMqttSettingsForm from './mqtt/ChannelFourMqttSettingsForm';
-import ChannelFourStateWebSocketForm from './ws/ChannelFourStateWebSocketForm';
+import OptimizedChannelStatus from './status/OptimizedChannelStatus';
+import OptimizedScheduleForm from './schedule/OptimizedScheduleForm';
 
 const ChannelFour: FC = () => {
   useLayoutTitle("Automation");
@@ -38,8 +38,16 @@ const ChannelFour: FC = () => {
                 <Tab icon={<MessageIcon/>} label="Mqtt" value="3" disabled={false} />
               </TabList>
             </Box>
-            <TabPanel value="1"> <ChannelFourStateRestForm/></TabPanel>
-            <TabPanel value="2"><ChannelFourStateWebSocketForm/></TabPanel>
+            <TabPanel value="1">
+              <OptimizedScheduleForm channelId="Four" />
+            </TabPanel>
+            <TabPanel value="2">
+              <OptimizedChannelStatus 
+                channelId="Four" 
+                defaultAutoRefresh={true}
+                defaultInterval={5000}
+              />
+            </TabPanel>
             <TabPanel value="3"><ChannelFourMqttSettingsForm/></TabPanel>
           </TabContext>
         </Box>
