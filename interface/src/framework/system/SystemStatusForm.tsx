@@ -3,8 +3,10 @@ import { useSnackbar } from "notistack";
 
 import {
   Avatar, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle,
-  Divider, List, ListItem, ListItemAvatar, ListItemText
+  Divider, List, ListItem, ListItemAvatar, ListItemText, Typography, Card, CardContent, 
+  Grid, Fade, useTheme, useMediaQuery, LinearProgress
 } from "@mui/material";
+import { makeStyles, createStyles } from "@mui/styles";
 import DevicesIcon from '@mui/icons-material/Devices';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
 import MemoryIcon from '@mui/icons-material/Memory';
@@ -27,7 +29,64 @@ function formatNumber(num: number) {
   return new Intl.NumberFormat().format(num);
 }
 
+const useStyles = makeStyles((theme: any) => createStyles({
+  systemContainer: {
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    minHeight: '100vh',
+    padding: theme.spacing(3),
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing(2),
+    },
+  },
+  systemCard: {
+    background: 'rgba(255, 255, 255, 0.95)',
+    backdropFilter: 'blur(10px)',
+    borderRadius: theme.spacing(2),
+    boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+    padding: theme.spacing(4),
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing(3),
+    },
+  },
+  headerSection: {
+    textAlign: 'center',
+    marginBottom: theme.spacing(4),
+  },
+  headerTitle: {
+    background: 'linear-gradient(45deg, #667eea 30%, #764ba2 90%)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    fontWeight: 700,
+    marginBottom: theme.spacing(1),
+  },
+  infoCard: {
+    background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+    color: 'white',
+    marginBottom: theme.spacing(2),
+    borderRadius: theme.spacing(2),
+    '& .MuiListItemText-primary': {
+      color: 'white',
+      fontWeight: 600,
+    },
+    '& .MuiListItemText-secondary': {
+      color: 'rgba(255, 255, 255, 0.8)',
+    },
+    '& .MuiAvatar-root': {
+      background: 'rgba(255, 255, 255, 0.2)',
+    },
+  },
+  actionSection: {
+    background: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
+    borderRadius: theme.spacing(2),
+    padding: theme.spacing(3),
+    marginTop: theme.spacing(4),
+  },
+}));
+
 const SystemStatusForm: FC = () => {
+  const classes = useStyles();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const {
     loadData, data, errorMessage
   } = useRest<SystemStatus>({ read: SystemApi.readSystemStatus });
@@ -123,136 +182,259 @@ const SystemStatusForm: FC = () => {
       return (<FormLoader onRetry={loadData} errorMessage={errorMessage} />);
     }
 
+    const heapUsagePercent = ((data.max_alloc_heap - data.free_heap) / data.max_alloc_heap) * 100;
+    const flashUsagePercent = ((data.sketch_size) / (data.sketch_size + data.free_sketch_space)) * 100;
+    const fsUsagePercent = (data.fs_used / data.fs_total) * 100;
+
     return (
-      <>
-        <List>
-          <ListItem>
-            <ListItemAvatar>
-              <Avatar>
-                <DevicesIcon />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary="Device (Platform / SDK)" secondary={data.esp_platform + ' / ' + data.sdk_version} />
-          </ListItem>
-          <Divider variant="inset" component="li" />
-          <ListItem >
-            <ListItemAvatar>
-              <Avatar>
-                <ShowChartIcon />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary="CPU Frequency" secondary={data.cpu_freq_mhz + ' MHz'} />
-          </ListItem>
-          <Divider variant="inset" component="li" />
-          <ListItem >
-            <ListItemAvatar>
-              <Avatar>
-                <MemoryIcon />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText
-              primary="Heap (Free / Max Alloc)"
-              secondary={
-                formatNumber(data.free_heap) +
-                ' / ' +
-                formatNumber(data.max_alloc_heap) +
-                ' bytes ' +
-                (data.esp_platform === EspPlatform.ESP8266 ? '(' + data.heap_fragmentation + '% fragmentation)' : '')
-              }
-            />
-          </ListItem>
-          {
-            (
-              data.esp_platform === EspPlatform.ESP32 && data.psram_size > 0) && (
-              <>
-                <Divider variant="inset" component="li" />
-                <ListItem >
-                  <ListItemAvatar>
-                    <Avatar>
-                      <AppsIcon />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary="PSRAM (Size / Free)"
-                    secondary={formatNumber(data.psram_size) + ' / ' + formatNumber(data.free_psram) + ' bytes'}
-                  />
-                </ListItem>
-              </>
-            )
-          }
-          <Divider variant="inset" component="li" />
-          <ListItem >
-            <ListItemAvatar>
-              <Avatar>
-                <DataUsageIcon />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText
-              primary="Sketch (Size / Free)"
-              secondary={formatNumber(data.sketch_size) + ' / ' + formatNumber(data.free_sketch_space) + ' bytes'}
-            />
-          </ListItem>
-          <Divider variant="inset" component="li" />
-          <ListItem >
-            <ListItemAvatar>
-              <Avatar>
-                <SdStorageIcon />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText
-              primary="Flash Chip (Size / Speed)"
-              secondary={formatNumber(data.flash_chip_size) + ' bytes / ' + (data.flash_chip_speed / 1000000).toFixed(0) + ' MHz'}
-            />
-          </ListItem>
-          <Divider variant="inset" component="li" />
-          <ListItem >
-            <ListItemAvatar>
-              <Avatar>
-                <FolderIcon />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText
-              primary="File System (Used / Total)"
-              secondary={
-                formatNumber(data.fs_used) +
-                ' / ' +
-                formatNumber(data.fs_total) +
-                ' bytes (' + formatNumber(data.fs_total - data.fs_used) + '\xa0bytes free)'
-              }
-            />
-          </ListItem>
-          <Divider variant="inset" component="li" />
-        </List>
-        <Box display="flex" flexWrap="wrap">
-          <Box flexGrow={1}>
-            <ButtonRow mt={1}>
-              <Button startIcon={<RefreshIcon />} variant="contained" color="secondary" onClick={loadData}>
-                Refresh
-              </Button>
-            </ButtonRow>
-          </Box>
-          {
-            me.admin &&
-            <Box flexWrap="nowrap" whiteSpace="nowrap">
-              <ButtonRow mt={1}>
-                <Button startIcon={<PowerSettingsNewIcon />} variant="contained" color="primary" onClick={() => setConfirmRestart(true)}>
-                  Restart
-                </Button>
-                <Button
-                  startIcon={<SettingsBackupRestoreIcon />}
-                  variant="contained"
-                  onClick={() => setConfirmFactoryReset(true)}
-                  color="error"
-                >
-                  Factory reset
-                </Button>
-              </ButtonRow>
+      <Fade in timeout={600}>
+        <Box className={classes.systemContainer}>
+          <Box className={classes.systemCard}>
+            {/* Header Section */}
+            <Box className={classes.headerSection}>
+              <Typography variant="h4" className={classes.headerTitle}>
+                <DevicesIcon sx={{ fontSize: 'inherit', mr: 2, verticalAlign: 'middle' }} />
+                System Status
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                Real-time system monitoring and device information
+              </Typography>
             </Box>
-          }
+
+            {/* System Information Cards */}
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6}>
+                <Card className={classes.infoCard}>
+                  <CardContent>
+                    <List>
+                      <ListItem>
+                        <ListItemAvatar>
+                          <Avatar>
+                            <DevicesIcon />
+                          </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText 
+                          primary="Device Platform" 
+                          secondary={data.esp_platform + ' / ' + data.sdk_version} 
+                        />
+                      </ListItem>
+                      <ListItem>
+                        <ListItemAvatar>
+                          <Avatar>
+                            <ShowChartIcon />
+                          </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText 
+                          primary="CPU Frequency" 
+                          secondary={data.cpu_freq_mhz + ' MHz'} 
+                        />
+                      </ListItem>
+                    </List>
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <Card className={classes.infoCard}>
+                  <CardContent>
+                    <List>
+                      <ListItem>
+                        <ListItemAvatar>
+                          <Avatar>
+                            <MemoryIcon />
+                          </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText
+                          primary="Heap Memory"
+                          secondary={
+                            formatNumber(data.free_heap) +
+                            ' / ' +
+                            formatNumber(data.max_alloc_heap) +
+                            ' bytes free' +
+                            (data.esp_platform === EspPlatform.ESP8266 ? ` (${data.heap_fragmentation}% fragmentation)` : '')
+                          }
+                        />
+                      </ListItem>
+                      <Box sx={{ px: 2, pb: 1 }}>
+                        <LinearProgress 
+                          variant="determinate" 
+                          value={heapUsagePercent} 
+                          sx={{ 
+                            height: 8, 
+                            borderRadius: 4,
+                            backgroundColor: 'rgba(255, 255, 255, 0.3)',
+                            '& .MuiLinearProgress-bar': {
+                              backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                            }
+                          }} 
+                        />
+                      </Box>
+                    </List>
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              {data.esp_platform === EspPlatform.ESP32 && data.psram_size > 0 && (
+                <Grid item xs={12} md={6}>
+                  <Card className={classes.infoCard}>
+                    <CardContent>
+                      <List>
+                        <ListItem>
+                          <ListItemAvatar>
+                            <Avatar>
+                              <AppsIcon />
+                            </Avatar>
+                          </ListItemAvatar>
+                          <ListItemText
+                            primary="PSRAM"
+                            secondary={formatNumber(data.psram_size) + ' / ' + formatNumber(data.free_psram) + ' bytes'}
+                          />
+                        </ListItem>
+                      </List>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              )}
+
+              <Grid item xs={12} md={6}>
+                <Card className={classes.infoCard}>
+                  <CardContent>
+                    <List>
+                      <ListItem>
+                        <ListItemAvatar>
+                          <Avatar>
+                            <DataUsageIcon />
+                          </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText
+                          primary="Sketch Space"
+                          secondary={formatNumber(data.sketch_size) + ' / ' + formatNumber(data.sketch_size + data.free_sketch_space) + ' bytes'}
+                        />
+                      </ListItem>
+                      <Box sx={{ px: 2, pb: 1 }}>
+                        <LinearProgress 
+                          variant="determinate" 
+                          value={flashUsagePercent} 
+                          sx={{ 
+                            height: 8, 
+                            borderRadius: 4,
+                            backgroundColor: 'rgba(255, 255, 255, 0.3)',
+                            '& .MuiLinearProgress-bar': {
+                              backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                            }
+                          }} 
+                        />
+                      </Box>
+                    </List>
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <Card className={classes.infoCard}>
+                  <CardContent>
+                    <List>
+                      <ListItem>
+                        <ListItemAvatar>
+                          <Avatar>
+                            <SdStorageIcon />
+                          </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText
+                          primary="Flash Chip"
+                          secondary={formatNumber(data.flash_chip_size) + ' bytes / ' + (data.flash_chip_speed / 1000000).toFixed(0) + ' MHz'}
+                        />
+                      </ListItem>
+                    </List>
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <Card className={classes.infoCard}>
+                  <CardContent>
+                    <List>
+                      <ListItem>
+                        <ListItemAvatar>
+                          <Avatar>
+                            <FolderIcon />
+                          </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText
+                          primary="File System"
+                          secondary={
+                            formatNumber(data.fs_used) +
+                            ' / ' +
+                            formatNumber(data.fs_total) +
+                            ' bytes (' + formatNumber(data.fs_total - data.fs_used) + '\xa0bytes free)'
+                          }
+                        />
+                      </ListItem>
+                      <Box sx={{ px: 2, pb: 1 }}>
+                        <LinearProgress 
+                          variant="determinate" 
+                          value={fsUsagePercent} 
+                          sx={{ 
+                            height: 8, 
+                            borderRadius: 4,
+                            backgroundColor: 'rgba(255, 255, 255, 0.3)',
+                            '& .MuiLinearProgress-bar': {
+                              backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                            }
+                          }} 
+                        />
+                      </Box>
+                    </List>
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grid>
+
+            {/* Action Section */}
+            <Box className={classes.actionSection}>
+              <Typography variant="h6" sx={{ mb: 2 }}>
+                Device Actions
+              </Typography>
+              <Box display="flex" flexWrap="wrap" gap={2}>
+                <Button 
+                  startIcon={<RefreshIcon />} 
+                  variant="contained" 
+                  color="secondary" 
+                  onClick={loadData}
+                  sx={{ borderRadius: 3 }}
+                >
+                  Refresh Status
+                </Button>
+                {me.admin && (
+                  <>
+                    <Button 
+                      startIcon={<PowerSettingsNewIcon />} 
+                      variant="contained" 
+                      color="primary" 
+                      onClick={() => setConfirmRestart(true)}
+                      sx={{ borderRadius: 3 }}
+                    >
+                      Restart Device
+                    </Button>
+                    <Button
+                      startIcon={<SettingsBackupRestoreIcon />}
+                      variant="contained"
+                      onClick={() => setConfirmFactoryReset(true)}
+                      color="error"
+                      sx={{ borderRadius: 3 }}
+                    >
+                      Factory Reset
+                    </Button>
+                  </>
+                )}
+              </Box>
+            </Box>
+
+            {renderRestartDialog()}
+            {renderFactoryResetDialog()}
+          </Box>
         </Box>
-        {renderRestartDialog()}
-        {renderFactoryResetDialog()}
-      </>
+      </Fade>
     );
   };
 
@@ -263,9 +445,7 @@ const SystemStatusForm: FC = () => {
       defaultEnabled={true}
       title="System Status Auto-refresh"
     >
-      <SectionContent title='System Status' titleGutter>
-        {content()}
-      </SectionContent>
+      {content()}
     </AutoRefreshWrapper>
   );
 

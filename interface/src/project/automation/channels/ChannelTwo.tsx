@@ -48,17 +48,17 @@ const ChannelTwo: FC = () => {
                 }}
               >
                 <Tab 
-                  icon={<AccessAlarmIcon/>} 
+                  icon={<AccessAlarmIcon sx={{ color: '#9C27B0' }} />} 
                   label="Schedule" 
                   value="1" 
                 />
                 <Tab 
-                  icon={<BlurCircularIcon/>} 
+                  icon={<BlurCircularIcon sx={{ color: '#F44336' }} />} 
                   label="Status" 
                   value="2" 
                 />
                 <Tab 
-                  icon={<MessageIcon/>} 
+                  icon={<MessageIcon sx={{ color: '#607D8B' }} />} 
                   label="Mqtt" 
                   value="3" 
                   disabled={false} 

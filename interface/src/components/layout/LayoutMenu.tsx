@@ -2,12 +2,12 @@ import React, { FC, useContext } from 'react';
 
 import { Divider, List } from '@mui/material';
 
-import SettingsInputAntennaIcon from '@mui/icons-material/SettingsInputAntenna';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import DeviceHubIcon from '@mui/icons-material/DeviceHub';
-import SettingsIcon from '@mui/icons-material/Settings';
-import LockIcon from '@mui/icons-material/Lock';
-import WifiIcon from '@mui/icons-material/Wifi';
+import WifiTetheringIcon from '@mui/icons-material/WifiTethering';
+import ScheduleIcon from '@mui/icons-material/Schedule';
+import RouterIcon from '@mui/icons-material/Router';
+import ComputerIcon from '@mui/icons-material/Computer';
+import SecurityIcon from '@mui/icons-material/Security';
+import NetworkWifiIcon from '@mui/icons-material/NetworkWifi';
 
 import { FeaturesContext } from '../../contexts/features';
 import ProjectMenu from '../../project/ProjectMenu';
@@ -27,18 +27,43 @@ const LayoutMenu: FC = () => {
         </List>
       )}
       <List disablePadding component="nav">
-        <LayoutMenuItem icon={WifiIcon} label="WiFi Connection" to="/wifi" />
-        <LayoutMenuItem icon={SettingsInputAntennaIcon} label="Access Point" to="/ap" />
+        <LayoutMenuItem 
+          icon={(props) => <NetworkWifiIcon {...props} sx={{ color: '#2196F3' }} />} 
+          label="WiFi Connection" 
+          to="/wifi" 
+        />
+        <LayoutMenuItem 
+          icon={(props) => <WifiTetheringIcon {...props} sx={{ color: '#FF9800' }} />} 
+          label="Access Point" 
+          to="/ap" 
+        />
         {features.ntp && (
-          <LayoutMenuItem icon={AccessTimeIcon} label="Network Time" to="/ntp" />
+          <LayoutMenuItem 
+            icon={(props) => <ScheduleIcon {...props} sx={{ color: '#4CAF50' }} />} 
+            label="Network Time" 
+            to="/ntp" 
+          />
         )}
         {features.mqtt && (
-          <LayoutMenuItem icon={DeviceHubIcon} label="MQTT" to="/mqtt" />
+          <LayoutMenuItem 
+            icon={(props) => <RouterIcon {...props} sx={{ color: '#9C27B0' }} />} 
+            label="MQTT" 
+            to="/mqtt" 
+          />
         )}
         {features.security && (
-          <LayoutMenuItem icon={LockIcon} label="Security" to="/security" disabled={!authenticatedContext.me.admin} />
+          <LayoutMenuItem 
+            icon={(props) => <SecurityIcon {...props} sx={{ color: '#F44336' }} />} 
+            label="Security" 
+            to="/security" 
+            disabled={!authenticatedContext.me.admin} 
+          />
         )}
-        <LayoutMenuItem icon={SettingsIcon} label="System" to="/system" />
+        <LayoutMenuItem 
+          icon={(props) => <ComputerIcon {...props} sx={{ color: '#607D8B' }} />} 
+          label="System" 
+          to="/system" 
+        />
       </List>
     </>
   );

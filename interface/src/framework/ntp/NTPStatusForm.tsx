@@ -137,7 +137,7 @@ const NTPStatusForm: FC = () => {
             <>
               <ListItem>
                 <ListItemAvatar>
-                  <Avatar>
+                  <Avatar sx={{ bgcolor: '#9C27B0' }}>
                     <DnsIcon />
                   </Avatar>
                 </ListItemAvatar>
@@ -148,7 +148,7 @@ const NTPStatusForm: FC = () => {
           )}
           <ListItem>
             <ListItemAvatar>
-              <Avatar>
+              <Avatar sx={{ bgcolor: '#4CAF50' }}>
                 <AccessTimeIcon />
               </Avatar>
             </ListItemAvatar>
@@ -157,7 +157,7 @@ const NTPStatusForm: FC = () => {
           <Divider variant="inset" component="li" />
           <ListItem>
             <ListItemAvatar>
-              <Avatar>
+              <Avatar sx={{ bgcolor: '#2196F3' }}>
                 <SwapVerticalCircleIcon />
               </Avatar>
             </ListItemAvatar>
@@ -166,7 +166,7 @@ const NTPStatusForm: FC = () => {
           <Divider variant="inset" component="li" />
           <ListItem>
             <ListItemAvatar>
-              <Avatar>
+              <Avatar sx={{ bgcolor: '#FF9800' }}>
                 <AvTimerIcon />
               </Avatar>
             </ListItemAvatar>

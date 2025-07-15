@@ -48,17 +48,17 @@ const ChannelFour: FC = () => {
                 }}
               >
                 <Tab 
-                  icon={<AccessAlarmIcon/>} 
+                  icon={<AccessAlarmIcon sx={{ color: '#795548' }} />} 
                   label="Schedule" 
                   value="1" 
                 />
                 <Tab 
-                  icon={<BlurCircularIcon/>} 
+                  icon={<BlurCircularIcon sx={{ color: '#3F51B5' }} />} 
                   label="Status" 
                   value="2" 
                 />
                 <Tab 
-                  icon={<MessageIcon/>} 
+                  icon={<MessageIcon sx={{ color: '#FFC107' }} />} 
                   label="Mqtt" 
                   value="3" 
                   disabled={false} 
