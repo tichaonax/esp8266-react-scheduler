@@ -2,7 +2,7 @@
 import React, { FC } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
-import { Tab } from '@mui/material';
+import { Tab, useMediaQuery, useTheme } from '@mui/material';
 
 import { RouterTabs, useRouterTab, useLayoutTitle } from '../../components';
 
@@ -21,10 +21,17 @@ import {
   CHANNEL_TWO_LABEL,
   CHANNEL_THREE_LABEL,
   CHANNEL_FOUR_LABEL,
+  CHANNEL_ONE_LABEL_MOBILE,
+  CHANNEL_TWO_LABEL_MOBILE,
+  CHANNEL_THREE_LABEL_MOBILE,
+  CHANNEL_FOUR_LABEL_MOBILE,
  } from './constants';
 
 const Schedule: FC = () => {
   const { routerTab } = useRouterTab();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // Mobile screens (< 600px)
+  
   const {
     channelOne,
     channelTwo,
@@ -43,13 +50,34 @@ const Schedule: FC = () => {
 
   useLayoutTitle("Schedule");
 
+  // Helper function to get responsive label
+  const getChannelLabel = (desktopLabel: string, mobileLabel: string) => {
+    return isMobile ? mobileLabel : desktopLabel;
+  };
+
   return (
     <CustomTheme>
       <RouterTabs value={routerTab}>
-        { channelOne && ((HaCall && activeChannel === ONE) || !HaCall) ? <Tab value={`${ONE}`} label={`${CHANNEL_ONE_LABEL}`} /> : null}
-        { channelTwo && ((HaCall && activeChannel === TWO) || !HaCall) ? <Tab value={`${TWO}`} label={`${CHANNEL_TWO_LABEL}`} /> : null }
-        { channelThree && ((HaCall && activeChannel === THREE) || !HaCall) ? <Tab value={`${THREE}`} label={`${CHANNEL_THREE_LABEL}`} /> : null }
-        { channelFour && ((HaCall && activeChannel === FOUR) || !HaCall) ? <Tab value={`${FOUR}`} label={`${CHANNEL_FOUR_LABEL}`} /> : null }
+        { channelOne && ((HaCall && activeChannel === ONE) || !HaCall) ? 
+          <Tab 
+            value={`${ONE}`} 
+            label={getChannelLabel(CHANNEL_ONE_LABEL, CHANNEL_ONE_LABEL_MOBILE)} 
+          /> : null}
+        { channelTwo && ((HaCall && activeChannel === TWO) || !HaCall) ? 
+          <Tab 
+            value={`${TWO}`} 
+            label={getChannelLabel(CHANNEL_TWO_LABEL, CHANNEL_TWO_LABEL_MOBILE)} 
+          /> : null }
+        { channelThree && ((HaCall && activeChannel === THREE) || !HaCall) ? 
+          <Tab 
+            value={`${THREE}`} 
+            label={getChannelLabel(CHANNEL_THREE_LABEL, CHANNEL_THREE_LABEL_MOBILE)} 
+          /> : null }
+        { channelFour && ((HaCall && activeChannel === FOUR) || !HaCall) ? 
+          <Tab 
+            value={`${FOUR}`} 
+            label={getChannelLabel(CHANNEL_FOUR_LABEL, CHANNEL_FOUR_LABEL_MOBILE)} 
+          /> : null }
       </RouterTabs>
       <Routes>
     <   Route path={`${ONE}`} element={<ChannelOne />} />

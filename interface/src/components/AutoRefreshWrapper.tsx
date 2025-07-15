@@ -52,13 +52,13 @@ export const AutoRefreshWrapper: React.FC<AutoRefreshWrapperProps> = ({
     return date.toLocaleTimeString();
   };
 
-  // ESP-optimized intervals - more conservative for memory-constrained devices
+  // ESP-optimized intervals - very conservative for resource-constrained devices
   const intervalOptions = [
-    { label: '10 seconds', value: 10000 },
-    { label: '30 seconds', value: 30000 },
     { label: '1 minute', value: 60000 },
     { label: '2 minutes', value: 120000 },
-    { label: '5 minutes', value: 300000 }
+    { label: '5 minutes', value: 300000 },
+    { label: '10 minutes', value: 600000 },
+    { label: 'Manual only', value: 0 }
   ];
 
   if (!showControls) {

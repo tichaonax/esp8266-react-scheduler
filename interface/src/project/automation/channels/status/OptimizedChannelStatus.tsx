@@ -1,20 +1,15 @@
 import React, { FC, useCallback, useEffect, useRef } from 'react';
-import { Card, CardContent, Typography, Box, Switch, Button, IconButton } from '@mui/material';
+import { Typography, Box, Switch, Button, IconButton } from '@mui/material';
 import { Theme } from '@mui/material';
 import { makeStyles, createStyles } from "@mui/styles";
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useNavigate } from 'react-router-dom';
-import { FormLoader } from '../../../../components';
+import { FormLoader, SectionContent } from '../../../../components';
 import { updateValue } from '../../../../utils';
 import { ChannelState } from '../../redux/types/channel';
 import * as Api from '../../api/channelApi';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
-  card: {
-    height: '100%',
-    minWidth: 300,
-    maxWidth: 350,
-  },
   header: {
     display: 'flex',
     alignItems: 'center',
@@ -92,9 +87,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     marginBottom: theme.spacing(1),
     minHeight: 24, // Fixed height to prevent jumping
   },
-  cardContent: {
-    paddingBottom: theme.spacing(2) + ' !important', // Consistent bottom padding
-  },
   errorContainer: {
     padding: theme.spacing(2),
     textAlign: 'center',
@@ -165,7 +157,7 @@ const OptimizedChannelStatus: FC<OptimizedChannelStatusProps> = ({
   const classes = useStyles();
   const navigate = useNavigate();
   const [data, setData] = React.useState<ChannelState | null>(null);
-  const [loading, setLoading] = React.useState(false);
+  const [loading] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const [saving, setSaving] = React.useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
@@ -277,15 +269,15 @@ const OptimizedChannelStatus: FC<OptimizedChannelStatusProps> = ({
   };
 
   // Get the appropriate title class based on channel ID
-  const getTitleClass = () => {
-    switch (channelId) {
-      case 'One': return classes.channelTitleOne;
-      case 'Two': return classes.channelTitleTwo;
-      case 'Three': return classes.channelTitleThree;
-      case 'Four': return classes.channelTitleFour;
-      default: return classes.channelTitleOne;
-    }
-  };
+  // const getTitleClass = () => {
+  //   switch (channelId) {
+  //     case 'One': return classes.channelTitleOne;
+  //     case 'Two': return classes.channelTitleTwo;
+  //     case 'Three': return classes.channelTitleThree;
+  //     case 'Four': return classes.channelTitleFour;
+  //     default: return classes.channelTitleOne;
+  //   }
+  // };
 
   // Get the appropriate button class based on channel ID
   const getButtonClass = () => {
@@ -392,12 +384,9 @@ const OptimizedChannelStatus: FC<OptimizedChannelStatusProps> = ({
 
     // Main content with data
     return (
-      <CardContent className={classes.cardContent}>
+      <>
         <Box className={classes.header}>
           <Box className={classes.titleSection}>
-            <Typography variant="h6" component="div" className={getTitleClass()}>
-              {data.name}
-            </Typography>
             <IconButton 
               size="small" 
               className={getButtonClass()}
@@ -433,14 +422,14 @@ const OptimizedChannelStatus: FC<OptimizedChannelStatusProps> = ({
         <Typography variant="caption" color="text.secondary">
           IP: <span className={classes.controlPinText}>{data.IPAddress}</span> | Time: <span className={classes.timeValueText}>{data.localDateTime.substr(0, data.localDateTime.lastIndexOf(':'))}</span>
         </Typography>
-      </CardContent>
+      </>
     );
   };
 
   return (
-    <Card variant="outlined" className={classes.card}>
+    <SectionContent title={`${data?.name || 'Channel'} Status`} titleGutter>
       {renderContent()}
-    </Card>
+    </SectionContent>
   );
 };
 

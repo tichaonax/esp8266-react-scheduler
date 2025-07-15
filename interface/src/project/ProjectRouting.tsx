@@ -4,6 +4,8 @@ import { Navigate, Routes, Route } from 'react-router-dom';
 //import DemoProject from './DemoProject';
 import Schedule from './automation/Schedule';
 import Status from './automation/Status';
+import TestAutoRefresh from './TestAutoRefresh';
+import TestOptimizedStatus from './TestOptimizedStatus';
 
 const ProjectRouting: FC = () => {
   return (
@@ -18,6 +20,8 @@ const ProjectRouting: FC = () => {
 {/*       <Route path="demo/*" element={<DemoProject />} /> */}
       <Route path="a/*" element={<Schedule />} />
       <Route path="status/*" element={<Status />} />
+      <Route path="test/*" element={<TestAutoRefresh />} />
+      <Route path="optimized/*" element={<TestOptimizedStatus />} />
     </Routes>
   );
 };

@@ -36,7 +36,7 @@ export const useAutoRefresh = (options: AutoRefreshOptions = {}) => {
 
     if (isEnabledRef.current && onRefresh && interval > 0) {
       intervalRef.current = setInterval(() => {
-        if (isEnabledRef.current) {
+        if (isEnabledRef.current && onRefresh) {
           onRefresh();
         }
       }, interval);

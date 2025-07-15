@@ -24,14 +24,50 @@ const ChannelStatusDisplay: FC<ChannelStatusDisplayProps> = ({ channelId, refres
 
   const content = () => {
     if (!data) {
+      // Show authentication message instead of infinite loading
+      if (errorMessage) {
+        return (
+          <div style={{ padding: '16px', textAlign: 'center' }}>
+            <Typography variant="h6" gutterBottom>
+              Channel {channelId}
+            </Typography>
+            <Typography color="error" variant="body2" gutterBottom>
+              Authentication required
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              Please log in to view channel status
+            </Typography>
+            <br />
+            <button 
+              onClick={loadData}
+              style={{ 
+                marginTop: '8px', 
+                padding: '4px 12px', 
+                fontSize: '12px',
+                cursor: 'pointer',
+                border: '1px solid #ccc',
+                borderRadius: '3px',
+                backgroundColor: '#f5f5f5'
+              }}
+            >
+              Retry
+            </button>
+          </div>
+        );
+      }
       return <FormLoader onRetry={loadData} errorMessage={errorMessage} />;
     }
 
     if (!data.schedule) {
       return (
-        <Typography color="text.secondary">
-          Channel {channelId} is not configured
-        </Typography>
+        <div style={{ padding: '16px', textAlign: 'center' }}>
+          <Typography variant="h6" gutterBottom>
+            Channel {channelId}
+          </Typography>
+          <Typography color="text.secondary">
+            Channel not configured
+          </Typography>
+        </div>
       );
     }
 
