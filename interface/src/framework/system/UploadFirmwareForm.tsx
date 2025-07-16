@@ -2,13 +2,9 @@ import React, { FC } from 'react';
 import { 
   Box, 
   Typography, 
-  Card, 
-  CardContent, 
   Avatar, 
   useTheme, 
-  useMediaQuery, 
   Fade,
-  Alert,
   Divider
 } from '@mui/material';
 import { makeStyles, createStyles } from '@mui/styles';
@@ -104,7 +100,6 @@ const useStyles = makeStyles((theme: any) => createStyles({
 const UploadFirmwareForm: FC = () => {
   const classes = useStyles();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [uploadFile, cancelUpload, uploading, uploadProgress] = useFileUpload({ upload: SystemApi.uploadFirmware });
 

@@ -12,7 +12,6 @@ import {
   Fade, 
   useTheme, 
   useMediaQuery, 
-  Divider, 
   Switch 
 } from '@mui/material';
 import { makeStyles, createStyles } from '@mui/styles';
@@ -20,12 +19,11 @@ import SaveIcon from '@mui/icons-material/Save';
 import SettingsIcon from '@mui/icons-material/Settings';
 import RouterIcon from '@mui/icons-material/Router';
 import SecurityIcon from '@mui/icons-material/Security';
-import TimerIcon from '@mui/icons-material/Timer';
 import TuneIcon from '@mui/icons-material/Tune';
 
 import * as MqttApi from "../../api/mqtt";
 import { MqttSettings } from '../../types';
-import { BlockFormControlLabel, ButtonRow, FormLoader, SectionContent, ValidatedPasswordField, ValidatedTextField } from '../../components';
+import { BlockFormControlLabel, FormLoader, ValidatedPasswordField, ValidatedTextField } from '../../components';
 import { MQTT_SETTINGS_VALIDATOR, validate } from '../../validators';
 import { numberValue, updateValue, useRest } from '../../utils';
 
@@ -218,7 +216,6 @@ const useStyles = makeStyles((theme: any) => createStyles({
 const MqttSettingsForm: FC = () => {
   const classes = useStyles();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [fieldErrors, setFieldErrors] = useState<ValidateFieldsError>();
   const {
     loadData, saving, data, setData, saveData, errorMessage

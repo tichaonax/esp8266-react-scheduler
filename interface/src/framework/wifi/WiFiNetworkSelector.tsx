@@ -1,9 +1,7 @@
 import React, { FC, useContext } from 'react';
 
 import { Avatar, Badge, List, ListItem, ListItemAvatar, ListItemIcon, ListItemText } from '@mui/material';
-import LockOpenIcon from '@mui/icons-material/LockOpen';
 import LockIcon from '@mui/icons-material/Lock';
-import WifiIcon from '@mui/icons-material/Wifi';
 import SignalWifi1BarIcon from '@mui/icons-material/SignalWifi1Bar';
 import SignalWifi2BarIcon from '@mui/icons-material/SignalWifi2Bar';
 import SignalWifi3BarIcon from '@mui/icons-material/SignalWifi3Bar';

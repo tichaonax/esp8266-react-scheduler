@@ -2,8 +2,8 @@ import React, { FC, useState } from 'react';
 import { ValidateFieldsError } from 'async-validator';
 
 import { 
-  Button, Checkbox, MenuItem, Card, CardContent, Box, Typography, 
-  Grid, Avatar, useTheme, useMediaQuery, Fade, Switch 
+  Button, MenuItem, Card, CardContent, Box, Typography, 
+  Avatar, useTheme, Fade, Switch 
 } from '@mui/material';
 import { makeStyles, createStyles } from '@mui/styles';
 import SaveIcon from '@mui/icons-material/Save';
@@ -14,7 +14,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 
 import * as NTPApi from "../../api/ntp";
 import { NTPSettings } from '../../types';
-import { BlockFormControlLabel, ButtonRow, FormLoader, SectionContent, ValidatedTextField } from '../../components';
+import { BlockFormControlLabel, FormLoader, ValidatedTextField } from '../../components';
 import { validate, NTP_SETTINGS_VALIDATOR } from '../../validators';
 import { updateValue, useRest } from '../../utils';
 
@@ -107,7 +107,6 @@ const useStyles = makeStyles((theme: any) => createStyles({
 const NTPSettingsForm: FC = () => {
   const classes = useStyles();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [fieldErrors, setFieldErrors] = useState<ValidateFieldsError>();
   const {
     loadData, saving, data, setData, saveData, errorMessage

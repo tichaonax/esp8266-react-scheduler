@@ -3,7 +3,7 @@ import { useSnackbar } from "notistack";
 
 import {
   Avatar, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle,
-  Divider, List, ListItem, ListItemAvatar, ListItemText, Typography, Card, CardContent, 
+  List, ListItem, ListItemAvatar, ListItemText, Typography, Card, CardContent, 
   Grid, Fade, useTheme, useMediaQuery, LinearProgress
 } from "@mui/material";
 import { makeStyles, createStyles } from "@mui/styles";
@@ -20,7 +20,7 @@ import SettingsBackupRestoreIcon from '@mui/icons-material/SettingsBackupRestore
 
 import * as SystemApi from "../../api/system";
 import { EspPlatform, SystemStatus } from "../../types";
-import { ButtonRow, FormLoader, SectionContent } from "../../components";
+import { FormLoader } from "../../components";
 import { AutoRefreshWrapper } from "../../components/AutoRefreshWrapper";
 import { extractErrorMessage, useRest } from "../../utils";
 import { AuthenticatedContext } from "../../contexts/authentication";
@@ -113,7 +113,6 @@ const useStyles = makeStyles((theme: any) => createStyles({
 const SystemStatusForm: FC = () => {
   const classes = useStyles();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const {
     loadData, data, errorMessage
   } = useRest<SystemStatus>({ read: SystemApi.readSystemStatus });

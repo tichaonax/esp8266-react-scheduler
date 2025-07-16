@@ -9,15 +9,13 @@ import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import EditIcon from '@mui/icons-material/Edit';
-import CheckIcon from '@mui/icons-material/Check';
-import CloseIcon from '@mui/icons-material/Close';
 import PeopleIcon from '@mui/icons-material/People';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import PersonIcon from '@mui/icons-material/Person';
 
 import * as SecurityApi from "../../api/security";
 import { SecuritySettings, User } from '../../types';
-import { ButtonRow, FormLoader, MessageBox, SectionContent } from '../../components';
+import { FormLoader } from '../../components';
 import { createUserValidator } from '../../validators';
 import { useRest } from '../../utils';
 import { AuthenticatedContext } from '../../contexts/authentication';
@@ -157,7 +155,6 @@ const useStyles = makeStyles((theme: any) => createStyles({
 const SecuritySettingsForm: FC = () => {
   const classes = useStyles();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const {
     loadData, saving, data, setData, saveData, errorMessage
   } = useRest<SecuritySettings>({ read: SecurityApi.readSecuritySettings, update: SecurityApi.updateSecuritySettings });

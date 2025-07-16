@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, useTheme, Card, CardContent, Typography, IconButton, Switch, Chip } from '@mui/material';
+import { Box, Card, Typography, IconButton, Switch, Chip } from '@mui/material';
 import { makeStyles, createStyles } from '@mui/styles';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -108,7 +108,6 @@ export const AutoRefreshWrapper: React.FC<AutoRefreshWrapperProps> = ({
   title = "Auto-refresh for ESP32"
 }) => {
   const classes = useStyles();
-  const theme = useTheme();
   const [interval, setInterval] = useState(defaultInterval);
   const [enabled, setEnabled] = useState(defaultEnabled);
   const [showSettings, setShowSettings] = useState(false);

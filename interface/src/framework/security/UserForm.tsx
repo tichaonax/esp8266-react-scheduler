@@ -3,7 +3,6 @@ import Schema, { ValidateFieldsError } from 'async-validator';
 
 import { 
   Button, 
-  Checkbox, 
   Dialog, 
   DialogActions, 
   DialogContent, 
@@ -20,7 +19,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 
 import { User } from '../../types';
-import { BlockFormControlLabel, ValidatedPasswordField, ValidatedTextField } from '../../components';
+import { ValidatedPasswordField, ValidatedTextField } from '../../components';
 import { validate } from '../../validators';
 import { updateValue } from '../../utils';
 

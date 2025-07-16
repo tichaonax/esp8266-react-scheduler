@@ -13,7 +13,7 @@ import LabelIcon from '@mui/icons-material/Label';
 import TopicIcon from '@mui/icons-material/Topic';
 import CloudIcon from '@mui/icons-material/Cloud';
 
-import { ButtonRow, FormLoader, SectionContent, ValidatedTextField } from "../../../../components";
+import { FormLoader, ValidatedTextField } from "../../../../components";
 import { validate } from "../../../../validators";
 import { useRest, updateValue } from "../../../../utils";
 
@@ -91,7 +91,6 @@ const useStyles = makeStyles((theme: any) => createStyles({
 const ChannelMqttSettingsForm: FC<ChannelMqttSettingsFormProps> = ({ channelId }) => {
   const classes = useStyles();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [fieldErrors, setFieldErrors] = useState<ValidateFieldsError>();
 
   const read = useCallback(

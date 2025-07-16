@@ -10,15 +10,13 @@ import { makeStyles, createStyles } from '@mui/styles';
 import SaveIcon from '@mui/icons-material/Save';
 import SettingsInputAntennaIcon from '@mui/icons-material/SettingsInputAntenna';
 import WifiIcon from '@mui/icons-material/Wifi';
-import SecurityIcon from '@mui/icons-material/Security';
 import NetworkWifiIcon from '@mui/icons-material/NetworkWifi';
 import IpIcon from '@mui/icons-material/LocationOn';
-import GroupIcon from '@mui/icons-material/Group';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 
 import * as APApi from "../../api/ap";
 import { APProvisionMode, APSettings } from '../../types';
-import { BlockFormControlLabel, ButtonRow, FormLoader, SectionContent, ValidatedPasswordField, ValidatedTextField } from '../../components';
+import { BlockFormControlLabel, FormLoader, ValidatedPasswordField, ValidatedTextField } from '../../components';
 import { createAPSettingsValidator, validate } from '../../validators';
 import { numberValue, updateValue, useRest } from '../../utils';
 
@@ -100,7 +98,6 @@ export const isAPEnabled = ({ provision_mode }: APSettings) => {
 const APSettingsForm: FC = () => {
   const classes = useStyles();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [fieldErrors, setFieldErrors] = useState<ValidateFieldsError>();
   const {
     loadData, saving, data, setData, saveData, errorMessage

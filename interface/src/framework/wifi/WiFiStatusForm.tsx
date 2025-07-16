@@ -1,8 +1,6 @@
 import React, { FC } from "react";
 
 import { Avatar, Button, Divider, List, ListItem, ListItemAvatar, ListItemText, Theme, useTheme } from "@mui/material";
-import SettingsInputComponentIcon from '@mui/icons-material/SettingsInputComponent';
-import SettingsInputAntennaIcon from '@mui/icons-material/SettingsInputAntenna';
 import DeviceHubIcon from '@mui/icons-material/DeviceHub';
 import WifiIcon from '@mui/icons-material/Wifi';
 import DnsIcon from '@mui/icons-material/Dns';

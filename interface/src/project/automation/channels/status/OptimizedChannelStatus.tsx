@@ -9,9 +9,7 @@ import {
   CardContent,
   Avatar,
   Grid,
-  Chip,
   useTheme,
-  useMediaQuery,
   Fade
 } from '@mui/material';
 import { Theme } from '@mui/material';
@@ -22,7 +20,6 @@ import ScheduleIcon from '@mui/icons-material/Schedule';
 import HistoryIcon from '@mui/icons-material/History';
 import RouterIcon from '@mui/icons-material/Router';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import MemoryIcon from '@mui/icons-material/Memory';
 import { useNavigate } from 'react-router-dom';
 import { FormLoader } from '../../../../components';
 import { updateValue } from '../../../../utils';
@@ -269,7 +266,6 @@ const OptimizedChannelStatus: FC<OptimizedChannelStatusProps> = ({
 }) => {
   const classes = useStyles();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
   const [data, setData] = React.useState<ChannelState | null>(null);
   const [loading] = React.useState(false);
