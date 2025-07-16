@@ -3,7 +3,7 @@ import { ValidateFieldsError } from 'async-validator';
 
 import { 
   Button, Card, CardContent, Box, Typography, 
-  Avatar, useTheme, useMediaQuery, Fade, Alert 
+  Avatar, useTheme, Fade 
 } from '@mui/material';
 import { makeStyles, createStyles } from '@mui/styles';
 import SaveIcon from '@mui/icons-material/Save';
@@ -13,7 +13,7 @@ import InfoIcon from '@mui/icons-material/Info';
 
 import * as SecurityApi from "../../api/security";
 import { SecuritySettings } from '../../types';
-import { ButtonRow, FormLoader, MessageBox, SectionContent, ValidatedPasswordField } from '../../components';
+import { FormLoader, ValidatedPasswordField } from '../../components';
 import { SECURITY_SETTINGS_VALIDATOR, validate } from '../../validators';
 import { updateValue, useRest } from '../../utils';
 import { AuthenticatedContext } from '../../contexts/authentication';
@@ -93,7 +93,6 @@ const useStyles = makeStyles((theme: any) => createStyles({
 const SecuritySettingsForm: FC = () => {
   const classes = useStyles();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [fieldErrors, setFieldErrors] = useState<ValidateFieldsError>();
   const {
     loadData, saving, data, setData, saveData, errorMessage

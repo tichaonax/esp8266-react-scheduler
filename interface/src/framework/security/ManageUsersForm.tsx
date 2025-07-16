@@ -2,7 +2,7 @@ import React, { FC, useContext, useState } from 'react';
 
 import {
   Button, IconButton, Table, TableBody, TableCell, TableFooter, TableHead, TableRow,
-  Box, Typography, Card, CardContent, Fade, useTheme, useMediaQuery, Chip, Avatar
+  Box, Typography, Fade, useTheme, Chip, Avatar
 } from '@mui/material';
 import { makeStyles, createStyles } from '@mui/styles';
 import SaveIcon from '@mui/icons-material/Save';

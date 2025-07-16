@@ -4,12 +4,11 @@ import { useSnackbar } from "notistack";
 import {
   Avatar, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle,
   Divider, List, ListItem, ListItemAvatar, ListItemText, TextField, Theme, useTheme,
-  Card, CardContent, Typography, Grid, Fade, useMediaQuery
+  Card, CardContent, Typography, Fade
 } from "@mui/material";
 import { makeStyles, createStyles } from '@mui/styles';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import SwapVerticalCircleIcon from '@mui/icons-material/SwapVerticalCircle';
 import UpdateIcon from '@mui/icons-material/Update';
 import DnsIcon from '@mui/icons-material/Dns';
 import AvTimerIcon from '@mui/icons-material/AvTimer';
@@ -18,7 +17,7 @@ import PublicIcon from '@mui/icons-material/Public';
 
 import * as NTPApi from "../../api/ntp";
 import { NTPStatus, NTPSyncStatus } from "../../types";
-import { ButtonRow, FormLoader, SectionContent } from "../../components";
+import { FormLoader } from "../../components";
 import { extractErrorMessage, formatDateTime, formatDuration, formatLocalDateTime, useRest } from "../../utils";
 import { AuthenticatedContext } from "../../contexts/authentication";
 
@@ -113,7 +112,6 @@ export const ntpStatus = ({ status }: NTPStatus) => {
 const NTPStatusForm: FC = () => {
   const classes = useStyles();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { loadData, data, errorMessage } = useRest<NTPStatus>({ read: NTPApi.readNTPStatus });
   const [localTime, setLocalTime] = useState<string>('');
   const [settingTime, setSettingTime] = useState<boolean>(false);

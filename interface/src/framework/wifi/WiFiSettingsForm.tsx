@@ -4,7 +4,6 @@ import { ValidateFieldsError } from 'async-validator';
 import { 
   Avatar, 
   Button, 
-  Checkbox, 
   IconButton, 
   List, 
   ListItem, 
@@ -17,17 +16,13 @@ import {
   Card,
   CardContent,
   Fade,
-  useTheme,
-  useMediaQuery,
-  Divider
+  useTheme
 } from '@mui/material';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
 import LockIcon from '@mui/icons-material/Lock';
 import WifiIcon from '@mui/icons-material/Wifi';
-import NetworkCheckIcon from '@mui/icons-material/NetworkCheck';
-import SettingsIcon from '@mui/icons-material/Settings';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import DeviceHubIcon from '@mui/icons-material/DeviceHub';
 import IpIcon from '@mui/icons-material/LocationOn';
@@ -35,7 +30,7 @@ import Switch from '@mui/material/Switch';
 
 import * as WiFiApi from "../../api/wifi";
 import { WiFiSettings } from '../../types';
-import { BlockFormControlLabel, ButtonRow, FormLoader, SectionContent, ValidatedPasswordField, ValidatedTextField } from '../../components';
+import { BlockFormControlLabel, FormLoader, ValidatedPasswordField, ValidatedTextField } from '../../components';
 import { validate, createWiFiSettingsValidator } from '../../validators';
 import { updateValue, useRest } from '../../utils';
 
@@ -154,7 +149,6 @@ const useStyles = makeStyles((theme: any) => createStyles({
 const WiFiSettingsForm: FC = () => {
   const classes = useStyles();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { selectedNetwork, deselectNetwork } = useContext(WiFiConnectionContext);
 
   const [fieldErrors, setFieldErrors] = useState<ValidateFieldsError>();

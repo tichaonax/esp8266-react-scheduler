@@ -2,20 +2,18 @@ import React, { FC } from "react";
 
 import { 
   Avatar, Button, Divider, List, ListItem, ListItemAvatar, ListItemText, Theme, useTheme,
-  Card, CardContent, Box, Typography, Grid, Fade, useMediaQuery 
+  Card, CardContent, Box, Typography, Fade 
 } from "@mui/material";
 import { makeStyles, createStyles } from '@mui/styles';
 import DeviceHubIcon from '@mui/icons-material/DeviceHub';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import ReportIcon from '@mui/icons-material/Report';
-import DeveloperBoardIcon from '@mui/icons-material/DeveloperBoard';
 import CloudIcon from '@mui/icons-material/Cloud';
 import FingerprintIcon from '@mui/icons-material/Fingerprint';
 import ErrorIcon from '@mui/icons-material/Error';
 
 import * as MqttApi from "../../api/mqtt";
 import { MqttStatus, MqttDisconnectReason } from "../../types";
-import { ButtonRow, FormLoader, SectionContent } from "../../components";
+import { FormLoader } from "../../components";
 import { useRest } from "../../utils";
 
 const useStyles = makeStyles((theme: any) => createStyles({
@@ -125,7 +123,6 @@ export const disconnectReason = ({ disconnect_reason }: MqttStatus) => {
 const MqttStatusForm: FC = () => {
   const classes = useStyles();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { loadData, data, errorMessage } = useRest<MqttStatus>({ read: MqttApi.readMqttStatus });
 
   const content = () => {

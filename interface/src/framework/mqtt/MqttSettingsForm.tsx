@@ -11,7 +11,6 @@ import {
   CardContent, 
   Fade, 
   useTheme, 
-  useMediaQuery, 
   Switch 
 } from '@mui/material';
 import { makeStyles, createStyles } from '@mui/styles';

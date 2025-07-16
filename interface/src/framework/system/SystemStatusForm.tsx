@@ -4,7 +4,7 @@ import { useSnackbar } from "notistack";
 import {
   Avatar, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle,
   List, ListItem, ListItemAvatar, ListItemText, Typography, Card, CardContent, 
-  Grid, Fade, useTheme, useMediaQuery, LinearProgress
+  Grid, Fade, useTheme, LinearProgress
 } from "@mui/material";
 import { makeStyles, createStyles } from "@mui/styles";
 import DevicesIcon from '@mui/icons-material/Devices';

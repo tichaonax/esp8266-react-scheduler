@@ -3,7 +3,7 @@ import { ValidateFieldsError } from "async-validator";
 
 import { 
   Button, Card, CardContent, Box, Typography, 
-  Avatar, useTheme, useMediaQuery, Fade, Grid 
+  Avatar, useTheme, Fade, Grid 
 } from "@mui/material";
 import { makeStyles, createStyles } from '@mui/styles';
 import SaveIcon from '@mui/icons-material/Save';

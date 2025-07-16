@@ -4,7 +4,7 @@ import { range } from 'lodash';
 
 import { 
   Button, Checkbox, MenuItem, Card, CardContent, Box, Typography, 
-  Grid, Avatar, useTheme, useMediaQuery, Fade 
+  Grid, Avatar, useTheme, Fade 
 } from '@mui/material';
 import { makeStyles, createStyles } from '@mui/styles';
 import SaveIcon from '@mui/icons-material/Save';

@@ -3,7 +3,6 @@ import React, { FC } from "react";
 import { Avatar, Button, Divider, List, ListItem, ListItemAvatar, ListItemText, Theme, useTheme } from "@mui/material";
 import SettingsInputAntennaIcon from '@mui/icons-material/SettingsInputAntenna';
 import DeviceHubIcon from '@mui/icons-material/DeviceHub';
-import ComputerIcon from '@mui/icons-material/Computer';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import IpIcon from '@mui/icons-material/LocationOn';
 import GroupIcon from '@mui/icons-material/Group';

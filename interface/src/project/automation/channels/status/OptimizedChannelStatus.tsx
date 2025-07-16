@@ -571,7 +571,7 @@ const OptimizedChannelStatus: FC<OptimizedChannelStatusProps> = ({
                   <Typography variant="subtitle2" className={classes.infoText}>
                     Next Run
                   </Typography>
-                  <Typography variant="body2" sx={{ color: theme.palette.mode === 'dark' ? '#a5d6a7' : '#388e3c' }}>
+                  <Typography variant="body2" sx={{ color: theme.palette.mode === 'dark' ? '#ffcc80' : '#ff8f00', fontWeight: 600 }}>
                     {data.nextRunTime || 'Not set'}
                   </Typography>
                 </Box>
@@ -587,7 +587,7 @@ const OptimizedChannelStatus: FC<OptimizedChannelStatusProps> = ({
                   <Typography variant="subtitle2" className={classes.infoText}>
                     Last Change
                   </Typography>
-                  <Typography variant="body2" sx={{ color: theme.palette.mode === 'dark' ? '#a5d6a7' : '#388e3c' }}>
+                  <Typography variant="body2" sx={{ color: theme.palette.mode === 'dark' ? '#ce93d8' : '#8e24aa', fontWeight: 600 }}>
                     {data.lastStartedChangeTime || 'Not set'}
                   </Typography>
                 </Box>
@@ -603,7 +603,7 @@ const OptimizedChannelStatus: FC<OptimizedChannelStatusProps> = ({
                   <Typography variant="subtitle2" className={classes.infoText}>
                     IP Address
                   </Typography>
-                  <Typography variant="body2" sx={{ color: theme.palette.mode === 'dark' ? '#a5d6a7' : '#388e3c' }}>
+                  <Typography variant="body2" sx={{ color: theme.palette.mode === 'dark' ? '#81c784' : '#2e7d32', fontWeight: 600 }}>
                     {data.IPAddress}
                   </Typography>
                 </Box>
@@ -619,7 +619,7 @@ const OptimizedChannelStatus: FC<OptimizedChannelStatusProps> = ({
                   <Typography variant="subtitle2" className={classes.infoText}>
                     Local Time
                   </Typography>
-                  <Typography variant="body2" sx={{ color: theme.palette.mode === 'dark' ? '#a5d6a7' : '#388e3c' }}>
+                  <Typography variant="body2" sx={{ color: theme.palette.mode === 'dark' ? '#90caf9' : '#1976d2', fontWeight: 600 }}>
                     {data.localDateTime.substr(0, data.localDateTime.lastIndexOf(':'))}
                   </Typography>
                 </Box>
