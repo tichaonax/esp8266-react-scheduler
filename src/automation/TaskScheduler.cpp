@@ -3,6 +3,52 @@
 #include "Channels.h"
 #include "TaskScheduler.h"
 
+TaskScheduler::TaskScheduler(const TaskSchedulerConfig& config):
+                             _channelStateService(config.server,
+                                                 config.securityManager,
+                                                 config.mqttClient,
+                                                 config.fs,
+                                                 config.channelControlPin,
+                                                 config.channelJsonConfigPath,
+                                                 config.restChannelEndPoint,
+                                                 config.webSocketChannelEndPoint,
+                                                 config.runEvery,
+                                                 config.offAfter,
+                                                 config.startTimeHour,
+                                                 config.startTimeMinute,
+                                                 config.endTimeHour,
+                                                 config.endTimeMinute,
+                                                 config.enabled,
+                                                 config.channelName,
+                                                 config.enableTimeSpan,
+                                                 config.channelMqttSettingsService,
+                                                 config.randomize,
+                                                 config.hotTimeHour,
+                                                 config.overrideTime,
+                                                 config.enableMinimumRunTime,
+                                                 config.homeAssistantTopicType,
+                                                 config.homeAssistantIcon,
+                                                 config.enableRemoteConfiguration,
+                                                 config.masterIPAddress,
+                                                 config.restChannelRestartEndPoint,
+                                                 config.enableDateRange,
+                                                 config.activeOutsideDateRange,
+                                                 config.activeStartDateRange,
+                                                 config.activeEndDateRange,
+                                                 config.buildVersion,
+                                                 config.weekDays,
+                                                 config.autoRebootSystem) {
+
+                              _isHotScheduleActive = false;
+                              _isOverrideActive = false;
+
+    _channelStateService.addUpdateHandler([&](const String& originId) {
+    if(_channelStateService.getChannel().schedule.isOverride){
+    this->setOverrideTime();
+    }  
+    }, false);
+}
+
 TaskScheduler::TaskScheduler(AsyncWebServer* server,
                              SecurityManager* securityManager,
                              AsyncMqttClient* mqttClient,
@@ -283,27 +329,33 @@ void TaskScheduler::scheduleButtonRead(bool bToggleSwitch, int toggleReadPin, in
   BToggleSwitch = bToggleSwitch;
 
   ScheduleButtonTicker.attach(0.250, +[](TaskScheduler* task) {
-     bool bControlOnState = task->_channelStateService.getChannel().controlOn;
-     if(bControlOnState){
-       digitalWrite(task->LED, task->LED_ON);
-     }
-     if(task->BToggleSwitch){
-      task->ScheduleButtonDebounceTicker.once(0.050, +[](TaskScheduler* once){
-        once->ToggleReadPinValue = digitalRead(once->_toggleReadPin);
-        if (once->ToggleReadPinValue != once->ToggleButtonState) {
-            once->ToggleButtonState = once->ToggleReadPinValue;
-            if (once->ToggleButtonState == LOW) {
-              once->toggleSwitch();
-            }
-          }
-        }, task);
-     }
+    task->buttonReadCallback();
   }, this);
 }
 
+void TaskScheduler::buttonReadCallback() {
+  bool bControlOnState = _channelStateService.getChannel().controlOn;
+  if(bControlOnState) {
+    digitalWrite(LED, LED_ON);
+  }
+  if(BToggleSwitch) {
+    ScheduleButtonDebounceTicker.once(0.050, +[](TaskScheduler* task) {
+      task->buttonDebounceCallback();
+    }, this);
+  }
+}
+
+void TaskScheduler::buttonDebounceCallback() {
+  ToggleReadPinValue = digitalRead(_toggleReadPin);
+  if (ToggleReadPinValue != ToggleButtonState) {
+    ToggleButtonState = ToggleReadPinValue;
+    if (ToggleButtonState == LOW) {
+      toggleSwitch();
+    }
+  }
+}
+
 void TaskScheduler::setSchedule(bool isReschedule){
-  debugln(F(""));
-  debug(F("Current Time: "));
   digitalClockDisplay();
   _isReschedule = isReschedule;
   reScheduleTasks();
@@ -311,9 +363,6 @@ void TaskScheduler::setSchedule(bool isReschedule){
     ScheduledTime schedule = getNextRunTime();
     printSchedule(schedule);
     if (schedule.scheduleTime <= 0) { schedule.scheduleTime = 1; } 
-    debug(F("Time to next task run: "));
-    debug(schedule.scheduleTime);
-    debugln(F("s"));
     ScheduleTime = schedule.scheduleTime;
 
     if(schedule.isHotSchedule){scheduleHotTaskTicker(schedule);}
@@ -328,8 +377,6 @@ void TaskScheduler::setSchedule(bool isReschedule){
       channelState.channel.lastStartedChangeTime = _utilities.strLocalTime();
       channelState.channel.nextRunTime = _utilities.strDeltaLocalTime(schedule.scheduleTime);
       channelState.channel.enableDateRange = _channel.enableDateRange;
-      debug(F("Task set to start at : "));
-      debugln(channelState.channel.nextRunTime);
       return StateUpdateResult::CHANGED;
     }, _channel.name);
   }
@@ -392,12 +439,10 @@ void TaskScheduler::updateNextRunStatus(){
 }
 
 int TaskScheduler::getRandomOnTimeSpan(){
-  srand((unsigned int)time(NULL));
   return(rand() % (_channel.schedule.runEvery - _channel.schedule.offAfter -1) + 1);
 }
 
 int TaskScheduler::getRandomOffTimeSpan(){
-  srand((unsigned int)time(NULL));
   if(_channel.enableMinimumRunTime){
     return(rand() % (_channel.schedule.runEvery - _controlOnTime - _channel.schedule.offAfter) + _channel.schedule.offAfter);
   }
@@ -405,42 +450,7 @@ int TaskScheduler::getRandomOffTimeSpan(){
 }
 
 void TaskScheduler::printSchedule(ScheduledTime schedule){
-  debugln(F(" "));
-  debug(F("channelName:         "));
-  debugln(schedule.channelName);
-  debug(F("controlPin:         "));
-  debugln(_channel.controlPin);
-  debug(F("scheduleTime:        "));
-  debugln(schedule.scheduleTime);
-  debug(F("isHotSchedule:       "));
-  debugln(schedule.isHotSchedule);
-  debug(F("isSpanSchedule:      "));
-  debugln(schedule.isSpanSchedule);
-  debug(F("isHotScheduleActive:        "));
-  debugln(schedule.isHotScheduleActive);
-  debug(F("isRunTaskNow:        "));
-  debugln(schedule.isRunTaskNow);
-  debug(F("currentTime:                 "));
-  debug(ctime(&schedule.currentTime));
-  debug(F("startTime:                   "));
-  debugln(schedule.startTime);
-  debug(F("endTime:                     "));
-  debugln(schedule.endTime);
-  debug(F("scheduleStartDateTime:       "));
-  debug(ctime(&schedule.scheduleStartDateTime));
-  debug(F("scheduleHotTimeEndDateTime:  "));
-  debug(ctime(&schedule.scheduleHotTimeEndDateTime));
-  debug(F("scheduleEndDateTime:         "));
-  debug(ctime(&schedule.scheduleEndDateTime));
-  debug(F("isOverride:                  "));
-  debugln(_channel.schedule.isOverride);
-  debug(F("isOverrideActive:            "));
-  debugln(schedule.isOverrideActive);
-  debug(F("overrideTime:                "));
-  debug(_channel.schedule.overrideTime);
-  debugln(F("s"));
-  debug(F("isWithInDateRange:           "));
-  debugln(schedule.isWithInDateRange);
+  // Debug output removed for production firmware size optimization
 }
 
 void TaskScheduler::runTask(){
@@ -527,12 +537,11 @@ void TaskScheduler::toggleSwitch(){
 }
 
 void TaskScheduler::digitalClockDisplay() {
-  time_t tnow = time(nullptr);
-  debug(ctime(&tnow));
+  // Debug output removed for production firmware size optimization
 }
 
 void TaskScheduler::digitalClockDisplay(time_t tnow) {
-  debugln(ctime(&tnow));
+  // Debug output removed for production firmware size optimization
 }
 
 int TaskScheduler::getScheduleTimeSpanOff(){

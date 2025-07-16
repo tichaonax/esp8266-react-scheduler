@@ -7,15 +7,6 @@
 #include "Homeassistant.h"
 #include "Channels.h"
 
-#define DEBUG 0
-
-#if DEBUG == 1
-  #define debug(x) Serial.print(x)
-  #define debugln(x) Serial.println(x)
-#else
-  #define debug(x)
-  #define debugln(x)
-#endif // DEBUG
 
 #define CONTROL_ON 0x1
 #define CONTROL_OFF 0x0

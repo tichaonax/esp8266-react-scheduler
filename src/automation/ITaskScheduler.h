@@ -1,6 +1,8 @@
 #ifndef ITASKSCHEDULER_H
 #define ITASKSCHEDULER_H
 
+#include <Arduino.h>
+
 class ITaskScheduler {
 public:
     virtual void begin() = 0;

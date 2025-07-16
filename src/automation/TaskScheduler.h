@@ -7,8 +7,50 @@
 #include "ChannelMqttSettingsService.h"
 #include "ChannelStateService.h"
 
+// Configuration struct to replace massive parameter lists
+struct TaskSchedulerConfig {
+    AsyncWebServer* server;
+    SecurityManager* securityManager;
+    AsyncMqttClient* mqttClient;
+    FS* fs;
+    uint8_t channelControlPin;
+    const char* channelJsonConfigPath;
+    String restChannelEndPoint;
+    const char* webSocketChannelEndPoint;
+    float runEvery;
+    float offAfter;
+    int startTimeHour;
+    int startTimeMinute;
+    int endTimeHour;
+    int endTimeMinute;
+    bool enabled;
+    String channelName;
+    bool enableTimeSpan;
+    ChannelMqttSettingsService* channelMqttSettingsService;
+    bool randomize;
+    float hotTimeHour;
+    float overrideTime;
+    bool enableMinimumRunTime;
+    uint8_t homeAssistantTopicType;
+    String homeAssistantIcon;
+    bool enableRemoteConfiguration;
+    String masterIPAddress;
+    String restChannelRestartEndPoint;
+    bool enableDateRange;
+    bool activeOutsideDateRange;
+    String activeStartDateRange;
+    String activeEndDateRange;
+    String buildVersion;
+    String weekDays;
+    bool autoRebootSystem;
+};
+
 class TaskScheduler : public ITaskScheduler {
 public:
+    // New streamlined constructor using config struct
+    TaskScheduler(const TaskSchedulerConfig& config);
+    
+    // Legacy constructor (to be removed)
     TaskScheduler(AsyncWebServer* server,
                   SecurityManager* securityManager,
                   AsyncMqttClient* mqttClient,
@@ -102,6 +144,10 @@ private:
     void scheduleTimeSpanTaskTicker(ScheduledTime schedule);
     void runSpanTaskTicker();
     void printSchedule(ScheduledTime schedule);
+    
+    // Callback optimization - extract inline lambdas to reduce code size
+    void buttonReadCallback();
+    void buttonDebounceCallback();
 
     Ticker SpanRepeatTicker;
     Ticker OffHotHourTicker;
