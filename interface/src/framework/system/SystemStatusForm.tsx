@@ -31,7 +31,9 @@ function formatNumber(num: number) {
 
 const useStyles = makeStyles((theme: any) => createStyles({
   systemContainer: {
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    background: theme.palette.mode === 'dark'
+      ? 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)'
+      : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
     minHeight: '100vh',
     padding: theme.spacing(3),
     [theme.breakpoints.down('sm')]: {
@@ -39,11 +41,18 @@ const useStyles = makeStyles((theme: any) => createStyles({
     },
   },
   systemCard: {
-    background: 'rgba(255, 255, 255, 0.95)',
+    background: theme.palette.mode === 'dark'
+      ? 'rgba(255, 255, 255, 0.05)'
+      : 'rgba(255, 255, 255, 0.95)',
     backdropFilter: 'blur(10px)',
     borderRadius: theme.spacing(2),
-    boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+    boxShadow: theme.palette.mode === 'dark'
+      ? '0 20px 40px rgba(0,0,0,0.3)'
+      : '0 20px 40px rgba(0,0,0,0.1)',
     padding: theme.spacing(4),
+    border: theme.palette.mode === 'dark'
+      ? '1px solid rgba(255, 255, 255, 0.1)'
+      : 'none',
     [theme.breakpoints.down('sm')]: {
       padding: theme.spacing(3),
     },
@@ -53,33 +62,51 @@ const useStyles = makeStyles((theme: any) => createStyles({
     marginBottom: theme.spacing(4),
   },
   headerTitle: {
-    background: 'linear-gradient(45deg, #667eea 30%, #764ba2 90%)',
+    background: theme.palette.mode === 'dark'
+      ? 'linear-gradient(45deg, #667eea 30%, #764ba2 90%)'
+      : 'linear-gradient(45deg, #667eea 30%, #764ba2 90%)',
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent',
     fontWeight: 700,
     marginBottom: theme.spacing(1),
   },
   infoCard: {
-    background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+    background: theme.palette.mode === 'dark'
+      ? 'linear-gradient(135deg, rgba(240, 147, 251, 0.2) 0%, rgba(245, 87, 108, 0.2) 100%)'
+      : 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
     color: 'white',
     marginBottom: theme.spacing(2),
     borderRadius: theme.spacing(2),
+    border: theme.palette.mode === 'dark'
+      ? '1px solid rgba(240, 147, 251, 0.3)'
+      : 'none',
     '& .MuiListItemText-primary': {
-      color: 'white',
+      color: theme.palette.mode === 'dark' ? '#f093fb' : 'white',
       fontWeight: 600,
     },
     '& .MuiListItemText-secondary': {
-      color: 'rgba(255, 255, 255, 0.8)',
+      color: theme.palette.mode === 'dark' ? '#81c784' : '#ffeb3b',
+      fontWeight: 500,
     },
     '& .MuiAvatar-root': {
-      background: 'rgba(255, 255, 255, 0.2)',
+      background: theme.palette.mode === 'dark'
+        ? 'rgba(240, 147, 251, 0.3)'
+        : 'rgba(255, 255, 255, 0.2)',
     },
   },
   actionSection: {
-    background: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
+    background: theme.palette.mode === 'dark'
+      ? 'linear-gradient(135deg, rgba(255, 236, 210, 0.1) 0%, rgba(252, 182, 159, 0.1) 100%)'
+      : 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
     borderRadius: theme.spacing(2),
     padding: theme.spacing(3),
     marginTop: theme.spacing(4),
+    border: theme.palette.mode === 'dark'
+      ? '1px solid rgba(255, 236, 210, 0.2)'
+      : 'none',
+    '& .MuiTypography-h6': {
+      color: theme.palette.mode === 'dark' ? '#ffcc80' : '#5d4037',
+    },
   },
 }));
 
@@ -196,7 +223,7 @@ const SystemStatusForm: FC = () => {
                 <DevicesIcon sx={{ fontSize: 'inherit', mr: 2, verticalAlign: 'middle' }} />
                 System Status
               </Typography>
-              <Typography variant="body2" color="textSecondary">
+              <Typography variant="body2" sx={{ color: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(102, 126, 234, 0.8)' }}>
                 Real-time system monitoring and device information
               </Typography>
             </Box>
@@ -262,9 +289,13 @@ const SystemStatusForm: FC = () => {
                           sx={{ 
                             height: 8, 
                             borderRadius: 4,
-                            backgroundColor: 'rgba(255, 255, 255, 0.3)',
+                            backgroundColor: theme.palette.mode === 'dark'
+                              ? 'rgba(240, 147, 251, 0.2)'
+                              : 'rgba(255, 255, 255, 0.3)',
                             '& .MuiLinearProgress-bar': {
-                              backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                              backgroundColor: theme.palette.mode === 'dark'
+                                ? 'rgba(240, 147, 251, 0.8)'
+                                : 'rgba(255, 255, 255, 0.8)',
                             }
                           }} 
                         />
@@ -318,9 +349,13 @@ const SystemStatusForm: FC = () => {
                           sx={{ 
                             height: 8, 
                             borderRadius: 4,
-                            backgroundColor: 'rgba(255, 255, 255, 0.3)',
+                            backgroundColor: theme.palette.mode === 'dark'
+                              ? 'rgba(240, 147, 251, 0.2)'
+                              : 'rgba(255, 255, 255, 0.3)',
                             '& .MuiLinearProgress-bar': {
-                              backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                              backgroundColor: theme.palette.mode === 'dark'
+                                ? 'rgba(240, 147, 251, 0.8)'
+                                : 'rgba(255, 255, 255, 0.8)',
                             }
                           }} 
                         />
@@ -377,9 +412,13 @@ const SystemStatusForm: FC = () => {
                           sx={{ 
                             height: 8, 
                             borderRadius: 4,
-                            backgroundColor: 'rgba(255, 255, 255, 0.3)',
+                            backgroundColor: theme.palette.mode === 'dark'
+                              ? 'rgba(240, 147, 251, 0.2)'
+                              : 'rgba(255, 255, 255, 0.3)',
                             '& .MuiLinearProgress-bar': {
-                              backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                              backgroundColor: theme.palette.mode === 'dark'
+                                ? 'rgba(240, 147, 251, 0.8)'
+                                : 'rgba(255, 255, 255, 0.8)',
                             }
                           }} 
                         />
@@ -441,7 +480,7 @@ const SystemStatusForm: FC = () => {
   return (
     <AutoRefreshWrapper
       onRefresh={loadData}
-      defaultInterval={30000}
+      defaultInterval={60000}
       defaultEnabled={true}
       title="System Status Auto-refresh"
     >

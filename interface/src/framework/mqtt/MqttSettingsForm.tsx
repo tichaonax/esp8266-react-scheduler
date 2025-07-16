@@ -31,7 +31,9 @@ import { numberValue, updateValue, useRest } from '../../utils';
 
 const useStyles = makeStyles((theme: any) => createStyles({
   mqttContainer: {
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    background: theme.palette.mode === 'dark'
+      ? 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)'
+      : 'linear-gradient(135deg, #2c3e50 0%, #34495e 100%)',
     minHeight: '100vh',
     padding: theme.spacing(3),
     [theme.breakpoints.down('sm')]: {
@@ -39,11 +41,18 @@ const useStyles = makeStyles((theme: any) => createStyles({
     },
   },
   mqttCard: {
-    background: 'rgba(255, 255, 255, 0.95)',
+    background: theme.palette.mode === 'dark'
+      ? 'rgba(255, 255, 255, 0.05)'
+      : 'rgba(255, 255, 255, 0.1)',
     backdropFilter: 'blur(10px)',
     borderRadius: theme.spacing(2),
-    boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+    boxShadow: theme.palette.mode === 'dark'
+      ? '0 20px 40px rgba(0,0,0,0.3)'
+      : '0 20px 40px rgba(0,0,0,0.2)',
     padding: theme.spacing(4),
+    border: theme.palette.mode === 'dark'
+      ? '1px solid rgba(255, 255, 255, 0.1)'
+      : '1px solid rgba(255, 255, 255, 0.2)',
     [theme.breakpoints.down('sm')]: {
       padding: theme.spacing(3),
     },
@@ -53,83 +62,156 @@ const useStyles = makeStyles((theme: any) => createStyles({
     marginBottom: theme.spacing(4),
   },
   headerTitle: {
-    background: 'linear-gradient(45deg, #667eea 30%, #764ba2 90%)',
+    background: theme.palette.mode === 'dark'
+      ? 'linear-gradient(45deg, #ff9800 30%, #f57c00 90%)'
+      : 'linear-gradient(45deg, #ecf0f1 30%, #bdc3c7 90%)',
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent',
     fontWeight: 700,
     marginBottom: theme.spacing(1),
   },
   sectionCard: {
-    background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-    color: 'white',
+    background: theme.palette.mode === 'dark'
+      ? 'linear-gradient(135deg, rgba(255, 152, 0, 0.1) 0%, rgba(245, 124, 0, 0.1) 100%)'
+      : 'linear-gradient(135deg, rgba(52, 73, 94, 0.8) 0%, rgba(44, 62, 80, 0.8) 100%)',
+    color: theme.palette.mode === 'dark' ? '#ff9800' : 'white',
     marginBottom: theme.spacing(3),
     borderRadius: theme.spacing(2),
+    border: theme.palette.mode === 'dark'
+      ? '1px solid rgba(255, 152, 0, 0.2)'
+      : 'none',
     '& .MuiTypography-root': {
-      color: 'white',
+      color: theme.palette.mode === 'dark' ? '#ff9800' : 'white',
     },
     '& .MuiFormControlLabel-root': {
-      color: 'white',
+      color: theme.palette.mode === 'dark' ? '#ff9800' : 'white',
     },
   },
   connectionSection: {
-    background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+    background: theme.palette.mode === 'dark'
+      ? 'linear-gradient(135deg, rgba(33, 150, 243, 0.1) 0%, rgba(21, 101, 192, 0.1) 100%)'
+      : 'linear-gradient(135deg, rgba(52, 73, 94, 0.7) 0%, rgba(44, 62, 80, 0.7) 100%)',
     borderRadius: theme.spacing(2),
     padding: theme.spacing(3),
     marginBottom: theme.spacing(3),
-    color: 'white',
+    color: theme.palette.mode === 'dark' ? '#64b5f6' : 'white',
+    border: theme.palette.mode === 'dark'
+      ? '1px solid rgba(33, 150, 243, 0.2)'
+      : 'none',
     '& .MuiTextField-root': {
       '& .MuiOutlinedInput-root': {
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        backgroundColor: theme.palette.mode === 'dark' 
+          ? 'rgba(255, 255, 255, 0.05)' 
+          : 'rgba(255, 255, 255, 0.1)',
         '& fieldset': {
-          borderColor: 'rgba(255, 255, 255, 0.3)',
+          borderColor: theme.palette.mode === 'dark'
+            ? 'rgba(100, 181, 246, 0.3)'
+            : 'rgba(255, 255, 255, 0.3)',
         },
         '&:hover fieldset': {
-          borderColor: 'rgba(255, 255, 255, 0.5)',
+          borderColor: theme.palette.mode === 'dark'
+            ? 'rgba(100, 181, 246, 0.5)'
+            : 'rgba(255, 255, 255, 0.5)',
         },
         '&.Mui-focused fieldset': {
-          borderColor: 'rgba(255, 255, 255, 0.7)',
+          borderColor: theme.palette.mode === 'dark'
+            ? 'rgba(100, 181, 246, 0.7)'
+            : 'rgba(255, 255, 255, 0.7)',
         },
       },
       '& .MuiInputLabel-root': {
-        color: 'rgba(255, 255, 255, 0.8)',
+        color: theme.palette.mode === 'dark'
+          ? 'rgba(100, 181, 246, 0.8)'
+          : 'rgba(255, 255, 255, 0.8)',
       },
       '& .MuiOutlinedInput-input': {
-        color: 'white',
+        color: theme.palette.mode === 'dark' ? '#64b5f6' : 'white',
       },
     },
   },
   authSection: {
-    background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+    background: theme.palette.mode === 'dark'
+      ? 'linear-gradient(135deg, rgba(156, 39, 176, 0.1) 0%, rgba(123, 31, 162, 0.1) 100%)'
+      : 'linear-gradient(135deg, rgba(52, 73, 94, 0.6) 0%, rgba(44, 62, 80, 0.6) 100%)',
     borderRadius: theme.spacing(2),
     padding: theme.spacing(3),
     marginBottom: theme.spacing(3),
-    color: 'white',
+    color: theme.palette.mode === 'dark' ? '#ce93d8' : 'white',
+    border: theme.palette.mode === 'dark'
+      ? '1px solid rgba(156, 39, 176, 0.2)'
+      : 'none',
     '& .MuiTextField-root': {
       '& .MuiOutlinedInput-root': {
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        backgroundColor: theme.palette.mode === 'dark' 
+          ? 'rgba(255, 255, 255, 0.05)' 
+          : 'rgba(255, 255, 255, 0.1)',
         '& fieldset': {
-          borderColor: 'rgba(255, 255, 255, 0.3)',
+          borderColor: theme.palette.mode === 'dark'
+            ? 'rgba(206, 147, 216, 0.3)'
+            : 'rgba(255, 255, 255, 0.3)',
         },
         '&:hover fieldset': {
-          borderColor: 'rgba(255, 255, 255, 0.5)',
+          borderColor: theme.palette.mode === 'dark'
+            ? 'rgba(206, 147, 216, 0.5)'
+            : 'rgba(255, 255, 255, 0.5)',
         },
         '&.Mui-focused fieldset': {
-          borderColor: 'rgba(255, 255, 255, 0.7)',
+          borderColor: theme.palette.mode === 'dark'
+            ? 'rgba(206, 147, 216, 0.7)'
+            : 'rgba(255, 255, 255, 0.7)',
         },
       },
       '& .MuiInputLabel-root': {
-        color: 'rgba(255, 255, 255, 0.8)',
+        color: theme.palette.mode === 'dark'
+          ? 'rgba(206, 147, 216, 0.8)'
+          : 'rgba(255, 255, 255, 0.8)',
       },
       '& .MuiOutlinedInput-input': {
-        color: 'white',
+        color: theme.palette.mode === 'dark' ? '#ce93d8' : 'white',
       },
     },
   },
   advancedSection: {
-    background: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+    background: theme.palette.mode === 'dark'
+      ? 'linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(56, 142, 60, 0.1) 100%)'
+      : 'linear-gradient(135deg, rgba(52, 73, 94, 0.5) 0%, rgba(44, 62, 80, 0.5) 100%)',
     borderRadius: theme.spacing(2),
     padding: theme.spacing(3),
     marginBottom: theme.spacing(3),
+    color: theme.palette.mode === 'dark' ? '#81c784' : 'white',
+    border: theme.palette.mode === 'dark'
+      ? '1px solid rgba(76, 175, 80, 0.2)'
+      : 'none',
+    '& .MuiTextField-root': {
+      '& .MuiOutlinedInput-root': {
+        backgroundColor: theme.palette.mode === 'dark' 
+          ? 'rgba(255, 255, 255, 0.05)' 
+          : 'rgba(255, 255, 255, 0.1)',
+        '& fieldset': {
+          borderColor: theme.palette.mode === 'dark'
+            ? 'rgba(129, 199, 132, 0.3)'
+            : 'rgba(255, 255, 255, 0.3)',
+        },
+        '&:hover fieldset': {
+          borderColor: theme.palette.mode === 'dark'
+            ? 'rgba(129, 199, 132, 0.5)'
+            : 'rgba(255, 255, 255, 0.5)',
+        },
+        '&.Mui-focused fieldset': {
+          borderColor: theme.palette.mode === 'dark'
+            ? 'rgba(129, 199, 132, 0.7)'
+            : 'rgba(255, 255, 255, 0.7)',
+        },
+      },
+      '& .MuiInputLabel-root': {
+        color: theme.palette.mode === 'dark'
+          ? 'rgba(129, 199, 132, 0.8)'
+          : 'rgba(255, 255, 255, 0.8)',
+      },
+      '& .MuiOutlinedInput-input': {
+        color: theme.palette.mode === 'dark' ? '#81c784' : 'white',
+      },
+    },
   },
 }));
 
@@ -338,10 +420,30 @@ const MqttSettingsForm: FC = () => {
                   py: 1.5,
                   fontSize: '1.1rem',
                   fontWeight: 600,
-                  background: 'linear-gradient(45deg, #667eea 30%, #764ba2 90%)',
+                  background: theme.palette.mode === 'dark'
+                    ? 'linear-gradient(45deg, #ff9800 30%, #f57c00 90%)'
+                    : 'linear-gradient(45deg, #34495e 30%, #2c3e50 90%)',
+                  color: 'white',
+                  boxShadow: theme.palette.mode === 'dark'
+                    ? '0 8px 16px rgba(255, 152, 0, 0.3)'
+                    : '0 8px 16px rgba(52, 73, 94, 0.3)',
                   '&:hover': {
-                    background: 'linear-gradient(45deg, #5a6fd8 30%, #6a4190 90%)',
-                  }
+                    background: theme.palette.mode === 'dark'
+                      ? 'linear-gradient(45deg, #f57c00 30%, #ef6c00 90%)'
+                      : 'linear-gradient(45deg, #2c3e50 30%, #1a252f 90%)',
+                    boxShadow: theme.palette.mode === 'dark'
+                      ? '0 12px 20px rgba(255, 152, 0, 0.4)'
+                      : '0 12px 20px rgba(52, 73, 94, 0.4)',
+                    transform: 'translateY(-2px)',
+                  },
+                  '&:disabled': {
+                    background: 'linear-gradient(45deg, #9E9E9E 30%, #757575 90%)',
+                    color: 'white',
+                  },
+                  '&:active': {
+                    transform: 'translateY(0px)',
+                  },
+                  transition: 'all 0.2s ease-in-out'
                 }}
               >
                 {saving ? 'Saving Configuration...' : 'Save MQTT Settings'}

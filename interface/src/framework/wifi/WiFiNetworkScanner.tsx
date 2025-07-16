@@ -23,8 +23,9 @@ const compareNetworks = (network1: WiFiNetwork, network2: WiFiNetwork) => {
 };
 
 const WiFiNetworkScanner: FC = () => {
-
   const { enqueueSnackbar } = useSnackbar();
+  const isMountedRef = useRef(true);
+  const timeoutRef = useRef<NodeJS.Timeout>();
 
   const pollCount = useRef(0);
   const [networkList, setNetworkList] = useState<WiFiNetworkList>();
@@ -32,8 +33,10 @@ const WiFiNetworkScanner: FC = () => {
 
   const finishedWithError = useCallback((message: string) => {
     enqueueSnackbar(message, { variant: 'error' });
-    setNetworkList(undefined);
-    setErrorMessage(message);
+    if (isMountedRef.current) {
+      setNetworkList(undefined);
+      setErrorMessage(message);
+    }
   }, [enqueueSnackbar]);
 
   const pollNetworkList = useCallback(async () => {
@@ -41,16 +44,18 @@ const WiFiNetworkScanner: FC = () => {
       const response = await WiFiApi.listNetworks();
       if (response.status === 202) {
         const completedPollCount = pollCount.current + 1;
-        if (completedPollCount < NUM_POLLS) {
+        if (completedPollCount < NUM_POLLS && isMountedRef.current) {
           pollCount.current = completedPollCount;
-          setTimeout(pollNetworkList, POLLING_FREQUENCY);
+          timeoutRef.current = setTimeout(pollNetworkList, POLLING_FREQUENCY);
         } else {
           finishedWithError("Device did not return network list in timely manner");
         }
       } else {
         const newNetworkList = response.data;
         newNetworkList.networks.sort(compareNetworks);
-        setNetworkList(newNetworkList);
+        if (isMountedRef.current) {
+          setNetworkList(newNetworkList);
+        }
       }
     } catch (error: any) {
       finishedWithError(extractErrorMessage(error, 'Problem listing WiFi networks'));
@@ -59,17 +64,31 @@ const WiFiNetworkScanner: FC = () => {
 
   const startNetworkScan = useCallback(async () => {
     pollCount.current = 0;
-    setNetworkList(undefined);
-    setErrorMessage(undefined);
+    if (isMountedRef.current) {
+      setNetworkList(undefined);
+      setErrorMessage(undefined);
+    }
     try {
       await WiFiApi.scanNetworks();
-      setTimeout(pollNetworkList, POLLING_FREQUENCY);
+      if (isMountedRef.current) {
+        timeoutRef.current = setTimeout(pollNetworkList, POLLING_FREQUENCY);
+      }
     } catch (error: any) {
       finishedWithError(extractErrorMessage(error, 'Problem scanning for WiFi networks'));
     }
   }, [finishedWithError, pollNetworkList]);
 
-  useEffect(() => { startNetworkScan(); }, [startNetworkScan]);
+  useEffect(() => { 
+    startNetworkScan(); 
+    
+    // Cleanup function to prevent memory leaks
+    return () => {
+      isMountedRef.current = false;
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [startNetworkScan]);
 
   const renderNetworkScanner = () => {
     if (!networkList) {

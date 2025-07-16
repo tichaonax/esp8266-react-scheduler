@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
+import React, { FC, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,6 +13,7 @@ const Authentication: FC = ({ children }) => {
   const { features } = useContext(FeaturesContext);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const isMountedRef = useRef(true);
 
   const [initialized, setInitialized] = useState<boolean>(false);
   const [me, setMe] = useState<Me>();
@@ -39,28 +40,41 @@ const Authentication: FC = ({ children }) => {
 
   const refresh = useCallback(async () => {
     if (!features.security) {
-      setMe({ admin: true, username: "admin" });
-      setInitialized(true);
+      if (isMountedRef.current) {
+        setMe({ admin: true, username: "admin" });
+        setInitialized(true);
+      }
       return;
     }
     const accessToken = AuthenticationApi.getStorage().getItem(ACCESS_TOKEN);
     if (accessToken) {
       try {
         await AuthenticationApi.verifyAuthorization();
-        setMe(AuthenticationApi.decodeMeJWT(accessToken));
-        setInitialized(true);
+        if (isMountedRef.current) {
+          setMe(AuthenticationApi.decodeMeJWT(accessToken));
+          setInitialized(true);
+        }
       } catch (error: any) {
+        if (isMountedRef.current) {
+          setMe(undefined);
+          setInitialized(true);
+        }
+      }
+    } else {
+      if (isMountedRef.current) {
         setMe(undefined);
         setInitialized(true);
       }
-    } else {
-      setMe(undefined);
-      setInitialized(true);
     }
   }, [features]);
 
   useEffect(() => {
     refresh();
+    
+    // Cleanup function to prevent memory leaks
+    return () => {
+      isMountedRef.current = false;
+    };
   }, [refresh]);
 
   if (initialized) {

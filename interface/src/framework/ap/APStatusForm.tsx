@@ -5,6 +5,8 @@ import SettingsInputAntennaIcon from '@mui/icons-material/SettingsInputAntenna';
 import DeviceHubIcon from '@mui/icons-material/DeviceHub';
 import ComputerIcon from '@mui/icons-material/Computer';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import IpIcon from '@mui/icons-material/LocationOn';
+import GroupIcon from '@mui/icons-material/Group';
 
 import * as APApi from "../../api/ap";
 import { APNetworkStatus, APStatus } from "../../types";
@@ -61,14 +63,16 @@ const APStatusForm: FC = () => {
           <Divider variant="inset" component="li" />
           <ListItem>
             <ListItemAvatar>
-              <Avatar>IP</Avatar>
+              <Avatar sx={{ bgcolor: '#4CAF50' }}>
+                <IpIcon />
+              </Avatar>
             </ListItemAvatar>
             <ListItemText primary="IP Address" secondary={data.ip_address} />
           </ListItem>
           <Divider variant="inset" component="li" />
           <ListItem>
             <ListItemAvatar>
-              <Avatar>
+              <Avatar sx={{ bgcolor: '#FF9800' }}>
                 <DeviceHubIcon />
               </Avatar>
             </ListItemAvatar>
@@ -77,8 +81,8 @@ const APStatusForm: FC = () => {
           <Divider variant="inset" component="li" />
           <ListItem>
             <ListItemAvatar>
-              <Avatar>
-                <ComputerIcon />
+              <Avatar sx={{ bgcolor: '#2196F3' }}>
+                <GroupIcon />
               </Avatar>
             </ListItemAvatar>
             <ListItemText primary="AP Clients" secondary={data.station_num} />
@@ -86,8 +90,32 @@ const APStatusForm: FC = () => {
           <Divider variant="inset" component="li" />
         </List>
         <ButtonRow pt={1}>
-          <Button startIcon={<RefreshIcon />} variant="contained" color="secondary" onClick={loadData}>
-            Refresh
+          <Button 
+            startIcon={<RefreshIcon />} 
+            variant="contained" 
+            onClick={loadData}
+            sx={{
+              background: 'linear-gradient(45deg, #9C27B0 30%, #7B1FA2 90%)',
+              borderRadius: 3,
+              px: 4,
+              py: 1.5,
+              fontSize: '1rem',
+              fontWeight: 600,
+              color: 'white',
+              textTransform: 'none',
+              boxShadow: '0 8px 16px rgba(156, 39, 176, 0.3)',
+              '&:hover': {
+                background: 'linear-gradient(45deg, #7B1FA2 30%, #6A1B9A 90%)',
+                boxShadow: '0 12px 20px rgba(156, 39, 176, 0.4)',
+                transform: 'translateY(-2px)',
+              },
+              '&:active': {
+                transform: 'translateY(0px)',
+              },
+              transition: 'all 0.2s ease-in-out'
+            }}
+          >
+            Refresh Status
           </Button>
         </ButtonRow>
       </>
