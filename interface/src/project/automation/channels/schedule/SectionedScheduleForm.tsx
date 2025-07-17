@@ -357,16 +357,53 @@ const SectionedScheduleForm: FC<SectionedScheduleFormProps> = ({ channelId }) =>
           variant="outlined"
         />
         
-        <FormControlLabel
-          control={
-            <Switch
-              checked={data.enabled}
-              onChange={(e) => setData({ ...data, enabled: e.target.checked })}
-              color="primary"
-            />
-          }
-          label="Schedule Enabled"
-        />
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: isMobile ? 'column' : 'row',
+          alignItems: isMobile ? 'stretch' : 'center',
+          gap: 2,
+          mt: 2
+        }}>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={data.enabled}
+                onChange={(e) => setData({ ...data, enabled: e.target.checked })}
+                color="primary"
+              />
+            }
+            label="Schedule Enabled"
+            sx={{ flexGrow: 1, margin: 0 }}
+          />
+          
+          <Button
+            startIcon={<SaveIcon />}
+            disabled={saving}
+            variant="contained"
+            color="primary"
+            onClick={handleSave}
+            size={isMobile ? "medium" : "small"}
+            sx={{ 
+              minWidth: isMobile ? '100%' : 120,
+              height: isMobile ? 42 : 36,
+              borderRadius: 2,
+              fontWeight: 600,
+              fontSize: isMobile ? '0.875rem' : '0.75rem',
+              background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+              boxShadow: '0 2px 10px rgba(33, 150, 243, 0.3)',
+              '&:hover': {
+                background: 'linear-gradient(45deg, #1976D2 30%, #1BA3D1 90%)',
+                boxShadow: '0 3px 15px rgba(33, 150, 243, 0.4)',
+              },
+              '&:disabled': {
+                background: '#ccc',
+                boxShadow: 'none',
+              }
+            }}
+          >
+            {saving ? (isMobile ? 'Saving...' : 'Save...') : (isMobile ? 'Save Schedule' : 'Save')}
+          </Button>
+        </Box>
       </SectionContent>
 
 

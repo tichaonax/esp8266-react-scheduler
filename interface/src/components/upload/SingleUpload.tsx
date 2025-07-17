@@ -1,12 +1,13 @@
 import React, { FC, Fragment } from 'react';
 import { useDropzone, DropzoneState } from 'react-dropzone';
+import { AxiosProgressEvent } from 'axios';
 
 import { Box, Button, LinearProgress, Theme, Typography, useTheme } from '@mui/material';
 
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import CancelIcon from '@mui/icons-material/Cancel';
 
-const progressPercentage = (progress: ProgressEvent) => Math.round((progress.loaded * 100) / progress.total);
+const progressPercentage = (progress: AxiosProgressEvent) => Math.round((progress.loaded * 100) / (progress.total || 1));
 
 const getBorderColor = (theme: Theme, props: DropzoneState) => {
   if (props.isDragAccept) {
@@ -26,7 +27,7 @@ export interface SingleUploadProps {
   onCancel: () => void;
   accept?: string | string[];
   uploading: boolean;
-  progress?: ProgressEvent;
+  progress?: AxiosProgressEvent;
 }
 
 const SingleUpload: FC<SingleUploadProps> = ({ onDrop, onCancel, accept, uploading, progress }) => {
@@ -36,7 +37,7 @@ const SingleUpload: FC<SingleUploadProps> = ({ onDrop, onCancel, accept, uploadi
 
   const progressText = () => {
     if (uploading) {
-      if (progress?.lengthComputable) {
+      if (progress && progress.total) {
         return `Uploading: ${progressPercentage(progress)}%`;
       }
       return "Uploading\u2026";
@@ -71,8 +72,8 @@ const SingleUpload: FC<SingleUploadProps> = ({ onDrop, onCancel, accept, uploadi
           <Fragment>
             <Box width="100%" p={2}>
               <LinearProgress
-                variant={!progress || progress.lengthComputable ? "determinate" : "indeterminate"}
-                value={!progress ? 0 : progress.lengthComputable ? progressPercentage(progress) : 0}
+                variant={!progress || progress.total ? "determinate" : "indeterminate"}
+                value={!progress ? 0 : progress.total ? progressPercentage(progress) : 0}
               />
             </Box>
             <Button startIcon={<CancelIcon />} variant="contained" color="secondary" onClick={onCancel}>
