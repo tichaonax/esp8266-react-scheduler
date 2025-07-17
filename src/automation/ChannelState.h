@@ -8,10 +8,48 @@
 
 #define DEFAULT_JSON_DOCUMENT_SIZE 2048
 
+// Constants for validation and bounds checking
+#define MAX_HOT_TIME_SECONDS 57600  // 16 hours
+#define MIN_RUN_EVERY_SECONDS 60    // 1 minute
+#define MAX_RUN_EVERY_SECONDS 86400 // 24 hours
+#define MIN_OFF_AFTER_SECONDS 30    // 30 seconds minimum
+
 struct CurrentTime {
   int minutesInSec;
   int totalCurrentTimeInSec;
 };
+
+// Helper functions for time conversions
+namespace ChannelStateHelpers {
+  inline float convertSecondsToMinutes(int seconds) { 
+    return seconds / 60.0f; 
+  }
+  
+  inline float convertSecondsToHours(int seconds) { 
+    return seconds / 3600.0f; 
+  }
+  
+  inline int convertMinutesToSeconds(float minutes) { 
+    return (int)round(minutes * 60); 
+  }
+  
+  inline int convertHoursToSeconds(float hours) { 
+    return (int)round(hours * 3600); 
+  }
+  
+  // Helper function to parse weekDays string
+  inline void parseWeekDays(const String& weekDaysStr, int weekDays[7]) {
+    for (int i = 0; i < 7; i++) weekDays[i] = -1;
+    
+    String str = weekDaysStr;
+    while (str.length() > 0) {
+      int index = str.indexOf(',');
+      int day = (index == -1) ? str.toInt() : str.substring(0, index).toInt();
+      if (day >= 0 && day < 7) weekDays[day] = day;
+      str = (index == -1) ? "" : str.substring(index + 1);
+    }
+  }
+}
 
 
 class ChannelState {
@@ -144,14 +182,14 @@ static void haRead(ChannelState& settings, JsonObject& root) {
 
     JsonObject schedule = jsonObject.createNestedObject("schedule");
       
-    schedule["runEvery"] = floor(float(float(channel.schedule.runEvery)/float(60)) * 1000) * 0.001;
-    schedule["offAfter"] = floor(float(float(channel.schedule.offAfter)/float(60)) * 1000) * 0.001;
-    schedule["startTimeHour"] = round(float(float(channel.schedule.startTimeHour)/float(3600)) * 1000) / 1000;
-    schedule["startTimeMinute"] = round(float(float(channel.schedule.startTimeMinute)/float(60)) * 1000) / 1000;
-    schedule["hotTimeHour"] = round(float(float(channel.schedule.hotTimeHour)/float(3600)) * 1000) /1000;
-    schedule["overrideTime"] = floor(float(float(channel.schedule.overrideTime)/float(60)) * 1000) * 0.001;
-    schedule["endTimeHour"] = round(float(float(channel.schedule.endTimeHour)/float(3600)) * 1000) / 1000;
-    schedule["endTimeMinute"] = round(float(float(channel.schedule.endTimeMinute)/float(60)) * 1000) / 1000;
+    schedule["runEvery"] = ChannelStateHelpers::convertSecondsToMinutes(channel.schedule.runEvery);
+    schedule["offAfter"] = ChannelStateHelpers::convertSecondsToMinutes(channel.schedule.offAfter);
+    schedule["startTimeHour"] = ChannelStateHelpers::convertSecondsToHours(channel.schedule.startTimeHour);
+    schedule["startTimeMinute"] = ChannelStateHelpers::convertSecondsToMinutes(channel.schedule.startTimeMinute);
+    schedule["hotTimeHour"] = ChannelStateHelpers::convertSecondsToHours(channel.schedule.hotTimeHour);
+    schedule["overrideTime"] = ChannelStateHelpers::convertSecondsToMinutes(channel.schedule.overrideTime);
+    schedule["endTimeHour"] = ChannelStateHelpers::convertSecondsToHours(channel.schedule.endTimeHour);
+    schedule["endTimeMinute"] = ChannelStateHelpers::convertSecondsToMinutes(channel.schedule.endTimeMinute);
     schedule["isOverride"] = channel.schedule.isOverride;
 
     JsonArray weekDays = schedule.createNestedArray("weekDays");
@@ -176,7 +214,7 @@ static void haRead(ChannelState& settings, JsonObject& root) {
     scheduled["scheduleTime"] = (int)scheduledTime.scheduleTime;
     scheduled["isHotSchedule"] = scheduledTime.isHotSchedule;
     scheduled["isSpanSchedule"] = scheduledTime.isSpanSchedule;
-    scheduled["isHotScheduleActive:"] =  scheduledTime.isHotScheduleActive;
+    scheduled["isHotScheduleActive"] = scheduledTime.isHotScheduleActive;
     scheduled["isRunTaskNow"] = scheduledTime.isRunTaskNow;
     scheduled["currentTime"] = utils.eraseLineFeed(ctime(&scheduledTime.currentTime));
     scheduled["startTimeSeconds"] = (int)scheduledTime.startTime;
@@ -221,23 +259,27 @@ static void updateChannel(JsonObject& json, Channel& channel) {
     }
    
     JsonObject schedule = json["schedule"];
-    channel.schedule.runEvery = schedule["runEvery"] ? (int)(round(60 * float(schedule["runEvery"]))) : channel.schedule.runEvery;
-    channel.schedule.offAfter = schedule["offAfter"] ? (int)(round(60 * float(schedule["offAfter"]))) : channel.schedule.offAfter;
-    channel.schedule.startTimeHour = schedule["startTimeHour"] ? (int)(round(3600 * float(schedule["startTimeHour"]))) : channel.schedule.startTimeHour;
-    channel.schedule.startTimeMinute = schedule["startTimeMinute"] ? (int)(round(60 * float(schedule["startTimeMinute"]))) : channel.schedule.startTimeMinute;
+    channel.schedule.runEvery = schedule["runEvery"] ? ChannelStateHelpers::convertMinutesToSeconds(schedule["runEvery"]) : channel.schedule.runEvery;
+    channel.schedule.offAfter = schedule["offAfter"] ? ChannelStateHelpers::convertMinutesToSeconds(schedule["offAfter"]) : channel.schedule.offAfter;
+    channel.schedule.startTimeHour = schedule["startTimeHour"] ? ChannelStateHelpers::convertHoursToSeconds(schedule["startTimeHour"]) : channel.schedule.startTimeHour;
+    channel.schedule.startTimeMinute = schedule["startTimeMinute"] ? ChannelStateHelpers::convertMinutesToSeconds(schedule["startTimeMinute"]) : channel.schedule.startTimeMinute;
     if (channel.schedule.startTimeMinute >= 3600) { channel.schedule.startTimeMinute  = 0; }
-    channel.schedule.endTimeHour = schedule["endTimeHour"] ? (int)(round(3600 * float(schedule["endTimeHour"]))) : channel.schedule.endTimeHour;
-    channel.schedule.endTimeMinute = schedule["endTimeMinute"] ? (int)(round(60 * float(schedule["endTimeMinute"]))) : channel.schedule.endTimeMinute;
+    channel.schedule.endTimeHour = schedule["endTimeHour"] ? ChannelStateHelpers::convertHoursToSeconds(schedule["endTimeHour"]) : channel.schedule.endTimeHour;
+    channel.schedule.endTimeMinute = schedule["endTimeMinute"] ? ChannelStateHelpers::convertMinutesToSeconds(schedule["endTimeMinute"]) : channel.schedule.endTimeMinute;
     if (channel.schedule.endTimeMinute >= 3600) { channel.schedule.endTimeMinute  = 0; }
 
     channel.schedule.isOverride = schedule["isOverride"];
 
-    channel.schedule.hotTimeHour = schedule["hotTimeHour"] ? (int)(round(3600 * float(schedule["hotTimeHour"]))) : channel.schedule.hotTimeHour;
-    channel.schedule.overrideTime = schedule["overrideTime"] ? (int)(round(60 * float(schedule["overrideTime"]))) : channel.schedule.overrideTime;
+    channel.schedule.hotTimeHour = schedule["hotTimeHour"] ? ChannelStateHelpers::convertHoursToSeconds(schedule["hotTimeHour"]) : channel.schedule.hotTimeHour;
+    channel.schedule.overrideTime = schedule["overrideTime"] ? ChannelStateHelpers::convertMinutesToSeconds(schedule["overrideTime"]) : channel.schedule.overrideTime;
     
-    if ((channel.schedule.hotTimeHour > 57600) | (channel.schedule.hotTimeHour < 0)) { channel.schedule.hotTimeHour  = 0; }
+    if ((channel.schedule.hotTimeHour > MAX_HOT_TIME_SECONDS) || (channel.schedule.hotTimeHour < 0)) { 
+      channel.schedule.hotTimeHour = 0; 
+    }
   
-    if ((channel.schedule.overrideTime > 57600) | (channel.schedule.overrideTime < 0)) { channel.schedule.overrideTime  = 0; }
+    if ((channel.schedule.overrideTime > MAX_HOT_TIME_SECONDS) || (channel.schedule.overrideTime < 0)) { 
+      channel.schedule.overrideTime = 0; 
+    }
 
     if (schedule["weekDays"]){
       for (int i = 0; i< 7; i++){
@@ -252,11 +294,32 @@ static void updateChannel(JsonObject& json, Channel& channel) {
   }
 
   static boolean dataIsValid(JsonObject& json, ChannelState& channelState){
-    // TO DO to be expanded for more validation
     JsonObject schedule = json["schedule"];
-    int runEvery = schedule["runEvery"] ? (int)(round(60 * float(schedule["runEvery"]))) : channelState.channel.schedule.runEvery;
-    int offAfter = schedule["offAfter"] ? (int)(round(60 * float(schedule["offAfter"]))) : channelState.channel.schedule.offAfter;
-    return (runEvery > offAfter);
+    
+    // Get values with proper conversions
+    int runEvery = schedule["runEvery"] ? ChannelStateHelpers::convertMinutesToSeconds(schedule["runEvery"]) : channelState.channel.schedule.runEvery;
+    int offAfter = schedule["offAfter"] ? ChannelStateHelpers::convertMinutesToSeconds(schedule["offAfter"]) : channelState.channel.schedule.offAfter;
+    
+    // Validate basic scheduling logic
+    if (runEvery <= offAfter) return false;
+    
+    // Validate time ranges
+    if (runEvery < MIN_RUN_EVERY_SECONDS || runEvery > MAX_RUN_EVERY_SECONDS) return false;
+    if (offAfter < MIN_OFF_AFTER_SECONDS || offAfter > runEvery) return false;
+    
+    // Validate hot time if present
+    if (schedule["hotTimeHour"]) {
+      int hotTime = ChannelStateHelpers::convertHoursToSeconds(schedule["hotTimeHour"]);
+      if (hotTime < 0 || hotTime > MAX_HOT_TIME_SECONDS) return false;
+    }
+    
+    // Validate override time if present
+    if (schedule["overrideTime"]) {
+      int overrideTime = ChannelStateHelpers::convertMinutesToSeconds(schedule["overrideTime"]);
+      if (overrideTime < 0 || overrideTime > MAX_HOT_TIME_SECONDS) return false;
+    }
+    
+    return true;
   }
 };
 
