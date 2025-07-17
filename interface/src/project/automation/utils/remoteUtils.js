@@ -23,7 +23,7 @@ export class RemoteUtils {
   static getProxy() {
       let isProxy = false;
       const currentChannelName = this.getRemoteDeviceChannelName();
-      const activeChannel = this.getRemoteDeviceActiveChannel().split('#')[0];
+      const activeChannel = this.getRemoteDeviceActiveChannel();
       const localhost = this.parseUrl(this.getUrlAddress());
       let device = this.getRemoteDeviceUrl();
       let remote = device;
@@ -92,7 +92,7 @@ export class RemoteUtils {
     }
 
     static getRemoteDeviceActiveChannel(){
-      return this.getLastPathItem(this.getUrlAddress());
+      return this.getLastPathItem(this.parseUrl(this.getUrlAddress()).pathname);
     }
 
     static isRemoteDevice(){
@@ -164,7 +164,11 @@ export class RemoteUtils {
       return deviceProxySelector(store.getState());
     }
 
-    static getLastPathItem = (thePath) => thePath.substring(thePath.lastIndexOf('/') + 1);
+    static getLastPathItem = (thePath) => {
+      // Remove query parameters and hash fragments
+      const cleanPath = thePath.split('?')[0].split('#')[0];
+      return cleanPath.substring(cleanPath.lastIndexOf('/') + 1);
+    };
   }
 
   const remoteUtils = { RemoteUtils };

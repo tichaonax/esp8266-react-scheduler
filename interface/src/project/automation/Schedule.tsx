@@ -80,7 +80,7 @@ const Schedule: FC = () => {
           /> : null }
       </RouterTabs>
       <Routes>
-    <   Route path={`${ONE}`} element={<ChannelOne />} />
+        <Route path={`${ONE}`} element={<ChannelOne />} />
         <Route path={`${TWO}`} element={<ChannelTwo />} />
         <Route path={`${THREE}`} element={<ChannelThree />} />
         <Route path={`${FOUR}`} element={<ChannelFour />} />
