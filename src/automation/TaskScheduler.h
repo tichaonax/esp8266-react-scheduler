@@ -45,6 +45,22 @@ struct TaskSchedulerConfig {
     bool autoRebootSystem;
 };
 
+// Schedule calculation parameters struct to replace massive parameter lists
+struct ScheduleCalculationParams {
+    int startTime;
+    int endTime;
+    int hotTimeHour;
+    bool enableTimeSpan;
+    bool isHotScheduleActive;
+    String channelName;
+    bool randomize;
+    bool enableMinimumRunTime;
+    String activeStartDateRange;
+    String activeEndDateRange;
+    bool enableDateRange;
+    bool activeOutsideDateRange;
+};
+
 class TaskScheduler : public ITaskScheduler {
 public:
     // New streamlined constructor using config struct
@@ -127,6 +143,7 @@ private:
     void digitalClockDisplay(time_t tnow);
 
     ScheduledTime getNextRunTime();
+    ScheduleCalculationParams buildScheduleParams() const;
     void updateStatus(short delta);
     void updateNextRunStatus();
     int getRandomOnTimeSpan();

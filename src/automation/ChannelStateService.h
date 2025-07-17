@@ -9,6 +9,61 @@
 #include "ChannelState.h"
 #include "ChannelMqttSettingsService.h"
 
+// Configuration struct to replace massive parameter lists
+struct ChannelStateConfig {
+    AsyncWebServer* server;
+    SecurityManager* securityManager;
+    AsyncMqttClient* mqttClient;
+    FS* fs;
+    uint8_t channelControlPin;
+    const char* channelJsonConfigPath;
+    String restChannelEndPoint;
+    const char* webSocketChannelEndPoint;
+    
+    // Schedule configuration group
+    struct {
+        float runEvery;
+        float offAfter;
+        int startTimeHour;
+        int startTimeMinute;
+        int endTimeHour;
+        int endTimeMinute;
+        bool enabled;
+        bool enableTimeSpan;
+        bool randomize;
+        float hotTimeHour;
+        float overrideTime;
+        bool enableMinimumRunTime;
+    } schedule;
+    
+    // Channel configuration group
+    struct {
+        String name;
+        uint8_t homeAssistantTopicType;
+        String homeAssistantIcon;
+        bool enableRemoteConfiguration;
+        String masterIPAddress;
+        String restChannelRestartEndPoint;
+    } channel;
+    
+    // Date range configuration group
+    struct {
+        bool enableDateRange;
+        bool activeOutsideDateRange;
+        String activeStartDateRange;
+        String activeEndDateRange;
+        String weekDays;
+    } dateRange;
+    
+    // System configuration group
+    struct {
+        String buildVersion;
+        bool autoRebootSystem;
+    } system;
+    
+    ChannelMqttSettingsService* channelMqttSettingsService;
+};
+
 #ifdef ESP32
 #include <WiFi.h>
 #elif defined(ESP8266)
@@ -17,6 +72,10 @@
 
 class ChannelStateService : public StatefulService<ChannelState> {
  public:
+  // New streamlined constructor using config struct
+  ChannelStateService(const ChannelStateConfig& config);
+  
+  // Legacy constructor (to be removed)
   ChannelStateService(AsyncWebServer* server,
                     SecurityManager* securityManager,
                     AsyncMqttClient* mqttClient,
@@ -61,47 +120,23 @@ class ChannelStateService : public StatefulService<ChannelState> {
   void mqttRepublishReattach();
 
  private:
+  // Service objects
   HttpEndpoint<ChannelState> _httpEndpoint;
   MqttPubSub<ChannelState> _mqttPubSub;
   WebSocketTxRx<ChannelState> _webSocket;
+  FSPersistence<ChannelState> _fsPersistence;
+  
+  // Essential runtime state (configuration is stored in _state.channel)
   AsyncMqttClient* _mqttClient;
   ChannelMqttSettingsService* _channelMqttSettingsService;
-  FSPersistence<ChannelState> _fsPersistence;
   uint8_t _channelControlPin;
-  String _defaultChannelName;
+  
+  // Timers
   Ticker _deviceTime;
   Ticker _mqttRepublish;
-
-  int  _runEvery;         // run every 30 mins
-  int  _offAfter;         // stop after 5 mins
-  int  _startTimeHour;    // 8
-  int  _startTimeMinute;  // 30
-  int  _endTimeHour;      // 16
-  int  _endTimeMinute;    // 30
-  int  _hotTimeHour;      // 0 to 16hr
-  int  _overrideTime;     //
-  bool    _enabled;
-  String  _channelName;
-  bool  _enableTimeSpan;
-  bool  _randomize;
-  bool  _isHotScheduleActive;
-  String _offHotHourDateTime;
-  String _controlOffDateTime;
-  bool  _isOverrideActive;
-  bool _enableMinimumRunTime;
-  uint8_t _homeAssistantTopicType;
-  String _homeAssistantIcon;
-  bool _enableRemoteConfiguration;
-  String _masterIPAddress;
-  String _restChannelEndPoint;
-  String _restChannelRestartEndPoint;
-  bool _enableDateRange;
-  bool _activeOutsideDateRange;
-  String _activeStartDateRange;
-  String _activeEndDateRange;
-  String _buildVersion;
-  String _weekDays;
-  bool _autoRebootSystem;
+  
+  // Helper methods for configuration struct initialization
+  void initializeFromConfig(const ChannelStateConfig& config);
 
 #ifdef ESP32
   void onStationModeGotIP(WiFiEvent_t event, WiFiEventInfo_t info);

@@ -4,40 +4,50 @@
 #include "TaskScheduler.h"
 
 TaskScheduler::TaskScheduler(const TaskSchedulerConfig& config):
-                             _channelStateService(config.server,
-                                                 config.securityManager,
-                                                 config.mqttClient,
-                                                 config.fs,
-                                                 config.channelControlPin,
-                                                 config.channelJsonConfigPath,
-                                                 config.restChannelEndPoint,
-                                                 config.webSocketChannelEndPoint,
-                                                 config.runEvery,
-                                                 config.offAfter,
-                                                 config.startTimeHour,
-                                                 config.startTimeMinute,
-                                                 config.endTimeHour,
-                                                 config.endTimeMinute,
-                                                 config.enabled,
-                                                 config.channelName,
-                                                 config.enableTimeSpan,
-                                                 config.channelMqttSettingsService,
-                                                 config.randomize,
-                                                 config.hotTimeHour,
-                                                 config.overrideTime,
-                                                 config.enableMinimumRunTime,
-                                                 config.homeAssistantTopicType,
-                                                 config.homeAssistantIcon,
-                                                 config.enableRemoteConfiguration,
-                                                 config.masterIPAddress,
-                                                 config.restChannelRestartEndPoint,
-                                                 config.enableDateRange,
-                                                 config.activeOutsideDateRange,
-                                                 config.activeStartDateRange,
-                                                 config.activeEndDateRange,
-                                                 config.buildVersion,
-                                                 config.weekDays,
-                                                 config.autoRebootSystem) {
+                             _channelStateService(ChannelStateConfig{
+                                 .server = config.server,
+                                 .securityManager = config.securityManager,
+                                 .mqttClient = config.mqttClient,
+                                 .fs = config.fs,
+                                 .channelControlPin = config.channelControlPin,
+                                 .channelJsonConfigPath = config.channelJsonConfigPath,
+                                 .restChannelEndPoint = config.restChannelEndPoint,
+                                 .webSocketChannelEndPoint = config.webSocketChannelEndPoint,
+                                 .schedule = {
+                                     .runEvery = config.runEvery,
+                                     .offAfter = config.offAfter,
+                                     .startTimeHour = config.startTimeHour,
+                                     .startTimeMinute = config.startTimeMinute,
+                                     .endTimeHour = config.endTimeHour,
+                                     .endTimeMinute = config.endTimeMinute,
+                                     .enabled = config.enabled,
+                                     .enableTimeSpan = config.enableTimeSpan,
+                                     .randomize = config.randomize,
+                                     .hotTimeHour = config.hotTimeHour,
+                                     .overrideTime = config.overrideTime,
+                                     .enableMinimumRunTime = config.enableMinimumRunTime
+                                 },
+                                 .channel = {
+                                     .name = config.channelName,
+                                     .homeAssistantTopicType = config.homeAssistantTopicType,
+                                     .homeAssistantIcon = config.homeAssistantIcon,
+                                     .enableRemoteConfiguration = config.enableRemoteConfiguration,
+                                     .masterIPAddress = config.masterIPAddress,
+                                     .restChannelRestartEndPoint = config.restChannelRestartEndPoint
+                                 },
+                                 .dateRange = {
+                                     .enableDateRange = config.enableDateRange,
+                                     .activeOutsideDateRange = config.activeOutsideDateRange,
+                                     .activeStartDateRange = config.activeStartDateRange,
+                                     .activeEndDateRange = config.activeEndDateRange,
+                                     .weekDays = config.weekDays
+                                 },
+                                 .system = {
+                                     .buildVersion = config.buildVersion,
+                                     .autoRebootSystem = config.autoRebootSystem
+                                 },
+                                 .channelMqttSettingsService = config.channelMqttSettingsService
+                             }) {
 
                               _isHotScheduleActive = false;
                               _isOverrideActive = false;
@@ -265,7 +275,7 @@ void TaskScheduler::scheduleTaskTicker(ScheduledTime schedule){
 }
 
 bool TaskScheduler::isScheduleWithInDateRange(String activeStartDateRange,
-  String activeEndDateRange, bool enableDateRange, bool activeOutsideDateRange, time_t currentTime){
+  String activeEndDateRange, bool enableDateRange, bool activeOutsideDateRange, time_t currentTime) {
 
   if (!enableDateRange || _isOverrideActive){
     return true;
@@ -285,17 +295,42 @@ bool TaskScheduler::isScheduleWithInDateRange(String activeStartDateRange,
   return (activeOutsideDateRange && !inBetween);
 }
 
-ScheduledTime TaskScheduler::getNextRunTime(){
-  ScheduledTime schedule = _utilities.getScheduleTimes(_channel.startTime,
-  _channel.endTime, _channel.schedule.hotTimeHour, _channel.enableTimeSpan,
-  _channel.isHotScheduleActive, _channel.name, _channel.randomize,
-  _isOverrideActive, _channel.enableMinimumRunTime);
+ScheduledTime TaskScheduler::getNextRunTime() {
+  // Early return if channel is disabled to avoid unnecessary calculations
+  if (!_channel.enabled) {
+    ScheduledTime emptySchedule = {};
+    return emptySchedule;
+  }
+
+  ScheduleCalculationParams params = buildScheduleParams();
+  
+  ScheduledTime schedule = _utilities.getScheduleTimes(
+    params.startTime, params.endTime, params.hotTimeHour,
+    params.enableTimeSpan, params.isHotScheduleActive, params.channelName,
+    params.randomize, _isOverrideActive, params.enableMinimumRunTime);
 
   schedule.isWithInDateRange = isScheduleWithInDateRange(
-    _channel.activeStartDateRange, _channel.activeEndDateRange,
-    _channel.enableDateRange, _channel.activeOutsideDateRange, schedule.currentTime);
+    params.activeStartDateRange, params.activeEndDateRange,
+    params.enableDateRange, params.activeOutsideDateRange, schedule.currentTime);
 
   return schedule;
+}
+
+ScheduleCalculationParams TaskScheduler::buildScheduleParams() const {
+  return {
+    .startTime = _channel.startTime,
+    .endTime = _channel.endTime,
+    .hotTimeHour = _channel.schedule.hotTimeHour,
+    .enableTimeSpan = _channel.enableTimeSpan,
+    .isHotScheduleActive = _channel.isHotScheduleActive,
+    .channelName = _channel.name,
+    .randomize = _channel.randomize,
+    .enableMinimumRunTime = _channel.enableMinimumRunTime,
+    .activeStartDateRange = _channel.activeStartDateRange,
+    .activeEndDateRange = _channel.activeEndDateRange,
+    .enableDateRange = _channel.enableDateRange,
+    .activeOutsideDateRange = _channel.activeOutsideDateRange
+  };
 }
 
 void TaskScheduler::setScheduleTimes(){
