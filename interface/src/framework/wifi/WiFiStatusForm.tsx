@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 
 import { Avatar, Button, Divider, List, ListItem, ListItemAvatar, ListItemText, Theme, useTheme } from "@mui/material";
 import DeviceHubIcon from '@mui/icons-material/DeviceHub';
@@ -13,7 +13,6 @@ import MaskIcon from '@mui/icons-material/GridOn';
 import * as WiFiApi from "../../api/wifi";
 import { WiFiConnectionStatus, WiFiStatus } from "../../types";
 import { ButtonRow, FormLoader, SectionContent } from "../../components";
-import { AutoRefreshWrapper } from "../../components/AutoRefreshWrapper";
 import { useRest } from "../../utils";
 
 const isConnected = ({ status }: WiFiStatus) => status === WiFiConnectionStatus.WIFI_STATUS_CONNECTED;
@@ -68,6 +67,11 @@ const WiFiStatusForm: FC = () => {
   } = useRest<WiFiStatus>({ read: WiFiApi.readWiFiStatus });
 
   const theme = useTheme();
+
+  // Load data on component mount (replace AutoRefreshWrapper behavior)
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const content = () => {
     if (!data) {
@@ -180,16 +184,9 @@ const WiFiStatusForm: FC = () => {
   };
 
   return (
-    <AutoRefreshWrapper
-      onRefresh={loadData}
-      defaultInterval={60000}
-      defaultEnabled={true}
-      title="WiFi Status Auto-refresh"
-    >
-      <SectionContent title='WiFi Status' titleGutter>
-        {content()}
-      </SectionContent>
-    </AutoRefreshWrapper>
+    <SectionContent title='WiFi Status' titleGutter>
+      {content()}
+    </SectionContent>
   );
 
 };

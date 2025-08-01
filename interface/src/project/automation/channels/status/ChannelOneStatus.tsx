@@ -1,19 +1,13 @@
 import React, { FC } from 'react';
-import OptimizedChannelStatus from './OptimizedChannelStatus';
+import ChannelOneStateWebSocketForm from '../ws/ChannelOneStateWebSocketForm';
 
 interface ChannelOneStatusProps {
   refreshTrigger?: number;
 }
 
 const ChannelOneStatus: FC<ChannelOneStatusProps> = ({ refreshTrigger }) => {
-  // Use optimized component with auto-refresh instead of manual trigger
-  return (
-    <OptimizedChannelStatus 
-      channelId="One" 
-      defaultAutoRefresh={true}
-      defaultInterval={5000} // 5 seconds for production
-    />
-  );
+  // Use WebSocket component for real-time updates
+  return <ChannelOneStateWebSocketForm />;
 };
 
 export default ChannelOneStatus;

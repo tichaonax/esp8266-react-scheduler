@@ -1,4 +1,4 @@
-import React, { FC, useContext, useState } from "react";
+import React, { FC, useContext, useState, useEffect } from "react";
 import { useSnackbar } from "notistack";
 
 import {
@@ -21,7 +21,6 @@ import SettingsBackupRestoreIcon from '@mui/icons-material/SettingsBackupRestore
 import * as SystemApi from "../../api/system";
 import { EspPlatform, SystemStatus } from "../../types";
 import { FormLoader } from "../../components";
-import { AutoRefreshWrapper } from "../../components/AutoRefreshWrapper";
 import { extractErrorMessage, useRest } from "../../utils";
 import { AuthenticatedContext } from "../../contexts/authentication";
 
@@ -122,6 +121,11 @@ const SystemStatusForm: FC = () => {
   const [confirmFactoryReset, setConfirmFactoryReset] = useState<boolean>(false);
   const [processing, setProcessing] = useState<boolean>(false);
   const { enqueueSnackbar } = useSnackbar();
+
+  // Load data on component mount (replace AutoRefreshWrapper behavior)
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const restart = async () => {
     setProcessing(true);
@@ -476,16 +480,7 @@ const SystemStatusForm: FC = () => {
     );
   };
 
-  return (
-    <AutoRefreshWrapper
-      onRefresh={loadData}
-      defaultInterval={60000}
-      defaultEnabled={true}
-      title="System Status Auto-refresh"
-    >
-      {content()}
-    </AutoRefreshWrapper>
-  );
+  return content();
 
 };
 

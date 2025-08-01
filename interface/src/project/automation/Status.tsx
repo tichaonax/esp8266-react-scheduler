@@ -14,10 +14,10 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 
 import { useLayoutTitle } from '../../components';
 
-import ChannelOneStatus from './channels/status/ChannelOneStatus';
-import ChannelTwoStatus from './channels/status/ChannelTwoStatus';
-import ChannelThreeStatus from './channels/status/ChannelThreeStatus';
-import ChannelFourStatus from './channels/status/ChannelFourStatus';
+import ChannelOneStateWebSocketForm from './channels/ws/ChannelOneStateWebSocketForm';
+import ChannelTwoStateWebSocketForm from './channels/ws/ChannelTwoStateWebSocketForm';
+import ChannelThreeStateWebSocketForm from './channels/ws/ChannelThreeStateWebSocketForm';
+import ChannelFourStateWebSocketForm from './channels/ws/ChannelFourStateWebSocketForm';
 import { RemoteUtils } from './utils/remoteUtils';
 
 const useStyles = makeStyles((theme: any) => createStyles({
@@ -77,7 +77,6 @@ const Status: FC = () => {
   const classes = useStyles();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const [refreshTrigger] = React.useState(0);
 
   const {
     channelOne,
@@ -89,10 +88,10 @@ const Status: FC = () => {
   useLayoutTitle("Status");
 
   const channels = [
-    { component: ChannelOneStatus, name: 'Channel 1', enabled: channelOne, color: '#2196F3' },
-    { component: ChannelTwoStatus, name: 'Channel 2', enabled: channelTwo, color: '#4CAF50' },
-    { component: ChannelThreeStatus, name: 'Channel 3', enabled: channelThree, color: '#FF9800' },
-    { component: ChannelFourStatus, name: 'Channel 4', enabled: channelFour, color: '#9C27B0' },
+    { component: ChannelOneStateWebSocketForm, name: 'Channel 1', enabled: channelOne, color: '#2196F3' },
+    { component: ChannelTwoStateWebSocketForm, name: 'Channel 2', enabled: channelTwo, color: '#4CAF50' },
+    { component: ChannelThreeStateWebSocketForm, name: 'Channel 3', enabled: channelThree, color: '#FF9800' },
+    { component: ChannelFourStateWebSocketForm, name: 'Channel 4', enabled: channelFour, color: '#9C27B0' },
   ].filter(channel => channel.enabled);
 
   return (
@@ -111,7 +110,7 @@ const Status: FC = () => {
               Device Status Dashboard
             </Typography>
             <Typography className={classes.headerSubtitle}>
-              Real-time monitoring of all {channels.length} active channels
+              Live WebSocket monitoring of all {channels.length} active channels
             </Typography>
             <Divider sx={{ mt: 2, mb: 1, maxWidth: 400, mx: 'auto' }} />
           </Box>
@@ -134,7 +133,7 @@ const Status: FC = () => {
                 >
                   <Fade in timeout={800 + (index * 200)}>
                     <Box className={classes.channelWrapper}>
-                      <ChannelComponent refreshTrigger={refreshTrigger} />
+                      <ChannelComponent />
                     </Box>
                   </Fade>
                 </Grid>

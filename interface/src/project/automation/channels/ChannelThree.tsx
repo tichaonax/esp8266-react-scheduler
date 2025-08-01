@@ -16,7 +16,7 @@ import { MuiThemeOverride } from './themeOverrides';
 import { useLayoutTitle } from '../../../components';
 
 import ChannelThreeMqttSettingsForm from './mqtt/ChannelThreeMqttSettingsForm';
-import OptimizedChannelStatus from './status/OptimizedChannelStatus';
+import ChannelThreeStateWebSocketForm from './ws/ChannelThreeStateWebSocketForm';
 import SectionedScheduleForm from './schedule/SectionedScheduleForm';
 
 const ChannelThree: FC = () => {
@@ -69,11 +69,7 @@ const ChannelThree: FC = () => {
               <SectionedScheduleForm channelId="Three" />
             </TabPanel>
             <TabPanel value="2">
-              <OptimizedChannelStatus 
-                channelId="Three" 
-                defaultAutoRefresh={true}
-                defaultInterval={5000}
-              />
+              <ChannelThreeStateWebSocketForm />
             </TabPanel>
             <TabPanel value="3"><ChannelThreeMqttSettingsForm/></TabPanel>
           </TabContext>

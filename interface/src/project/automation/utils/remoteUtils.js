@@ -151,6 +151,24 @@ export class RemoteUtils {
     static getWsBaseAddress() {
       const host = deviceProxySelector(store.getState());
       let webProtocol;
+      
+      // In development mode, detect if we're running on localhost (dev server)
+      // and use the proxy target directly for WebSocket connections
+      const isDevelopment = process.env.NODE_ENV === 'development';
+      const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      
+      if (isDevelopment && isLocalhost) {
+        // In development mode, bypass proxy middleware and connect directly to ESP32
+        // Use the same proxy target as defined in package.json
+        const proxyTarget = process.env.REACT_APP_PROXY || "http://192.168.0.110";
+        const proxyUrl = new URL(proxyTarget);
+        webProtocol = proxyUrl.protocol === "https:" ? "wss:" : "ws:";
+        const port = proxyUrl.port || (proxyUrl.protocol === 'https:' ? 443 : 80);
+        const wsUrl = `${webProtocol}//${proxyUrl.hostname}:${port}${WS_BASE_URL}`;
+        return wsUrl;
+      }
+      
+      // Production mode or when not on localhost - use existing proxy logic
       if(host.isProxy){
         webProtocol = host.proxy.protocol === "https:" ? "wss:" : "ws:";
         return `${webProtocol}//${host.proxy.hostname}${WS_BASE_URL}`;

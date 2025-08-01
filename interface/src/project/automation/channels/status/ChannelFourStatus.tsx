@@ -1,18 +1,12 @@
 import React, { FC } from 'react';
-import OptimizedChannelStatus from './OptimizedChannelStatus';
+import ChannelFourStateWebSocketForm from '../ws/ChannelFourStateWebSocketForm';
 
 interface ChannelFourStatusProps {
   refreshTrigger?: number;
 }
 
 const ChannelFourStatus: FC<ChannelFourStatusProps> = ({ refreshTrigger }) => {
-  return (
-    <OptimizedChannelStatus 
-      channelId="Four" 
-      defaultAutoRefresh={true}
-      defaultInterval={5000}
-    />
-  );
+  return <ChannelFourStateWebSocketForm />;
 };
 
 export default ChannelFourStatus;
