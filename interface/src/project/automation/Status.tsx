@@ -7,10 +7,14 @@ import {
   useTheme, 
   useMediaQuery,
   Typography,
-  Divider
+  Chip,
+  Paper
 } from '@mui/material';
 import { makeStyles, createStyles } from "@mui/styles";
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import WifiIcon from '@mui/icons-material/Wifi';
+import SpeedIcon from '@mui/icons-material/Speed';
+import DevicesIcon from '@mui/icons-material/Devices';
 
 import { useLayoutTitle } from '../../components';
 
@@ -22,14 +26,32 @@ import { RemoteUtils } from './utils/remoteUtils';
 
 const useStyles = makeStyles((theme: any) => createStyles({
   statusContainer: {
-    padding: theme.spacing(3),
+    padding: theme.spacing(2),
     background: theme.palette.mode === 'dark' 
-      ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)'
-      : 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+      ? 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%)'
+      : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
     minHeight: 'calc(100vh - 64px)',
-    [theme.breakpoints.down('sm')]: {
-      padding: theme.spacing(2),
+    position: 'relative',
+    overflow: 'hidden',
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: theme.palette.mode === 'dark'
+        ? 'radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%)'
+        : 'radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(102, 126, 234, 0.1) 0%, transparent 50%)',
+      zIndex: 0,
     },
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing(1.5),
+    },
+  },
+  contentWrapper: {
+    position: 'relative',
+    zIndex: 1,
   },
   headerSection: {
     marginBottom: theme.spacing(4),
@@ -38,23 +60,63 @@ const useStyles = makeStyles((theme: any) => createStyles({
       marginBottom: theme.spacing(3),
     },
   },
+  headerCard: {
+    background: theme.palette.mode === 'dark'
+      ? 'rgba(255, 255, 255, 0.05)'
+      : 'rgba(255, 255, 255, 0.15)',
+    backdropFilter: 'blur(20px)',
+    border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.2)'}`,
+    borderRadius: theme.spacing(3),
+    padding: theme.spacing(4),
+    maxWidth: 600,
+    margin: '0 auto',
+    boxShadow: theme.palette.mode === 'dark'
+      ? '0 8px 32px 0 rgba(31, 38, 135, 0.37)'
+      : '0 8px 32px 0 rgba(102, 126, 234, 0.37)',
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing(3),
+      borderRadius: theme.spacing(2),
+    },
+  },
   headerTitle: {
     background: theme.palette.mode === 'dark'
-      ? 'linear-gradient(45deg, #4fc3f7 30%, #29b6f6 90%)'
-      : 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+      ? 'linear-gradient(45deg, #4fc3f7 30%, #29b6f6 70%, #e1f5fe 100%)'
+      : 'linear-gradient(45deg, #ffffff 30%, #f8f9ff 70%, #e3f2fd 100%)',
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent',
-    fontWeight: 700,
-    marginBottom: theme.spacing(1),
+    fontWeight: 800,
+    letterSpacing: '-0.5px',
+    marginBottom: theme.spacing(2),
     [theme.breakpoints.down('sm')]: {
-      fontSize: '1.75rem',
+      fontSize: '1.8rem',
     },
   },
   headerSubtitle: {
-    color: theme.palette.text.secondary,
+    color: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.9)',
     fontSize: '1.1rem',
+    fontWeight: 400,
+    marginBottom: theme.spacing(2),
     [theme.breakpoints.down('sm')]: {
       fontSize: '0.95rem',
+    },
+  },
+  statusChips: {
+    display: 'flex',
+    justifyContent: 'center',
+    gap: theme.spacing(1),
+    flexWrap: 'wrap',
+    marginTop: theme.spacing(2),
+  },
+  statusChip: {
+    background: theme.palette.mode === 'dark'
+      ? 'rgba(76, 175, 80, 0.2)'
+      : 'rgba(255, 255, 255, 0.3)',
+    color: theme.palette.mode === 'dark' ? '#4caf50' : '#ffffff',
+    backdropFilter: 'blur(10px)',
+    border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(76, 175, 80, 0.3)' : 'rgba(255, 255, 255, 0.4)'}`,
+    fontWeight: 600,
+    '& .MuiChip-icon': {
+      color: 'inherit',
     },
   },
   channelGrid: {
@@ -70,6 +132,14 @@ const useStyles = makeStyles((theme: any) => createStyles({
       display: 'flex',
       flexDirection: 'column',
     },
+  },
+  dashboardIcon: {
+    fontSize: 'inherit',
+    marginRight: theme.spacing(2),
+    verticalAlign: 'middle',
+    filter: theme.palette.mode === 'dark' 
+      ? 'drop-shadow(0 0 10px rgba(79, 195, 247, 0.5))'
+      : 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.5))',
   },
 }));
 
@@ -97,22 +167,40 @@ const Status: FC = () => {
   return (
     <Box className={classes.statusContainer}>
       <Fade in timeout={600}>
-        <Box>
+        <Box className={classes.contentWrapper}>
           {/* Header Section */}
           <Box className={classes.headerSection}>
-            <Typography variant="h3" className={classes.headerTitle}>
-              <DashboardIcon sx={{ 
-                fontSize: 'inherit', 
-                mr: 2, 
-                verticalAlign: 'middle',
-                color: theme.palette.mode === 'dark' ? '#4fc3f7' : '#2196F3'
-              }} />
-              Device Status Dashboard
-            </Typography>
-            <Typography className={classes.headerSubtitle}>
-              Live WebSocket monitoring of all {channels.length} active channels
-            </Typography>
-            <Divider sx={{ mt: 2, mb: 1, maxWidth: 400, mx: 'auto' }} />
+            <Paper className={classes.headerCard} elevation={0}>
+              <Typography variant="h2" className={classes.headerTitle}>
+                <DashboardIcon className={classes.dashboardIcon} />
+                Device Status Dashboard
+              </Typography>
+              <Typography className={classes.headerSubtitle}>
+                Real-time WebSocket monitoring of {channels.length} active channel{channels.length !== 1 ? 's' : ''}
+              </Typography>
+              
+              {/* Status Indicators */}
+              <Box className={classes.statusChips}>
+                <Chip 
+                  icon={<WifiIcon />} 
+                  label="Connected" 
+                  className={classes.statusChip}
+                  size="small"
+                />
+                <Chip 
+                  icon={<SpeedIcon />} 
+                  label="Real-time" 
+                  className={classes.statusChip}
+                  size="small"
+                />
+                <Chip 
+                  icon={<DevicesIcon />} 
+                  label={`${channels.length} Active`}
+                  className={classes.statusChip}
+                  size="small"
+                />
+              </Box>
+            </Paper>
           </Box>
 
           {/* Channel Grid */}
