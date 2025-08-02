@@ -31,7 +31,16 @@ export interface SingleUploadProps {
 }
 
 const SingleUpload: FC<SingleUploadProps> = ({ onDrop, onCancel, accept, uploading, progress }) => {
-  const dropzoneState = useDropzone({ onDrop, accept, disabled: uploading, multiple: false });
+  const handleDrop = (acceptedFiles: File[], rejectedFiles: any[]) => {
+    onDrop(acceptedFiles);
+  };
+  
+  const dropzoneState = useDropzone({ 
+    onDrop: handleDrop, 
+    accept, 
+    disabled: uploading, 
+    multiple: false 
+  });
   const { getRootProps, getInputProps } = dropzoneState;
   const theme = useTheme();
 

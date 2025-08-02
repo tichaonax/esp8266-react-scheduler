@@ -39,9 +39,24 @@ export const uploadFile = (url: string, file: File, config?: FileUploadConfig): 
   formData.append('file', file);
 
   return AXIOS.post(url, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    },
+    transformRequest: [(data, headers) => {
+      // For FormData, don't transform and let browser set Content-Type
+      if (data instanceof FormData) {
+        delete headers['Content-Type']; // Remove default Content-Type so browser sets multipart boundary
+        // Keep Authorization header for FormData uploads
+        if (localStorage.getItem(ACCESS_TOKEN)) {
+          headers.Authorization = 'Bearer ' + localStorage.getItem(ACCESS_TOKEN);
+        }
+        return data;
+      }
+      // For other data, use default transform
+      if (headers) {
+        if (localStorage.getItem(ACCESS_TOKEN)) {
+          headers.Authorization = 'Bearer ' + localStorage.getItem(ACCESS_TOKEN);
+        }
+      }
+      return JSON.stringify(data);
+    }],
     onUploadProgress: config?.onUploadProgress,
     cancelToken: config?.cancelToken,
   });

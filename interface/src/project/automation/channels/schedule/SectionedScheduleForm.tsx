@@ -315,7 +315,6 @@ const SectionedScheduleForm: FC<SectionedScheduleFormProps> = ({ channelId }) =>
         masterIPAddress: data.masterIPAddress,
       };
       
-      console.log('Sending minimal payload:', JSON.stringify(minimalPayload, null, 2));
       const response = await Api.createUpdateChannelApi(channelId, minimalPayload as ChannelState);
       setData(response.data);
       enqueueSnackbar('Schedule saved successfully!', { variant: 'success' });

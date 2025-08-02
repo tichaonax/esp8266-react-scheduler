@@ -358,10 +358,8 @@ const OptimizedChannelStatus: FC<OptimizedChannelStatusProps> = ({
         // - uniqueId (backend generated)
       };
       
-      console.log('Sending minimal payload:', JSON.stringify(minimalPayload, null, 2));
       const response = await Api.createUpdateChannelApi(channelId, minimalPayload as ChannelState);
       setData(response.data);
-      console.log('Update successful:', response.data);
     } catch (err: any) {
       console.error(`Failed to update channel ${channelId}:`, err);
       console.error('Error details:', err.response?.data);

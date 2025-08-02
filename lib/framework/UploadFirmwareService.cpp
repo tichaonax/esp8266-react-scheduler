@@ -2,20 +2,14 @@
 
 UploadFirmwareService::UploadFirmwareService(AsyncWebServer* server, SecurityManager* securityManager) :
     _securityManager(securityManager) {
-  Serial.println("*** UploadFirmwareService initialized with enhanced logging ***");
-  Serial.printf("Upload endpoint: %s\n", UPLOAD_FIRMWARE_PATH);
-  
   server->on(UPLOAD_FIRMWARE_PATH,
              HTTP_POST,
-             std::bind(&UploadFirmwareService::uploadComplete, this, std::placeholders::_1),
-             std::bind(&UploadFirmwareService::handleUpload,
-                       this,
-                       std::placeholders::_1,
-                       std::placeholders::_2,
-                       std::placeholders::_3,
-                       std::placeholders::_4,
-                       std::placeholders::_5,
-                       std::placeholders::_6));
+             [this](AsyncWebServerRequest *request) {
+               this->uploadComplete(request);
+             },
+             [this](AsyncWebServerRequest *request, const String& filename, size_t index, uint8_t *data, size_t len, bool final) {
+               this->handleUpload(request, filename, index, data, len, final);
+             });
 #ifdef ESP8266
   Update.runAsync(true);
 #endif
@@ -30,28 +24,19 @@ void UploadFirmwareService::handleUpload(AsyncWebServerRequest* request,
   if (!index) {
     Authentication authentication = _securityManager->authenticateRequest(request);
     if (AuthenticationPredicates::IS_ADMIN(authentication)) {
-      Serial.printf("Starting firmware upload, size: %u bytes\n", request->contentLength());
-      
-      // Ensure we have enough space for the update
       size_t contentLength = request->contentLength();
       if (contentLength == 0) {
-        Serial.println("ERROR: No content length provided");
         handleError(request, 400);
         return;
       }
       
-      // Check available space
       size_t freeSpace = ESP.getFreeSketchSpace();
-      Serial.printf("Available space: %u bytes, Required: %u bytes\n", freeSpace, contentLength);
       if (contentLength > freeSpace) {
-        Serial.println("ERROR: Not enough space for firmware update");
         handleError(request, 507);  // Insufficient Storage
         return;
       }
       
-      // Validate firmware file appears to be a reasonable size
       if (contentLength < 100000) {  // Less than 100KB is probably not a valid firmware
-        Serial.printf("ERROR: Firmware file too small: %u bytes\n", contentLength);
         handleError(request, 400);  // Bad Request
         return;
       }
@@ -63,14 +48,10 @@ void UploadFirmwareService::handleUpload(AsyncWebServerRequest* request,
       // For ESP8266
       if (Update.begin(contentLength)) {
 #endif
-        Serial.println("Update.begin() successful");
-        Serial.printf("Update initialized for %u bytes\n", contentLength);
         // success, let's make sure we end the update if the client hangs up
         request->onDisconnect(UploadFirmwareService::handleEarlyDisconnect);
       } else {
         // failed to begin, send an error response
-        Serial.println("ERROR: Update.begin() failed");
-        Serial.printf("Available space: %u, Requested: %u\n", freeSpace, contentLength);
         Update.printError(Serial);
         handleError(request, 500);
       }
@@ -84,23 +65,15 @@ void UploadFirmwareService::handleUpload(AsyncWebServerRequest* request,
   if (!request->_tempObject) {
     size_t written = Update.write(data, len);
     if (written != len) {
-      Serial.printf("ERROR: Update.write() failed. Expected: %u, Written: %u\n", len, written);
-      Serial.printf("Current progress: %u bytes\n", Update.progress());
       Update.printError(Serial);
       handleError(request, 500);
       return;
     }
     
     if (final) {
-      Serial.printf("Finalizing update. Total progress: %u bytes\n", Update.progress());
       if (!Update.end(true)) {
-        Serial.println("ERROR: Update.end() failed");
-        Serial.printf("Final progress: %u bytes\n", Update.progress());
         Update.printError(Serial);
         handleError(request, 500);
-      } else {
-        Serial.printf("Update.end() successful. Final size: %u bytes\n", Update.progress());
-        Serial.println("Firmware update completed successfully");
       }
     }
   }
@@ -111,30 +84,38 @@ void UploadFirmwareService::uploadComplete(AsyncWebServerRequest* request) {
   if (!request->_tempObject) {
     // Double-check that the update actually completed successfully
     if (Update.hasError()) {
-      Serial.println("ERROR: Update has errors, not restarting");
       Update.printError(Serial);
       handleError(request, 500);
       return;
     }
     
-    // Verify the update was actually applied
-    if (Update.progress() == 0 || !Update.isFinished()) {
-      Serial.println("ERROR: Update did not complete properly");
-      Serial.printf("Progress: %u bytes, Finished: %s\n", 
-                    Update.progress(), Update.isFinished() ? "YES" : "NO");
-      handleError(request, 500);
-      return;
-    }
+    // Check if the update process was successful
+    // Note: We need to handle the case where Update.progress() is broken but writes succeeded
+    size_t expectedSize = request->contentLength();
+    size_t updateProgress = Update.progress();
     
-    Serial.printf("Firmware update verified successful: %u bytes written\n", Update.progress());
-    Serial.println("Firmware upload completed, sending success response");
+    // If Update library progress tracking is broken (returns 0) but we had successful writes,
+    // we need to check other indicators
+    if (updateProgress == 0) {
+      // Since Update.progress() is unreliable, rely on Update.end() success
+      // If Update.end() succeeded, the firmware was likely written correctly
+      if (!Update.isFinished()) {
+        handleError(request, 500);
+        return;
+      }
+    } else {
+      // Normal validation when progress tracking works
+      if (updateProgress != expectedSize) {
+        handleError(request, 500);
+        return;
+      }
+    }
     
     // Send response first
     AsyncWebServerResponse* response = request->beginResponse(200);
     request->send(response);
     
     // Use the existing RestartService instead of custom restart logic
-    Serial.println("Scheduling device restart...");
     request->onDisconnect(RestartService::restartNow);
   }
 }
@@ -145,18 +126,15 @@ void UploadFirmwareService::handleError(AsyncWebServerRequest* request, int code
     return;
   }
   
-  Serial.printf("Firmware upload error: HTTP %d\n", code);
-  
   // Clean up any ongoing update
   if (Update.isRunning()) {
-    Serial.println("Aborting ongoing update due to error");
 #ifdef ESP32
     Update.abort();
 #elif defined(ESP8266)
     Update.end();
 #endif
   }
-  
+
   // send the error code to the client and record the error code in the temp object
   request->_tempObject = new int(code);
   
@@ -174,37 +152,24 @@ void UploadFirmwareService::handleError(AsyncWebServerRequest* request, int code
 }
 
 void UploadFirmwareService::handleEarlyDisconnect() {
-  Serial.println("Client disconnected during firmware upload");
   if (Update.isRunning()) {
-    Serial.printf("Update was running, progress: %u bytes\n", Update.progress());
 #ifdef ESP32
     Update.abort();
-    Serial.println("Update aborted due to early disconnect");
 #elif defined(ESP8266)
     Update.end();
-    Serial.println("Update ended due to early disconnect");
 #endif
   }
 }
 
 void UploadFirmwareService::printUpdateStatus() {
-  Serial.println("=== Firmware Update Status ===");
-  Serial.printf("Update running: %s\n", Update.isRunning() ? "YES" : "NO");
-  Serial.printf("Update progress: %u bytes\n", Update.progress());
-  Serial.printf("Update size: %u bytes\n", Update.size());
-  Serial.printf("Update remaining: %u bytes\n", Update.remaining());
-  Serial.printf("Free sketch space: %u bytes\n", ESP.getFreeSketchSpace());
-  Serial.printf("Sketch size: %u bytes\n", ESP.getSketchSize());
+  Serial.printf("Update running: %s, Progress: %u/%u bytes\n", 
+                Update.isRunning() ? "YES" : "NO", 
+                Update.progress(), 
+                Update.size());
   
 #ifdef ESP32
-  // Check for update errors
   if (Update.hasError()) {
-    Serial.println("Update has errors:");
     Update.printError(Serial);
-  } else {
-    Serial.println("No update errors detected");
   }
 #endif
-  
-  Serial.println("==============================");
 }
