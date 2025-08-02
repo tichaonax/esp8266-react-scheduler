@@ -10,6 +10,7 @@
 #elif defined(ESP8266)
 #include <ESP8266WiFi.h>
 #include <ESPAsyncTCP.h>
+#include <Updater.h>
 #endif
 
 #include <ESPAsyncWebServer.h>
@@ -21,6 +22,9 @@
 class UploadFirmwareService {
  public:
   UploadFirmwareService(AsyncWebServer* server, SecurityManager* securityManager);
+
+  // Add a status endpoint for debugging
+  static void printUpdateStatus();
 
  private:
   SecurityManager* _securityManager;
