@@ -8,46 +8,47 @@
 
 #define DEFAULT_JSON_DOCUMENT_SIZE 2048
 
-// Constants for validation and bounds checking
-#define MAX_HOT_TIME_SECONDS 57600  // 16 hours
-#define MIN_RUN_EVERY_SECONDS 60    // 1 minute
-#define MAX_RUN_EVERY_SECONDS 86400 // 24 hours
-#define MIN_OFF_AFTER_SECONDS 30    // 30 seconds minimum
-
 struct CurrentTime {
   int minutesInSec;
   int totalCurrentTimeInSec;
 };
 
-// Helper functions for time conversions
-namespace ChannelStateHelpers {
-  inline float convertSecondsToMinutes(int seconds) { 
-    return seconds / 60.0f; 
+// Time constants for better code readability
+const int SECONDS_PER_MINUTE = 60;
+const int SECONDS_PER_HOUR = 3600;
+const int MAX_HOT_TIME_SECONDS = 57600; // 16 hours maximum
+
+// Utility functions for time conversions with proper precision
+namespace TimeConversions {
+  // Convert seconds to minutes with floor precision (for intervals)
+  // Round to exactly 3 decimal places to match frontend options
+  inline double secondsToMinutesFloor(int seconds) {
+    double minutes = (double)seconds / (double)SECONDS_PER_MINUTE;
+    return floor(minutes * 1000.0) / 1000.0;
   }
   
-  inline float convertSecondsToHours(int seconds) { 
-    return seconds / 3600.0f; 
+  // Convert seconds to hours with round precision (for time values)
+  // Round to exactly 3 decimal places
+  inline double secondsToHoursRound(int seconds) {
+    double hours = (double)seconds / (double)SECONDS_PER_HOUR;
+    return round(hours * 1000.0) / 1000.0;
   }
   
-  inline int convertMinutesToSeconds(float minutes) { 
-    return (int)round(minutes * 60); 
+  // Convert seconds to minutes with round precision (for time values)
+  // Round to exactly 3 decimal places
+  inline double secondsToMinutesRound(int seconds) {
+    double minutes = (double)seconds / (double)SECONDS_PER_MINUTE;
+    return round(minutes * 1000.0) / 1000.0;
   }
   
-  inline int convertHoursToSeconds(float hours) { 
-    return (int)round(hours * 3600); 
+  // Convert minutes to seconds
+  inline int minutesToSeconds(float minutes) {
+    return (int)(round((double)SECONDS_PER_MINUTE * (double)minutes));
   }
   
-  // Helper function to parse weekDays string
-  inline void parseWeekDays(const String& weekDaysStr, int weekDays[7]) {
-    for (int i = 0; i < 7; i++) weekDays[i] = -1;
-    
-    String str = weekDaysStr;
-    while (str.length() > 0) {
-      int index = str.indexOf(',');
-      int day = (index == -1) ? str.toInt() : str.substring(0, index).toInt();
-      if (day >= 0 && day < 7) weekDays[day] = day;
-      str = (index == -1) ? "" : str.substring(index + 1);
-    }
+  // Convert hours to seconds
+  inline int hoursToSeconds(double hours) {
+    return (int)(round(SECONDS_PER_HOUR * hours));
   }
 }
 
@@ -182,14 +183,14 @@ static void haRead(ChannelState& settings, JsonObject& root) {
 
     JsonObject schedule = jsonObject.createNestedObject("schedule");
       
-    schedule["runEvery"] = ChannelStateHelpers::convertSecondsToMinutes(channel.schedule.runEvery);
-    schedule["offAfter"] = ChannelStateHelpers::convertSecondsToMinutes(channel.schedule.offAfter);
-    schedule["startTimeHour"] = ChannelStateHelpers::convertSecondsToHours(channel.schedule.startTimeHour);
-    schedule["startTimeMinute"] = ChannelStateHelpers::convertSecondsToMinutes(channel.schedule.startTimeMinute);
-    schedule["hotTimeHour"] = ChannelStateHelpers::convertSecondsToHours(channel.schedule.hotTimeHour);
-    schedule["overrideTime"] = ChannelStateHelpers::convertSecondsToMinutes(channel.schedule.overrideTime);
-    schedule["endTimeHour"] = ChannelStateHelpers::convertSecondsToHours(channel.schedule.endTimeHour);
-    schedule["endTimeMinute"] = ChannelStateHelpers::convertSecondsToMinutes(channel.schedule.endTimeMinute);
+    schedule["runEvery"] = TimeConversions::secondsToMinutesFloor(channel.schedule.runEvery);
+    schedule["offAfter"] = TimeConversions::secondsToMinutesFloor(channel.schedule.offAfter);
+    schedule["startTimeHour"] = TimeConversions::secondsToHoursRound(channel.schedule.startTimeHour);
+    schedule["startTimeMinute"] = TimeConversions::secondsToMinutesRound(channel.schedule.startTimeMinute);
+    schedule["hotTimeHour"] = TimeConversions::secondsToHoursRound(channel.schedule.hotTimeHour);
+    schedule["overrideTime"] = TimeConversions::secondsToMinutesFloor(channel.schedule.overrideTime);
+    schedule["endTimeHour"] = TimeConversions::secondsToHoursRound(channel.schedule.endTimeHour);
+    schedule["endTimeMinute"] = TimeConversions::secondsToMinutesRound(channel.schedule.endTimeMinute);
     schedule["isOverride"] = channel.schedule.isOverride;
 
     JsonArray weekDays = schedule.createNestedArray("weekDays");
@@ -259,27 +260,23 @@ static void updateChannel(JsonObject& json, Channel& channel) {
     }
    
     JsonObject schedule = json["schedule"];
-    channel.schedule.runEvery = schedule["runEvery"] ? ChannelStateHelpers::convertMinutesToSeconds(schedule["runEvery"]) : channel.schedule.runEvery;
-    channel.schedule.offAfter = schedule["offAfter"] ? ChannelStateHelpers::convertMinutesToSeconds(schedule["offAfter"]) : channel.schedule.offAfter;
-    channel.schedule.startTimeHour = schedule["startTimeHour"] ? ChannelStateHelpers::convertHoursToSeconds(schedule["startTimeHour"]) : channel.schedule.startTimeHour;
-    channel.schedule.startTimeMinute = schedule["startTimeMinute"] ? ChannelStateHelpers::convertMinutesToSeconds(schedule["startTimeMinute"]) : channel.schedule.startTimeMinute;
-    if (channel.schedule.startTimeMinute >= 3600) { channel.schedule.startTimeMinute  = 0; }
-    channel.schedule.endTimeHour = schedule["endTimeHour"] ? ChannelStateHelpers::convertHoursToSeconds(schedule["endTimeHour"]) : channel.schedule.endTimeHour;
-    channel.schedule.endTimeMinute = schedule["endTimeMinute"] ? ChannelStateHelpers::convertMinutesToSeconds(schedule["endTimeMinute"]) : channel.schedule.endTimeMinute;
-    if (channel.schedule.endTimeMinute >= 3600) { channel.schedule.endTimeMinute  = 0; }
+    channel.schedule.runEvery = schedule["runEvery"] ? TimeConversions::minutesToSeconds(schedule["runEvery"]) : channel.schedule.runEvery;
+    channel.schedule.offAfter = schedule["offAfter"] ? TimeConversions::minutesToSeconds(schedule["offAfter"]) : channel.schedule.offAfter;
+    channel.schedule.startTimeHour = schedule["startTimeHour"] ? TimeConversions::hoursToSeconds(schedule["startTimeHour"]) : channel.schedule.startTimeHour;
+    channel.schedule.startTimeMinute = schedule["startTimeMinute"] ? TimeConversions::minutesToSeconds(schedule["startTimeMinute"]) : channel.schedule.startTimeMinute;
+    if (channel.schedule.startTimeMinute >= SECONDS_PER_HOUR) { channel.schedule.startTimeMinute = 0; }
+    channel.schedule.endTimeHour = schedule["endTimeHour"] ? TimeConversions::hoursToSeconds(schedule["endTimeHour"]) : channel.schedule.endTimeHour;
+    channel.schedule.endTimeMinute = schedule["endTimeMinute"] ? TimeConversions::minutesToSeconds(schedule["endTimeMinute"]) : channel.schedule.endTimeMinute;
+    if (channel.schedule.endTimeMinute >= SECONDS_PER_HOUR) { channel.schedule.endTimeMinute = 0; }
 
     channel.schedule.isOverride = schedule["isOverride"];
 
-    channel.schedule.hotTimeHour = schedule["hotTimeHour"] ? ChannelStateHelpers::convertHoursToSeconds(schedule["hotTimeHour"]) : channel.schedule.hotTimeHour;
-    channel.schedule.overrideTime = schedule["overrideTime"] ? ChannelStateHelpers::convertMinutesToSeconds(schedule["overrideTime"]) : channel.schedule.overrideTime;
+    channel.schedule.hotTimeHour = schedule["hotTimeHour"] ? TimeConversions::hoursToSeconds(schedule["hotTimeHour"]) : channel.schedule.hotTimeHour;
+    channel.schedule.overrideTime = schedule["overrideTime"] ? TimeConversions::minutesToSeconds(schedule["overrideTime"]) : channel.schedule.overrideTime;
     
-    if ((channel.schedule.hotTimeHour > MAX_HOT_TIME_SECONDS) || (channel.schedule.hotTimeHour < 0)) { 
-      channel.schedule.hotTimeHour = 0; 
-    }
+    if ((channel.schedule.hotTimeHour > MAX_HOT_TIME_SECONDS) || (channel.schedule.hotTimeHour < 0)) { channel.schedule.hotTimeHour = 0; }
   
-    if ((channel.schedule.overrideTime > MAX_HOT_TIME_SECONDS) || (channel.schedule.overrideTime < 0)) { 
-      channel.schedule.overrideTime = 0; 
-    }
+    if ((channel.schedule.overrideTime > MAX_HOT_TIME_SECONDS) || (channel.schedule.overrideTime < 0)) { channel.schedule.overrideTime = 0; }
 
     if (schedule["weekDays"]){
       for (int i = 0; i< 7; i++){
@@ -295,31 +292,9 @@ static void updateChannel(JsonObject& json, Channel& channel) {
 
   static boolean dataIsValid(JsonObject& json, ChannelState& channelState){
     JsonObject schedule = json["schedule"];
-    
-    // Get values with proper conversions
-    int runEvery = schedule["runEvery"] ? ChannelStateHelpers::convertMinutesToSeconds(schedule["runEvery"]) : channelState.channel.schedule.runEvery;
-    int offAfter = schedule["offAfter"] ? ChannelStateHelpers::convertMinutesToSeconds(schedule["offAfter"]) : channelState.channel.schedule.offAfter;
-    
-    // Validate basic scheduling logic
-    if (runEvery <= offAfter) return false;
-    
-    // Validate time ranges
-    if (runEvery < MIN_RUN_EVERY_SECONDS || runEvery > MAX_RUN_EVERY_SECONDS) return false;
-    if (offAfter < MIN_OFF_AFTER_SECONDS || offAfter > runEvery) return false;
-    
-    // Validate hot time if present
-    if (schedule["hotTimeHour"]) {
-      int hotTime = ChannelStateHelpers::convertHoursToSeconds(schedule["hotTimeHour"]);
-      if (hotTime < 0 || hotTime > MAX_HOT_TIME_SECONDS) return false;
-    }
-    
-    // Validate override time if present
-    if (schedule["overrideTime"]) {
-      int overrideTime = ChannelStateHelpers::convertMinutesToSeconds(schedule["overrideTime"]);
-      if (overrideTime < 0 || overrideTime > MAX_HOT_TIME_SECONDS) return false;
-    }
-    
-    return true;
+    int runEvery = schedule["runEvery"] ? TimeConversions::minutesToSeconds(schedule["runEvery"]) : channelState.channel.schedule.runEvery;
+    int offAfter = schedule["offAfter"] ? TimeConversions::minutesToSeconds(schedule["offAfter"]) : channelState.channel.schedule.offAfter;
+    return (runEvery > offAfter);
   }
 };
 

@@ -263,6 +263,7 @@ ScheduledTime getScheduleTimes(int startTime, int endTime,
   schedule.isRunTaskNow = schedule.isRunTaskNow && !schedule.isHotScheduleActive && !schedule.isOverrideActive;
   return schedule;
 }
+
 static String getMqttUniqueIdOrPath(uint8_t controlPin, uint8_t homeAssistantTopicType, bool isUniqueIdOrPath, String homeAssistantEntity = "") {
   String topicType;
   String topicHeader;

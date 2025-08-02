@@ -134,14 +134,14 @@ ChannelStateService::ChannelStateService(AsyncWebServer* server,
     }
     
     // Convert time units and store in schedule
-    _state.channel.schedule.runEvery = (int)(round(60 * runEvery));
-    _state.channel.schedule.offAfter = (int)(round(60 * offAfter));
-    _state.channel.schedule.startTimeHour = (int)(round(3600 * startTimeHour));
-    _state.channel.schedule.startTimeMinute = (int)(round(60 * startTimeMinute));
-    _state.channel.schedule.endTimeHour = (int)(round(3600 * endTimeHour));
-    _state.channel.schedule.endTimeMinute = (int)(round(60 * endTimeMinute));
-    _state.channel.schedule.hotTimeHour = (int)(round(3600 * hotTimeHour));
-    _state.channel.schedule.overrideTime = (int)(round(60 * overrideTime));
+    _state.channel.schedule.runEvery = (int)(round(SECONDS_PER_MINUTE * runEvery));
+    _state.channel.schedule.offAfter = (int)(round(SECONDS_PER_MINUTE * offAfter));
+    _state.channel.schedule.startTimeHour = (int)(round(SECONDS_PER_HOUR * startTimeHour));
+    _state.channel.schedule.startTimeMinute = (int)(round(SECONDS_PER_MINUTE * startTimeMinute));
+    _state.channel.schedule.endTimeHour = (int)(round(SECONDS_PER_HOUR * endTimeHour));
+    _state.channel.schedule.endTimeMinute = (int)(round(SECONDS_PER_MINUTE * endTimeMinute));
+    _state.channel.schedule.hotTimeHour = (int)(round(SECONDS_PER_HOUR * hotTimeHour));
+    _state.channel.schedule.overrideTime = (int)(round(SECONDS_PER_MINUTE * overrideTime));
     
     // Initialize runtime state
     _state.channel.controlOn = false;
@@ -227,14 +227,14 @@ void ChannelStateService::initializeFromConfig(const ChannelStateConfig& config)
     }
     
     // Convert time units and store in schedule
-    _state.channel.schedule.runEvery = (int)(round(60 * config.schedule.runEvery));
-    _state.channel.schedule.offAfter = (int)(round(60 * config.schedule.offAfter));
-    _state.channel.schedule.startTimeHour = (int)(round(3600 * config.schedule.startTimeHour));
-    _state.channel.schedule.startTimeMinute = (int)(round(60 * config.schedule.startTimeMinute));
-    _state.channel.schedule.endTimeHour = (int)(round(3600 * config.schedule.endTimeHour));
-    _state.channel.schedule.endTimeMinute = (int)(round(60 * config.schedule.endTimeMinute));
-    _state.channel.schedule.hotTimeHour = (int)(round(3600 * config.schedule.hotTimeHour));
-    _state.channel.schedule.overrideTime = (int)(round(60 * config.schedule.overrideTime));
+    _state.channel.schedule.runEvery = (int)(round(SECONDS_PER_MINUTE * config.schedule.runEvery));
+    _state.channel.schedule.offAfter = (int)(round(SECONDS_PER_MINUTE * config.schedule.offAfter));
+    _state.channel.schedule.startTimeHour = (int)(round(SECONDS_PER_HOUR * config.schedule.startTimeHour));
+    _state.channel.schedule.startTimeMinute = (int)(round(SECONDS_PER_MINUTE * config.schedule.startTimeMinute));
+    _state.channel.schedule.endTimeHour = (int)(round(SECONDS_PER_HOUR * config.schedule.endTimeHour));
+    _state.channel.schedule.endTimeMinute = (int)(round(SECONDS_PER_MINUTE * config.schedule.endTimeMinute));
+    _state.channel.schedule.hotTimeHour = (int)(round(SECONDS_PER_HOUR * config.schedule.hotTimeHour));
+    _state.channel.schedule.overrideTime = (int)(round(SECONDS_PER_MINUTE * config.schedule.overrideTime));
     
     // Initialize runtime state
     _state.channel.controlOn = false;
