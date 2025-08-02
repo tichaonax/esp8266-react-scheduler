@@ -2,6 +2,9 @@
 
 UploadFirmwareService::UploadFirmwareService(AsyncWebServer* server, SecurityManager* securityManager) :
     _securityManager(securityManager) {
+  Serial.println("*** UploadFirmwareService initialized with enhanced logging ***");
+  Serial.printf("Upload endpoint: %s\n", UPLOAD_FIRMWARE_PATH);
+  
   server->on(UPLOAD_FIRMWARE_PATH,
              HTTP_POST,
              std::bind(&UploadFirmwareService::uploadComplete, this, std::placeholders::_1),
@@ -40,10 +43,16 @@ void UploadFirmwareService::handleUpload(AsyncWebServerRequest* request,
       // Check available space
       size_t freeSpace = ESP.getFreeSketchSpace();
       Serial.printf("Available space: %u bytes, Required: %u bytes\n", freeSpace, contentLength);
-      
       if (contentLength > freeSpace) {
         Serial.println("ERROR: Not enough space for firmware update");
         handleError(request, 507);  // Insufficient Storage
+        return;
+      }
+      
+      // Validate firmware file appears to be a reasonable size
+      if (contentLength < 100000) {  // Less than 100KB is probably not a valid firmware
+        Serial.printf("ERROR: Firmware file too small: %u bytes\n", contentLength);
+        handleError(request, 400);  // Bad Request
         return;
       }
       
@@ -55,17 +64,18 @@ void UploadFirmwareService::handleUpload(AsyncWebServerRequest* request,
       if (Update.begin(contentLength)) {
 #endif
         Serial.println("Update.begin() successful");
+        Serial.printf("Update initialized for %u bytes\n", contentLength);
         // success, let's make sure we end the update if the client hangs up
         request->onDisconnect(UploadFirmwareService::handleEarlyDisconnect);
       } else {
         // failed to begin, send an error response
         Serial.println("ERROR: Update.begin() failed");
+        Serial.printf("Available space: %u, Requested: %u\n", freeSpace, contentLength);
         Update.printError(Serial);
         handleError(request, 500);
       }
     } else {
       // send the forbidden response
-      Serial.println("ERROR: Authentication failed for firmware upload");
       handleError(request, 403);
     }
   }
@@ -75,18 +85,21 @@ void UploadFirmwareService::handleUpload(AsyncWebServerRequest* request,
     size_t written = Update.write(data, len);
     if (written != len) {
       Serial.printf("ERROR: Update.write() failed. Expected: %u, Written: %u\n", len, written);
+      Serial.printf("Current progress: %u bytes\n", Update.progress());
       Update.printError(Serial);
       handleError(request, 500);
       return;
     }
     
     if (final) {
-      Serial.printf("Finalizing update. Total bytes written: %u\n", Update.progress());
+      Serial.printf("Finalizing update. Total progress: %u bytes\n", Update.progress());
       if (!Update.end(true)) {
         Serial.println("ERROR: Update.end() failed");
+        Serial.printf("Final progress: %u bytes\n", Update.progress());
         Update.printError(Serial);
         handleError(request, 500);
       } else {
+        Serial.printf("Update.end() successful. Final size: %u bytes\n", Update.progress());
         Serial.println("Firmware update completed successfully");
       }
     }
@@ -96,32 +109,33 @@ void UploadFirmwareService::handleUpload(AsyncWebServerRequest* request,
 void UploadFirmwareService::uploadComplete(AsyncWebServerRequest* request) {
   // if no error, send the success response
   if (!request->_tempObject) {
+    // Double-check that the update actually completed successfully
+    if (Update.hasError()) {
+      Serial.println("ERROR: Update has errors, not restarting");
+      Update.printError(Serial);
+      handleError(request, 500);
+      return;
+    }
+    
+    // Verify the update was actually applied
+    if (Update.progress() == 0 || !Update.isFinished()) {
+      Serial.println("ERROR: Update did not complete properly");
+      Serial.printf("Progress: %u bytes, Finished: %s\n", 
+                    Update.progress(), Update.isFinished() ? "YES" : "NO");
+      handleError(request, 500);
+      return;
+    }
+    
+    Serial.printf("Firmware update verified successful: %u bytes written\n", Update.progress());
     Serial.println("Firmware upload completed, sending success response");
     
     // Send response first
     AsyncWebServerResponse* response = request->beginResponse(200);
     request->send(response);
     
-    // Schedule restart with delay to ensure response is sent
-    Serial.println("Scheduling device restart in 3 seconds...");
-    
-    // Use a simple delayed restart
-    static bool restartScheduled = false;
-    if (!restartScheduled) {
-      restartScheduled = true;
-      
-      // Create a delayed restart task
-      static auto restartTask = []() {
-        delay(3000);  // Wait 3 seconds for response to be fully sent
-        Serial.println("Restarting device now after firmware update...");
-        WiFi.disconnect(true);
-        delay(1000);
-        ESP.restart();
-      };
-      
-      // Execute restart on disconnect or after delay
-      request->onDisconnect(restartTask);
-    }
+    // Use the existing RestartService instead of custom restart logic
+    Serial.println("Scheduling device restart...");
+    request->onDisconnect(RestartService::restartNow);
   }
 }
 
